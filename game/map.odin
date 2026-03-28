@@ -1,6 +1,5 @@
 package game
 
-import "core:fmt"
 import "core:math/rand"
 
 import rl "vendor:raylib"
@@ -57,10 +56,6 @@ tile_free :: proc(t: Tile_Coord) -> bool {
 		if e.k.tile == t && !e.k.ghost {
 			return false
 		}
-	}
-	if !valid_tile_coord(t) {
-		fmt.println("tile out of bounds of map", t)
-		return false
 	}
 	p := PASSABLE
 	return p[m[t.x][t.y]]

@@ -1,10 +1,21 @@
 package game
 
-import "core:fmt"
-
 import la "core:math/linalg"
 
 import rl "vendor:raylib"
+
+Pixel :: f32
+Pixel_Coord :: [2]Pixel
+Pixel_Dim :: [2]Pixel
+
+PIXEL_ORIGIN: Pixel_Coord
+
+Tile_T :: int
+Tile_Coord :: [2]Tile_T
+Tile_Offset :: Pixel_Coord
+
+TILE_SIZE: Pixel : 32
+TILE_DIM :: Pixel_Dim{TILE_SIZE, TILE_SIZE}
 
 Direction :: enum {
 	None,
@@ -37,23 +48,6 @@ tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
 	}
 }
 
-get_direction_input :: proc() -> Tile_Coord {
-	input: Tile_Coord
-	if rl.IsKeyDown(.UP) {
-		input.y -= 1
-	}
-	if rl.IsKeyDown(.DOWN) {
-		input.y += 1
-	}
-	if rl.IsKeyDown(.LEFT) {
-		input.x -= 1
-	}
-	if rl.IsKeyDown(.RIGHT) {
-		input.x += 1
-	}
-	return input
-}
-
 get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
 	v := la.sign(d - t)
 	if (v.x == 0 || v.y == 0) {
@@ -66,6 +60,5 @@ get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
 	}
 	move := la.projection(v, f)
 	alt := v - move
-	fmt.println(move, alt)
 	return move, alt
 }

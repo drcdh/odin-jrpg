@@ -1,7 +1,5 @@
 package game
 
-import "core:fmt"
-
 import rl "vendor:raylib"
 
 Kinematics :: struct {
@@ -31,16 +29,11 @@ _draw_entity :: proc(k: Kinematics, v: Visual) {
 	)
 }
 
-Player_Control :: struct {
-	prev_input: Tile_Coord,
-}
-
 set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 	k.tile += d
 	k.offset = -tile_to_pixel(d)
 	k.offset_ease = 1
 	k.moving = true
-	// fmt.println(k)
 }
 
 try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
@@ -70,36 +63,17 @@ Entity :: struct {
 }
 
 update_entity :: proc(dt: f32, e: ^Entity) {
-	// fmt.println("updating entity", e.n)
 	update_kinematics(dt, &e.k)
-	update_control(dt, e)
+	e.s(dt, e)
 }
 
 update_kinematics :: proc(dt: f32, k: ^Kinematics) {
 	if k.moving {
-		// fmt.println("moving")
 		k.offset_ease -= dt * k.speed
 		if k.offset_ease < 0 {
 			k.offset_ease = 0
 			k.moving = false
 		}
-	}
-}
-
-update_control :: proc(dt: f32, entity: ^Entity) {
-	if !entity.k.moving {
-		// fmt.println("not moving")
-		entity.s(dt, entity)
-		// switch &c in entity.c {
-		// case Player_Control:
-		// 	{
-		// 		control_player(&entity.k)
-		// 	}
-		// case Script_Control:
-		// 	{
-		// 		c.f(dt, entity, c.data)
-		// 	}
-		// }
 	}
 }
 

@@ -1,6 +1,9 @@
 package game
 
-import "core:fmt"
+import rl "vendor:raylib"
+
+DUDE_COLOR :: rl.Color{80, 80, 90, 255}
+PLAYER_COLOR :: rl.Color{200, 120, 120, 255}
 
 DUDE_DESTINATIONS :: [4]Tile_Coord{{18, 10}, {18, 8}, {16, 8}, {16, 10}}
 DUDE_PAUSE: f32 : 1
@@ -17,7 +20,6 @@ dude_pace :: proc(dt: f32, dude: ^Entity) {
 				dude_step += 1
 				if dude_step >= 4 {dude_step = 0}
 			}
-			// fmt.println("dude_pace", dude_step, next_dest)
 			try_set_destination(&dude.k, dd[dude_step])
 			dude_countdown = DUDE_PAUSE
 		}
@@ -42,7 +44,7 @@ start_level :: proc() {
 		k = Kinematics{tile = Tile_Coord{18, 10}, speed = 2},
 		n = "Dude",
 		s = dude_pace,
-		v = Visual{color = {80, 80, 90, 255}, size = TILE_DIM},
+		v = Visual{color = DUDE_COLOR, size = TILE_DIM},
 	}
 
 	append(&entities, player)
