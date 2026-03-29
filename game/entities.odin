@@ -12,21 +12,33 @@ Kinematics :: struct {
 	tile:        Tile_Coord,
 }
 
-Visual :: struct {
+Visual_Solid_Rect :: struct {
 	size:  Pixel_Dim,
 	color: rl.Color,
 }
 
-draw_entity :: proc(e: Entity) {
-	_draw_entity(e.k, e.v)
+Visual :: union {
+	Visual_Solid_Rect,
+	Text_Display,
 }
 
-_draw_entity :: proc(k: Kinematics, v: Visual) {
+draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
 	rl.DrawRectangleV(
 		tile_to_pixel(k.tile) + k.offset * k.offset_ease,
 		v.size,
 		v.color,
 	)
+}
+
+draw_entity :: proc(e: Entity) {
+	if !e.disabled {
+		switch v in e.v {
+		case Visual_Solid_Rect:
+			draw_solid_rect(e.k, v)
+		case Text_Display:
+			draw_text_display(v)
+		}
+	}
 }
 
 set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
@@ -56,15 +68,20 @@ Name :: string
 Script :: proc(_: f32, _: ^Entity)
 
 Entity :: struct {
-	k: Kinematics,
-	n: Name,
-	s: Script,
-	v: Visual,
+	busy:     bool, // script will not run if true
+	disabled: bool, // script will not run and will not be displayed if true
+	id:       Id,
+	k:        Kinematics,
+	n:        Name,
+	s:        Script,
+	v:        Visual,
 }
 
 update_entity :: proc(dt: f32, e: ^Entity) {
 	update_kinematics(dt, &e.k)
-	e.s(dt, e)
+	if !e.busy && !e.disabled {
+		e.s(dt, e)
+	}
 }
 
 update_kinematics :: proc(dt: f32, k: ^Kinematics) {

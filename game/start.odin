@@ -20,6 +20,7 @@ start :: proc(args: []string) -> int {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
 		draw_level()
+		draw_text()
 		rl.EndDrawing()
 
 		dt := rl.GetFrameTime()
@@ -29,6 +30,7 @@ start :: proc(args: []string) -> int {
 		}
 
 		update_level(dt)
+		update_text(dt)
 	}
 
 	rl.CloseWindow()
