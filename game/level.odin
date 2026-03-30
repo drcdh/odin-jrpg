@@ -29,20 +29,6 @@ dude_pace :: proc(dt: f32, dude: ^Entity) {
 	}
 }
 
-welcome_script :: proc(dt: f32, e: ^Entity) {
-	if !e.disabled {
-		#partial switch &td in e.v {
-		case Text_Display:
-			td.time += dt
-			if td.time >= td.pause {
-				if !td.wait || rl.IsKeyDown(.SPACE) {
-					e.disabled = true
-				}
-			}
-		}
-	}
-}
-
 start_level :: proc() {
 	m = build_map()
 
