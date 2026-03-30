@@ -23,11 +23,7 @@ Visual :: union {
 }
 
 draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
-	rl.DrawRectangleV(
-		tile_to_pixel(k.tile) + k.offset * k.offset_ease,
-		v.size,
-		v.color,
-	)
+	rl.DrawRectangleV(tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.size, v.color)
 }
 
 draw_entity :: proc(e: Entity) {
@@ -74,6 +70,7 @@ Entity :: struct {
 	k:        Kinematics,
 	n:        Name,
 	s:        Script,
+	state:    State,
 	v:        Visual,
 }
 

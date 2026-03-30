@@ -38,11 +38,7 @@ draw_map :: proc(m: Map) {
 	colors := TILE_COLORS
 	for i in 0 ..< MAP_WIDTH {
 		for j in 0 ..< MAP_HEIGHT {
-			rl.DrawRectangleV(
-				tile_to_pixel(Tile_Coord{i, j}),
-				TILE_DIM,
-				colors[m[i][j]],
-			)
+			rl.DrawRectangleV(tile_to_pixel(Tile_Coord{i, j}), TILE_DIM, colors[m[i][j]])
 		}
 	}
 }

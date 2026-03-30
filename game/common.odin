@@ -44,10 +44,7 @@ Direction_Vectors :: [Direction]Tile_Coord {
 }
 
 tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
-	return Pixel_Coord {
-		cast(Pixel)(t.x) * TILE_SIZE,
-		cast(Pixel)(t.y) * TILE_SIZE,
-	}
+	return Pixel_Coord{cast(Pixel)(t.x) * TILE_SIZE, cast(Pixel)(t.y) * TILE_SIZE}
 }
 
 get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {

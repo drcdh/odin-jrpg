@@ -2,11 +2,10 @@ package game
 
 import "core:fmt"
 
-import rl "vendor:raylib"
-
 entities: [dynamic]Entity
 m: Map
-text: [dynamic]Text_Display
+// text: [dynamic]Text_Display
+text: Text_Display
 
 draw_level :: proc() {
 	draw_map(m)
@@ -18,11 +17,15 @@ draw_level :: proc() {
 }
 
 draw_text :: proc() {
-	for t in text {
-		if !t.disabled {
-			draw_text_display(t)
-		}
+	if text.id != 0 {
+		// fmt.println("drawing text", text)
+		draw_text_display(text)
 	}
+	// for t in text {
+	// 	if !t.disabled {
+	// 		draw_text_display(t)
+	// 	}
+	// }
 }
 
 update_level :: proc(dt: f32) {
@@ -32,17 +35,15 @@ update_level :: proc(dt: f32) {
 }
 
 update_text :: proc(dt: f32) {
-	for &t in text {
-		if !t.disabled {
-			t.time += dt
-			t.time += dt
-			if t.time >= t.pause {
-				if !t.wait || rl.IsKeyDown(.SPACE) {
-					t.disabled = true
-					t.on_end(t.selection)
-				}
+	if text.id != 0 {
+		text.time += dt
+		if text.time >= text.pause {
+			if !text.wait || get_input(Game_Input.ENTER) {
+				fmt.println("got enter. ending text display", text.id)
+				old := text
+				text = Text_Display{}
+				old.on_end(old.selection)
 			}
-
 		}
 	}
 }
@@ -51,10 +52,30 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 	for &e in entities {
 		if e.id == e_id {
 			e.busy = busy
-			fmt.println("set entity busy", e.n, e.busy)
+			// fmt.println("set entity busy", e.n, e.busy)
 			return
 		}
 	}
 	fmt.println("didn't find entity with id", e_id)
+}
 
+set_entity_dialogue :: proc(e_id: Id, line: int) {
+	for &e in entities {
+		if e.id == e_id {
+			#partial switch &state in e.state {
+			case Talking:
+				state.line = line
+				return
+			}
+			panic("entity not in dialogue state")
+		}
+	}
+}
+
+set_entity_state :: proc(e_id: Id, state: State) {
+	for &e in entities {
+		if e.id == e_id {
+			e.state = state
+		}
+	}
 }

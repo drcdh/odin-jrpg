@@ -40,10 +40,6 @@ TEXT_COLOR := rl.Color{50, 10, 10, 255}
 TEXT_DISPLAY_BACKGROUND := rl.Color{200, 200, 200, 255}
 
 draw_text_display :: proc(td: Text_Display) {
-	rl.DrawRectangleV(
-		Pixel_Coord{10, 10},
-		Pixel_Dim{300, 100},
-		TEXT_DISPLAY_BACKGROUND,
-	)
+	rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
 	rl.DrawText(td.text, 20, 20, 18, TEXT_COLOR)
 }
