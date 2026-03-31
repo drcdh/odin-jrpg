@@ -13,19 +13,19 @@ player_control :: proc(_: f32, p: ^Entity) {
 		} else {
 			if get_input(.ENTER) {
 				fmt.println("TODO")
-				// if hack {
-				// 	//fixme HACK
-				// 	set_entity_state(DUDE_ID, Talking{tree = 1})
-				// 	hack = false
-				// }
+				if hack {
+					//fixme HACK
+					start_entity_script(DUDE_ID)
+					// hack = false
+				}
 			}
 		}
 	}
 }
 
 Append_Text :: struct {
-	hurry: bool,
-	pause: f32,
+	// hurry: bool,
+	// pause: f32,
 	text: cstring,
 }
 Clear_Text :: struct {}
@@ -45,17 +45,6 @@ Event :: union {
 	Set_Entity_Busy,
 	Set_Entity_Script,
 	Set_Entity_State,
-}
-
-blah := []Event {
-	Append_Text{text="Hey, this is some text.", hurry=true},
-	Pause_Dialogue{duration=1},
-	Clear_Text{},
-	Append_Text{text="Press spacebar to continue."},
-	Pause_Dialogue{duration=4},
-	Append_Text{text="...that's it."},
-	Close_Dialogue{},
-	End{},
 }
 
 Continue :: struct {}
@@ -96,12 +85,12 @@ update_runner :: proc(dt: f32) {
 		dialogue_show = true
 		dialogue_str = strings.concatenate({dialogue_str, string(event.text)})
 		fmt.println(event.text)
-		if !event.hurry {
-			fmt.println("[waiting]")
+		// if !event.hurry {
+		// 	fmt.println("[waiting]")
 			runner.state = Wait{}
-		} else {
-			fmt.println("[hurry]")
-		}
+		// } else {
+		// 	fmt.println("[hurry]")
+		// }
 	case End:
 		runner.script = nil
 	case Pause_Dialogue:

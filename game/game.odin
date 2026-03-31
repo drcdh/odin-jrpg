@@ -7,9 +7,25 @@ m: Map
 runner := Runner { }
 
 start_script:: proc(script: []Event) {
+	if script != nil {
+		fmt.println("starting script of len", len(script))
 	runner.script = script
 runner.state = Continue{}
 runner.step = -1
+	}
+}
+
+start_entity_script :: proc(id: Id) {
+	for e in entities {
+		if e.id == id {
+			if e.script != nil {
+			fmt.println("starting entity script", e.n)
+		start_script(e.script)
+		} else {
+			fmt.println("not starting nil entity script", e.n)
+		}
+	}
+	}
 }
 
 draw_level :: proc() {
@@ -42,6 +58,7 @@ set_entity_script :: proc(e_id: Id, script: []Event) {
 	for &e in entities {
 		if e.id == e_id {
 			e.script = script
+			fmt.println("set entity with script of len", e.n, len(e.script))
 		}
 	}
 }

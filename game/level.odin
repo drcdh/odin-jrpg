@@ -36,29 +36,33 @@ State :: union {
 	Pacing,
 }
 
-dude_0 := []Event {
+dude_0 := [?]Event {
 	Set_Entity_Busy{id=PLAYER_ID, busy=true},
 	Set_Entity_Busy{id=DUDE_ID, busy=true},
 	Append_Text{text="Oh, hey! What's up, $player?"},
+	Clear_Text{},
 	Append_Text{text="Anyway, I'm going over there now."},
 	Close_Dialogue{},
-	Set_Entity_Script{id=DUDE_ID, script=dude_1},
+	Clear_Text{},
+	Set_Entity_Script{id=DUDE_ID, script=dude_1[:]},
 	Set_Entity_State{id=DUDE_ID, state=Pacing{route=1}},
 	Set_Entity_Busy{id=DUDE_ID, busy=false},
 	Set_Entity_Busy{id=PLAYER_ID, busy=false},
 	End{},
 }
 
-dude_1 := []Event {
-	Append_Text{text="Keep on keepin' on.", hurry=true, pause=2},
+dude_1 := [?]Event {
+	Append_Text{text="Keep on keepin' on."},
 	Close_Dialogue{},
+	Clear_Text{},
 	End{},
 }
 
-welcome := []Event {
+welcome := [?]Event {
 	Set_Entity_Busy{id=PLAYER_ID, busy=true},
 	Append_Text{text="(Press spacebar to start)"},
 	Close_Dialogue{},
+	Clear_Text{},
 	Set_Entity_Busy{id=PLAYER_ID, busy=false},
 	End{},
 }
@@ -79,7 +83,7 @@ start_level :: proc() {
 		id = DUDE_ID,
 		k = Kinematics{face = Direction_Vectors[.South], tile = DUDE_SPAWN, speed = 2},
 		n = "Dude",
-		script = dude_0,
+		script = dude_0[:],
 		state = Pacing{route = 0, pause = 1},
 		v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
 	}
@@ -87,5 +91,5 @@ start_level :: proc() {
 	append(&entities, player)
 	append(&entities, dude)
 
-	start_script(welcome)
+	start_script(welcome[:])
 }

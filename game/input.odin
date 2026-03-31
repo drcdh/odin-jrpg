@@ -67,6 +67,8 @@ get_direction_input :: proc(consume := true, consume_all := true) -> Tile_Coord 
   if get_input(.RIGHT, consume, false) {
 		input.x += 1
 	}
+	if input.x != 0 || input.y != 0 {
 	if consume_all {frame_input = FRAME_INPUT{}}
+	}
 	return input
 }
