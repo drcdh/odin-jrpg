@@ -7,6 +7,15 @@ m: Map
 // text: [dynamic]Text_Display
 text: Text_Display
 
+
+runner := Runner { }
+
+start_script:: proc(script: []Event) {
+	runner.script = script
+runner.state = Continue{}
+runner.step = -1
+}
+
 draw_level :: proc() {
 	draw_map(m)
 	for e in entities {
@@ -52,22 +61,17 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 	for &e in entities {
 		if e.id == e_id {
 			e.busy = busy
-			// fmt.println("set entity busy", e.n, e.busy)
+			fmt.println("set entity busy", e.n, e.busy)
 			return
 		}
 	}
 	fmt.println("didn't find entity with id", e_id)
 }
 
-set_entity_dialogue :: proc(e_id: Id, line: int) {
+set_entity_script :: proc(e_id: Id, script: []Event) {
 	for &e in entities {
 		if e.id == e_id {
-			#partial switch &state in e.state {
-			case Talking:
-				state.line = line
-				return
-			}
-			panic("entity not in dialogue state")
+			e.script = script
 		}
 	}
 }

@@ -61,7 +61,6 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 }
 
 Name :: string
-Script :: proc(_: f32, _: ^Entity)
 
 Entity :: struct {
 	busy:     bool, // script will not run if true
@@ -69,7 +68,7 @@ Entity :: struct {
 	id:       Id,
 	k:        Kinematics,
 	n:        Name,
-	s:        Script,
+	script:   []Event,
 	state:    State,
 	v:        Visual,
 }
@@ -77,7 +76,23 @@ Entity :: struct {
 update_entity :: proc(dt: f32, e: ^Entity) {
 	update_kinematics(dt, &e.k)
 	if !e.busy && !e.disabled {
-		e.s(dt, e)
+	switch &s in e.state {
+	case Pacing:
+		destinations := LEVEL_ROUTES[s.route]
+			if !e.k.moving {
+				s.countdown -= dt
+				if s.countdown <= 0 {
+					if entity_at_tile(e^, destinations[s.step]) {
+						s.step += 1
+						if s.step >= len(destinations) {s.step = 0}
+					}
+					try_set_destination(&e.k, destinations[s.step])
+					s.countdown = s.pause
+				}
+			}
+		case Control:
+			player_control(dt, e)
+		}
 	}
 }
 
