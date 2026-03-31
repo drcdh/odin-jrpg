@@ -13,13 +13,13 @@ TEXT_COLOR := rl.Color{50, 10, 10, 255}
 TEXT_DISPLAY_BACKGROUND := rl.Color{200, 200, 200, 255}
 
 dialogue_show := false
-dialogue_str : string
+dialogue_str: string
 
 draw_dialogue :: proc() {
 	if dialogue_show {
 		c_str := strings.clone_to_cstring(dialogue_str)
-	rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
-	rl.DrawText(c_str, 20, 20, 18, TEXT_COLOR)
+		rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
+		rl.DrawText(c_str, 20, 20, 18, TEXT_COLOR)
 	}
 }
 
@@ -52,7 +52,7 @@ start :: proc(args: []string) -> int {
 
 		dt := rl.GetFrameTime()
 
-	 // text gets input priority
+		// text gets input priority
 		update_runner(dt)
 		update_level(dt)
 		// time.sleep(time.Second)

@@ -4,14 +4,14 @@ import "core:fmt"
 
 entities: [dynamic]Entity
 m: Map
-runner := Runner { }
+runner := Runner{}
 
-start_script:: proc(script: []Event) {
+start_script :: proc(script: []Event) {
 	if script != nil {
 		fmt.println("starting script of len", len(script))
-	runner.script = script
-runner.state = Continue{}
-runner.step = -1
+		runner.script = script
+		runner.state = Continue{}
+		runner.step = -1
 	}
 }
 
@@ -19,12 +19,12 @@ start_entity_script :: proc(id: Id) {
 	for e in entities {
 		if e.id == id {
 			if e.script != nil {
-			fmt.println("starting entity script", e.n)
-		start_script(e.script)
-		} else {
-			fmt.println("not starting nil entity script", e.n)
+				fmt.println("starting entity script", e.n)
+				start_script(e.script)
+			} else {
+				fmt.println("not starting nil entity script", e.n)
+			}
 		}
-	}
 	}
 }
 

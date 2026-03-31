@@ -55,20 +55,20 @@ get_input :: proc(k: Game_Input, consume := true, consume_all := true) -> (v := 
 
 get_direction_input :: proc(consume := true, consume_all := true) -> Tile_Coord {
 	input: Tile_Coord
-  if get_input(.UP, consume, false) {
-    input.y -= 1
-  }
-  if get_input(.DOWN, consume, false) {
-    input.y += 1
-  }
-  if get_input(.LEFT, consume, false) {
-    input.x -= 1
-  }
-  if get_input(.RIGHT, consume, false) {
+	if get_input(.UP, consume, false) {
+		input.y -= 1
+	}
+	if get_input(.DOWN, consume, false) {
+		input.y += 1
+	}
+	if get_input(.LEFT, consume, false) {
+		input.x -= 1
+	}
+	if get_input(.RIGHT, consume, false) {
 		input.x += 1
 	}
 	if input.x != 0 || input.y != 0 {
-	if consume_all {frame_input = FRAME_INPUT{}}
+		if consume_all {frame_input = FRAME_INPUT{}}
 	}
 	return input
 }

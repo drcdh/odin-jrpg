@@ -12,39 +12,31 @@ PLAYER_COLOR :: rl.Color{200, 120, 120, 255}
 PLAYER_SPAWN :: Tile_Coord{15, 15}
 DUDE_SPAWN :: Tile_Coord{18, 10}
 
-LEVEL_ROUTES := [][]Tile_Coord{
-	{{18, 10}, {18, 8}, {16, 8}, {16, 10}},
-{{10, 10}, {10, 14}},
-}
+LEVEL_ROUTES := [][]Tile_Coord{{{18, 10}, {18, 8}, {16, 8}, {16, 10}}, {{10, 10}, {10, 14}}}
 
 DUDE_SCRIPT_0 := [?]Event {
-	Set_Entity_Busy{id=PLAYER_ID, busy=true},
-	Set_Entity_Busy{id=DUDE_ID, busy=true},
-	Append_Text{text="Oh, hey! What's up, $player?"},
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Set_Entity_Busy{id = DUDE_ID, busy = true},
+	Append_Text{text = "Oh, hey! What's up, $player?"},
 	Clear_Text{},
-	Append_Text{text="Anyway, I'm going over there now."},
+	Append_Text{text = "Anyway, I'm going over there now."},
 	Close_Dialogue{},
 	Clear_Text{},
-	Set_Entity_Script{id=DUDE_ID, script=DUDE_SCRIPT_1[:]},
-	Set_Entity_State{id=DUDE_ID, state=Pacing{route=1}},
-	Set_Entity_Busy{id=DUDE_ID, busy=false},
-	Set_Entity_Busy{id=PLAYER_ID, busy=false},
+	Set_Entity_Script{id = DUDE_ID, script = DUDE_SCRIPT_1[:]},
+	Set_Entity_State{id = DUDE_ID, state = Pacing{route = 1}},
+	Set_Entity_Busy{id = DUDE_ID, busy = false},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
 
-DUDE_SCRIPT_1 := [?]Event {
-	Append_Text{text="Keep on keepin' on."},
-	Close_Dialogue{},
-	Clear_Text{},
-	End{},
-}
+DUDE_SCRIPT_1 := [?]Event{Append_Text{text = "Keep on keepin' on."}, Close_Dialogue{}, Clear_Text{}, End{}}
 
 welcome := [?]Event {
-	Set_Entity_Busy{id=PLAYER_ID, busy=true},
-	Append_Text{text="(Press spacebar to start)"},
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text{text = "(Press spacebar to start)"},
 	Close_Dialogue{},
 	Clear_Text{},
-	Set_Entity_Busy{id=PLAYER_ID, busy=false},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
 

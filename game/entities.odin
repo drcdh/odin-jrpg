@@ -27,7 +27,7 @@ Control :: struct {}
 
 Pacing :: struct {
 	countdown: f32,
-	pause: f32,
+	pause:     f32,
 	route:     int,
 	step:      int,
 }
@@ -87,9 +87,9 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 update_entity :: proc(dt: f32, e: ^Entity) {
 	update_kinematics(dt, &e.k)
 	if !e.busy && !e.disabled {
-	switch &s in e.state {
-	case Pacing:
-		destinations := LEVEL_ROUTES[s.route]
+		switch &s in e.state {
+		case Pacing:
+			destinations := LEVEL_ROUTES[s.route]
 			if !e.k.moving {
 				s.countdown -= dt
 				if s.countdown <= 0 {
