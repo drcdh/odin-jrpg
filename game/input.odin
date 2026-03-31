@@ -30,7 +30,7 @@ capture_input :: proc() {
 	// fmt.println(frame_input)
 }
 
-get_input :: proc(k: Game_Input, consume := true) -> (v := false) {
+get_input :: proc(k: Game_Input, consume := true, consume_all := true) -> (v := false) {
 	// fmt.println("get", frame_input)
 	switch k {
 	case .ENTER:
@@ -48,23 +48,25 @@ get_input :: proc(k: Game_Input, consume := true) -> (v := false) {
 	case .DOWN:
 		if frame_input.down {if consume {frame_input.down = false};v = true}
 	}
+	if consume_all {frame_input = FRAME_INPUT{}}
 	// fmt.println("get_input:", k, consume, v, frame_input)
 	return
 }
 
-get_direction_input :: proc(consume := true) -> Tile_Coord {
+get_direction_input :: proc(consume := true, consume_all := true) -> Tile_Coord {
 	input: Tile_Coord
-	if get_input(.UP) {
-		input.y -= 1
-	}
-	if get_input(.DOWN) {
-		input.y += 1
-	}
-	if get_input(.LEFT) {
-		input.x -= 1
-	}
-	if get_input(.RIGHT) {
+  if get_input(.UP, consume, false) {
+    input.y -= 1
+  }
+  if get_input(.DOWN, consume, false) {
+    input.y += 1
+  }
+  if get_input(.LEFT, consume, false) {
+    input.x -= 1
+  }
+  if get_input(.RIGHT, consume, false) {
 		input.x += 1
 	}
+	if consume_all {frame_input = FRAME_INPUT{}}
 	return input
 }
