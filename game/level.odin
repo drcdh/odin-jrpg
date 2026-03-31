@@ -17,26 +17,7 @@ LEVEL_ROUTES := [][]Tile_Coord{
 {{10, 10}, {10, 14}},
 }
 
-Control :: struct {}
-
-Pacing :: struct {
-	countdown: f32,
-	pause: f32,
-	route:     int,
-	step:      int,
-}
-
-Talking :: struct {
-	line: int,
-	tree: int,
-}
-
-State :: union {
-	Control,
-	Pacing,
-}
-
-dude_0 := [?]Event {
+DUDE_SCRIPT_0 := [?]Event {
 	Set_Entity_Busy{id=PLAYER_ID, busy=true},
 	Set_Entity_Busy{id=DUDE_ID, busy=true},
 	Append_Text{text="Oh, hey! What's up, $player?"},
@@ -44,14 +25,14 @@ dude_0 := [?]Event {
 	Append_Text{text="Anyway, I'm going over there now."},
 	Close_Dialogue{},
 	Clear_Text{},
-	Set_Entity_Script{id=DUDE_ID, script=dude_1[:]},
+	Set_Entity_Script{id=DUDE_ID, script=DUDE_SCRIPT_1[:]},
 	Set_Entity_State{id=DUDE_ID, state=Pacing{route=1}},
 	Set_Entity_Busy{id=DUDE_ID, busy=false},
 	Set_Entity_Busy{id=PLAYER_ID, busy=false},
 	End{},
 }
 
-dude_1 := [?]Event {
+DUDE_SCRIPT_1 := [?]Event {
 	Append_Text{text="Keep on keepin' on."},
 	Close_Dialogue{},
 	Clear_Text{},
@@ -83,7 +64,7 @@ start_level :: proc() {
 		id = DUDE_ID,
 		k = Kinematics{face = Direction_Vectors[.South], tile = DUDE_SPAWN, speed = 2},
 		n = "Dude",
-		script = dude_0[:],
+		script = DUDE_SCRIPT_0[:],
 		state = Pacing{route = 0, pause = 1},
 		v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
 	}

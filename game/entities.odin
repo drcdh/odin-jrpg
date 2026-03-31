@@ -23,6 +23,20 @@ Visual :: union {
 
 Name :: cstring
 
+Control :: struct {}
+
+Pacing :: struct {
+	countdown: f32,
+	pause: f32,
+	route:     int,
+	step:      int,
+}
+
+State :: union {
+	Control,
+	Pacing,
+}
+
 Entity :: struct {
 	busy:     bool, // script will not run if true
 	disabled: bool, // script will not run and will not be displayed if true
