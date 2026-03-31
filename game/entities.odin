@@ -19,7 +19,19 @@ Visual_Solid_Rect :: struct {
 
 Visual :: union {
 	Visual_Solid_Rect,
-	Text_Display,
+}
+
+Name :: cstring
+
+Entity :: struct {
+	busy:     bool, // script will not run if true
+	disabled: bool, // script will not run and will not be displayed if true
+	id:       Id,
+	k:        Kinematics,
+	n:        Name,
+	script:   []Event,
+	state:    State,
+	v:        Visual,
 }
 
 draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
@@ -31,8 +43,6 @@ draw_entity :: proc(e: Entity) {
 		switch v in e.v {
 		case Visual_Solid_Rect:
 			draw_solid_rect(e.k, v)
-		case Text_Display:
-			draw_text_display(v)
 		}
 	}
 }
@@ -58,19 +68,6 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 	if !try_set_adjacent_destination(k, move) {
 		_ = try_set_adjacent_destination(k, alt)
 	}
-}
-
-Name :: string
-
-Entity :: struct {
-	busy:     bool, // script will not run if true
-	disabled: bool, // script will not run and will not be displayed if true
-	id:       Id,
-	k:        Kinematics,
-	n:        Name,
-	script:   []Event,
-	state:    State,
-	v:        Visual,
 }
 
 update_entity :: proc(dt: f32, e: ^Entity) {

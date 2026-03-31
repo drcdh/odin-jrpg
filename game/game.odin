@@ -4,10 +4,6 @@ import "core:fmt"
 
 entities: [dynamic]Entity
 m: Map
-// text: [dynamic]Text_Display
-text: Text_Display
-
-
 runner := Runner { }
 
 start_script:: proc(script: []Event) {
@@ -25,35 +21,9 @@ draw_level :: proc() {
 	}
 }
 
-draw_text :: proc() {
-	if text.id != 0 {
-		// fmt.println("drawing text", text)
-		draw_text_display(text)
-	}
-	// for t in text {
-	// 	if !t.disabled {
-	// 		draw_text_display(t)
-	// 	}
-	// }
-}
-
 update_level :: proc(dt: f32) {
 	for &e in entities {
 		update_entity(dt, &e)
-	}
-}
-
-update_text :: proc(dt: f32) {
-	if text.id != 0 {
-		text.time += dt
-		if text.time >= text.pause {
-			if !text.wait || get_input(Game_Input.ENTER) {
-				fmt.println("got enter. ending text display", text.id)
-				old := text
-				text = Text_Display{}
-				old.on_end(old.selection)
-			}
-		}
 	}
 }
 
