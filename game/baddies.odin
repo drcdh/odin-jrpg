@@ -1,4 +1,4 @@
-package data
+package game
 
 import "core:fmt"
 
@@ -69,50 +69,29 @@ RAT_SIZED_MOUSE :: Baddy{
 	},
 }
 
-PC :: struct {}
+MAX_ENCOUNTER_SIZE :: 6
 
-Combatant_Variant :: union {
-	Baddy,
-	PC,
+Encounter :: struct {
+	baddies: [MAX_ENCOUNTER_SIZE]Baddy,
+	size: int,
 }
 
-Combatant :: struct {
-	state: Character_State,
-	variant: Combatant_Variant,
-}
-
-new_state :: proc(stats: Stats) -> Character_State {
-	return Character_State {
-		stats = Stats {
-		hitpoints = stats.hitpoints,
-		offense = stats.offense,
-		defense = stats.defense,
-	}}
-}
-
-new_baddy :: proc(b: Baddy) -> Combatant {
-	return Combatant{
-		state = new_state(b.stats),
-		variant = b,
-	}
-}
-
-main :: proc() {
-	baddy := new_baddy(MOUSE_SIZED_RAT)
-	player := Combatant {
-		state = new_state(Stats{
-			hitpoints = 10,
-			offense = 5,
-			defense = 5,
-		}),
-		variant = PC{},
-	}
-
-	fmt.println(baddy)
-	fmt.println(player)
-
-	CE_ATTACK.f(&baddy.state, &player.state)
-
-	fmt.println(baddy)
-	fmt.println(player)
-}
+// main :: proc() {
+// 	baddy := new_baddy(MOUSE_SIZED_RAT)
+// 	player := Combatant {
+// 		state = new_state(Stats{
+// 			hitpoints = 10,
+// 			offense = 5,
+// 			defense = 5,
+// 		}),
+// 		variant = PC{},
+// 	}
+//
+// 	fmt.println(baddy)
+// 	fmt.println(player)
+//
+// 	CE_ATTACK.f(&baddy.state, &player.state)
+//
+// 	fmt.println(baddy)
+// 	fmt.println(player)
+// }
