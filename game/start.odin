@@ -40,8 +40,12 @@ start :: proc(args: []string) -> int {
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
+		if battle_active {
+			draw_battle()
+		} else {
 		draw_level()
 		draw_dialogue()
+		}
 		rl.EndDrawing()
 
 		if rl.IsKeyDown(.Q) {

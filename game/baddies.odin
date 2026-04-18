@@ -53,6 +53,8 @@ Baddy :: struct {
 	turn: Turn,
 }
 
+NULL_BADDY :: Baddy{}
+
 MOUSE_SIZED_RAT :: Baddy{
 	stats = Stats{hitpoints=1, offense=1, defense=1},
 	name = "Mouse-Sized Rat",
@@ -76,22 +78,14 @@ Encounter :: struct {
 	size: int,
 }
 
-// main :: proc() {
-// 	baddy := new_baddy(MOUSE_SIZED_RAT)
-// 	player := Combatant {
-// 		state = new_state(Stats{
-// 			hitpoints = 10,
-// 			offense = 5,
-// 			defense = 5,
-// 		}),
-// 		variant = PC{},
-// 	}
-//
-// 	fmt.println(baddy)
-// 	fmt.println(player)
-//
-// 	CE_ATTACK.f(&baddy.state, &player.state)
-//
-// 	fmt.println(baddy)
-// 	fmt.println(player)
-// }
+ENC_0 :: Encounter {
+	baddies = {
+		MOUSE_SIZED_RAT,
+		MOUSE_SIZED_RAT,
+		RAT_SIZED_MOUSE,
+		NULL_BADDY,
+		NULL_BADDY,
+		NULL_BADDY,
+	},
+	size=3,
+}

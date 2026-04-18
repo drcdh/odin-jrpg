@@ -3,6 +3,7 @@ package game
 import "core:fmt"
 import "core:strings"
 
+battle_hack := true
 hack := true
 
 player_control :: proc(_: f32, p: ^Entity) {
@@ -13,7 +14,13 @@ player_control :: proc(_: f32, p: ^Entity) {
 		} else {
 			if get_input(.ENTER) {
 				fmt.println("TODO")
-				if hack {
+				if battle_hack {
+					if battle_active {
+						battle_active = false
+					} else {
+					start_encounter(ENC_0)
+					}
+				} else if hack {
 					//fixme HACK
 					start_entity_script(DUDE_ID)
 					// hack = false
