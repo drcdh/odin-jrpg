@@ -18,7 +18,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 					if battle_active {
 						battle_active = false
 					} else {
-					start_encounter(ENC_0)
+					start_encounter_0()
 					}
 				} else if hack {
 					//fixme HACK
