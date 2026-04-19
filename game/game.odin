@@ -4,7 +4,6 @@ import "core:fmt"
 
 entities: [dynamic]Entity
 m: Map
-party: Party
 runner := Runner{}
 
 start_script :: proc(script: []Event) {

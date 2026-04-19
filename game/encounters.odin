@@ -12,10 +12,16 @@ start_encounter_0 :: proc() {
 	battle_combatants[2] = Combatant {
 		variant = new_rat_sized_mouse(),
 	}
-
-	battle_combatants[3] = Combatant {
-		variant = PC_Combatant{pc = &STAND_IN},
+	battle_num_combatants = 3
+	for slot, i in PARTY_ROSTER {
+		switch slot {
+		case .Empty:
+		case .Protagonist:
+			battle_combatants[3+i] = Combatant {
+				variant = PC_Combatant{pc = &PROTAGONIST},
+			}
+			battle_num_combatants += 1
+		}
 	}
-	battle_num_combatants = 4
 	battle_active = true
 }

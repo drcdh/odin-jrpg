@@ -4,7 +4,7 @@ import "core:fmt"
 
 import rl "vendor:raylib"
 
-MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + MAX_PARTY_SIZE
+MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + PARTY_SIZE
 
 battle_combatants := [MAX_COMBATANTS]Combatant{}
 battle_active := false
@@ -16,7 +16,7 @@ NPC_Combatant :: struct {
 }
 
 PC_Combatant :: struct {
-	pc: ^PC,
+	pc: ^Character,
 }
 
 CHARACTER_EFFECT :: proc(actor, target: ^Stats)
