@@ -1,6 +1,6 @@
 package game
 
 Character :: struct {
-	name: string,
+	name:  string,
 	stats: Stats,
 }

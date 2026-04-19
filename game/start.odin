@@ -43,8 +43,8 @@ start :: proc(args: []string) -> int {
 		if battle_active {
 			draw_battle()
 		} else {
-		draw_level()
-		draw_dialogue()
+			draw_level()
+			draw_dialogue()
 		}
 		rl.EndDrawing()
 
