@@ -65,22 +65,6 @@ Combatant :: struct {
 	variant: Combatant_Variant,
 }
 
-// new_state :: proc(stats: Stats) -> Character_State {
-// 	return Character_State {
-// 		stats = Stats {
-// 		hitpoints = stats.hitpoints,
-// 		offense = stats.offense,
-// 		defense = stats.defense,
-// 	}}
-// }
-//
-// new_baddy :: proc(b: Baddy) -> Combatant {
-// 	return Combatant{
-// 		state = new_state(b.stats),
-// 		variant = b,
-// 	}
-// }
-
 draw_battle :: proc() {
 		rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
 		baddy_y := i32(60)
