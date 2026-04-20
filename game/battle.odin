@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import "core:time"
 
 import rl "vendor:raylib"
 
@@ -10,13 +11,12 @@ battle_combatants := [MAX_COMBATANTS]Combatant{}
 battle_active := false
 battle_num_combatants := 0
 
-NPC_Combatant :: struct {
+Combatant :: struct {
 	character: Character,
-	turn:      Turn,
-}
-
-PC_Combatant :: struct {
-	pc: ^Character,
+	enabled: bool,
+	t: int,
+	team: int,
+	turn: Turn,
 }
 
 CHARACTER_EFFECT :: proc(actor, target: ^Stats)
@@ -31,58 +31,106 @@ Battle_Effect :: union {
 
 CE_ATTACK :: Character_Effect {
 	f = proc(actor, target: ^Stats) {
-		target.hitpoints -= actor.offense - target.defense
+		target.hitpoints -= max(0, actor.offense - target.defense)
+		target.hitpoints = max(0, target.hitpoints)
 	},
 }
 
-Battle_Action :: struct {
+Battle_Action_Type :: struct {
 	name:   cstring,
 	// effect: Battle_Effect,
 	effect: Character_Effect,
 	// message: cstring,
 }
 
-BA_ATTACK :: Battle_Action {
+BAT_ATTACK :: Battle_Action_Type {
 	name   = "Attack",
 	effect = CE_ATTACK,
 	// message = "{:actor} attacks {:target}!",
 }
 
-Turn :: proc() -> Battle_Action
-
-Combatant_State :: struct {}
-
-Nil_Combatant :: struct {}
-
-Combatant_Variant :: union {
-	Nil_Combatant,
-	NPC_Combatant,
-	PC_Combatant,
+Battle_Action :: struct {
+	actor: int,
+	target: int,
+	type: Battle_Action_Type,
 }
 
-Combatant :: struct {
-	// state: Combatant_State,
-	variant: Combatant_Variant,
+Turn :: proc(actor_idx: int) -> Battle_Action
+
+get_combatant_not_on_team :: proc(actor_team: int) -> int {
+	// todo: just take first for now
+	for bc, i in battle_combatants {
+		if bc.enabled && bc.character.stats.hitpoints > 0 && bc.team != actor_team {
+			return i
+		}
+	}
+	return MAX_COMBATANTS // fixme
 }
 
 draw_battle :: proc() {
 	rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
-	baddy_y := i32(60)
-	party_y := i32(60)
-	for i in 0 ..< battle_num_combatants {
-		#partial switch v in battle_combatants[i].variant {
-		case NPC_Combatant:
+	y := i32(0)
+	for bc, i in battle_combatants {
+		if bc.enabled {
+			y += 60
+			tc := TEXT_COLOR
+			if bc.character.stats.hitpoints == 0 {
+				tc = rl.Color{250, 10, 10, 255}
+			}
 			rl.DrawText(
-				fmt.caprintf("%d/%d: %s", i + 1, battle_num_combatants, v.character.name),
+				fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t),
 				60,
-				baddy_y,
+				y,
 				18,
-				TEXT_COLOR,
+				tc,
 			)
-			baddy_y += 60
-		case PC_Combatant:
-			rl.DrawText(fmt.caprintf("%d/%d: %s", i + 1, battle_num_combatants, v.pc.name), 400, party_y, 18, TEXT_COLOR)
-			party_y += 60
 		}
 	}
+}
+
+check_win :: proc() {
+	// todo tie function to encounter
+	team_lives := [?]bool{false, false}
+	for bc, i in battle_combatants {
+		if bc.enabled && bc.character.stats.hitpoints > 0 {
+			team_lives[bc.team] = true
+		}
+	}
+	if team_lives[0] && !team_lives[1] {
+		fmt.println("Team 0 wins")
+		battle_active = false
+	} else if !team_lives[0] && team_lives[1] {
+		fmt.println("Team 1 wins")
+		battle_active = false
+	} else if !team_lives[0] && !team_lives[1] {
+		fmt.println("Draw")
+		battle_active = false
+	}
+}
+
+get_next_combatant :: proc() -> int {
+	actor_idx := 0
+	actor_t := battle_combatants[0].t
+	for i in 1..<MAX_ENCOUNTER_SIZE {
+		if battle_combatants[i].enabled && battle_combatants[i].character.stats.hitpoints > 0 {
+			if battle_combatants[i].t < actor_t {
+				actor_t = battle_combatants[i].t
+				actor_idx = i
+			}
+		}
+	}
+	return actor_idx
+}
+
+update_battle :: proc(dt: f32) {
+	time.sleep(time.Second/2)
+	// fmt.printfln("%w", battle_combatants)
+	actor_idx := get_next_combatant()
+	actor := &battle_combatants[actor_idx]
+	action := actor.turn(actor_idx)
+	target := &battle_combatants[action.target]
+	fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
+	action.type.effect.f(&actor.character.stats, &target.character.stats)
+	actor.t += 20
+	check_win()
 }

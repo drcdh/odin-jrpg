@@ -56,10 +56,13 @@ start :: proc(args: []string) -> int {
 
 		dt := rl.GetFrameTime()
 
-		// text gets input priority
-		update_runner(dt)
-		update_level(dt)
-		// time.sleep(time.Second)
+		if battle_active {
+			update_battle(dt)
+		} else {
+			// text gets input priority
+			update_runner(dt)
+			update_level(dt)
+		}
 	}
 
 	rl.CloseWindow()

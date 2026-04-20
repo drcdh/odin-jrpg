@@ -1,17 +1,23 @@
 package game
 
-new_mouse_sized_rat :: proc() -> NPC_Combatant {
-	return NPC_Combatant {
+ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) -> Battle_Action {
+	actor_team := battle_combatants[actor_idx].team
+	target_idx := get_combatant_not_on_team(actor_team)
+	return Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target_idx }
+}
+
+new_mouse_sized_rat :: proc() -> Combatant {
+	return Combatant {
 		character = Character{stats = Stats{hitpoints = 1, offense = 1, defense = 1}, name = "Mouse-Sized Rat"},
-		turn = proc() -> Battle_Action {
-			return BA_ATTACK
-		},
+		enabled = true,
+		t = 10,
+		turn = ATTACK_RANDOM_OPPONENT,
 	}}
 
-new_rat_sized_mouse :: proc() -> NPC_Combatant {
-	return NPC_Combatant {
+new_rat_sized_mouse :: proc() -> Combatant {
+	return Combatant {
 		character = Character{stats = Stats{hitpoints = 3, offense = 3, defense = 2}, name = "Rat-Sized Mouse"},
-		turn = proc() -> Battle_Action {
-			return BA_ATTACK
-		},
+		enabled = true,
+		t = 12,
+		turn = ATTACK_RANDOM_OPPONENT,
 	}}
