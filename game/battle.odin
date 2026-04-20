@@ -55,7 +55,9 @@ Battle_Action :: struct {
 	type: Battle_Action_Type,
 }
 
-Turn :: proc(actor_idx: int) -> Battle_Action
+action := Battle_Action{}
+
+Turn :: proc(actor_idx: int) -> bool
 
 get_combatant_not_on_team :: proc(actor_team: int) -> int {
 	// todo: just take first for now
@@ -76,6 +78,9 @@ draw_battle :: proc() {
 			tc := TEXT_COLOR
 			if bc.character.stats.hitpoints == 0 {
 				tc = rl.Color{250, 10, 10, 255}
+			}
+			if i == target {
+				tc = rl.Color{50, 100, 100, 255}
 			}
 			rl.DrawText(
 				fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t),
@@ -123,14 +128,42 @@ get_next_combatant :: proc() -> int {
 }
 
 update_battle :: proc(dt: f32) {
-	time.sleep(time.Second/2)
 	// fmt.printfln("%w", battle_combatants)
 	actor_idx := get_next_combatant()
 	actor := &battle_combatants[actor_idx]
-	action := actor.turn(actor_idx)
-	target := &battle_combatants[action.target]
-	fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
-	action.type.effect.f(&actor.character.stats, &target.character.stats)
-	actor.t += 20
-	check_win()
+	if actor.turn(actor_idx) {
+		// time.sleep(time.Second/2)
+		target := &battle_combatants[action.target]
+		fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
+		action.type.effect.f(&actor.character.stats, &target.character.stats)
+		actor.t += 20
+		check_win()
+	}
+}
+
+target := -1
+
+change_target :: proc(d: int) {
+	initial_target := target
+	for {
+		target += d
+		if target < 0 { target = MAX_COMBATANTS - 1 }
+		if target >= MAX_COMBATANTS { target = 0 }
+		if target == initial_target { return }
+		if battle_combatants[target].enabled { return }
+	}
+}
+
+PC_COMBATANT_TURN :: proc(actor_idx: int) -> bool {
+	// fmt.printfln("actor %d target %d", actor_idx, target)
+	if target < 0 { target = 0 }
+	if rl.IsKeyPressed(.UP) {
+		change_target(-1)
+	} else if rl.IsKeyPressed(.DOWN) {
+		change_target(1)
+	} else if rl.IsKeyPressed(.SPACE) {
+		action = Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target }
+		return true
+	}
+	return false
 }

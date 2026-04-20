@@ -1,9 +1,10 @@
 package game
 
-ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) -> Battle_Action {
+ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) -> bool {
 	actor_team := battle_combatants[actor_idx].team
 	target_idx := get_combatant_not_on_team(actor_team)
-	return Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target_idx }
+	action = Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target_idx }
+	return true
 }
 
 new_mouse_sized_rat :: proc() -> Combatant {

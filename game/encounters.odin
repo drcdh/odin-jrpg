@@ -16,7 +16,7 @@ start_encounter_0 :: proc() {
 				enabled = true,
 				t = 18,
 				team = 1,
-				turn = ATTACK_RANDOM_OPPONENT,
+				turn = PC_COMBATANT_TURN,
 			}
 			battle_num_combatants += 1
 		}
