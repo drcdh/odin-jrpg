@@ -7,7 +7,7 @@ Party_Slot :: enum {
 	Protagonist,
 }
 
-PARTY_ROSTER :: [PARTY_SIZE]Party_Slot{
+PARTY_ROSTER :: [PARTY_SIZE]Party_Slot {
 	Party_Slot.Protagonist,
 	Party_Slot.Empty,
 	Party_Slot.Empty,

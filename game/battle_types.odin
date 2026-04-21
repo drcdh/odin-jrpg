@@ -2,19 +2,19 @@ package game
 
 Combatant :: struct {
 	character: Character,
-	enabled: bool,
-	t: int,
-	team: int,
-	turn: Turn,
+	enabled:   bool,
+	t:         int,
+	team:      int,
+	turn:      Turn,
 }
 
 Battle_Animation :: struct {
-	draw: proc(dt: f32, offset: Pixel_Coord),
+	draw:   proc(dt: f32, offset: Pixel_Coord),
 	offset: Pixel_Coord,
 }
 
 Battle_Message :: struct {
-  text: cstring,
+	text: cstring,
 }
 
 Character_Effect_Proc :: proc(actor, target: ^Stats)
@@ -37,10 +37,10 @@ Battle_Action_Type :: struct {
 // Next :: struct {}
 // Turn :: struct {actor_idx: int}
 Battle_Action :: struct {
-	actor: int,
+	actor:  int,
 	target: int,
-	type: Battle_Action_Type,
-	idx: int,
+	type:   Battle_Action_Type,
+	idx:    int,
 }
 
 // Battle_State :: union {
@@ -50,4 +50,3 @@ Battle_Action :: struct {
 // }
 
 Turn :: proc(actor_idx: int) -> Maybe(Battle_Action)
-

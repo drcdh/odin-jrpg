@@ -11,4 +11,3 @@ BAT_ATTACK :: Battle_Action_Type {
 	name   = "Attack",
 	effect = CE_ATTACK,
 }
-

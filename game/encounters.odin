@@ -11,12 +11,12 @@ start_encounter_0 :: proc() {
 		switch slot {
 		case .Empty:
 		case .Protagonist:
-			battle_combatants[3+i] = Combatant {
+			battle_combatants[3 + i] = Combatant {
 				character = PROTAGONIST,
-				enabled = true,
-				t = 18,
-				team = 1,
-				turn = PC_COMBATANT_TURN,
+				enabled   = true,
+				t         = 18,
+				team      = 1,
+				turn      = PC_COMBATANT_TURN,
 			}
 			battle_num_combatants += 1
 		}

@@ -34,13 +34,7 @@ draw_battle :: proc() {
 			if i == target {
 				tc = rl.Color{50, 100, 100, 255}
 			}
-			rl.DrawText(
-				fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t),
-				60,
-				y,
-				18,
-				tc,
-			)
+			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t), 60, y, 18, tc)
 		}
 	}
 }
@@ -68,7 +62,7 @@ check_win :: proc() {
 get_next_combatant :: proc() -> int {
 	actor_idx := 0
 	actor_t := battle_combatants[0].t
-	for i in 1..<MAX_ENCOUNTER_SIZE {
+	for i in 1 ..< MAX_ENCOUNTER_SIZE {
 		if battle_combatants[i].enabled && battle_combatants[i].character.stats.hitpoints > 0 {
 			if battle_combatants[i].t < actor_t {
 				actor_t = battle_combatants[i].t
@@ -100,22 +94,22 @@ change_target :: proc(d: int) {
 	initial_target := target
 	for {
 		target += d
-		if target < 0 { target = MAX_COMBATANTS - 1 }
-		if target >= MAX_COMBATANTS { target = 0 }
-		if target == initial_target { return }
-		if battle_combatants[target].enabled { return }
+		if target < 0 {target = MAX_COMBATANTS - 1}
+		if target >= MAX_COMBATANTS {target = 0}
+		if target == initial_target {return}
+		if battle_combatants[target].enabled {return}
 	}
 }
 
 PC_COMBATANT_TURN :: proc(actor_idx: int) -> Maybe(Battle_Action) {
 	// fmt.printfln("actor %d target %d", actor_idx, target)
-	if target < 0 { target = 0 }
+	if target < 0 {target = 0}
 	if rl.IsKeyPressed(.UP) {
 		change_target(-1)
 	} else if rl.IsKeyPressed(.DOWN) {
 		change_target(1)
 	} else if rl.IsKeyPressed(.SPACE) {
-		return Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target }
+		return Battle_Action{type = BAT_ATTACK, actor = actor_idx, target = target}
 	}
 	return nil
 }
