@@ -11,54 +11,6 @@ battle_combatants := [MAX_COMBATANTS]Combatant{}
 battle_active := false
 battle_num_combatants := 0
 
-Combatant :: struct {
-	character: Character,
-	enabled: bool,
-	t: int,
-	team: int,
-	turn: Turn,
-}
-
-CHARACTER_EFFECT :: proc(actor, target: ^Stats)
-
-Character_Effect :: struct {
-	f: CHARACTER_EFFECT,
-}
-
-Battle_Effect :: union {
-	Character_Effect,
-}
-
-CE_ATTACK :: Character_Effect {
-	f = proc(actor, target: ^Stats) {
-		target.hitpoints -= max(0, actor.offense - target.defense)
-		target.hitpoints = max(0, target.hitpoints)
-	},
-}
-
-Battle_Action_Type :: struct {
-	name:   cstring,
-	// effect: Battle_Effect,
-	effect: Character_Effect,
-	// message: cstring,
-}
-
-BAT_ATTACK :: Battle_Action_Type {
-	name   = "Attack",
-	effect = CE_ATTACK,
-	// message = "{:actor} attacks {:target}!",
-}
-
-Battle_Action :: struct {
-	actor: int,
-	target: int,
-	type: Battle_Action_Type,
-}
-
-action := Battle_Action{}
-
-Turn :: proc(actor_idx: int) -> bool
-
 get_combatant_not_on_team :: proc(actor_team: int) -> int {
 	// todo: just take first for now
 	for bc, i in battle_combatants {
@@ -131,7 +83,8 @@ update_battle :: proc(dt: f32) {
 	// fmt.printfln("%w", battle_combatants)
 	actor_idx := get_next_combatant()
 	actor := &battle_combatants[actor_idx]
-	if actor.turn(actor_idx) {
+	action, done := actor.turn(actor_idx).?
+	if done {
 		// time.sleep(time.Second/2)
 		target := &battle_combatants[action.target]
 		fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
@@ -154,7 +107,7 @@ change_target :: proc(d: int) {
 	}
 }
 
-PC_COMBATANT_TURN :: proc(actor_idx: int) -> bool {
+PC_COMBATANT_TURN :: proc(actor_idx: int) -> Maybe(Battle_Action) {
 	// fmt.printfln("actor %d target %d", actor_idx, target)
 	if target < 0 { target = 0 }
 	if rl.IsKeyPressed(.UP) {
@@ -162,8 +115,7 @@ PC_COMBATANT_TURN :: proc(actor_idx: int) -> bool {
 	} else if rl.IsKeyPressed(.DOWN) {
 		change_target(1)
 	} else if rl.IsKeyPressed(.SPACE) {
-		action = Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target }
-		return true
+		return Battle_Action{ type=BAT_ATTACK, actor=actor_idx, target=target }
 	}
-	return false
+	return nil
 }
