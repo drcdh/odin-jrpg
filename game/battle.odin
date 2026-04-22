@@ -53,6 +53,10 @@ draw_battle :: proc() {
 	}
 }
 
+end_turn :: proc() {
+	battle_state = Process{}
+}
+
 get_next_combatant :: proc() -> int {
 	actor_idx := 0
 	actor_t := battle_combatants[0].t
@@ -68,17 +72,20 @@ get_next_combatant :: proc() -> int {
 }
 
 update_battle :: proc(dt: f32) {
+	// fmt.println("battle_event_queue_len", battle_event_queue_len)
 	switch s in battle_state {
 	case Next:
-		// fmt.printfln("%w", battle_combatants)
+		fmt.println(s)
 		battle_state = Turn {
 			actor_idx = get_next_combatant(),
 		}
 	case Turn:
+		// fmt.println(s)
 		actor := &battle_combatants[s.actor_idx]
 		actor.turn(s.actor_idx)
 	// action, done := actor.turn(actor_idx).?
 	case Process:
+		fmt.println("Process", battle_event_queue_len)
 		if battle_event_queue_len > 0 {
 			switch e in battle_event_queue[battle_event_queue_len - 1] {
 			case Battle_Animation:
@@ -108,13 +115,15 @@ PC_COMBATANT_TURN :: proc(actor_idx: int) {
 	} else if rl.IsKeyPressed(.DOWN) {
 		change_target(1)
 	} else if rl.IsKeyPressed(.SPACE) {
-		target := get_combatant_ref(target)
+		target_c := get_combatant_ref(target)
 		queue_character_effect(
 			Character_Effect {
-				character = target,
-				effect = HP_LOSS{hp_loss = max(1, get_combatant_ref(actor_idx).stats.offense - target.stats.defense)},
+				character = target_c,
+				effect = HP_LOSS{hp_loss = max(1, get_combatant_ref(actor_idx).stats.offense - target_c.stats.defense)},
 			},
 		)
-		// return Battle_Action{type = BAT_ATTACK, actor = actor_idx, target = target}
+		target = -1
+		battle_combatants[actor_idx].t += 20
+		end_turn()
 	}
 }

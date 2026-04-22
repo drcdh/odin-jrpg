@@ -1,7 +1,9 @@
 package game
 
+import "core:fmt"
+
 Character :: struct {
-	name:   string,
+	name:   cstring,
 	stats:  Stats,
 	status: Status,
 }
@@ -32,12 +34,16 @@ Character_Effect :: struct {
 }
 
 do_effect :: proc(ce: Character_Effect) {
+	target := ce.character
+	fmt.println("  ~  ", target^, ce.effect)
 	switch e in ce.effect {
 	case HP_GAIN:
-		ce.character.stats.hitpoints += e.hp_gain
+		target.stats.hitpoints += e.hp_gain
 	case HP_LOSS:
-		ce.character.stats.hitpoints -= e.hp_loss
+		target.stats.hitpoints -= e.hp_loss
 	case POISON:
-		ce.character.status.poison = true
+		target.status.poison = true
+	case nil:
+		fmt.println("oops")
 	}
 }
