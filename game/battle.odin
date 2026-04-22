@@ -6,38 +6,14 @@ import "core:time"
 import rl "vendor:raylib"
 
 MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + PARTY_SIZE
+MAX_EVENTS :: 10
 
 battle_combatants := [MAX_COMBATANTS]Combatant{}
 battle_active := false
+battle_event_queue := [MAX_EVENTS]Battle_Event{}
+battle_event_queue_len := 0
 battle_num_combatants := 0
-
-get_combatant_not_on_team :: proc(actor_team: int) -> int {
-	// todo: just take first for now
-	for bc, i in battle_combatants {
-		if bc.enabled && bc.character.stats.hitpoints > 0 && bc.team != actor_team {
-			return i
-		}
-	}
-	return MAX_COMBATANTS // fixme
-}
-
-draw_battle :: proc() {
-	rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
-	y := i32(0)
-	for bc, i in battle_combatants {
-		if bc.enabled {
-			y += 60
-			tc := TEXT_COLOR
-			if bc.character.stats.hitpoints == 0 {
-				tc = rl.Color{250, 10, 10, 255}
-			}
-			if i == target {
-				tc = rl.Color{50, 100, 100, 255}
-			}
-			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t), 60, y, 18, tc)
-		}
-	}
-}
+battle_state: Battle_State = Next{}
 
 check_win :: proc() {
 	// todo tie function to encounter
@@ -59,6 +35,24 @@ check_win :: proc() {
 	}
 }
 
+draw_battle :: proc() {
+	rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
+	y := i32(0)
+	for bc, i in battle_combatants {
+		if bc.enabled {
+			y += 60
+			tc := TEXT_COLOR
+			if bc.character.stats.hitpoints == 0 {
+				tc = rl.Color{250, 10, 10, 255}
+			}
+			if i == target {
+				tc = rl.Color{50, 100, 100, 255}
+			}
+			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t), 60, y, 18, tc)
+		}
+	}
+}
+
 get_next_combatant :: proc() -> int {
 	actor_idx := 0
 	actor_t := battle_combatants[0].t
@@ -74,34 +68,39 @@ get_next_combatant :: proc() -> int {
 }
 
 update_battle :: proc(dt: f32) {
-	// fmt.printfln("%w", battle_combatants)
-	actor_idx := get_next_combatant()
-	actor := &battle_combatants[actor_idx]
-	action, done := actor.turn(actor_idx).?
-	if done {
-		// time.sleep(time.Second/2)
-		target := &battle_combatants[action.target]
-		fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
-		action.type.effect.f(&actor.character.stats, &target.character.stats)
-		actor.t += 20
-		check_win()
+	switch s in battle_state {
+	case Next:
+		// fmt.printfln("%w", battle_combatants)
+		battle_state = Turn {
+			actor_idx = get_next_combatant(),
+		}
+	case Turn:
+		actor := &battle_combatants[s.actor_idx]
+		actor.turn(s.actor_idx)
+	// action, done := actor.turn(actor_idx).?
+	case Process:
+		if battle_event_queue_len > 0 {
+			switch e in battle_event_queue[battle_event_queue_len - 1] {
+			case Battle_Animation:
+			// todo
+			case Battle_Message:
+				// todo
+				fmt.println(e.text)
+			case Character_Effect:
+				do_effect(e)
+			// fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
+			// action.type.effect.f(&actor.character.stats, &target.character.stats)
+			// actor.t += 20
+			}
+			battle_event_queue_len -= 1
+		} else {
+			check_win()
+			battle_state = Next{}
+		}
 	}
 }
 
-target := -1
-
-change_target :: proc(d: int) {
-	initial_target := target
-	for {
-		target += d
-		if target < 0 {target = MAX_COMBATANTS - 1}
-		if target >= MAX_COMBATANTS {target = 0}
-		if target == initial_target {return}
-		if battle_combatants[target].enabled {return}
-	}
-}
-
-PC_COMBATANT_TURN :: proc(actor_idx: int) -> Maybe(Battle_Action) {
+PC_COMBATANT_TURN :: proc(actor_idx: int) {
 	// fmt.printfln("actor %d target %d", actor_idx, target)
 	if target < 0 {target = 0}
 	if rl.IsKeyPressed(.UP) {
@@ -109,7 +108,13 @@ PC_COMBATANT_TURN :: proc(actor_idx: int) -> Maybe(Battle_Action) {
 	} else if rl.IsKeyPressed(.DOWN) {
 		change_target(1)
 	} else if rl.IsKeyPressed(.SPACE) {
-		return Battle_Action{type = BAT_ATTACK, actor = actor_idx, target = target}
+		target := get_combatant_ref(target)
+		queue_character_effect(
+			Character_Effect {
+				character = target,
+				effect = HP_LOSS{hp_loss = max(1, get_combatant_ref(actor_idx).stats.offense - target.stats.defense)},
+			},
+		)
+		// return Battle_Action{type = BAT_ATTACK, actor = actor_idx, target = target}
 	}
-	return nil
 }

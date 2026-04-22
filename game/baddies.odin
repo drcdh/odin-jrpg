@@ -1,9 +1,18 @@
 package game
 
-ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) -> Maybe(Battle_Action) {
+ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) {
+	actor := battle_combatants[actor_idx].character
 	actor_team := battle_combatants[actor_idx].team
 	target_idx := get_combatant_not_on_team(actor_team)
-	return Battle_Action{type = BAT_ATTACK, actor = actor_idx, target = target_idx}
+	target := battle_combatants[target_idx].character
+
+	queue_character_effect(
+		Character_Effect {
+			character = &target,
+			effect = HP_LOSS{hp_loss = max(1, actor.stats.offense - target.stats.defense)},
+		},
+	)
+	// return Battle_Action{type = BAT_ATTACK, actor = actor_idx, target = target_idx}
 }
 
 new_mouse_sized_rat :: proc() -> Combatant {
