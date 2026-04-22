@@ -1,19 +1,18 @@
 package game
 
+import "core:container/queue"
 import "core:fmt"
 import "core:time"
 
 import rl "vendor:raylib"
 
 MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + PARTY_SIZE
-MAX_EVENTS :: 10
 
-battle_combatants := [MAX_COMBATANTS]Combatant{}
 battle_active := false
-battle_event_queue := [MAX_EVENTS]Battle_Event{}
-battle_event_queue_len := 0
+battle_combatants := [MAX_COMBATANTS]Combatant{}
+battle_event_queue : queue.Queue(Battle_Event)
 battle_num_combatants := 0
-battle_state : Battle_State = nil
+battle_state : Battle_State
 
 check_win :: proc() {
 	// todo tie function to encounter
@@ -85,9 +84,9 @@ update_battle :: proc(dt: f32) {
 		actor.turn(s.actor_idx)
 	// action, done := actor.turn(actor_idx).?
 	case Process:
-		fmt.println("Process", battle_event_queue_len)
-		if battle_event_queue_len > 0 {
-			switch e in battle_event_queue[battle_event_queue_len - 1] {
+		if queue.len(battle_event_queue) > 0 {
+			fmt.println("Process", queue.len(battle_event_queue))
+			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Animation:
 			// todo
 			case Battle_Message:
@@ -95,11 +94,7 @@ update_battle :: proc(dt: f32) {
 				fmt.println(e.text)
 			case Character_Effect:
 				do_effect(e)
-			// fmt.printfln("%s: actor=%d target=%d", action.type.name, actor_idx, action.target)
-			// action.type.effect.f(&actor.character.stats, &target.character.stats)
-			// actor.t += 20
 			}
-			battle_event_queue_len -= 1
 		} else {
 			check_win()
 			battle_state = Next{}
