@@ -13,7 +13,7 @@ battle_active := false
 battle_event_queue := [MAX_EVENTS]Battle_Event{}
 battle_event_queue_len := 0
 battle_num_combatants := 0
-battle_state: Battle_State = Next{}
+battle_state : Battle_State = nil
 
 check_win :: proc() {
 	// todo tie function to encounter
