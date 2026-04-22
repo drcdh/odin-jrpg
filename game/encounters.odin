@@ -22,5 +22,5 @@ start_encounter_0 :: proc() {
 		}
 	}
 	battle_active = true
-	battle_state = Next{}
+	battle_state = Next_Turn{}
 }

@@ -10,11 +10,12 @@ MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + PARTY_SIZE
 
 battle_active := false
 battle_combatants := [MAX_COMBATANTS]Combatant{}
+battle_ending := false
 battle_event_queue : queue.Queue(Battle_Event)
 battle_num_combatants := 0
 battle_state : Battle_State
 
-check_win :: proc() {
+check_win :: proc() -> bool {
 	// todo tie function to encounter
 	team_lives := [?]bool{false, false}
 	for bc, i in battle_combatants {
@@ -24,14 +25,15 @@ check_win :: proc() {
 	}
 	if team_lives[0] && !team_lives[1] {
 		fmt.println("Team 0 wins")
-		battle_active = false
+		battle_ending = true
 	} else if !team_lives[0] && team_lives[1] {
 		fmt.println("Team 1 wins")
-		battle_active = false
+		battle_ending = true
 	} else if !team_lives[0] && !team_lives[1] {
 		fmt.println("Draw")
-		battle_active = false
+		battle_ending = true
 	}
+	return battle_ending
 }
 
 draw_battle :: proc() {
@@ -50,10 +52,14 @@ draw_battle :: proc() {
 			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t), 60, y, 18, tc)
 		}
 	}
+	#partial switch s in battle_state {
+	case Process_Battle_Animation:
+		s.draw(s.t, s.offset)
+	}
 }
 
 end_turn :: proc() {
-	battle_state = Process{}
+	battle_state = Next_Event{}
 }
 
 get_next_combatant :: proc() -> int {
@@ -71,24 +77,30 @@ get_next_combatant :: proc() -> int {
 }
 
 update_battle :: proc(dt: f32) {
-	// fmt.println("battle_event_queue_len", battle_event_queue_len)
-	switch s in battle_state {
-	case Next:
+	switch &s in battle_state {
+	case Next_Turn:
 		fmt.println(s)
-		battle_state = Turn {
-			actor_idx = get_next_combatant(),
+		if check_win() {
+			// todo: enqueue default or encounter-overriding events (exp gain etc.)
+			battle_state = Next_Event{}
+		} else {
+			battle_state = Take_Turn {
+				actor_idx = get_next_combatant(),
+			}
 		}
-	case Turn:
+	case Take_Turn:
 		// fmt.println(s)
 		actor := &battle_combatants[s.actor_idx]
 		actor.turn(s.actor_idx)
 	// action, done := actor.turn(actor_idx).?
-	case Process:
+	case Next_Event:
 		if queue.len(battle_event_queue) > 0 {
-			fmt.println("Process", queue.len(battle_event_queue))
 			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Animation:
-			// todo
+				battle_state = Process_Battle_Animation{
+					draw = e.draw,
+					offset = e.offset,
+				}
 			case Battle_Message:
 				// todo
 				fmt.println(e.text)
@@ -96,8 +108,16 @@ update_battle :: proc(dt: f32) {
 				do_effect(e)
 			}
 		} else {
-			check_win()
-			battle_state = Next{}
+			if battle_ending {
+				battle_active = false
+			} else {
+				battle_state = Next_Turn{}
+			}
+		}
+	case Process_Battle_Animation:
+		s.t += dt
+		if s.t >= .5 {
+			battle_state = Next_Event{}
 		}
 	}
 }
@@ -111,6 +131,12 @@ PC_COMBATANT_TURN :: proc(actor_idx: int) {
 		change_target(1)
 	} else if rl.IsKeyPressed(.SPACE) {
 		target_c := get_combatant_ref(target)
+		queue_battle_animation(
+			Battle_Animation{
+				draw = draw_expanding_circle,
+				offset = Pixel_Coord{100, f32(60+60*target)},
+			}
+		)
 		queue_character_effect(
 			Character_Effect {
 				character = target_c,

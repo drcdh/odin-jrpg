@@ -8,8 +8,10 @@ Combatant :: struct {
 	turn:      Turn_Proc,
 }
 
+// EVENTS
 Battle_Animation :: struct {
 	draw:   proc(dt: f32, offset: Pixel_Coord),
+	// animation: Animation,
 	offset: Pixel_Coord,
 }
 
@@ -23,27 +25,26 @@ Battle_Event :: union {
 	Character_Effect,
 }
 
-// Battle_Action_Type :: struct {
-// 	name:   cstring,
-// 	effect: Character_Effect,
-// }
-
-Next :: struct {}
-Process :: struct {}
-Turn :: struct {
+// STATE
+Next_Event :: struct {}
+Next_Turn :: struct {}
+Take_Turn :: struct {
 	actor_idx: int,
 }
-// Battle_Action :: struct {
-// 	actor:  int,
-// 	target: int,
-// 	type:   Battle_Action_Type,
-// 	idx:    int,
+Process_Battle_Animation :: struct {
+	draw:   proc(dt: f32, offset: Pixel_Coord),
+	// animation: Animation,
+	offset: Pixel_Coord,
+	t: f32,
+}
+// Process_Battle_Message :: struct {
+// 	text: cstring,
 // }
-
 Battle_State :: union {
-	Next,
-	Process,
-	Turn,
+	Next_Event,
+	Next_Turn,
+	Take_Turn,
+	Process_Battle_Animation,
 }
 
 Turn_Proc :: proc(actor_idx: int)
