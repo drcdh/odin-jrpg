@@ -35,7 +35,7 @@ Process_Battle_Animation :: struct {
 	draw:   proc(dt: f32, offset: Pixel_Coord),
 	// animation: Animation,
 	offset: Pixel_Coord,
-	t: f32,
+	t:      f32,
 }
 // Process_Battle_Message :: struct {
 // 	text: cstring,

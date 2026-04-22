@@ -11,9 +11,9 @@ MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + PARTY_SIZE
 battle_active := false
 battle_combatants := [MAX_COMBATANTS]Combatant{}
 battle_ending := false
-battle_event_queue : queue.Queue(Battle_Event)
+battle_event_queue: queue.Queue(Battle_Event)
 battle_num_combatants := 0
-battle_state : Battle_State
+battle_state: Battle_State
 
 check_win :: proc() -> bool {
 	// todo tie function to encounter
@@ -97,8 +97,8 @@ update_battle :: proc(dt: f32) {
 		if queue.len(battle_event_queue) > 0 {
 			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Animation:
-				battle_state = Process_Battle_Animation{
-					draw = e.draw,
+				battle_state = Process_Battle_Animation {
+					draw   = e.draw,
 					offset = e.offset,
 				}
 			case Battle_Message:
@@ -132,10 +132,7 @@ PC_COMBATANT_TURN :: proc(actor_idx: int) {
 	} else if rl.IsKeyPressed(.SPACE) {
 		target_c := get_combatant_ref(target)
 		queue_battle_animation(
-			Battle_Animation{
-				draw = draw_expanding_circle,
-				offset = Pixel_Coord{100, f32(60+60*target)},
-			}
+			Battle_Animation{draw = draw_expanding_circle, offset = Pixel_Coord{100, f32(60 + 60 * target)}},
 		)
 		queue_character_effect(
 			Character_Effect {

@@ -10,12 +10,9 @@ ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) {
 
 	fmt.printfln("> actor %d is attacking target %d %w", actor_idx, target_idx, target)
 
-		queue_battle_animation(
-			Battle_Animation{
-				draw = draw_expanding_circle,
-				offset = Pixel_Coord{100, f32(60+60*target_idx)},
-			}
-		)
+	queue_battle_animation(
+		Battle_Animation{draw = draw_expanding_circle, offset = Pixel_Coord{100, f32(60 + 60 * target_idx)}},
+	)
 
 	queue_character_effect(
 		Character_Effect {
