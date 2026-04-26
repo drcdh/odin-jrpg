@@ -6,6 +6,19 @@ entities: [dynamic]Entity
 m: Map
 runner := Runner{}
 
+get_entity_at_tile :: proc(t: Tile_Coord) -> Maybe(int) {
+	for e, i in entities {
+		if e.k.tile == t {
+			return i
+		}
+	}
+	return nil
+}
+
+activate_entity_idx :: proc(i: int) {
+	start_script(entities[i].script)
+}
+
 start_script :: proc(script: []Event) {
 	if script != nil {
 		fmt.println("starting script of len", len(script))

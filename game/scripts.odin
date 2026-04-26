@@ -13,19 +13,22 @@ player_control :: proc(_: f32, p: ^Entity) {
 			try_set_destination(&p.k, p.k.tile + input)
 		} else {
 			if get_input(.ENTER) {
-				fmt.println("TODO")
-				if battle_hack {
-					if battle_active {
-						battle_active = false
-					} else {
-						start_encounter_0()
-						battle_hack = false
-					}
-				} else if hack {
-					//fixme HACK
-					start_entity_script(DUDE_ID)
-					// hack = false
+				if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
+					activate_entity_idx(entity_in_front)
 				}
+				// fmt.println("TODO")
+				// if battle_hack {
+				// 	if battle_active {
+				// 		battle_active = false
+				// 	} else {
+				// 		start_encounter_0()
+				// 		battle_hack = false
+				// 	}
+				// } else if hack {
+				// 	//fixme HACK
+				// 	start_entity_script(DUDE_ID)
+				// 	// hack = false
+				// }
 			}
 		}
 	}

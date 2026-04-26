@@ -120,3 +120,7 @@ update_kinematics :: proc(dt: f32, k: ^Kinematics) {
 entity_at_tile :: proc(e: Entity, t: Tile_Coord) -> bool {
 	return e.k.tile == t
 }
+
+tile_in_front :: proc(e: ^Entity) -> Tile_Coord {
+	return e.k.tile + e.k.face
+}
