@@ -4,6 +4,7 @@ _build/
 bin/
 project.bin
 priv/logs/
+odin-jrpg
 
 ### Editors ###
 .vscode
