@@ -6,6 +6,8 @@ entities: [dynamic]Entity
 m: Map
 runner := Runner{}
 
+quitting := false // todo: transitions
+
 get_entity_at_tile :: proc(t: Tile_Coord) -> Maybe(int) {
 	for e, i in entities {
 		if e.k.tile == t {

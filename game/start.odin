@@ -30,6 +30,9 @@ start :: proc(args: []string) -> int {
 
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
 
+	menu_0_state = Menu_Closed{}
+	menu_1_state = Menu_Closed{}
+
 	start_level()
 
 	fmt.println("Starting window_loop")
@@ -45,10 +48,11 @@ start :: proc(args: []string) -> int {
 		} else {
 			draw_level()
 			draw_dialogue()
+			draw_menus()
 		}
 		rl.EndDrawing()
 
-		if rl.IsKeyDown(.Q) {
+		if quitting || rl.IsKeyDown(.Q) {
 			break window_loop
 		}
 
@@ -62,6 +66,7 @@ start :: proc(args: []string) -> int {
 			// text gets input priority
 			update_runner(dt)
 			update_level(dt)
+			update_menus(dt)
 		}
 	}
 

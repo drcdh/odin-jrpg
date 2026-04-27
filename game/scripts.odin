@@ -7,7 +7,8 @@ battle_hack := true
 hack := true
 
 player_control :: proc(_: f32, p: ^Entity) {
-	if !p.k.moving {
+	// todo: check update_entity for redundant checks
+	if !p.k.moving && !p.busy && !p.disabled {
 		input := get_direction_input()
 		if (input.x != 0 || input.y != 0) {
 			try_set_destination(&p.k, p.k.tile + input)

@@ -48,7 +48,7 @@ get_input :: proc(k: Game_Input, consume := true, consume_all := true) -> (v := 
 	case .DOWN:
 		if frame_input.down {if consume {frame_input.down = false};v = true}
 	}
-	if consume_all {frame_input = FRAME_INPUT{}}
+	if v && consume_all {frame_input = FRAME_INPUT{}}
 	// fmt.println("get_input:", k, consume, v, frame_input)
 	return
 }
