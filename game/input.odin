@@ -72,3 +72,17 @@ get_direction_input :: proc(consume := true, consume_all := true) -> Tile_Coord 
 	}
 	return input
 }
+
+get_y_input :: proc(consume := true, consume_all := true) -> Maybe(int) {
+	v := 0
+	if get_input(.UP, consume, consume_all) {
+		v -= 1
+	}
+	if get_input(.DOWN, consume, consume_all) {
+		v += 1
+	}
+	if v != 0 {
+		return v
+	}
+	return nil
+}

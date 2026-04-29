@@ -80,30 +80,43 @@ draw_menus :: proc() {
 	}
 }
 
-update_menus :: proc(dt: f32) {
-	switch s in menu_0_state {
-	case Menu_Closed:
-	//if protag not busy
-	if get_input(.MENU) {
-		menu_0_state = Menu_Open{}
-	}
-case Menu_Open:
-	if get_input(.MENU) {
-	menu_0_state = Menu_Closed{}
-		if menu_0_forget {menu_0_selection = 0}
-	} else if get_input(.ENTER) {
-		menu_0_proc()
+change_menu_selection_vertical :: proc(s: ^int, n: int) {
+	if dy, ok := get_y_input().?; ok {
+		s^ = s^ + dy
+		if s^ >= n { s^ = 0 }
+		if s^ < 0 { s^ = n-1 }
 	}
 }
 
+
+update_menus :: proc(dt: f32) {
 	switch _ in menu_1_state {
 	case Menu_Closed:
 	case Menu_Open:
 		if get_input(.MENU) {
-	menu_1_state = Menu_Closed{}
-		if menu_1_forget {menu_1_selection = 0}
-	} else if get_input(.ENTER) {
-		menu_1_proc()
+			menu_1_state = Menu_Closed{}
+			if menu_1_forget {menu_1_selection = 0}
+		} else if get_input(.ENTER) {
+			menu_1_proc()
+		} else {
+			change_menu_selection_vertical(&menu_1_selection, len(menu_1_options))
+		}
 	}
-}
+
+	switch _ in menu_0_state {
+	case Menu_Closed:
+		//if protag not busy
+		if get_input(.MENU) {
+			menu_0_state = Menu_Open{}
+		}
+	case Menu_Open:
+		if get_input(.MENU) {
+			menu_0_state = Menu_Closed{}
+			if menu_0_forget {menu_0_selection = 0}
+		} else if get_input(.ENTER) {
+			menu_0_proc()
+		} else {
+			change_menu_selection_vertical(&menu_0_selection, len(menu_0_options))
+		}
+	}
 }

@@ -110,6 +110,7 @@ update_battle :: proc(dt: f32) {
 		} else {
 			if battle_ending {
 				battle_active = false
+				queue.clear(&battle_event_queue)
 			} else {
 				battle_state = Next_Turn{}
 			}
