@@ -17,19 +17,6 @@ player_control :: proc(_: f32, p: ^Entity) {
 				if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
 					activate_entity(entity_in_front)
 				}
-				// fmt.println("TODO")
-				// if battle_hack {
-				// 	if battle_active {
-				// 		battle_active = false
-				// 	} else {
-				// 		start_encounter_0()
-				// 		battle_hack = false
-				// 	}
-				// } else if hack {
-				// 	//fixme HACK
-				// 	start_entity_script(DUDE_ID)
-				// 	// hack = false
-				// }
 			}
 		}
 	}
@@ -58,6 +45,9 @@ Set_Entity_State :: struct {
 	id:    Id,
 	state: State,
 }
+Start_Level :: struct {
+	level: Level,
+}
 
 Event :: union {
 	Append_Text,
@@ -68,6 +58,7 @@ Event :: union {
 	Set_Entity_Busy,
 	Set_Entity_Script,
 	Set_Entity_State,
+	Start_Level,
 }
 
 Continue :: struct {}
@@ -103,6 +94,8 @@ update_runner :: proc(dt: f32) {
 			return
 		}
 
+		// fmt.println("Start event", runner.script[runner.step])
+
 		switch event in runner.script[runner.step] {
 		case Append_Text:
 			dialogue_show = true
@@ -117,22 +110,24 @@ update_runner :: proc(dt: f32) {
 		case End:
 			runner.script = nil
 		case Pause_Dialogue:
-			fmt.println("[pause]")
+			// fmt.println("[pause]")
 			runner.state = Pause {
 				countdown = event.duration,
 			}
 		case Clear_Text:
 			dialogue_str = ""
-			fmt.println("<clear>")
+			// fmt.println("<clear>")
 		case Close_Dialogue:
 			dialogue_show = false
-			fmt.println("<close>")
+			// fmt.println("<close>")
 		case Set_Entity_Busy:
 			set_entity_busy(event.id, event.busy)
 		case Set_Entity_Script:
 			set_entity_script(event.id, event.script)
 		case Set_Entity_State:
 			set_entity_state(event.id, event.state)
+		case Start_Level:
+			start_level(event.level)
 		}
 	}
 }

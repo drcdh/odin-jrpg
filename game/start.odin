@@ -33,7 +33,7 @@ start :: proc(args: []string) -> int {
 	menu_0_state = Menu_Closed{}
 	menu_1_state = Menu_Closed{}
 
-	start_level()
+	start_level(.LEVEL_0)
 
 	fmt.println("Starting window_loop")
 

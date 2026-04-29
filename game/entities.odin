@@ -13,12 +13,18 @@ Kinematics :: struct {
 	tile:        Tile_Coord,
 }
 
+Visual_Solid_Circle :: struct {
+	radius:  Pixel,
+	color: rl.Color,
+}
+
 Visual_Solid_Rect :: struct {
 	size:  Pixel_Dim,
 	color: rl.Color,
 }
 
 Visual :: union {
+	Visual_Solid_Circle,
 	Visual_Solid_Rect,
 }
 
@@ -56,9 +62,15 @@ draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
 	rl.DrawRectangleV(tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.size, v.color)
 }
 
+draw_solid_circle :: proc(k: Kinematics, v: Visual_Solid_Circle) {
+	rl.DrawCircleV(TILE_DIM/2 + tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.radius, v.color)
+}
+
 draw_entity :: proc(e: ^Entity) {
 	if !e.disabled {
 		switch v in e.v {
+		case Visual_Solid_Circle:
+			draw_solid_circle(e.k, v)
 		case Visual_Solid_Rect:
 			draw_solid_rect(e.k, v)
 		}

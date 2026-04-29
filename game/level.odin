@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import "core:time"
 import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
@@ -41,17 +42,33 @@ welcome := [?]Event {
 	End{},
 }
 
-start_level :: proc() {
-	m = build_map()
+	WARP_TO_1 := [?]Event{
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Start_Level{level = .LEVEL_1},
+			End{},
+		}
 
+	WARP_TO_0 := [?]Event{
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Start_Level{level = .LEVEL_0},
+			End{},
+		}
+
+add_pc_entity :: proc(tile, face: Tile_Coord) {
 	pc_entity = hm.add(&entities, Entity {
 		id = PLAYER_ID,
-		k = Kinematics{face = Direction_Vectors[.South], tile = PLAYER_SPAWN, speed = 3},
+		k = Kinematics{face = face, tile = tile, speed = 3},
 		n = "Player",
 		script = nil,
 		state = Control{},
 		v = Visual_Solid_Rect{color = PLAYER_COLOR, size = TILE_DIM},
 	})
+}
+
+start_level_0 :: proc() {
+	m = build_map()
+
+	add_pc_entity(PLAYER_SPAWN, Direction_Vectors[.South])
 
 	dude := hm.add(&entities, Entity {
 		id = DUDE_ID,
@@ -62,5 +79,53 @@ start_level :: proc() {
 		v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
 	})
 
+	warp := hm.add(&entities, Entity {
+		id = 3,
+		k = Kinematics{tile = Tile_Coord{10, 10}},
+		n = "warp",
+		script = WARP_TO_1[:],
+		v = Visual_Solid_Circle{color = rl.Color{200, 0, 200, 255}, radius = TILE_SIZE/2},
+	})
+
 	start_script(welcome[:])
+}
+
+start_level_1 :: proc() {
+	{
+		m = Map{}
+		for i in 10 ..= 18 {
+			for j in 10 ..= 13 {
+				m[i][j] = 1
+			}
+		}
+	}
+
+	add_pc_entity(Tile_Coord{11, 11}, Direction_Vectors[.East])
+
+	warp := hm.add(&entities, Entity {
+		id = 3,
+		k = Kinematics{tile = Tile_Coord{15, 11}},
+		n = "warp",
+		script = WARP_TO_0[:],
+		v = Visual_Solid_Circle{color = rl.Color{200, 0, 200, 255}, radius = TILE_SIZE/2},
+	})
+}
+
+Level :: enum {
+	LEVEL_0,
+	LEVEL_1,
+}
+
+start_level :: proc(l: Level) {
+	hm.clear(&entities)
+	stopwatch: time.Stopwatch
+	time.stopwatch_start(&stopwatch)
+	switch l {
+	case .LEVEL_0:
+		start_level_0()
+	case .LEVEL_1:
+		start_level_1()
+	}
+	time.stopwatch_stop(&stopwatch)
+	fmt.println("Loaded level", l, "in", time.stopwatch_duration(stopwatch))
 }
