@@ -15,7 +15,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 		} else {
 			if get_input(.ENTER) {
 				if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
-					activate_entity_idx(entity_in_front)
+					activate_entity(entity_in_front)
 				}
 				// fmt.println("TODO")
 				// if battle_hack {

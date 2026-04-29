@@ -1,24 +1,27 @@
 package game
 
 import "core:fmt"
+import hm "core:container/handle_map"
 
-entities: [dynamic]Entity
+entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map
+pc_entity: Entity_Handle
 runner := Runner{}
 
 quitting := false // todo: transitions
 
-get_entity_at_tile :: proc(t: Tile_Coord) -> Maybe(int) {
-	for e, i in entities {
+get_entity_at_tile :: proc(t: Tile_Coord) -> Maybe(Entity_Handle) {
+	it := hm.iterator_make(&entities)
+	for e, h in hm.iterate(&it) {
 		if e.k.tile == t {
-			return i
+			return h
 		}
 	}
 	return nil
 }
 
-activate_entity_idx :: proc(i: int) {
-	start_script(entities[i].script)
+activate_entity :: proc(h: Entity_Handle) {
+	start_script(hm.get(&entities, h).script)
 }
 
 start_script :: proc(script: []Event) {
@@ -30,22 +33,10 @@ start_script :: proc(script: []Event) {
 	}
 }
 
-start_entity_script :: proc(id: Id) {
-	for e in entities {
-		if e.id == id {
-			if e.script != nil {
-				fmt.println("starting entity script", e.n)
-				start_script(e.script)
-			} else {
-				fmt.println("not starting nil entity script", e.n)
-			}
-		}
-	}
-}
-
 draw_level :: proc() {
 	draw_map(m)
-	for e in entities {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
 		if !e.disabled {
 			draw_entity(e)
 		}
@@ -53,13 +44,15 @@ draw_level :: proc() {
 }
 
 update_level :: proc(dt: f32) {
-	for &e in entities {
-		update_entity(dt, &e)
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		update_entity(dt, e)
 	}
 }
 
 set_entity_busy :: proc(e_id: Id, busy: bool) {
-	for &e in entities {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
 			e.busy = busy
 			fmt.println("set entity busy", e.n, e.busy)
@@ -70,7 +63,8 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 }
 
 set_entity_script :: proc(e_id: Id, script: []Event) {
-	for &e in entities {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
 			e.script = script
 			fmt.println("set entity with script of len", e.n, len(e.script))
@@ -79,7 +73,8 @@ set_entity_script :: proc(e_id: Id, script: []Event) {
 }
 
 set_entity_state :: proc(e_id: Id, state: State) {
-	for &e in entities {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
 			e.state = state
 		}

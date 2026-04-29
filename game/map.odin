@@ -1,7 +1,7 @@
 package game
 
 import "core:math/rand"
-
+import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
 NUM_TILE_TYPES :: 3
@@ -48,7 +48,8 @@ valid_tile_coord :: proc(t: Tile_Coord) -> bool {
 }
 
 tile_free :: proc(t: Tile_Coord) -> bool {
-	for e in entities {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
 		if e.k.tile == t && !e.k.ghost {
 			return false
 		}

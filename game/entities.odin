@@ -1,5 +1,6 @@
 package game
 
+import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
 Kinematics :: struct {
@@ -37,9 +38,12 @@ State :: union {
 	Pacing,
 }
 
+Entity_Handle :: distinct hm.Handle16
+
 Entity :: struct {
 	busy:     bool, // script will not run if true
 	disabled: bool, // script will not run and will not be displayed if true
+	handle:   Entity_Handle,
 	id:       Id,
 	k:        Kinematics,
 	n:        Name,
@@ -52,7 +56,7 @@ draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
 	rl.DrawRectangleV(tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.size, v.color)
 }
 
-draw_entity :: proc(e: Entity) {
+draw_entity :: proc(e: ^Entity) {
 	if !e.disabled {
 		switch v in e.v {
 		case Visual_Solid_Rect:

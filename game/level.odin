@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
 PLAYER_ID: Id = 0
@@ -43,26 +44,23 @@ welcome := [?]Event {
 start_level :: proc() {
 	m = build_map()
 
-	player := Entity {
+	pc_entity = hm.add(&entities, Entity {
 		id = PLAYER_ID,
 		k = Kinematics{face = Direction_Vectors[.South], tile = PLAYER_SPAWN, speed = 3},
 		n = "Player",
 		script = nil,
 		state = Control{},
 		v = Visual_Solid_Rect{color = PLAYER_COLOR, size = TILE_DIM},
-	}
+	})
 
-	dude := Entity {
+	dude := hm.add(&entities, Entity {
 		id = DUDE_ID,
 		k = Kinematics{face = Direction_Vectors[.South], tile = DUDE_SPAWN, speed = 2},
 		n = "Dude",
 		script = DUDE_SCRIPT_0[:],
 		state = Pacing{route = 0, pause = 1},
 		v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
-	}
-
-	append(&entities, player)
-	append(&entities, dude)
+	})
 
 	start_script(welcome[:])
 }
