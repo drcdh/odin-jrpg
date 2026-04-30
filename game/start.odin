@@ -30,6 +30,8 @@ start :: proc(args: []string) -> int {
 
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
 
+	initialize_input()
+
 	menu_0_state = Menu_Closed{}
 	menu_1_state = Menu_Closed{}
 
@@ -56,9 +58,9 @@ start :: proc(args: []string) -> int {
 			break window_loop
 		}
 
-		capture_input()
-
 		dt := rl.GetFrameTime()
+
+		update_input_state(dt)
 
 		if battle_active {
 			update_battle(dt)

@@ -8,9 +8,7 @@ ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
 
 	fmt.printfln("> %s is attacking target %s", actor.character.name, target.character.name)
 
-	queue_battle_animation(
-		Battle_Animation{draw = draw_expanding_circle, offset = target.coord},
-	)
+	queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target.coord})
 
 	queue_character_effect(
 		Character_Effect {
@@ -23,4 +21,3 @@ ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
 
 	end_turn()
 }
-

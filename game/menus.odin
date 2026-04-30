@@ -1,5 +1,6 @@
 package game
 
+import hm "core:container/handle_map"
 import "core:fmt"
 import rl "vendor:raylib"
 
@@ -94,13 +95,15 @@ update_menus :: proc(dt: f32) {
 		} else {
 			change_menu_selection_vertical(&menu_1_selection, len(menu_1_options))
 		}
+		return // don't let input get to menu 0
 	}
 
 	switch _ in menu_0_state {
 	case Menu_Closed:
-		//if protag not busy
 		if get_input(.MENU) {
-			menu_0_state = Menu_Open{}
+			if pc_entity, ok := hm.get(&entities, pc_entity); ok && !pc_entity.busy {
+				menu_0_state = Menu_Open{}
+			}
 		}
 	case Menu_Open:
 		if get_input(.MENU) {

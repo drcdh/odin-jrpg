@@ -84,7 +84,7 @@ end_turn :: proc() {
 
 get_next_combatant :: proc() -> Combatant_Handle {
 	first := true
-	actor_h : Combatant_Handle
+	actor_h: Combatant_Handle
 	actor_t := 0
 	it := hm.iterator_make(&battle_combatants)
 	for c, h in hm.iterate(&it) {
@@ -152,15 +152,13 @@ update_battle :: proc(dt: f32) {
 PC_COMBATANT_TURN :: proc(actor: ^Combatant) {
 	// fmt.printfln("actor %d target %d", actor_idx, target)
 	if target < 0 {target = 0}
-	if rl.IsKeyPressed(.UP) {
+	if get_input(.UP) {
 		change_target(-1)
-	} else if rl.IsKeyPressed(.DOWN) {
+	} else if get_input(.DOWN) {
 		change_target(1)
-	} else if rl.IsKeyPressed(.SPACE) {
+	} else if get_input(.ENTER) {
 		if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[target]); ok {
-			queue_battle_animation(
-				Battle_Animation{draw = draw_expanding_circle, offset = target_cb.coord},
-			)
+			queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target_cb.coord})
 			queue_character_effect(
 				Character_Effect {
 					character = target_cb.character,

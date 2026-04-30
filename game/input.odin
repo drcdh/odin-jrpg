@@ -1,8 +1,11 @@
 package game
 
-import "core:fmt"
 import rl "vendor:raylib"
 
+HOLD_TIME :: 1 // second
+
+// These are player inputs that the game understands.
+// These will be (re)mapped to keyboard or controller buttons
 Game_Input :: enum {
 	ENTER,
 	CANCEL,
@@ -13,72 +16,103 @@ Game_Input :: enum {
 	RIGHT,
 }
 
-FRAME_INPUT :: struct {
-	enter, cancel, menu, left, right, up, down: bool,
+GAME_INPUTS :: [?]Game_Input{.ENTER, .CANCEL, .MENU, .UP, .DOWN, .LEFT, .RIGHT}
+
+INPUT_MAP: map[Game_Input]rl.KeyboardKey
+
+Input_Up :: struct {}
+Input_Pressed :: struct {}
+Input_Held :: struct {
+	t: f32,
+}
+Single_Input_State :: union {
+	Input_Up,
+	Input_Pressed,
+	Input_Held,
 }
 
-frame_input := FRAME_INPUT{}
+input_state : map[Game_Input]Single_Input_State
 
-capture_input :: proc() {
-	frame_input.enter = rl.IsKeyPressed(.SPACE) || rl.IsKeyPressed(.ENTER) || rl.IsKeyPressed(.Z)
-	frame_input.cancel = rl.IsKeyPressed(.DELETE) || rl.IsKeyPressed(.X)
-	frame_input.menu = rl.IsKeyPressed(.S)
-	frame_input.left = rl.IsKeyDown(.LEFT)
-	frame_input.right = rl.IsKeyDown(.RIGHT)
-	frame_input.up = rl.IsKeyDown(.UP)
-	frame_input.down = rl.IsKeyDown(.DOWN)
-	// fmt.println(frame_input)
+initialize_input :: proc() {
+	INPUT_MAP[Game_Input.ENTER] = rl.KeyboardKey.Z
+	INPUT_MAP[Game_Input.CANCEL] = rl.KeyboardKey.X
+	INPUT_MAP[Game_Input.MENU] = rl.KeyboardKey.S
+	INPUT_MAP[Game_Input.UP] = rl.KeyboardKey.UP
+	INPUT_MAP[Game_Input.DOWN] = rl.KeyboardKey.DOWN
+	INPUT_MAP[Game_Input.LEFT] = rl.KeyboardKey.LEFT
+	INPUT_MAP[Game_Input.RIGHT] = rl.KeyboardKey.RIGHT
+
+	input_state[.ENTER  ]= Input_Up{}
+	input_state[.CANCEL ]= Input_Up{}
+	input_state[.MENU   ]= Input_Up{}
+	input_state[.UP     ]= Input_Up{}
+	input_state[.DOWN   ]= Input_Up{}
+	input_state[.LEFT   ]= Input_Up{}
+	input_state[.RIGHT  ]= Input_Up{}
 }
 
-get_input :: proc(k: Game_Input, consume := true, consume_all := true) -> (v := false) {
-	// fmt.println("get", frame_input)
-	switch k {
-	case .ENTER:
-		if frame_input.enter {if consume {frame_input.enter = false};v = true}
-	case .CANCEL:
-		if frame_input.cancel {if consume {frame_input.cancel = false};v = true}
-	case .MENU:
-		if frame_input.menu {if consume {frame_input.menu = false};v = true}
-	case .LEFT:
-		if frame_input.left {if consume {frame_input.left = false};v = true}
-	case .RIGHT:
-		if frame_input.right {if consume {frame_input.right = false};v = true}
-	case .UP:
-		if frame_input.up {if consume {frame_input.up = false};v = true}
-	case .DOWN:
-		if frame_input.down {if consume {frame_input.down = false};v = true}
+get_updated_input_state :: proc(dt: f32, k: rl.KeyboardKey, s: Single_Input_State) -> Single_Input_State {
+	if rl.IsKeyDown(k) {
+		switch s in s {
+		case Input_Up:
+			return Input_Pressed{}
+		case Input_Pressed:
+			return Input_Held{t = dt}
+		case Input_Held:
+			return Input_Held{t = dt + s.t}
+		}
 	}
-	if v && consume_all {frame_input = FRAME_INPUT{}}
-	// fmt.println("get_input:", k, consume, v, frame_input)
+	if rl.IsKeyUp(k) {return Input_Up{}}
+	return nil
+}
+
+update_input_state :: proc(dt: f32) {
+	for k in GAME_INPUTS {
+		input_state[k] = get_updated_input_state(dt, INPUT_MAP[k], input_state[k])
+	}
+	// input_state[.ENTER] = get_updated_input_state(dt, INPUT_MAP[.ENTER], input_state[.ENTER])
+	// input_state[.CANCEL] = get_updated_input_state(dt, INPUT_MAP[.CANCEL], input_state[.CANCEL])
+	// input_state[.MENU] = get_updated_input_state(dt, INPUT_MAP[.MENU], input_state[.MENU])
+	// input_state[.UP] = get_updated_input_state(dt, INPUT_MAP[.UP], input_state[.UP])
+	// input_state[.DOWN] = get_updated_input_state(dt, INPUT_MAP[.DOWN], input_state[.DOWN])
+	// input_state[.LEFT] = get_updated_input_state(dt, INPUT_MAP[.LEFT], input_state[.LEFT])
+	// input_state[.RIGHT] = get_updated_input_state(dt, INPUT_MAP[.RIGHT], input_state[.RIGHT])
+}
+
+get_input :: proc(k: Game_Input, down:=false) -> (v := false) {
+	switch s in input_state[k] {
+	case Input_Up:
+		v = false
+	case Input_Pressed:
+		v = true
+	case Input_Held:
+		v = down || s.t >= HOLD_TIME
+	}
 	return
 }
 
-get_direction_input :: proc(consume := true, consume_all := true) -> Tile_Coord {
-	input: Tile_Coord
-	if get_input(.UP, consume, false) {
-		input.y -= 1
+get_direction_input :: proc() -> (m := Tile_Coord{}) {
+	if get_input(.UP, true) {
+		m.y -= 1
 	}
-	if get_input(.DOWN, consume, false) {
-		input.y += 1
+	if get_input(.DOWN, true) {
+		m.y += 1
 	}
-	if get_input(.LEFT, consume, false) {
-		input.x -= 1
+	if get_input(.LEFT, true) {
+		m.x -= 1
 	}
-	if get_input(.RIGHT, consume, false) {
-		input.x += 1
+	if get_input(.RIGHT, true) {
+		m.x += 1
 	}
-	if input.x != 0 || input.y != 0 {
-		if consume_all {frame_input = FRAME_INPUT{}}
-	}
-	return input
+	return
 }
 
-get_y_input :: proc(consume := true, consume_all := true) -> Maybe(int) {
+get_y_input :: proc() -> Maybe(int) {
 	v := 0
-	if get_input(.UP, consume, consume_all) {
+	if get_input(.UP) {
 		v -= 1
 	}
-	if get_input(.DOWN, consume, consume_all) {
+	if get_input(.DOWN) {
 		v += 1
 	}
 	if v != 0 {
