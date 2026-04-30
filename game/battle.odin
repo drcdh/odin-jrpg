@@ -1,55 +1,75 @@
 package game
 
+import hm "core:container/handle_map"
 import "core:container/queue"
 import "core:fmt"
 import "core:time"
 
 import rl "vendor:raylib"
 
-MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + PARTY_SIZE
+MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + NUM_PC
 
 battle_active := false
-battle_combatants := [MAX_COMBATANTS]Combatant{}
+battle_baddies: [MAX_ENCOUNTER_SIZE]Character
+battle_baddy_handles: [MAX_ENCOUNTER_SIZE]Combatant_Handle
+battle_combatants: hm.Static_Handle_Map(MAX_COMBATANTS, Combatant, Combatant_Handle)
 battle_ending := false
 battle_event_queue: queue.Queue(Battle_Event)
-battle_num_combatants := 0
+battle_num_baddies := 0
 battle_state: Battle_State
 
 check_win :: proc() -> bool {
 	// todo tie function to encounter
-	team_lives := [?]bool{false, false}
-	for bc, i in battle_combatants {
-		if bc.enabled && bc.character.stats.hitpoints > 0 {
-			team_lives[bc.team] = true
+	team_alive := [?]bool{false, false}
+	it := hm.iterator_make(&battle_combatants)
+	for c, _ in hm.iterate(&it) {
+		if combatant_alive(c) {
+			team_alive[c.team] = true
 		}
 	}
-	if team_lives[0] && !team_lives[1] {
+	if team_alive[0] && !team_alive[1] {
 		fmt.println("Team 0 wins")
 		battle_ending = true
-	} else if !team_lives[0] && team_lives[1] {
+	} else if !team_alive[0] && team_alive[1] {
 		fmt.println("Team 1 wins")
 		battle_ending = true
-	} else if !team_lives[0] && !team_lives[1] {
+	} else if !team_alive[0] && !team_alive[1] {
 		fmt.println("Draw")
 		battle_ending = true
 	}
 	return battle_ending
 }
 
+combatant_alive :: proc(c: ^Combatant) -> bool {
+	return c.enabled && c.character.stats.hitpoints > 0
+}
+
+get_combatant_not_on_team :: proc(actor_team: int) -> ^Combatant {
+	// todo: just take first for now
+	it := hm.iterator_make(&battle_combatants)
+	for c, _ in hm.iterate(&it) {
+		if combatant_alive(c) && c.team != actor_team {
+			return c
+		}
+	}
+	return nil
+}
+
 draw_battle :: proc() {
 	rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
-	y := i32(0)
-	for bc, i in battle_combatants {
-		if bc.enabled {
-			y += 60
+	it := hm.iterator_make(&battle_combatants)
+	for c, h in hm.iterate(&it) {
+		if c.enabled {
 			tc := TEXT_COLOR
-			if bc.character.stats.hitpoints == 0 {
+			if c.character.stats.hitpoints == 0 {
 				tc = rl.Color{250, 10, 10, 255}
 			}
-			if i == target {
+			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
 				tc = rl.Color{50, 100, 100, 255}
 			}
-			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", bc.character.name, bc.character.stats.hitpoints, bc.t), 60, y, 18, tc)
+			x := i32(c.coord.x)
+			y := i32(c.coord.y)
+			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), x, y, 18, tc)
 		}
 	}
 	#partial switch s in battle_state {
@@ -62,36 +82,42 @@ end_turn :: proc() {
 	battle_state = Next_Event{}
 }
 
-get_next_combatant :: proc() -> int {
-	actor_idx := 0
-	actor_t := battle_combatants[0].t
-	for i in 1 ..< MAX_ENCOUNTER_SIZE {
-		if battle_combatants[i].enabled && battle_combatants[i].character.stats.hitpoints > 0 {
-			if battle_combatants[i].t < actor_t {
-				actor_t = battle_combatants[i].t
-				actor_idx = i
+get_next_combatant :: proc() -> Combatant_Handle {
+	first := true
+	actor_h : Combatant_Handle
+	actor_t := 0
+	it := hm.iterator_make(&battle_combatants)
+	for c, h in hm.iterate(&it) {
+		if combatant_alive(c) {
+			if first || c.t < actor_t {
+				actor_t = c.t
+				actor_h = h
+				first = false
 			}
 		}
 	}
-	return actor_idx
+	return actor_h
 }
 
 update_battle :: proc(dt: f32) {
 	switch &s in battle_state {
 	case Next_Turn:
-		fmt.println(s)
 		if check_win() {
 			// todo: enqueue default or encounter-overriding events (exp gain etc.)
 			battle_state = Next_Event{}
 		} else {
 			battle_state = Take_Turn {
-				actor_idx = get_next_combatant(),
+				actor_h = get_next_combatant(),
 			}
 		}
 	case Take_Turn:
 		// fmt.println(s)
-		actor := &battle_combatants[s.actor_idx]
-		actor.turn(s.actor_idx)
+		if actor, ok := hm.get(&battle_combatants, s.actor_h); ok {
+			actor.turn(actor)
+		} else {
+			fmt.println("tried to take turn but handle not in map")
+			battle_state = Next_Turn{}
+		}
 	// action, done := actor.turn(actor_idx).?
 	case Next_Event:
 		if queue.len(battle_event_queue) > 0 {
@@ -123,7 +149,7 @@ update_battle :: proc(dt: f32) {
 	}
 }
 
-PC_COMBATANT_TURN :: proc(actor_idx: int) {
+PC_COMBATANT_TURN :: proc(actor: ^Combatant) {
 	// fmt.printfln("actor %d target %d", actor_idx, target)
 	if target < 0 {target = 0}
 	if rl.IsKeyPressed(.UP) {
@@ -131,18 +157,19 @@ PC_COMBATANT_TURN :: proc(actor_idx: int) {
 	} else if rl.IsKeyPressed(.DOWN) {
 		change_target(1)
 	} else if rl.IsKeyPressed(.SPACE) {
-		target_c := get_combatant_ref(target)
-		queue_battle_animation(
-			Battle_Animation{draw = draw_expanding_circle, offset = Pixel_Coord{100, f32(60 + 60 * target)}},
-		)
-		queue_character_effect(
-			Character_Effect {
-				character = target_c,
-				effect = HP_LOSS{hp_loss = max(1, get_combatant_ref(actor_idx).stats.offense - target_c.stats.defense)},
-			},
-		)
-		target = -1
-		battle_combatants[actor_idx].t += 20
-		end_turn()
+		if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[target]); ok {
+			queue_battle_animation(
+				Battle_Animation{draw = draw_expanding_circle, offset = target_cb.coord},
+			)
+			queue_character_effect(
+				Character_Effect {
+					character = target_cb.character,
+					effect = HP_LOSS{hp_loss = max(1, actor.character.stats.offense - target_cb.character.stats.defense)},
+				},
+			)
+			target = -1
+			actor.t += 20
+			end_turn()
+		}
 	}
 }

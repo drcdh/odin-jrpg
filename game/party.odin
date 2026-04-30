@@ -17,7 +17,7 @@ PROTAGONIST := Character {
 }
 
 ASSASSIN := Character {
-	name = "Player",
+	name = "Assassin",
 	stats = Stats{hitpoints = 8, offense = 9, defense = 4},
 }
 
@@ -27,17 +27,17 @@ MUSICIAN := Character {
 }
 
 KILLER := Character {
-	name = "Player",
+	name = "Killer",
 	stats = Stats{hitpoints = 5, offense = 9, defense = 2},
 }
 
 MOURNER := Character {
-	name = "Player",
+	name = "Mourner",
 	stats = Stats{hitpoints = 5, offense = 7, defense = 3},
 }
 
 ZEALOT := Character {
-	name = "Player",
+	name = "Zealot",
 	stats = Stats{hitpoints = 11, offense = 8, defense = 8},
 }
 
@@ -56,4 +56,5 @@ get_pc :: proc(pc: PC) -> ^Character {
 	case .Zealot:
 		return &ZEALOT
 	}
+	return nil
 }

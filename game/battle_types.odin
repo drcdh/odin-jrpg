@@ -1,8 +1,14 @@
 package game
 
+import hm "core:container/handle_map"
+
+Combatant_Handle :: distinct hm.Handle16
+
 Combatant :: struct {
-	character: Character,
+	character: ^Character,
+	coord:     Pixel_Coord,
 	enabled:   bool,
+	handle:    Combatant_Handle,
 	t:         int,
 	team:      int,
 	turn:      Turn_Proc,
@@ -29,7 +35,7 @@ Battle_Event :: union {
 Next_Event :: struct {}
 Next_Turn :: struct {}
 Take_Turn :: struct {
-	actor_idx: int,
+	actor_h: Combatant_Handle,
 }
 Process_Battle_Animation :: struct {
 	draw:   proc(dt: f32, offset: Pixel_Coord),
@@ -47,4 +53,4 @@ Battle_State :: union {
 	Process_Battle_Animation,
 }
 
-Turn_Proc :: proc(actor_idx: int)
+Turn_Proc :: proc(actor: ^Combatant)

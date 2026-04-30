@@ -2,41 +2,38 @@ package game
 
 import "core:fmt"
 
-ATTACK_RANDOM_OPPONENT :: proc(actor_idx: int) {
-	actor := battle_combatants[actor_idx].character
-	actor_team := battle_combatants[actor_idx].team
-	target_idx := get_combatant_not_on_team(actor_team)
-	target := get_combatant_ref(target_idx)
-
-	fmt.printfln("> actor %d is attacking target %d %w", actor_idx, target_idx, target)
-
-	queue_battle_animation(
-		Battle_Animation{draw = draw_expanding_circle, offset = Pixel_Coord{100, f32(60 + 60 * target_idx)}},
-	)
-
-	queue_character_effect(
-		Character_Effect {
-			character = target,
-			effect = HP_LOSS{hp_loss = max(1, actor.stats.offense - target.stats.defense)},
-		},
-	)
-
-	battle_combatants[actor_idx].t += 20
-	end_turn()
+Baddy_Template :: struct {
+	name: cstring,
+	stats: Stats,
+	turn: Turn_Proc,
 }
 
-new_mouse_sized_rat :: proc() -> Combatant {
-	return Combatant {
-		character = Character{stats = Stats{hitpoints = 1, offense = 1, defense = 1}, name = "Mouse-Sized Rat"},
-		enabled = true,
-		t = 10,
-		turn = ATTACK_RANDOM_OPPONENT,
-	}}
+mouse_sized_rat := Baddy_Template{
+	name = "Mouse-Sized Rat",
+	stats = Stats{hitpoints = 1, offense = 1, defense = 1},
+	turn = ATTACK_RANDOM_OPPONENT,
+}
 
-new_rat_sized_mouse :: proc() -> Combatant {
-	return Combatant {
-		character = Character{stats = Stats{hitpoints = 3, offense = 3, defense = 2}, name = "Rat-Sized Mouse"},
-		enabled = true,
-		t = 12,
-		turn = ATTACK_RANDOM_OPPONENT,
-	}}
+rat_sized_mouse := Baddy_Template{
+	name = "Rat-Sized Mouse",
+	stats = Stats{hitpoints = 3, offense = 3, defense = 2},
+	turn = ATTACK_RANDOM_OPPONENT,
+}
+
+Baddy_Id :: enum{
+	None,
+	Mouse_Sized_Rat,
+	Rat_Sized_Mouse,
+}
+
+get_baddy_template :: proc(baddy_id: Baddy_Id) -> ^Baddy_Template {
+	switch baddy_id {
+	case .None:
+		return nil
+	case .Mouse_Sized_Rat:
+		return &mouse_sized_rat
+	case .Rat_Sized_Mouse:
+		return &rat_sized_mouse
+	}
+	return nil
+}

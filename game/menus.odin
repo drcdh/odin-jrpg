@@ -24,7 +24,7 @@ menu_0_proc :: proc() {
 	case 1:
 		menu_0_state = Menu_Closed{}
 		if menu_0_forget {menu_0_selection = 0}
-		start_encounter_0()
+		start_encounter(0)
 	case 2:
 		menu_0_state = Menu_Closed{}
 		quitting = true //Quitting_State{.5}
