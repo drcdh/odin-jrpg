@@ -116,10 +116,10 @@ update_runner :: proc(dt: f32) {
 			}
 		case Clear_Text:
 			dialogue_str = ""
-			// fmt.println("<clear>")
+		// fmt.println("<clear>")
 		case Close_Dialogue:
 			dialogue_show = false
-			// fmt.println("<close>")
+		// fmt.println("<close>")
 		case Set_Entity_Busy:
 			set_entity_busy(event.id, event.busy)
 		case Set_Entity_Script:

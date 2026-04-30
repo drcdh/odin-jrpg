@@ -15,12 +15,8 @@ Menu_State :: union {
 
 menu_0_forget := false
 menu_0_selection := 0
-menu_0_state : Menu_State
-menu_0_options := [?]cstring{
-	"More",
-	"Fight!",
-	"Quit",
-}
+menu_0_state: Menu_State
+menu_0_options := [?]cstring{"More", "Fight!", "Quit"}
 menu_0_proc :: proc() {
 	switch menu_0_selection {
 	case 0:
@@ -31,17 +27,14 @@ menu_0_proc :: proc() {
 		start_encounter_0()
 	case 2:
 		menu_0_state = Menu_Closed{}
-		quitting = true//Quitting_State{.5}
+		quitting = true //Quitting_State{.5}
 	}
 }
 
 menu_1_forget := false
 menu_1_selection := 0
-menu_1_state : Menu_State
-menu_1_options := [?]cstring{
-	"HP +9",
-	"Back",
-}
+menu_1_state: Menu_State
+menu_1_options := [?]cstring{"HP +9", "Back"}
 menu_1_proc :: proc() {
 	switch menu_1_selection {
 	case 0:
@@ -62,7 +55,7 @@ draw_menus :: proc() {
 			if i == menu_0_selection {
 				tc = rl.Color{50, 100, 100, 255}
 			}
-			rl.DrawText(opt, 120, i32(100 + i*50), 18, tc)
+			rl.DrawText(opt, 120, i32(100 + i * 50), 18, tc)
 		}
 	}
 
@@ -75,7 +68,7 @@ draw_menus :: proc() {
 			if i == menu_1_selection {
 				tc = rl.Color{50, 100, 100, 255}
 			}
-			rl.DrawText(opt, 520, i32(100 + i*50), 18, tc)
+			rl.DrawText(opt, 520, i32(100 + i * 50), 18, tc)
 		}
 	}
 }
@@ -83,8 +76,8 @@ draw_menus :: proc() {
 change_menu_selection_vertical :: proc(s: ^int, n: int) {
 	if dy, ok := get_y_input().?; ok {
 		s^ = s^ + dy
-		if s^ >= n { s^ = 0 }
-		if s^ < 0 { s^ = n-1 }
+		if s^ >= n {s^ = 0}
+		if s^ < 0 {s^ = n - 1}
 	}
 }
 

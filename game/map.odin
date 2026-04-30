@@ -1,7 +1,7 @@
 package game
 
-import "core:math/rand"
 import hm "core:container/handle_map"
+import "core:math/rand"
 import rl "vendor:raylib"
 
 NUM_TILE_TYPES :: 3

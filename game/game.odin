@@ -1,7 +1,7 @@
 package game
 
-import "core:fmt"
 import hm "core:container/handle_map"
+import "core:fmt"
 
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map
