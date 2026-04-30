@@ -1,5 +1,6 @@
 package game
 
+import "core:fmt"
 import hm "core:container/handle_map"
 
 MAX_ENCOUNTER_SIZE :: 6
@@ -12,6 +13,7 @@ encounters := [?]Encounter{{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_
 
 add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 	if template := get_baddy_template(baddy_id); template != nil {
+		fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
 		battle_baddies[battle_num_baddies] = Character {
 			name  = template.name,
 			stats = template.stats,

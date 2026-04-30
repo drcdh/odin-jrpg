@@ -18,6 +18,11 @@ battle_event_queue: queue.Queue(Battle_Event)
 battle_num_baddies := 0
 battle_state: Battle_State
 
+battle_cleanup :: proc() {
+	queue.clear(&battle_event_queue)
+	hm.clear(&battle_combatants)
+}
+
 check_win :: proc() -> bool {
 	// todo tie function to encounter
 	team_alive := [?]bool{false, false}
@@ -136,7 +141,7 @@ update_battle :: proc(dt: f32) {
 		} else {
 			if battle_ending {
 				battle_active = false
-				queue.clear(&battle_event_queue)
+				battle_cleanup()
 			} else {
 				battle_state = Next_Turn{}
 			}

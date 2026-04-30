@@ -10,9 +10,9 @@ change_target :: proc(d: int) {
 		target += d
 		if target < 0 {target = MAX_ENCOUNTER_SIZE - 1}
 		if target >= MAX_ENCOUNTER_SIZE {target = 0}
-		if target == initial_target {return}
+		if target == initial_target {break}
 		if c, ok := hm.get(&battle_combatants, battle_baddy_handles[target]); ok {
-			if c.enabled {return}
+			if c.enabled {break}
 		}
 	}
 }
