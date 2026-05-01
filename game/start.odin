@@ -19,7 +19,7 @@ dialogue_str: string
 
 draw_dialogue :: proc() {
 	if dialogue_show {
-		c_str := strings.clone_to_cstring(dialogue_str)
+		c_str := strings.clone_to_cstring(dialogue_str, context.temp_allocator)
 		rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
 		rl.DrawTextEx(font, c_str, {20, 20}, 18, 0, TEXT_COLOR)
 	}
@@ -79,9 +79,18 @@ start :: proc(args: []string) -> int {
 			update_level(dt)
 			update_menus(dt)
 		}
+
+		free_all(context.temp_allocator)
 	}
 
+	free_all(context.temp_allocator)
+
+	delete_atlased_font(font)
+	delete_input()
+	unload_sounds()
+
 	rl.UnloadTexture(atlas)
+	rl.CloseAudioDevice()
 	rl.CloseWindow()
 
 	return 0

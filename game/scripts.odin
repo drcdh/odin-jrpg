@@ -115,6 +115,7 @@ update_runner :: proc(dt: f32) {
 				countdown = event.duration,
 			}
 		case Clear_Text:
+			delete(dialogue_str)
 			dialogue_str = ""
 		// fmt.println("<clear>")
 		case Close_Dialogue:

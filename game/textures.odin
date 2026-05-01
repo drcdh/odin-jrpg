@@ -1,5 +1,6 @@
 package game
 
+import "core:slice"
 import "core:strings"
 import rl "vendor:raylib"
 
@@ -33,6 +34,11 @@ load_atlased_font :: proc() -> rl.Font {
 		recs = raw_data(font_rects),
 		glyphs = raw_data(glyphs),
 	}
+}
+
+delete_atlased_font :: proc(font: rl.Font) {
+	delete(slice.from_ptr(font.glyphs, int(font.glyphCount)))
+	delete(slice.from_ptr(font.recs, int(font.glyphCount)))
 }
 
 // textures: map[string]rl.Texture

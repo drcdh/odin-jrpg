@@ -51,6 +51,11 @@ initialize_input :: proc() {
 	input_state[.RIGHT  ]= Input_Up{}
 }
 
+delete_input :: proc() {
+	delete(INPUT_MAP)
+	delete(input_state)
+}
+
 get_updated_input_state :: proc(dt: f32, k: rl.KeyboardKey, s: Single_Input_State) -> Single_Input_State {
 	if rl.IsKeyDown(k) {
 		switch s in s {

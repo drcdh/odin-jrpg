@@ -23,7 +23,7 @@ get_sound :: proc(n: SoundName) -> rl.Sound {
 
 	path := sound_paths[n]
 
-	s := rl.LoadSound(strings.clone_to_cstring(strings.concatenate({AUDIO_ASSETS_ROOT, path}), context.temp_allocator))
+	s := rl.LoadSound(strings.clone_to_cstring(strings.concatenate({AUDIO_ASSETS_ROOT, path}, context.temp_allocator), context.temp_allocator))
 
 	sounds[n] = s
 
@@ -33,4 +33,11 @@ get_sound :: proc(n: SoundName) -> rl.Sound {
 play_sound :: proc(n: SoundName) {
 	s := get_sound(n)
 	rl.PlaySound(s)
+}
+
+unload_sounds :: proc() {
+	for _, s in sounds {
+		rl.UnloadSound(s)
+	}
+	delete(sounds)
 }
