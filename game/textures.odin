@@ -3,6 +3,12 @@ package game
 import "core:strings"
 import rl "vendor:raylib"
 
+// This is loaded in `main` from `ATLAS_DATA`
+atlas: rl.Texture
+
+// This is manually constructed in `main` from the font info in `atlas.odin`
+font: rl.Font
+
 textures: map[string]rl.Texture
 
 load_texture :: proc(path: string) -> rl.Texture {

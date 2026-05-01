@@ -59,11 +59,11 @@ get_pc :: proc(pc: PC) -> ^Character {
 	return nil
 }
 
-pc_textures := [NUM_PC]string{
-	"protagonist.png",
-	"assassin.png",
-	"musician.png",
-	"killer.png",
-	"mourner.png",
-	"zealot.png",
+pc_textures := [NUM_PC]Texture_Name{
+	.Protagonist,
+	.Assassin,
+	.Musician,
+	.Killer,
+	.Mourner,
+	.Zealot,
 }

@@ -9,6 +9,8 @@ import rl "vendor:raylib"
 WINDOW_WIDTH: i32 : cast(i32)(TILE_SIZE) * 30
 WINDOW_HEIGHT: i32 : cast(i32)(TILE_SIZE) * 30
 
+ATLAS_DATA :: #load("atlas.png")
+
 TEXT_COLOR := rl.Color{50, 10, 10, 255}
 TEXT_DISPLAY_BACKGROUND := rl.Color{200, 200, 200, 255}
 
@@ -30,6 +32,10 @@ start :: proc(args: []string) -> int {
 
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
 	rl.InitAudioDevice()
+
+	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
+	atlas = rl.LoadTextureFromImage(atlas_image)
+	rl.UnloadImage(atlas_image)
 
 	initialize_input()
 
@@ -73,6 +79,7 @@ start :: proc(args: []string) -> int {
 		}
 	}
 
+	rl.UnloadTexture(atlas)
 	rl.CloseWindow()
 
 	return 0

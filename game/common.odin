@@ -45,6 +45,8 @@ Direction_Vectors :: [Direction]Tile_Coord {
 	.NorthWest = {-1, -1},
 }
 
+Rect :: rl.Rectangle // for the results of atlas_builder
+
 tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
 	return Pixel_Coord{cast(Pixel)(t.x) * TILE_SIZE, cast(Pixel)(t.y) * TILE_SIZE}
 }

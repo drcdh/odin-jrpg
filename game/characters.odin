@@ -35,7 +35,7 @@ Character_Effect :: struct {
 
 do_effect :: proc(ce: Character_Effect) {
 	target := ce.character
-	fmt.println("  ~  ", target^, ce.effect)
+	// fmt.println("  ~  ", target^, ce.effect)
 	switch e in ce.effect {
 	case HP_GAIN:
 		target.stats.hitpoints += e.hp_gain

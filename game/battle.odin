@@ -102,7 +102,8 @@ draw_battle_combatants :: proc() {
 				tint = rl.YELLOW
 				tc = rl.YELLOW
 			}
-			rl.DrawTextureV(load_texture(c.texture), c.coord, tint)
+			// rl.DrawTextureV(load_texture(c.texture), c.coord, tint)
+	rl.DrawTextureRec(atlas, atlas_textures[c.texture].rect, c.coord, tint)
 			rl.DrawText(c.character.name, i32(c.coord.x), i32(c.coord.y-32), 20, tc)
 		}
 	}

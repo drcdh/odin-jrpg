@@ -11,7 +11,7 @@ Combatant :: struct {
 	handle:    Combatant_Handle,
 	t:         int,
 	team:      int,
-	texture: string,
+	texture: Texture_Name,
 	turn:      Turn_Proc,
 }
 
