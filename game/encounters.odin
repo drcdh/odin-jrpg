@@ -11,6 +11,7 @@ Encounter :: struct {
 }
 
 encounters := [?]Encounter{
+	{baddies = {.Mouse_Sized_Rat, .None, .None, .None, .None, .None}},
 	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .None, .None, .None}},
 	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .Mouse_Sized_Rat, .Mouse_Sized_Rat, .Mouse_Sized_Rat}},
 }

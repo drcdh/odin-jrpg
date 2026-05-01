@@ -93,21 +93,37 @@ draw_battle_combatants :: proc() {
 	it := hm.iterator_make(&battle_combatants)
 	for c, h in hm.iterate(&it) {
 		if c.enabled {
-			tint := c.visual.tint
 			tc := rl.BLACK
 			if c.character.stats.hitpoints <= 0 {
-				tint = rl.RED
 				tc = rl.RED
 			}
 			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-				tint = rl.YELLOW
-				tc = rl.YELLOW
+				r : Pixel_Dim
+				switch v in c.visual.variant {
+				case Animation:
+					r = atlas_textures[v.current_frame].document_size
+				case Texture_Name:
+					r = atlas_textures[v].document_size
+				}
+				rl.DrawRectangleV(c.coord-{2,2}, r + {4, 4}, rl.GREEN)
+			}
+			if actor, ok := battle_state.(Take_Turn); ok {
+				if h == actor.actor_h {
+					r : Pixel_Dim
+					switch v in c.visual.variant {
+					case Animation:
+						r = atlas_textures[v.current_frame].document_size
+					case Texture_Name:
+						r = atlas_textures[v].document_size
+					}
+					rl.DrawRectangleV(c.coord-{2,2}, r + {4, 4}, rl.YELLOW)
+				}
 			}
 			switch v in c.visual.variant {
 			case Animation:
-				draw_animation(v, c.coord, tint)
+				draw_animation(v, c.coord, c.visual.tint)
 			case Texture_Name:
-				rl.DrawTextureRec(atlas, atlas_textures[v].rect, c.coord, tint)
+				rl.DrawTextureRec(atlas, atlas_textures[v].rect, c.coord, c.visual.tint)
 			}
 			pos := Pixel_Coord{c.coord.x, c.coord.y-32}
 			rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
