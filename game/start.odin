@@ -21,7 +21,7 @@ draw_dialogue :: proc() {
 	if dialogue_show {
 		c_str := strings.clone_to_cstring(dialogue_str)
 		rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
-		rl.DrawText(c_str, 20, 20, 18, TEXT_COLOR)
+		rl.DrawTextEx(font, c_str, {20, 20}, 18, 0, TEXT_COLOR)
 	}
 }
 
@@ -36,6 +36,8 @@ start :: proc(args: []string) -> int {
 	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
 	atlas = rl.LoadTextureFromImage(atlas_image)
 	rl.UnloadImage(atlas_image)
+
+	font = load_atlased_font()
 
 	initialize_input()
 

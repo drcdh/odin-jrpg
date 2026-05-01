@@ -56,7 +56,8 @@ draw_menus :: proc() {
 			if i == menu_0_selection {
 				tc = rl.Color{50, 100, 100, 255}
 			}
-			rl.DrawText(opt, 120, i32(100 + i * 50), 18, tc)
+			i := f32(i)
+			rl.DrawTextEx(font, opt, {120, 100 + i * 50}, 18, 0, tc)
 		}
 	}
 
@@ -69,7 +70,8 @@ draw_menus :: proc() {
 			if i == menu_1_selection {
 				tc = rl.Color{50, 100, 100, 255}
 			}
-			rl.DrawText(opt, 520, i32(100 + i * 50), 18, tc)
+			i := f32(i)
+			rl.DrawTextEx(font, opt, Pixel_Coord{520, 100 + i * 50}, 18, 0, tc)
 		}
 	}
 }
