@@ -201,13 +201,7 @@ PC_COMBATANT_TURN :: proc(actor: ^Combatant) {
 		change_target(1)
 	} else if get_input(.ENTER) {
 		if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[target]); ok {
-			queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target_cb.coord})
-			queue_character_effect(
-				Character_Effect {
-					character = target_cb.character,
-					effect = HP_LOSS{hp_loss = max(1, actor.character.stats.offense - target_cb.character.stats.defense)},
-				},
-			)
+			attack(actor, target_cb)
 			target = -1
 			actor.t += 20
 			end_turn()
