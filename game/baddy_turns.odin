@@ -7,15 +7,18 @@ attack :: proc(actor, target: ^Combatant) {
 
 	queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target.coord})
 
+	hp_loss := max(1, actor.character.stats.offense - target.character.stats.defense)
+
+	queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss)})
+
 	queue_character_effect(
 		Character_Effect {
 			character = target.character,
-			effect = HP_LOSS{hp_loss = max(1, actor.character.stats.offense - target.character.stats.defense)},
+			effect = HP_LOSS{hp_loss = hp_loss},
 		},
 	)
 
 	actor.t += 20
-
 }
 
 ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {

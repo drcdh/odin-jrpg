@@ -70,6 +70,8 @@ draw_battle :: proc() {
 	#partial switch s in battle_state {
 	case Process_Battle_Animation:
 		s.draw(s.t, s.offset)
+	case Process_Text_Effect:
+		rl.DrawText(s.text, i32(s.coord.x-32), i32(s.coord.y-32*s.t), 32, rl.Color{0, 0, 0, u8(255*(1-s.t))})
 	}
 }
 
@@ -175,6 +177,11 @@ update_battle :: proc(dt: f32) {
 				fmt.println(e.text)
 			case Character_Effect:
 				do_effect(e)
+			case Text_Effect:
+				battle_state = Process_Text_Effect {
+					coord = e.coord,
+					text = e.text,
+				}
 			}
 		} else {
 			if battle_ending {
@@ -187,6 +194,11 @@ update_battle :: proc(dt: f32) {
 	case Process_Battle_Animation:
 		s.t += dt
 		if s.t >= .5 {
+			battle_state = Next_Event{}
+		}
+	case Process_Text_Effect:
+		s.t += dt
+		if s.t >= 1 {
 			battle_state = Next_Event{}
 		}
 	}

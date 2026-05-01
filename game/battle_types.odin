@@ -26,10 +26,16 @@ Battle_Message :: struct {
 	text: cstring,
 }
 
+Text_Effect :: struct {
+	coord: Pixel_Coord,
+	text: cstring,
+}
+
 Battle_Event :: union {
 	Battle_Animation,
 	Battle_Message,
 	Character_Effect,
+	Text_Effect,
 }
 
 // STATE
@@ -44,6 +50,11 @@ Process_Battle_Animation :: struct {
 	offset: Pixel_Coord,
 	t:      f32,
 }
+Process_Text_Effect :: struct {
+	coord: Pixel_Coord,
+	t: f32,
+	text: cstring,
+}
 // Process_Battle_Message :: struct {
 // 	text: cstring,
 // }
@@ -52,6 +63,7 @@ Battle_State :: union {
 	Next_Turn,
 	Take_Turn,
 	Process_Battle_Animation,
+	Process_Text_Effect,
 }
 
 Turn_Proc :: proc(actor: ^Combatant)

@@ -13,3 +13,7 @@ queue_battle_message :: proc(event: Battle_Message) {
 queue_character_effect :: proc(event: Character_Effect) {
 	queue.push_back(&battle_event_queue, event)
 }
+
+queue_text_effect :: proc(event: Text_Effect) {
+	queue.push_back(&battle_event_queue, event)
+}
