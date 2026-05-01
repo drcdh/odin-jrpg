@@ -3,6 +3,9 @@ package game
 import "core:strings"
 import rl "vendor:raylib"
 
+AUDIO_ASSETS_ROOT :: "game/audio/"
+
+
 SoundName :: enum {
 	UI_Blip,
 }
@@ -20,7 +23,7 @@ get_sound :: proc(n: SoundName) -> rl.Sound {
 
 	path := sound_paths[n]
 
-	s := rl.LoadSound(strings.clone_to_cstring(strings.concatenate({ASSETS_ROOT, path}), context.temp_allocator))
+	s := rl.LoadSound(strings.clone_to_cstring(strings.concatenate({AUDIO_ASSETS_ROOT, path}), context.temp_allocator))
 
 	sounds[n] = s
 

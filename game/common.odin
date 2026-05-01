@@ -4,8 +4,6 @@ import la "core:math/linalg"
 
 import rl "vendor:raylib"
 
-ASSETS_ROOT :: "assets/"
-
 Id :: int
 
 Pixel :: f32
@@ -13,6 +11,8 @@ Pixel_Coord :: [2]Pixel
 Pixel_Dim :: [2]Pixel
 
 PIXEL_ORIGIN: Pixel_Coord
+
+Vec2 :: rl.Vector2
 
 Tile_T :: int
 Tile_Coord :: [2]Tile_T
@@ -44,6 +44,8 @@ Direction_Vectors :: [Direction]Tile_Coord {
 	.West      = {-1, 0},
 	.NorthWest = {-1, -1},
 }
+
+Rect :: rl.Rectangle // for the results of atlas_builder
 
 tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
 	return Pixel_Coord{cast(Pixel)(t.x) * TILE_SIZE, cast(Pixel)(t.y) * TILE_SIZE}

@@ -2,6 +2,7 @@ package game
 
 import "core:fmt"
 import hm "core:container/handle_map"
+import rl "vendor:raylib"
 
 MAX_ENCOUNTER_SIZE :: 6
 
@@ -27,8 +28,8 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 				character = &battle_baddies[battle_num_baddies],
 				coord = Pixel_Coord{64, f32(64 + 128 * battle_num_baddies)},
 				enabled = true,
-				texture = template.texture,
 				turn = template.turn,
+				visual = {variant = template.texture, tint = rl.WHITE},
 			},
 		)
 		battle_num_baddies += 1
@@ -55,8 +56,8 @@ start_encounter :: proc(i: int) {
 				coord = {x, y},
 				enabled = true,
 				team = 1,
-				texture = pc_textures[pc_idx],
 				turn = PC_COMBATANT_TURN,
+				visual = {variant=animation_create(pc_idle_anim[pc_idx]), tint=pc_idle_anim_tint[pc_idx]},
 			},
 		)
 		battle_num_pc += 1

@@ -71,7 +71,8 @@ draw_battle :: proc() {
 	case Process_Battle_Animation:
 		s.draw(s.t, s.offset)
 	case Process_Text_Effect:
-		rl.DrawText(s.text, i32(s.coord.x-32), i32(s.coord.y-32*s.t), 32, rl.Color{0, 0, 0, u8(255*(1-s.t))})
+		pos := Pixel_Coord{s.coord.x-32, s.coord.y-32*s.t}
+		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{0, 0, 0, u8(255*(1-s.t))})
 	}
 }
 
@@ -92,7 +93,7 @@ draw_battle_combatants :: proc() {
 	it := hm.iterator_make(&battle_combatants)
 	for c, h in hm.iterate(&it) {
 		if c.enabled {
-			tint := rl.WHITE
+			tint := c.visual.tint
 			tc := rl.BLACK
 			if c.character.stats.hitpoints <= 0 {
 				tint = rl.RED
@@ -102,8 +103,14 @@ draw_battle_combatants :: proc() {
 				tint = rl.YELLOW
 				tc = rl.YELLOW
 			}
-			rl.DrawTextureV(load_texture(c.texture), c.coord, tint)
-			rl.DrawText(c.character.name, i32(c.coord.x), i32(c.coord.y-32), 20, tc)
+			switch v in c.visual.variant {
+			case Animation:
+				draw_animation(v, c.coord, tint)
+			case Texture_Name:
+				rl.DrawTextureRec(atlas, atlas_textures[v].rect, c.coord, tint)
+			}
+			pos := Pixel_Coord{c.coord.x, c.coord.y-32}
+			rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
 		}
 	}
 }
@@ -119,7 +126,7 @@ draw_party_member_stats :: proc(p: int) {
 		if c.character.stats.hitpoints <= 0 {
 			tc = rl.RED
 		}
-		rl.DrawText(fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), i32(x), i32(y), 32, tc)
+		rl.DrawTextEx(font, fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), {x, y}, 32, 0, tc)
 	}
 }
 
@@ -200,6 +207,14 @@ update_battle :: proc(dt: f32) {
 		s.t += dt
 		if s.t >= 1 {
 			battle_state = Next_Event{}
+		}
+	}
+
+	it := hm.iterator_make(&battle_combatants)
+	for c, _ in hm.iterate(&it) {
+		#partial switch &v in c.visual.variant {
+		case Animation:
+			animation_update(&v, dt)
 		}
 	}
 }

@@ -39,7 +39,7 @@ DUDE_SCRIPT_1 := [?]Event{Append_Text{text = "Keep on keepin' on."}, Close_Dialo
 
 welcome := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Append_Text{text = "(Press spacebar to start)"},
+	Append_Text{text = "[Press Z to start]"},
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
