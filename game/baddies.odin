@@ -5,18 +5,21 @@ import "core:fmt"
 Baddy_Template :: struct {
 	name:  cstring,
 	stats: Stats,
+	texture: string,
 	turn:  Turn_Proc,
 }
 
 mouse_sized_rat := Baddy_Template {
 	name = "Mouse-Sized Rat",
 	stats = Stats{hitpoints = 1, offense = 1, defense = 1},
+	texture = "mouse-sized_rat.png",
 	turn = ATTACK_RANDOM_OPPONENT,
 }
 
 rat_sized_mouse := Baddy_Template {
 	name = "Rat-Sized Mouse",
 	stats = Stats{hitpoints = 3, offense = 3, defense = 2},
+	texture = "rat-sized_mouse.png",
 	turn = ATTACK_RANDOM_OPPONENT,
 }
 

@@ -90,13 +90,17 @@ draw_battle_combatants :: proc() {
 	it := hm.iterator_make(&battle_combatants)
 	for c, h in hm.iterate(&it) {
 		if c.enabled {
-			tc := rl.Color{10, 10, 10, 255}
+			tint := rl.WHITE
+			tc := rl.BLACK
 			if c.character.stats.hitpoints <= 0 {
-				tc = rl.Color{250, 10, 10, 255}
+				tint = rl.RED
+				tc = rl.RED
 			}
 			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-				tc = rl.Color{10, 10, 200, 255}
+				tint = rl.YELLOW
+				tc = rl.YELLOW
 			}
+			rl.DrawTextureV(load_texture(c.texture), c.coord, tint)
 			rl.DrawText(c.character.name, i32(c.coord.x), i32(c.coord.y), 20, tc)
 		}
 	}
@@ -109,11 +113,11 @@ draw_party_member_stats :: proc(p: int) {
 		if p >= 3 {
 			x += 14*TILE_SIZE
 		}
-		y := TILE_SIZE*(25 + f32(p % 3))
+		y := TILE_SIZE*(25.5 + f32(p % 3))
 		if c.character.stats.hitpoints <= 0 {
-			tc = rl.Color{250, 10, 10, 255}
+			tc = rl.RED
 		}
-		rl.DrawText(fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), i32(x), i32(y), 16, tc)
+		rl.DrawText(fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), i32(x), i32(y), 32, tc)
 	}
 }
 

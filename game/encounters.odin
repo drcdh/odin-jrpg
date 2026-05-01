@@ -22,8 +22,9 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 			&battle_combatants,
 			Combatant {
 				character = &battle_baddies[battle_num_baddies],
-				coord = Pixel_Coord{64, f32(64 + 64 * battle_num_baddies)},
+				coord = Pixel_Coord{64, f32(64 + 128 * battle_num_baddies)},
 				enabled = true,
+				texture = template.texture,
 				turn = template.turn,
 			},
 		)
@@ -43,9 +44,10 @@ start_encounter :: proc(i: int) {
 			&battle_combatants,
 			Combatant {
 				character = get_pc(PC(pc_idx)),
-				coord = Pixel_Coord{480, f32(96 + 64 * pc_idx)},
+				coord = Pixel_Coord{480, f32(96 + 96 * pc_idx)},
 				enabled = true,
 				team = 1,
+				texture = pc_textures[pc_idx],
 				turn = PC_COMBATANT_TURN,
 			},
 		)
