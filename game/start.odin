@@ -29,6 +29,7 @@ start :: proc(args: []string) -> int {
 	fmt.println("Hellope! Environment: ", #config(env, "dev"))
 
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
+	rl.InitAudioDevice()
 
 	initialize_input()
 

@@ -79,7 +79,7 @@ update_input_state :: proc(dt: f32) {
 	// input_state[.RIGHT] = get_updated_input_state(dt, INPUT_MAP[.RIGHT], input_state[.RIGHT])
 }
 
-get_input :: proc(k: Game_Input, down:=false) -> (v := false) {
+get_input :: proc(k: Game_Input, down:=false, silent:=false) -> (v := false) {
 	switch s in input_state[k] {
 	case Input_Up:
 		v = false
@@ -88,20 +88,23 @@ get_input :: proc(k: Game_Input, down:=false) -> (v := false) {
 	case Input_Held:
 		v = down || s.t >= HOLD_TIME
 	}
+	if v && !silent {
+		play_sound(.UI_Blip)
+	}
 	return
 }
 
 get_direction_input :: proc() -> (m := Tile_Coord{}) {
-	if get_input(.UP, true) {
+	if get_input(.UP, true, true) {
 		m.y -= 1
 	}
-	if get_input(.DOWN, true) {
+	if get_input(.DOWN, true, true) {
 		m.y += 1
 	}
-	if get_input(.LEFT, true) {
+	if get_input(.LEFT, true, true) {
 		m.x -= 1
 	}
-	if get_input(.RIGHT, true) {
+	if get_input(.RIGHT, true, true) {
 		m.x += 1
 	}
 	return

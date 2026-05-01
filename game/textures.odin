@@ -3,8 +3,6 @@ package game
 import "core:strings"
 import rl "vendor:raylib"
 
-ROOT :: "assets/"
-
 textures: map[string]rl.Texture
 
 load_texture :: proc(path: string) -> rl.Texture {
@@ -12,7 +10,7 @@ load_texture :: proc(path: string) -> rl.Texture {
 		return t
 	}
 
-	t := rl.LoadTexture(strings.clone_to_cstring(strings.concatenate({ROOT, path}), context.temp_allocator))
+	t := rl.LoadTexture(strings.clone_to_cstring(strings.concatenate({ASSETS_ROOT, path}), context.temp_allocator))
 
 	if t.id != 0 {
 		textures[path] = t
