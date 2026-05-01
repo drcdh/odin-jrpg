@@ -13,9 +13,11 @@ battle_active := false
 battle_baddies: [MAX_ENCOUNTER_SIZE]Character
 battle_baddy_handles: [MAX_ENCOUNTER_SIZE]Combatant_Handle
 battle_combatants: hm.Static_Handle_Map(MAX_COMBATANTS, Combatant, Combatant_Handle)
+battle_pc_handles: [NUM_PC]Combatant_Handle
 battle_ending := false
 battle_event_queue: queue.Queue(Battle_Event)
 battle_num_baddies := 0
+battle_num_pc := 0
 battle_state: Battle_State
 
 battle_cleanup :: proc() {
@@ -61,25 +63,57 @@ get_combatant_not_on_team :: proc(actor_team: int) -> ^Combatant {
 }
 
 draw_battle :: proc() {
-	rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
-	it := hm.iterator_make(&battle_combatants)
-	for c, h in hm.iterate(&it) {
-		if c.enabled {
-			tc := TEXT_COLOR
-			if c.character.stats.hitpoints == 0 {
-				tc = rl.Color{250, 10, 10, 255}
-			}
-			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-				tc = rl.Color{50, 100, 100, 255}
-			}
-			x := i32(c.coord.x)
-			y := i32(c.coord.y)
-			rl.DrawText(fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), x, y, 18, tc)
-		}
-	}
+	draw_battle_background()
+	draw_battle_party_stats()
+	draw_battle_combatants()
+
 	#partial switch s in battle_state {
 	case Process_Battle_Animation:
 		s.draw(s.t, s.offset)
+	}
+}
+
+draw_battle_background :: proc() {
+	// rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
+		rl.ClearBackground(rl.GRAY)
+}
+
+draw_battle_party_stats :: proc() {
+	rl.DrawRectangleV({TILE_SIZE/2, 25*TILE_SIZE}, {29*TILE_SIZE, TILE_SIZE*4}, rl.Color{0, 250, 250, 255})
+
+	for p in 0..<battle_num_pc {
+		draw_party_member_stats(p)
+	}
+}
+
+draw_battle_combatants :: proc() {
+	it := hm.iterator_make(&battle_combatants)
+	for c, h in hm.iterate(&it) {
+		if c.enabled {
+			tc := rl.Color{10, 10, 10, 255}
+			if c.character.stats.hitpoints <= 0 {
+				tc = rl.Color{250, 10, 10, 255}
+			}
+			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
+				tc = rl.Color{10, 10, 200, 255}
+			}
+			rl.DrawText(c.character.name, i32(c.coord.x), i32(c.coord.y), 20, tc)
+		}
+	}
+}
+
+draw_party_member_stats :: proc(p: int) {
+	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
+		tc := TEXT_COLOR
+		x := TILE_SIZE
+		if p >= 3 {
+			x += 14*TILE_SIZE
+		}
+		y := TILE_SIZE*(25 + f32(p % 3))
+		if c.character.stats.hitpoints <= 0 {
+			tc = rl.Color{250, 10, 10, 255}
+		}
+		rl.DrawText(fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), i32(x), i32(y), 16, tc)
 	}
 }
 

@@ -33,12 +33,13 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 
 start_encounter :: proc(i: int) {
 	battle_num_baddies = 0
+	battle_num_pc = 0
 
 	for baddy_id in encounters[i].baddies {
 		add_baddy_combatant(baddy_id)
 	}
 	for pc_idx in 0 ..< NUM_PC {
-		_ = hm.add(
+		battle_pc_handles[battle_num_pc] = hm.add(
 			&battle_combatants,
 			Combatant {
 				character = get_pc(PC(pc_idx)),
@@ -48,6 +49,7 @@ start_encounter :: proc(i: int) {
 				turn = PC_COMBATANT_TURN,
 			},
 		)
+		battle_num_pc += 1
 	}
 	battle_active = true
 	battle_ending = false
