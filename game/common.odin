@@ -12,6 +12,8 @@ Pixel_Dim :: [2]Pixel
 
 PIXEL_ORIGIN: Pixel_Coord
 
+Vec2 :: rl.Vector2
+
 Tile_T :: int
 Tile_Coord :: [2]Tile_T
 Tile_Offset :: Pixel_Coord

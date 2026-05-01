@@ -1,6 +1,7 @@
 package game
 
 import hm "core:container/handle_map"
+import rl "vendor:raylib"
 
 Combatant_Handle :: distinct hm.Handle16
 
@@ -11,8 +12,18 @@ Combatant :: struct {
 	handle:    Combatant_Handle,
 	t:         int,
 	team:      int,
-	texture: Texture_Name,
 	turn:      Turn_Proc,
+	visual:    Combatant_Visual,
+}
+
+Combatant_Visual_Variant :: union {
+	Animation,
+	Texture_Name,
+}
+
+Combatant_Visual :: struct {
+	tint:			 rl.Color,
+	variant: Combatant_Visual_Variant,
 }
 
 // EVENTS
