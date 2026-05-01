@@ -4,8 +4,6 @@ import la "core:math/linalg"
 
 import rl "vendor:raylib"
 
-ASSETS_ROOT :: "assets/"
-
 Id :: int
 
 Pixel :: f32
