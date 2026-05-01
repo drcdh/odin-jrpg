@@ -12,7 +12,7 @@ MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + NUM_PC
 battle_active := false
 battle_baddies: [MAX_ENCOUNTER_SIZE]Character
 battle_baddy_handles: [MAX_ENCOUNTER_SIZE]Combatant_Handle
-battle_combatants: hm.Static_Handle_Map(MAX_COMBATANTS, Combatant, Combatant_Handle)
+battle_combatants: hm.Static_Handle_Map(64, Combatant, Combatant_Handle)
 battle_pc_handles: [NUM_PC]Combatant_Handle
 battle_ending := false
 battle_event_queue: queue.Queue(Battle_Event)
@@ -101,7 +101,7 @@ draw_battle_combatants :: proc() {
 				tc = rl.YELLOW
 			}
 			rl.DrawTextureV(load_texture(c.texture), c.coord, tint)
-			rl.DrawText(c.character.name, i32(c.coord.x), i32(c.coord.y), 20, tc)
+			rl.DrawText(c.character.name, i32(c.coord.x), i32(c.coord.y-32), 20, tc)
 		}
 	}
 }

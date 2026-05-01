@@ -9,7 +9,10 @@ Encounter :: struct {
 	baddies: [MAX_ENCOUNTER_SIZE]Baddy_Id,
 }
 
-encounters := [?]Encounter{{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .None, .None, .None}}}
+encounters := [?]Encounter{
+	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .None, .None, .None}},
+	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .Mouse_Sized_Rat, .Mouse_Sized_Rat, .Mouse_Sized_Rat}},
+}
 
 add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 	if template := get_baddy_template(baddy_id); template != nil {
@@ -39,12 +42,17 @@ start_encounter :: proc(i: int) {
 	for baddy_id in encounters[i].baddies {
 		add_baddy_combatant(baddy_id)
 	}
+
+	dy : f32 = 128
+	y0 : f32 = 192
+	x : f32 = 480
+	y : f32 = y0
 	for pc_idx in 0 ..< NUM_PC {
 		battle_pc_handles[battle_num_pc] = hm.add(
 			&battle_combatants,
 			Combatant {
 				character = get_pc(PC(pc_idx)),
-				coord = Pixel_Coord{480, f32(96 + 96 * pc_idx)},
+				coord = {x, y},
 				enabled = true,
 				team = 1,
 				texture = pc_textures[pc_idx],
@@ -52,6 +60,13 @@ start_encounter :: proc(i: int) {
 			},
 		)
 		battle_num_pc += 1
+		x += 32
+		if battle_num_pc != 3 {
+			y += dy
+		} else {
+			x += 128
+			y = y0 + dy/2
+		}
 	}
 	battle_active = true
 	battle_ending = false
