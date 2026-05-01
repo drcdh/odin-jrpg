@@ -2,11 +2,8 @@ package game
 
 import "core:fmt"
 
-ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
-	actor_team := actor.team
-	target := get_combatant_not_on_team(actor_team)
-
-	fmt.printfln("> %s is attacking target %s", actor.character.name, target.character.name)
+attack :: proc(actor, target: ^Combatant) {
+	fmt.printfln("> %s is attacking %s", actor.character.name, target.character.name)
 
 	queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target.coord})
 
@@ -18,6 +15,14 @@ ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
 	)
 
 	actor.t += 20
+
+}
+
+ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
+	actor_team := actor.team
+	target := get_combatant_not_on_team(actor_team)
+
+	attack(actor, target)
 
 	end_turn()
 }
