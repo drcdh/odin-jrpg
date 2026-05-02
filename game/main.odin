@@ -2,12 +2,18 @@ package game
 
 import rl "vendor:raylib"
 
-WINDOW_WIDTH: i32 : cast(i32)(TILE_SIZE) * 30
-WINDOW_HEIGHT: i32 : cast(i32)(TILE_SIZE) * 30
+WORLD_WIDTH :: 32
+WORLD_HEIGHT :: 28
+
+SCALE :: 2
+
+WINDOW_WIDTH:: cast(i32)(TILE_SIZE * WORLD_WIDTH)
+WINDOW_HEIGHT:: cast(i32)(TILE_SIZE * WORLD_HEIGHT)
 
 ATLAS_DATA :: #load("atlas.png")
 
 running : bool
+text_test : bool
 
 init :: proc() {
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
@@ -39,6 +45,15 @@ draw :: proc() {
 			draw_dialogue()
 			draw_menus()
 		}
+
+		if rl.IsKeyPressed(.T) { text_test = !text_test }
+		if text_test {
+			rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
+			rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
+			rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 16}, 32, 0, rl.WHITE)
+			rl.DrawLine(0, 16+32, WINDOW_WIDTH, 16+32, rl.WHITE)
+		}
+
 		rl.EndDrawing()
 	}
 

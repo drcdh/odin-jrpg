@@ -76,12 +76,20 @@ draw_battle :: proc() {
 }
 
 draw_battle_background :: proc() {
-	// rl.DrawRectangleV(Pixel_Coord{50, 50}, Pixel_Dim{800, 800}, TEXT_DISPLAY_BACKGROUND)
-		rl.ClearBackground(rl.GRAY)
+	rl.ClearBackground(rl.GRAY)
+}
+
+remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
+	return {
+		x = r.x + p,
+		y = r.y + p,
+		width = r.width - 2*p,
+		height = r.height - 2*p,
+	}
 }
 
 draw_battle_party_stats :: proc() {
-	rl.DrawRectangleV({TILE_SIZE/2, 25*TILE_SIZE}, {29*TILE_SIZE, TILE_SIZE*4}, rl.Color{0, 250, 250, 255})
+	draw_menu(rl.Rectangle{0, 24*TILE_SIZE, 32*TILE_SIZE, 4*TILE_SIZE})
 
 	for p in 0..<battle_num_pc {
 		draw_party_member_stats(p)

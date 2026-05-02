@@ -6,7 +6,6 @@ import rl "vendor:raylib"
 Rect :: rl.Rectangle // for the results of atlas_builder
 
 TEXT_COLOR := rl.Color{50, 10, 10, 255}
-TEXT_DISPLAY_BACKGROUND := rl.Color{200, 200, 200, 255}
 
 // This is loaded in `main` from `ATLAS_DATA`
 atlas: rl.Texture

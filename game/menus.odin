@@ -45,11 +45,20 @@ menu_1_proc :: proc() {
 	}
 }
 
+MENU_COLOR :: rl.Color{0, 250, 250,255}
+MENU_ROUND :: .2
+
+draw_menu :: proc(r: rl.Rectangle) {
+	rl.DrawRectangleRounded(r, MENU_ROUND, 0, rl.BLACK)
+	rl.DrawRectangleRounded(remove_margins(r, 4), MENU_ROUND, 0, rl.WHITE)
+	rl.DrawRectangleRounded(remove_margins(r, 8), MENU_ROUND, 0, MENU_COLOR)
+}
+
 draw_menus :: proc() {
 	switch s in menu_0_state {
 	case Menu_Closed:
 	case Menu_Open:
-		rl.DrawRectangleV(Pixel_Coord{100, 100}, Pixel_Dim{300, 300}, TEXT_DISPLAY_BACKGROUND)
+		draw_menu({100, 100, 300, 300})
 		for opt, i in menu_0_options {
 			tc := TEXT_COLOR
 			if i == menu_0_selection {
@@ -63,7 +72,7 @@ draw_menus :: proc() {
 	switch s in menu_1_state {
 	case Menu_Closed:
 	case Menu_Open:
-		rl.DrawRectangleV(Pixel_Coord{500, 100}, Pixel_Dim{200, 200}, TEXT_DISPLAY_BACKGROUND)
+		draw_menu({500, 100, 200, 200})
 		for opt, i in menu_1_options {
 			tc := TEXT_COLOR
 			if i == menu_1_selection {

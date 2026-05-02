@@ -8,13 +8,11 @@ Pixel :: f32
 Pixel_Coord :: [2]Pixel
 Pixel_Dim :: [2]Pixel
 
-PIXEL_ORIGIN: Pixel_Coord
-
 Tile_T :: int
 Tile_Coord :: [2]Tile_T
 Tile_Offset :: Pixel_Coord
 
-TILE_SIZE: Pixel : 32
+TILE_SIZE: Pixel : 16 * SCALE
 TILE_DIM :: Pixel_Dim{TILE_SIZE, TILE_SIZE}
 
 Direction :: enum {

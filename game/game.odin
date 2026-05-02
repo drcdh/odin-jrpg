@@ -11,7 +11,7 @@ dialogue_str: string
 draw_dialogue :: proc() {
 	if dialogue_show {
 		c_str := strings.clone_to_cstring(dialogue_str, context.temp_allocator)
-		rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
+		draw_menu({10, 10, 300, 100})
 		rl.DrawTextEx(font, c_str, {20, 20}, 18, 0, TEXT_COLOR)
 	}
 }
