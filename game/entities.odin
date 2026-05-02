@@ -102,20 +102,18 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 
 update_entity :: proc(dt: f32, e: ^Entity) {
 	update_kinematics(dt, &e.k)
-	if !e.busy && !e.disabled {
+	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
 		case Pacing:
 			destinations := LEVEL_ROUTES[s.route]
-			if !e.k.moving {
-				s.countdown -= dt
-				if s.countdown <= 0 {
-					if entity_at_tile(e^, destinations[s.step]) {
-						s.step += 1
-						if s.step >= len(destinations) {s.step = 0}
-					}
-					try_set_destination(&e.k, destinations[s.step])
-					s.countdown = s.pause
+			s.countdown -= dt
+			if s.countdown <= 0 {
+				if entity_at_tile(e^, destinations[s.step]) {
+					s.step += 1
+					if s.step >= len(destinations) {s.step = 0}
 				}
+				try_set_destination(&e.k, destinations[s.step])
+				s.countdown = s.pause
 			}
 		case Control:
 			player_control(dt, e)
@@ -139,4 +137,19 @@ entity_at_tile :: proc(e: Entity, t: Tile_Coord) -> bool {
 
 tile_in_front :: proc(e: ^Entity) -> Tile_Coord {
 	return e.k.tile + e.k.face
+}
+
+player_control :: proc(_: f32, p: ^Entity) {
+	if _, ok := menu_0_state.(Menu_Closed); ok {
+		input := get_direction_input()
+		if (input.x != 0 || input.y != 0) {
+			try_set_destination(&p.k, p.k.tile + input)
+		} else {
+			if get_input(.ENTER) {
+				if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
+					activate_entity(entity_in_front)
+				}
+			}
+		}
+	}
 }

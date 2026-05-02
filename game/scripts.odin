@@ -3,25 +3,6 @@ package game
 import "core:fmt"
 import "core:strings"
 
-battle_hack := true
-hack := true
-
-player_control :: proc(_: f32, p: ^Entity) {
-	// todo: check update_entity for redundant checks
-	if (menu_0_state != Menu_Open{}) && !p.k.moving && !p.busy && !p.disabled {
-		input := get_direction_input()
-		if (input.x != 0 || input.y != 0) {
-			try_set_destination(&p.k, p.k.tile + input)
-		} else {
-			if get_input(.ENTER) {
-				if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
-					activate_entity(entity_in_front)
-				}
-			}
-		}
-	}
-}
-
 Append_Text :: struct {
 	// hurry: bool,
 	// pause: f32,
@@ -77,6 +58,15 @@ Runner :: struct {
 	script: []Event,
 	state:  Script_State,
 	step:   int,
+}
+
+start_script :: proc(script: []Event) {
+	if script != nil {
+		fmt.println("starting script of len", len(script))
+		runner.script = script
+		runner.state = Continue{}
+		runner.step = -1
+	}
 }
 
 update_runner :: proc(dt: f32) {

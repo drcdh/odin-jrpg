@@ -37,51 +37,50 @@ init :: proc() {
 }
 
 draw :: proc() {
-		rl.BeginDrawing()
-		rl.ClearBackground(rl.BLACK)
-		if battle_active {
-			draw_battle()
-		} else if world_menu_active {
-			draw_world_menu()
-		} else {
-			draw_level()
-			draw_dialogue()
-			draw_menus()
-		}
-
-		if rl.IsKeyPressed(.A) { world_menu_active = !world_menu_active }
-
-		if rl.IsKeyPressed(.T) { text_test = !text_test }
-		if text_test {
-			rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
-			rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
-			rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 16}, 32, 0, rl.WHITE)
-			rl.DrawLine(0, 16+32, WINDOW_WIDTH, 16+32, rl.WHITE)
-		}
-
-		rl.EndDrawing()
+	rl.BeginDrawing()
+	rl.ClearBackground(rl.BLACK)
+	if battle_active {
+		draw_battle()
+	} else if world_menu_active {
+		draw_world_menu()
+	} else {
+		draw_world()
+		draw_dialogue()
+		draw_menus()
 	}
+
+	if rl.IsKeyPressed(.A) { world_menu_active = !world_menu_active }
+
+	if rl.IsKeyPressed(.T) { text_test = !text_test }
+	if text_test {
+		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
+		rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
+		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 16}, 32, 0, rl.WHITE)
+		rl.DrawLine(0, 16+32, WINDOW_WIDTH, 16+32, rl.WHITE)
+	}
+
+	rl.EndDrawing()
+}
 
 update :: proc() {
+	dt := rl.GetFrameTime()
 
-		dt := rl.GetFrameTime()
+	update_input_state(dt)
 
-		update_input_state(dt)
-
-		if battle_active {
-			update_battle(dt)
-		} else if world_menu_active {
-			update_world_menu()
-		} else {
-			// text gets input priority
-			update_runner(dt)
-			update_level(dt)
-			update_menus(dt)
-		}
-
-		free_all(context.temp_allocator)
-		running = !( quitting || rl.IsKeyDown(.Q))
+	if battle_active {
+		update_battle(dt)
+	} else if world_menu_active {
+		update_world_menu()
+	} else {
+		// text gets input priority
+		update_runner(dt)
+		update_world(dt)
+		update_menus(dt)
 	}
+
+	free_all(context.temp_allocator)
+	running = !( quitting || rl.IsKeyDown(.Q))
+}
 
 tear_down :: proc() {
 	delete_atlased_font(font)
