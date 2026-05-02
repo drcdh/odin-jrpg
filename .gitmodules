@@ -1,6 +1,3 @@
-[submodule "assets/atlas-builder"]
-	path = assets/atlas-builder
-	url = https://github.com/karl-zylinski/atlas-builder.git
 [submodule "game/atlas-builder"]
 	path = game/atlas-builder
 	url = https://github.com/karl-zylinski/atlas-builder.git
