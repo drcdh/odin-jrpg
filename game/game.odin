@@ -2,6 +2,19 @@ package game
 
 import hm "core:container/handle_map"
 import "core:fmt"
+import "core:strings"
+import rl "vendor:raylib"
+
+dialogue_show := false
+dialogue_str: string
+
+draw_dialogue :: proc() {
+	if dialogue_show {
+		c_str := strings.clone_to_cstring(dialogue_str, context.temp_allocator)
+		rl.DrawRectangleV(Pixel_Coord{10, 10}, Pixel_Dim{300, 100}, TEXT_DISPLAY_BACKGROUND)
+		rl.DrawTextEx(font, c_str, {20, 20}, 18, 0, TEXT_COLOR)
+	}
+}
 
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map

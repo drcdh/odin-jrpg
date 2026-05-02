@@ -65,3 +65,12 @@ get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
 	alt := v - move
 	return move, alt
 }
+
+WINDOW_WIDTH: i32 : cast(i32)(TILE_SIZE) * 30
+WINDOW_HEIGHT: i32 : cast(i32)(TILE_SIZE) * 30
+
+ATLAS_DATA :: #load("atlas.png")
+
+TEXT_COLOR := rl.Color{50, 10, 10, 255}
+TEXT_DISPLAY_BACKGROUND := rl.Color{200, 200, 200, 255}
+
