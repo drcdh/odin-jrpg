@@ -81,6 +81,7 @@ update :: proc() {
 			update_runner(dt)
 			update_world(dt)
 			// update_menus(dt)
+			update_dialogue()
 		}
 	}
 

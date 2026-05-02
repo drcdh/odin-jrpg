@@ -3,7 +3,7 @@ package game
 import "core:strings"
 import rl "vendor:raylib"
 
-dialogue_speed: f32 = .1 // seconds
+dialogue_speed: f32 = .05 // seconds
 
 Dialogue_Hidden :: struct {}
 Dialogue_Marquee :: struct {
@@ -74,7 +74,7 @@ update_dialogue :: proc() {
 
 advance_marquee :: proc() -> bool {
 	dialogue_end += 1
-	return dialogue_end == strings.builder_len(dialogue_builder) - 1
+	return dialogue_end == strings.builder_len(dialogue_builder)
 }
 
 clear_dialogue :: proc() {
