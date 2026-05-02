@@ -44,6 +44,12 @@ delete_atlased_font :: proc(font: rl.Font) {
 	delete(slice.from_ptr(font.recs, int(font.glyphCount)))
 }
 
+draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
+	atlas_rect := atlas_textures[v].rect
+	dest := rl.Rectangle{pos.x, pos.y, SCALE*atlas_rect.width, SCALE*atlas_rect.height}
+	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
+}
+
 // textures: map[string]rl.Texture
 //
 // load_texture :: proc(path: string) -> rl.Texture {

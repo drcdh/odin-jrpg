@@ -130,7 +130,7 @@ draw_battle_combatants :: proc() {
 			case Animation:
 				draw_animation(v, c.coord, c.visual.tint)
 			case Texture_Name:
-				rl.DrawTextureRec(atlas, atlas_textures[v].rect, c.coord, c.visual.tint)
+				draw_texture(v, c.coord, c.visual.tint)
 			}
 			pos := Pixel_Coord{c.coord.x, c.coord.y-32}
 			rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)

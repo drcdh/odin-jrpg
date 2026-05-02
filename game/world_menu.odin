@@ -36,7 +36,7 @@ draw_world_menu :: proc() {
 	y := .5*TILE_SIZE
 	for i in 0..<4 {
 		if world_menu_selection == World_Menu_Selection(i) {
-			draw_animation(icon, {x-1.5*TILE_SIZE, y}, rl.WHITE, SCALE)
+			draw_animation(icon, {x-1.5*TILE_SIZE, y}, rl.WHITE)
 		}
 		rl.DrawTextEx(font, strings.clone_to_cstring(world_menu_options[i], context.allocator), {x, y}, 32, 0, rl.WHITE)
 		x += f32(WINDOW_WIDTH/4)

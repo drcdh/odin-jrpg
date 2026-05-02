@@ -69,7 +69,7 @@ animation_atlas_texture :: proc(anim: Animation) -> Atlas_Texture {
 	return atlas_textures[anim.current_frame]
 }
 
-draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, scale:f32=1, flip_x:=false) {
+draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, flip_x:=false) {
 	// Fetch the texture for the current frame of the animation.
 	anim_texture := animation_atlas_texture(anim)
 
@@ -98,8 +98,8 @@ draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, scale:
 	dest := Rect {
 		pos.x + offset.x,
 		pos.y + offset.y,
-		scale*anim_texture.rect.width,
-		scale*anim_texture.rect.height,
+		SCALE*anim_texture.rect.width,
+		SCALE*anim_texture.rect.height,
 	}
 
 	// I want origin of player to be at the feet.
