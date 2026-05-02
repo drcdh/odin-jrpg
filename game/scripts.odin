@@ -4,14 +4,12 @@ import "core:fmt"
 import "core:strings"
 
 Append_Text :: struct {
-	// hurry: bool,
-	// pause: f32,
-	text: cstring,
+	text: string,
 }
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}
 End :: struct {}
-Pause_Dialogue :: struct {
+Pause_Runner :: struct {
 	duration: f32,
 }
 Set_Entity_Busy :: struct {
@@ -35,7 +33,7 @@ Event :: union {
 	Clear_Text,
 	Close_Dialogue,
 	End,
-	Pause_Dialogue,
+	Pause_Runner,
 	Set_Entity_Busy,
 	Set_Entity_Script,
 	Set_Entity_State,
@@ -47,11 +45,13 @@ Pause :: struct {
 	countdown: f32,
 }
 Wait :: struct {}
+Wait_Dialogue :: struct {}
 
 Script_State :: union {
 	Continue,
 	Pause,
 	Wait,
+	Wait_Dialogue,
 }
 
 Runner :: struct {
@@ -76,41 +76,30 @@ update_runner :: proc(dt: f32) {
 			runner.step += 1
 		case Pause:
 			state.countdown -= dt
-			// fmt.println("paused:", state.countdown)
 			if state.countdown <= 0 {runner.state = Continue{}}
 			return
 		case Wait:
 			if get_input(Game_Input.ENTER) {runner.state = Continue{}}
 			return
+		case Wait_Dialogue:
+			if dialogue_done() { runner.state = Continue{} }
+			return
 		}
-
-		// fmt.println("Start event", runner.script[runner.step])
 
 		switch event in runner.script[runner.step] {
 		case Append_Text:
-			dialogue_show = true
-			dialogue_str = strings.concatenate({dialogue_str, string(event.text)})
-			fmt.println(event.text)
-			// if !event.hurry {
-			// 	fmt.println("[waiting]")
-			runner.state = Wait{}
-		// } else {
-		// 	fmt.println("[hurry]")
-		// }
+			queue_dialogue(event.text)
+			runner.state = Wait_Dialogue{}
 		case End:
 			runner.script = nil
-		case Pause_Dialogue:
-			// fmt.println("[pause]")
+		case Pause_Runner:
 			runner.state = Pause {
 				countdown = event.duration,
 			}
 		case Clear_Text:
-			delete(dialogue_str)
-			dialogue_str = ""
-		// fmt.println("<clear>")
+			clear_dialogue()
 		case Close_Dialogue:
-			dialogue_show = false
-		// fmt.println("<close>")
+			close_dialogue()
 		case Set_Entity_Busy:
 			set_entity_busy(event.id, event.busy)
 		case Set_Entity_Script:
