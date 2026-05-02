@@ -2,8 +2,6 @@ package game
 
 import la "core:math/linalg"
 
-import rl "vendor:raylib"
-
 Id :: int
 
 Pixel :: f32
@@ -11,8 +9,6 @@ Pixel_Coord :: [2]Pixel
 Pixel_Dim :: [2]Pixel
 
 PIXEL_ORIGIN: Pixel_Coord
-
-Vec2 :: rl.Vector2
 
 Tile_T :: int
 Tile_Coord :: [2]Tile_T
@@ -45,8 +41,6 @@ Direction_Vectors :: [Direction]Tile_Coord {
 	.NorthWest = {-1, -1},
 }
 
-Rect :: rl.Rectangle // for the results of atlas_builder
-
 tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
 	return Pixel_Coord{cast(Pixel)(t.x) * TILE_SIZE, cast(Pixel)(t.y) * TILE_SIZE}
 }
@@ -65,12 +59,3 @@ get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
 	alt := v - move
 	return move, alt
 }
-
-WINDOW_WIDTH: i32 : cast(i32)(TILE_SIZE) * 30
-WINDOW_HEIGHT: i32 : cast(i32)(TILE_SIZE) * 30
-
-ATLAS_DATA :: #load("atlas.png")
-
-TEXT_COLOR := rl.Color{50, 10, 10, 255}
-TEXT_DISPLAY_BACKGROUND := rl.Color{200, 200, 200, 255}
-

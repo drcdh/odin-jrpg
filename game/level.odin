@@ -71,7 +71,7 @@ start_level_0 :: proc() {
 
 	add_pc_entity(PLAYER_SPAWN, Direction_Vectors[.South])
 
-	dude := hm.add(
+	_ = hm.add(
 		&entities,
 		Entity {
 			id = DUDE_ID,
@@ -83,7 +83,7 @@ start_level_0 :: proc() {
 		},
 	)
 
-	warp := hm.add(
+	_ = hm.add(
 		&entities,
 		Entity {
 			id = 3,
@@ -109,7 +109,7 @@ start_level_1 :: proc() {
 
 	add_pc_entity(Tile_Coord{11, 11}, Direction_Vectors[.East])
 
-	warp := hm.add(
+	_ = hm.add(
 		&entities,
 		Entity {
 			id = 3,
@@ -174,7 +174,7 @@ start_level_2 :: proc() {
 		)
 	}
 
-	warp := hm.add(
+	_ = hm.add(
 		&entities,
 		Entity {
 			id = 3,

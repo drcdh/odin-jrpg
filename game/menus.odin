@@ -1,7 +1,6 @@
 package game
 
 import hm "core:container/handle_map"
-import "core:fmt"
 import rl "vendor:raylib"
 
 Menu_Closed :: struct {}

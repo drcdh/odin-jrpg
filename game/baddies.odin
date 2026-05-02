@@ -1,7 +1,5 @@
 package game
 
-import "core:fmt"
-
 Baddy_Template :: struct {
 	name:  cstring,
 	stats: Stats,

@@ -2,6 +2,11 @@ package game
 
 import rl "vendor:raylib"
 
+WINDOW_WIDTH: i32 : cast(i32)(TILE_SIZE) * 30
+WINDOW_HEIGHT: i32 : cast(i32)(TILE_SIZE) * 30
+
+ATLAS_DATA :: #load("atlas.png")
+
 running : bool
 
 init :: proc() {

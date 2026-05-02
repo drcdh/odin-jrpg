@@ -1,4 +1,4 @@
-// Taken from Karl's atlas-builder example
+// Adapted from Karl's atlas-builder example
 
 // This implements animations using an atlased texture as defined in atlas.odin (which is generated
 // before the code in this folder is built).
@@ -69,7 +69,7 @@ animation_atlas_texture :: proc(anim: Animation) -> Atlas_Texture {
 	return atlas_textures[anim.current_frame]
 }
 
-draw_animation :: proc(anim: Animation, pos: Vec2, tint: rl.Color, flip_x:=false) {
+draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, flip_x:=false) {
 	// Fetch the texture for the current frame of the animation.
 	anim_texture := animation_atlas_texture(anim)
 
@@ -85,7 +85,7 @@ draw_animation :: proc(anim: Animation, pos: Vec2, tint: rl.Color, flip_x:=false
 	// amounts of empty pixels around it. By adding the offsets everything will look OK.
 	//
 	// Note that when when flip_x is true we need to add the offset_right instead of the offset_left.
-	offset := Vec2 { anim_texture.offset_left, anim_texture.offset_top }
+	offset := Pixel_Coord { anim_texture.offset_left, anim_texture.offset_top }
 
 	// Flip player when walking to the left. This means both flipping the atlas_rect width, but also
 	// using the right offset instead of the left one.
@@ -105,7 +105,7 @@ draw_animation :: proc(anim: Animation, pos: Vec2, tint: rl.Color, flip_x:=false
 	// I want origin of player to be at the feet.
 	// Use document_size for origin instead of anim_texture.rect.width (and height), because those
 	// may vary from frame to frame due to being tightly packed in atlas.
-	origin := Vec2 {
+	origin := Pixel_Coord {
 		// anim_texture.document_size.x/2,
 		// anim_texture.document_size.y - 1, // -1 because there's an outline in the player anim that takes an extra pixel
 	}
