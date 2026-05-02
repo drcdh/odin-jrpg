@@ -6,17 +6,21 @@ import rl "vendor:raylib"
 AUDIO_ASSETS_ROOT :: "game/audio/"
 
 
-SoundName :: enum {
+Sound_Name :: enum {
 	UI_Blip,
+	UI_Blip2,
+	Whack,
 }
 
-sound_paths := [SoundName]string{
-	.UI_Blip = "107156__bubaproducer__button-9-funny.wav",
+sound_paths := [Sound_Name]string{
+	.UI_Blip = "sfx_menu_move2.wav",
+	.UI_Blip2 = "107156__bubaproducer__button-9-funny.wav",
+	.Whack = "sfx_sounds_impact1.wav",
 }
 
-sounds : map[SoundName]rl.Sound
+sounds : map[Sound_Name]rl.Sound
 
-get_sound :: proc(n: SoundName) -> rl.Sound {
+get_sound :: proc(n: Sound_Name) -> rl.Sound {
 	if s, ok := sounds[n]; ok {
 		return s
 	}
@@ -30,7 +34,7 @@ get_sound :: proc(n: SoundName) -> rl.Sound {
 	return s
 }
 
-play_sound :: proc(n: SoundName) {
+play_sound :: proc(n: Sound_Name) {
 	s := get_sound(n)
 	rl.PlaySound(s)
 }

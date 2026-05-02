@@ -37,6 +37,10 @@ Battle_Message :: struct {
 	text: cstring,
 }
 
+Battle_Sound :: struct {
+	sound: Sound_Name,
+}
+
 Text_Effect :: struct {
 	coord: Pixel_Coord,
 	text: cstring,
@@ -45,6 +49,7 @@ Text_Effect :: struct {
 Battle_Event :: union {
 	Battle_Animation,
 	Battle_Message,
+	Battle_Sound,
 	Character_Effect,
 	Text_Effect,
 }

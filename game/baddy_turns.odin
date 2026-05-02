@@ -1,9 +1,13 @@
 package game
 
 import "core:fmt"
+import "core:container/queue"
 
 attack :: proc(actor, target: ^Combatant) {
 	fmt.printfln("> %s is attacking %s", actor.character.name, target.character.name)
+
+	// queue_battle_sound(Battle_Sound{sound = .Whack})
+	queue.push_back(&battle_event_queue, Battle_Sound{sound = .Whack})
 
 	queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target.coord})
 

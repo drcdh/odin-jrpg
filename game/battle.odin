@@ -198,6 +198,8 @@ update_battle :: proc(dt: f32) {
 			case Battle_Message:
 				// todo
 				fmt.println(e.text)
+			case Battle_Sound:
+				play_sound(e.sound)
 			case Character_Effect:
 				do_effect(e)
 			case Text_Effect:
