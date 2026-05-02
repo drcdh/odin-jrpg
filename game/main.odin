@@ -7,13 +7,13 @@ WORLD_HEIGHT :: 28
 
 SCALE :: 2
 
-WINDOW_WIDTH:: cast(i32)(TILE_SIZE * WORLD_WIDTH)
-WINDOW_HEIGHT:: cast(i32)(TILE_SIZE * WORLD_HEIGHT)
+WINDOW_WIDTH :: cast(i32)(TILE_SIZE * WORLD_WIDTH)
+WINDOW_HEIGHT :: cast(i32)(TILE_SIZE * WORLD_HEIGHT)
 
 ATLAS_DATA :: #load("atlas.png")
 
-running : bool
-text_test : bool
+running: bool
+text_test: bool
 quitting := false // todo: transitions
 
 init :: proc() {
@@ -54,7 +54,7 @@ draw :: proc() {
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
 		rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 16}, 32, 0, rl.WHITE)
-		rl.DrawLine(0, 16+32, WINDOW_WIDTH, 16+32, rl.WHITE)
+		rl.DrawLine(0, 16 + 32, WINDOW_WIDTH, 16 + 32, rl.WHITE)
 	}
 
 	rl.EndDrawing()
@@ -65,7 +65,7 @@ update :: proc() {
 
 	update_input_state(dt)
 
-	if rl.IsKeyPressed(.T) { text_test = !text_test }
+	if rl.IsKeyPressed(.T) {text_test = !text_test}
 
 	if battle_active {
 		update_battle(dt)
@@ -85,7 +85,7 @@ update :: proc() {
 	}
 
 	free_all(context.temp_allocator)
-	running = !( quitting || rl.IsKeyDown(.Q))
+	running = !(quitting || rl.IsKeyDown(.Q))
 }
 
 tear_down :: proc() {

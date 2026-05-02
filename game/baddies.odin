@@ -1,10 +1,10 @@
 package game
 
 Baddy_Template :: struct {
-	name:  cstring,
-	stats: Stats,
+	name:    cstring,
+	stats:   Stats,
 	texture: Texture_Name,
-	turn:  Turn_Proc,
+	turn:    Turn_Proc,
 }
 
 mouse_sized_rat := Baddy_Template {

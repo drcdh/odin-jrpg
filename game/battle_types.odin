@@ -22,7 +22,7 @@ Combatant_Visual_Variant :: union {
 }
 
 Combatant_Visual :: struct {
-	tint:			 rl.Color,
+	tint:    rl.Color,
 	variant: Combatant_Visual_Variant,
 }
 
@@ -43,7 +43,7 @@ Battle_Sound :: struct {
 
 Text_Effect :: struct {
 	coord: Pixel_Coord,
-	text: cstring,
+	text:  cstring,
 }
 
 Battle_Event :: union {
@@ -68,8 +68,8 @@ Process_Battle_Animation :: struct {
 }
 Process_Text_Effect :: struct {
 	coord: Pixel_Coord,
-	t: f32,
-	text: cstring,
+	t:     f32,
+	text:  cstring,
 }
 // Process_Battle_Message :: struct {
 // 	text: cstring,

@@ -1,7 +1,7 @@
 package game
 
-import "core:fmt"
 import hm "core:container/handle_map"
+import "core:fmt"
 import rl "vendor:raylib"
 
 MAX_ENCOUNTER_SIZE :: 6
@@ -10,10 +10,19 @@ Encounter :: struct {
 	baddies: [MAX_ENCOUNTER_SIZE]Baddy_Id,
 }
 
-encounters := [?]Encounter{
+encounters := [?]Encounter {
 	{baddies = {.Mouse_Sized_Rat, .None, .None, .None, .None, .None}},
 	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .None, .None, .None}},
-	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .Mouse_Sized_Rat, .Mouse_Sized_Rat, .Mouse_Sized_Rat}},
+	{
+		baddies = {
+			.Mouse_Sized_Rat,
+			.Mouse_Sized_Rat,
+			.Rat_Sized_Mouse,
+			.Mouse_Sized_Rat,
+			.Mouse_Sized_Rat,
+			.Mouse_Sized_Rat,
+		},
+	},
 }
 
 add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
@@ -27,7 +36,7 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 			&battle_combatants,
 			Combatant {
 				character = &battle_baddies[battle_num_baddies],
-				coord = Pixel_Coord{2*TILE_SIZE, 4*TILE_SIZE*f32(1 + battle_num_baddies)},
+				coord = Pixel_Coord{2 * TILE_SIZE, 4 * TILE_SIZE * f32(1 + battle_num_baddies)},
 				enabled = true,
 				turn = template.turn,
 				visual = {variant = template.texture, tint = rl.WHITE},
@@ -45,10 +54,10 @@ start_encounter :: proc(i: int) {
 		add_baddy_combatant(baddy_id)
 	}
 
-	dy : f32 = 6*TILE_SIZE
-	y0 : f32 = 4*TILE_SIZE
-	x : f32 = 19*TILE_SIZE
-	y : f32 = y0
+	dy: f32 = 6 * TILE_SIZE
+	y0: f32 = 4 * TILE_SIZE
+	x: f32 = 19 * TILE_SIZE
+	y: f32 = y0
 	for pc_idx in 0 ..< NUM_PC {
 		battle_pc_handles[battle_num_pc] = hm.add(
 			&battle_combatants,
@@ -58,7 +67,7 @@ start_encounter :: proc(i: int) {
 				enabled = true,
 				team = 1,
 				turn = PC_COMBATANT_TURN,
-				visual = {variant=animation_create(pc_idle_anim[pc_idx]), tint=pc_idle_anim_tint[pc_idx]},
+				visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
 			},
 		)
 		battle_num_pc += 1
@@ -66,8 +75,8 @@ start_encounter :: proc(i: int) {
 		if battle_num_pc != 3 {
 			y += dy
 		} else {
-			x += 4*TILE_SIZE
-			y = y0 + dy/2
+			x += 4 * TILE_SIZE
+			y = y0 + dy / 2
 		}
 	}
 	battle_active = true

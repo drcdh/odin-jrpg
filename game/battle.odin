@@ -70,8 +70,8 @@ draw_battle :: proc() {
 	case Process_Battle_Animation:
 		s.draw(s.t, s.offset)
 	case Process_Text_Effect:
-		pos := Pixel_Coord{s.coord.x-32, s.coord.y-32*s.t}
-		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{0, 0, 0, u8(255*(1-s.t))})
+		pos := Pixel_Coord{s.coord.x - 32, s.coord.y - 32 * s.t}
+		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{0, 0, 0, u8(255 * (1 - s.t))})
 	}
 }
 
@@ -80,18 +80,13 @@ draw_battle_background :: proc() {
 }
 
 remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
-	return {
-		x = r.x + p,
-		y = r.y + p,
-		width = r.width - 2*p,
-		height = r.height - 2*p,
-	}
+	return {x = r.x + p, y = r.y + p, width = r.width - 2 * p, height = r.height - 2 * p}
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(rl.Rectangle{0, 24*TILE_SIZE, 32*TILE_SIZE, 4*TILE_SIZE})
+	draw_menu(rl.Rectangle{0, 24 * TILE_SIZE, 32 * TILE_SIZE, 4 * TILE_SIZE})
 
-	for p in 0..<battle_num_pc {
+	for p in 0 ..< battle_num_pc {
 		draw_party_member_stats(p)
 	}
 }
@@ -105,25 +100,25 @@ draw_battle_combatants :: proc() {
 				tc = rl.RED
 			}
 			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-				r : Pixel_Dim
+				r: Pixel_Dim
 				switch v in c.visual.variant {
 				case Animation:
 					r = atlas_textures[v.current_frame].document_size
 				case Texture_Name:
 					r = atlas_textures[v].document_size
 				}
-				rl.DrawRectangleV(c.coord-{2,2}, r + {4, 4}, rl.GREEN)
+				rl.DrawRectangleV(c.coord - {2, 2}, r + {4, 4}, rl.GREEN)
 			}
 			if actor, ok := battle_state.(Take_Turn); ok {
 				if h == actor.actor_h {
-					r : Pixel_Dim
+					r: Pixel_Dim
 					switch v in c.visual.variant {
 					case Animation:
 						r = atlas_textures[v.current_frame].document_size
 					case Texture_Name:
 						r = atlas_textures[v].document_size
 					}
-					rl.DrawRectangleV(c.coord-{2,2}, r + {4, 4}, rl.YELLOW)
+					rl.DrawRectangleV(c.coord - {2, 2}, r + {4, 4}, rl.YELLOW)
 				}
 			}
 			switch v in c.visual.variant {
@@ -132,7 +127,7 @@ draw_battle_combatants :: proc() {
 			case Texture_Name:
 				draw_texture(v, c.coord, c.visual.tint)
 			}
-			pos := Pixel_Coord{c.coord.x, c.coord.y-32}
+			pos := Pixel_Coord{c.coord.x, c.coord.y - 32}
 			rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
 		}
 	}
@@ -143,13 +138,20 @@ draw_party_member_stats :: proc(p: int) {
 		tc := TEXT_COLOR
 		x := TILE_SIZE
 		if p >= 3 {
-			x += 14*TILE_SIZE
+			x += 14 * TILE_SIZE
 		}
-		y := TILE_SIZE*(25.5 + f32(p % 3))
+		y := TILE_SIZE * (25.5 + f32(p % 3))
 		if c.character.stats.hitpoints <= 0 {
 			tc = rl.RED
 		}
-		rl.DrawTextEx(font, fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t), {x, y}, 32, 0, tc)
+		rl.DrawTextEx(
+			font,
+			fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t),
+			{x, y},
+			32,
+			0,
+			tc,
+		)
 	}
 }
 
@@ -212,7 +214,7 @@ update_battle :: proc(dt: f32) {
 			case Text_Effect:
 				battle_state = Process_Text_Effect {
 					coord = e.coord,
-					text = e.text,
+					text  = e.text,
 				}
 			}
 		} else {

@@ -31,7 +31,7 @@ Single_Input_State :: union {
 	Input_Held,
 }
 
-input_state : map[Game_Input]Single_Input_State
+input_state: map[Game_Input]Single_Input_State
 
 initialize_input :: proc() {
 	INPUT_MAP[Game_Input.ENTER] = rl.KeyboardKey.Z
@@ -42,13 +42,13 @@ initialize_input :: proc() {
 	INPUT_MAP[Game_Input.LEFT] = rl.KeyboardKey.LEFT
 	INPUT_MAP[Game_Input.RIGHT] = rl.KeyboardKey.RIGHT
 
-	input_state[.ENTER  ]= Input_Up{}
-	input_state[.CANCEL ]= Input_Up{}
-	input_state[.MENU   ]= Input_Up{}
-	input_state[.UP     ]= Input_Up{}
-	input_state[.DOWN   ]= Input_Up{}
-	input_state[.LEFT   ]= Input_Up{}
-	input_state[.RIGHT  ]= Input_Up{}
+	input_state[.ENTER] = Input_Up{}
+	input_state[.CANCEL] = Input_Up{}
+	input_state[.MENU] = Input_Up{}
+	input_state[.UP] = Input_Up{}
+	input_state[.DOWN] = Input_Up{}
+	input_state[.LEFT] = Input_Up{}
+	input_state[.RIGHT] = Input_Up{}
 }
 
 delete_input :: proc() {
@@ -84,7 +84,7 @@ update_input_state :: proc(dt: f32) {
 	// input_state[.RIGHT] = get_updated_input_state(dt, INPUT_MAP[.RIGHT], input_state[.RIGHT])
 }
 
-get_input :: proc(k: Game_Input, down:=false, silent:=false) -> (v := false) {
+get_input :: proc(k: Game_Input, down := false, silent := false) -> (v := false) {
 	switch s in input_state[k] {
 	case Input_Up:
 		v = false

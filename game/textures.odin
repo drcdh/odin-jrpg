@@ -22,9 +22,9 @@ load_atlased_font :: proc() -> rl.Font {
 	for ag, idx in atlas_glyphs {
 		font_rects[idx] = ag.rect
 		glyphs[idx] = {
-			value = ag.value,
-			offsetX = i32(ag.offset_x),
-			offsetY = i32(ag.offset_y),
+			value    = ag.value,
+			offsetX  = i32(ag.offset_x),
+			offsetY  = i32(ag.offset_y),
 			advanceX = i32(ag.advance_x),
 		}
 	}
@@ -46,7 +46,7 @@ delete_atlased_font :: proc(font: rl.Font) {
 
 draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
 	atlas_rect := atlas_textures[v].rect
-	dest := rl.Rectangle{pos.x, pos.y, SCALE*atlas_rect.width, SCALE*atlas_rect.height}
+	dest := rl.Rectangle{pos.x, pos.y, SCALE * atlas_rect.width, SCALE * atlas_rect.height}
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
 

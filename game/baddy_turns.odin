@@ -1,7 +1,7 @@
 package game
 
-import "core:fmt"
 import "core:container/queue"
+import "core:fmt"
 
 attack :: proc(actor, target: ^Combatant) {
 	fmt.printfln("> %s is attacking %s", actor.character.name, target.character.name)
@@ -15,12 +15,7 @@ attack :: proc(actor, target: ^Combatant) {
 
 	queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss)})
 
-	queue_character_effect(
-		Character_Effect {
-			character = target.character,
-			effect = HP_LOSS{hp_loss = hp_loss},
-		},
-	)
+	queue_character_effect(Character_Effect{character = target.character, effect = HP_LOSS{hp_loss = hp_loss}})
 
 	actor.t += 20
 }

@@ -1,8 +1,5 @@
 package game
 
-import "core:fmt"
-import "core:strings"
-
 Append_Text :: struct {
 	text: string,
 }
@@ -62,7 +59,6 @@ Runner :: struct {
 
 start_script :: proc(script: []Event) {
 	if script != nil {
-		fmt.println("starting script of len", len(script))
 		runner.script = script
 		runner.state = Continue{}
 		runner.step = -1
@@ -82,7 +78,7 @@ update_runner :: proc(dt: f32) {
 			if get_input(Game_Input.ENTER) {runner.state = Continue{}}
 			return
 		case Wait_Dialogue:
-			if dialogue_done() { runner.state = Continue{} }
+			if dialogue_done() {runner.state = Continue{}}
 			return
 		}
 
