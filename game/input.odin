@@ -115,6 +115,22 @@ get_direction_input :: proc() -> (m := Tile_Coord{}) {
 	return
 }
 
+get_menu_input :: proc() -> (m := Tile_Coord{}) {
+	if get_input(.UP) {
+		m.y -= 1
+	}
+	if get_input(.DOWN) {
+		m.y += 1
+	}
+	if get_input(.LEFT) {
+		m.x -= 1
+	}
+	if get_input(.RIGHT) {
+		m.x += 1
+	}
+	return
+}
+
 get_y_input :: proc() -> Maybe(int) {
 	v := 0
 	if get_input(.UP) {

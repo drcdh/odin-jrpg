@@ -26,6 +26,7 @@ init :: proc() {
 	font = load_atlased_font()
 
 	initialize_input()
+	init_world_menu()
 
 	menu_0_state = Menu_Closed{}
 	menu_1_state = Menu_Closed{}
@@ -69,6 +70,8 @@ update :: proc() {
 
 		if battle_active {
 			update_battle(dt)
+		} else if world_menu_active {
+			update_world_menu()
 		} else {
 			// text gets input priority
 			update_runner(dt)
