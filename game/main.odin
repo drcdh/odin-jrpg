@@ -40,11 +40,15 @@ draw :: proc() {
 		rl.ClearBackground(rl.BLACK)
 		if battle_active {
 			draw_battle()
+		} else if world_menu_active {
+			draw_world_menu()
 		} else {
 			draw_level()
 			draw_dialogue()
 			draw_menus()
 		}
+
+		if rl.IsKeyPressed(.A) { world_menu_active = !world_menu_active }
 
 		if rl.IsKeyPressed(.T) { text_test = !text_test }
 		if text_test {

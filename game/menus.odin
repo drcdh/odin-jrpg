@@ -45,7 +45,7 @@ menu_1_proc :: proc() {
 	}
 }
 
-MENU_COLOR :: rl.Color{0, 250, 250,255}
+MENU_COLOR :: rl.Color{10, 150, 200,255}
 MENU_ROUND :: .2
 
 draw_menu :: proc(r: rl.Rectangle) {
