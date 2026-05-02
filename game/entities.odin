@@ -140,15 +140,13 @@ tile_in_front :: proc(e: ^Entity) -> Tile_Coord {
 }
 
 player_control :: proc(_: f32, p: ^Entity) {
-	if _, ok := menu_0_state.(Menu_Closed); ok {
-		input := get_direction_input()
-		if (input.x != 0 || input.y != 0) {
-			try_set_destination(&p.k, p.k.tile + input)
-		} else {
-			if get_input(.ENTER) {
-				if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
-					activate_entity(entity_in_front)
-				}
+	input := get_direction_input()
+	if (input.x != 0 || input.y != 0) {
+		try_set_destination(&p.k, p.k.tile + input)
+	} else {
+		if get_input(.ENTER) {
+			if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
+				activate_entity(entity_in_front)
 			}
 		}
 	}

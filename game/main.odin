@@ -14,6 +14,7 @@ ATLAS_DATA :: #load("atlas.png")
 
 running : bool
 text_test : bool
+quitting := false // todo: transitions
 
 init :: proc() {
 	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
@@ -46,12 +47,9 @@ draw :: proc() {
 	} else {
 		draw_world()
 		draw_dialogue()
-		draw_menus()
+		// draw_menus()
 	}
 
-	if rl.IsKeyPressed(.A) { world_menu_active = !world_menu_active }
-
-	if rl.IsKeyPressed(.T) { text_test = !text_test }
 	if text_test {
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
 		rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
@@ -67,15 +65,23 @@ update :: proc() {
 
 	update_input_state(dt)
 
+	if rl.IsKeyPressed(.T) { text_test = !text_test }
+
 	if battle_active {
 		update_battle(dt)
-	} else if world_menu_active {
-		update_world_menu()
 	} else {
-		// text gets input priority
-		update_runner(dt)
-		update_world(dt)
-		update_menus(dt)
+		if get_input(.MENU) {
+			world_menu_active = !world_menu_active
+		}
+
+		if world_menu_active {
+			update_world_menu()
+		} else {
+			// text gets input priority
+			update_runner(dt)
+			update_world(dt)
+			// update_menus(dt)
+		}
 	}
 
 	free_all(context.temp_allocator)

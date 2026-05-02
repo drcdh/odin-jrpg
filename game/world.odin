@@ -2,8 +2,6 @@ package game
 
 import hm "core:container/handle_map"
 import "core:fmt"
-import "core:strings"
-import rl "vendor:raylib"
 
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map
@@ -24,14 +22,6 @@ update_world :: proc(dt: f32) {
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
 		update_entity(dt, e)
-	}
-}
-
-draw_dialogue :: proc() {
-	if dialogue_show {
-		c_str := strings.clone_to_cstring(dialogue_str, context.temp_allocator)
-		draw_menu({10, 10, 300, 100})
-		rl.DrawTextEx(font, c_str, {20, 20}, 18, 0, TEXT_COLOR)
 	}
 }
 
