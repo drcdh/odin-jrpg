@@ -136,7 +136,7 @@ draw_battle_combatants :: proc() {
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
 		tc := TEXT_COLOR
-		x := TILE_SIZE
+		x : f32 = TILE_SIZE
 		if p >= 3 {
 			x += 14 * TILE_SIZE
 		}

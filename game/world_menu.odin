@@ -28,7 +28,7 @@ init_world_menu :: proc() {
 draw_world_menu :: proc() {
 	draw_menu({0, 0, f32(WINDOW_WIDTH), TOP_MENU_HEIGHT})
 	x: f32 = 2 * TILE_SIZE
-	y := .5 * TILE_SIZE
+	y : f32 = .5 * TILE_SIZE
 	for i in 0 ..< 4 {
 		if world_menu_selection == World_Menu_Selection(i) {
 			draw_animation(world_menu_icon, {x - 1.5 * TILE_SIZE, y}, rl.WHITE)

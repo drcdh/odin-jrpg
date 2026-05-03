@@ -7,8 +7,8 @@ WORLD_HEIGHT :: 28
 
 SCALE :: 2
 
-WINDOW_WIDTH :: cast(i32)(TILE_SIZE * WORLD_WIDTH)
-WINDOW_HEIGHT :: cast(i32)(TILE_SIZE * WORLD_HEIGHT)
+WINDOW_WIDTH :: TILE_SIZE * WORLD_WIDTH
+WINDOW_HEIGHT :: TILE_SIZE * WORLD_HEIGHT
 
 ATLAS_DATA :: #load("atlas.png")
 
@@ -54,7 +54,7 @@ draw :: proc() {
 
 	if grid {
 		for g in 0..<WORLD_WIDTH {
-			g := i32(g)*i32(TILE_SIZE)
+			g := i32(g*TILE_SIZE)
 			rl.DrawLine(g, 0, g, WINDOW_WIDTH, {200, 50, 100, 100})
 			rl.DrawLine(0, g, WINDOW_HEIGHT, g, {200, 50, 100, 100})
 		}
