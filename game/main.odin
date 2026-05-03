@@ -27,6 +27,7 @@ init :: proc() {
 	font = load_atlased_font()
 
 	initialize_input()
+	init_dialogue()
 	init_world_menu()
 
 	menu_0_state = Menu_Closed{}

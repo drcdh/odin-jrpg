@@ -19,10 +19,10 @@ world_menu_options := [4]string{"Characters", "Skills", "Items", "System"}
 
 TOP_MENU_HEIGHT :: 2 * TILE_SIZE
 
-icon: Animation
+world_menu_icon: Animation
 
 init_world_menu :: proc() {
-	icon = animation_create(.Select_Icon)
+	world_menu_icon = animation_create(.Select_Icon)
 }
 
 draw_world_menu :: proc() {
@@ -31,7 +31,7 @@ draw_world_menu :: proc() {
 	y := .5 * TILE_SIZE
 	for i in 0 ..< 4 {
 		if world_menu_selection == World_Menu_Selection(i) {
-			draw_animation(icon, {x - 1.5 * TILE_SIZE, y}, rl.WHITE)
+			draw_animation(world_menu_icon, {x - 1.5 * TILE_SIZE, y}, rl.WHITE)
 		}
 		rl.DrawTextEx(font, strings.clone_to_cstring(world_menu_options[i], context.allocator), {x, y}, 32, 0, rl.WHITE)
 		x += f32(WINDOW_WIDTH / 4)
@@ -103,5 +103,5 @@ update_world_menu :: proc() {
 	if selection < 0 {selection = 3}
 	if selection >= 4 {selection = 0}
 	world_menu_selection = World_Menu_Selection(selection)
-	animation_update(&icon, rl.GetFrameTime())
+	animation_update(&world_menu_icon, rl.GetFrameTime())
 }

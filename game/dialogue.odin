@@ -23,7 +23,6 @@ Dialogue_State :: union #no_nil {
 	Dialogue_Done,
 }
 
-// dialogue_buffer : string
 dialogue_hurry: bool
 dialogue_pause: f32
 dialogue_state: Dialogue_State
@@ -31,6 +30,11 @@ dialogue_state: Dialogue_State
 dialogue_start, dialogue_end: int
 
 dialogue_builder: strings.Builder
+dialogue_icon: Animation
+
+init_dialogue :: proc() {
+	dialogue_icon = animation_create(.Dialogue_Icon)
+}
 
 draw_dialogue :: proc() {
 	if _, hidden := dialogue_state.(Dialogue_Hidden); !hidden {
@@ -39,6 +43,9 @@ draw_dialogue :: proc() {
 			cstr := strings.clone_to_cstring(substr, context.temp_allocator)
 			draw_menu({TILE_SIZE / 2, TILE_SIZE / 2, f32(WINDOW_WIDTH) - TILE_SIZE, 4 * TILE_SIZE})
 			rl.DrawTextEx(font, cstr, {TILE_SIZE, TILE_SIZE}, 32, 0, rl.WHITE)
+		}
+		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
+			draw_animation(dialogue_icon, {f32(WINDOW_WIDTH) - 2 * TILE_SIZE, 3*TILE_SIZE}, rl.WHITE)
 		}
 	}
 }
@@ -64,6 +71,7 @@ update_dialogue :: proc() {
 			set_next_dialogue_state()
 		}
 	case Dialogue_Wait:
+		animation_update(&dialogue_icon, rl.GetFrameTime())
 		if get_input(.ENTER) {
 			dialogue_state = Dialogue_Done{}
 		}

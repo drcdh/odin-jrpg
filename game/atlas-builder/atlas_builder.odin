@@ -1,5 +1,5 @@
 /*
-This atlas builder looks into a 'textures' folder for pngs, ase and aseprite 
+This atlas builder looks into a 'textures' folder for pngs, ase and aseprite
 files and makes an atlas from those. It outputs both `atlas.png` and
 `atlas.odin`. The odin file you compile as part of your game. It contains
 metadata about where in the atlas the textures ended up.
@@ -61,7 +61,7 @@ PACKAGE_NAME :: "game"
 TEXTURES_DIR :: "textures"
 
 // The letters to extract from the font
-LETTERS_IN_FONT :: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890?!&.,_:[]-+"
+LETTERS_IN_FONT :: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890/?!@#$%^&*(),.-_=+;:'"
 
 // The font to extract letters from
 FONT_FILENAME :: "font.ttf"
