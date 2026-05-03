@@ -67,3 +67,46 @@ draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, flip_x
 
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
+
+Facing_Animation :: struct {
+	left:    Animation,
+	right:    Animation,
+	up:    Animation,
+	down:    Animation,
+	face: Direction,
+}
+
+facing_animation_create :: proc(
+	left:    Animation_Name,
+	right:    Animation_Name,
+	up:    Animation_Name,
+	down:    Animation_Name,
+	face:= Direction.South,
+	) -> Facing_Animation {
+	left := animation_create(left)
+	right := animation_create(right)
+	up := animation_create(up)
+	down := animation_create(down)
+	return {face = face, left=left,right=right,up=up,down=down}
+}
+
+facing_animation_update :: proc(a: ^Facing_Animation, face: Direction, dt: f32) {
+	animation_update(&a.left, dt)
+	animation_update(&a.right, dt)
+	animation_update(&a.up, dt)
+	animation_update(&a.down, dt)
+	a.face = face
+}
+
+draw_facing_animation :: proc(anim: Facing_Animation, pos: Pixel_Coord, tint: rl.Color, flip_x := false) {
+	#partial switch anim.face {
+	case .West:
+	draw_animation(anim.left, pos, tint, flip_x)
+	case .East:
+		draw_animation(anim.right, pos, tint, flip_x)
+	case .South:
+		draw_animation(anim.down, pos, tint, flip_x)
+	case .North:
+		draw_animation(anim.up, pos, tint, flip_x)
+	}
+}

@@ -52,16 +52,23 @@ WARP_TO_1 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Start_Level{
 
 WARP_TO_2 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Start_Level{level = .LEVEL_2}, End{}}
 
-add_pc_entity :: proc(tile, face: Tile_Coord) {
+add_pc_entity :: proc(tile: Tile_Coord, face: Direction) {
+	dv := Direction_Vectors
 	pc_entity = hm.add(
 		&entities,
 		Entity {
 			id = PLAYER_ID,
-			k = Kinematics{face = face, tile = tile, speed = 3},
+			k = Kinematics{d=face, face = dv[face], tile = tile, speed = 3},
 			n = "Player",
 			script = nil,
 			state = Control{},
-			v = Visual_Solid_Rect{color = PLAYER_COLOR, size = TILE_DIM},
+			v = facing_animation_create(
+				.Protagonist_World_Left,
+				.Protagonist_World_Right,
+				.Protagonist_World_Up,
+				.Protagonist_World_Down,
+				face,
+			),
 		},
 	)
 }
@@ -69,7 +76,7 @@ add_pc_entity :: proc(tile, face: Tile_Coord) {
 start_level_0 :: proc() {
 	m = build_map()
 
-	add_pc_entity(PLAYER_SPAWN, Direction_Vectors[.South])
+	add_pc_entity(PLAYER_SPAWN, .South)
 
 	_ = hm.add(
 		&entities,
@@ -107,7 +114,7 @@ start_level_1 :: proc() {
 		}
 	}
 
-	add_pc_entity(Tile_Coord{11, 11}, Direction_Vectors[.East])
+	add_pc_entity(Tile_Coord{11, 11}, .East)
 
 	_ = hm.add(
 		&entities,
@@ -131,7 +138,7 @@ start_level_2 :: proc() {
 		}
 	}
 
-	add_pc_entity(Tile_Coord{14, 14}, Direction_Vectors[.East])
+	add_pc_entity(Tile_Coord{14, 14}, .South)
 
 	for i := 1; i <= MAP_WIDTH - 3; i += 2 {
 		_ = hm.add(
