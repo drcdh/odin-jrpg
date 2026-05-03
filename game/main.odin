@@ -12,6 +12,7 @@ WINDOW_HEIGHT :: cast(i32)(TILE_SIZE * WORLD_HEIGHT)
 
 ATLAS_DATA :: #load("atlas.png")
 
+grid: bool
 running: bool
 text_test: bool
 quitting := false // todo: transitions
@@ -51,6 +52,14 @@ draw :: proc() {
 		// draw_menus()
 	}
 
+	if grid {
+		for g in 0..<WORLD_WIDTH {
+			g := i32(g)*i32(TILE_SIZE)
+			rl.DrawLine(g, 0, g, WINDOW_WIDTH, {200, 50, 100, 100})
+			rl.DrawLine(0, g, WINDOW_HEIGHT, g, {200, 50, 100, 100})
+		}
+	}
+
 	if text_test {
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
 		rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
@@ -66,6 +75,7 @@ update :: proc() {
 
 	update_input_state(dt)
 
+	if rl.IsKeyPressed(.G) {grid = !grid}
 	if rl.IsKeyPressed(.T) {text_test = !text_test}
 
 	if battle_active {
