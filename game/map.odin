@@ -4,16 +4,23 @@ import hm "core:container/handle_map"
 import "core:math/rand"
 import rl "vendor:raylib"
 
-NUM_TILE_TYPES :: 3
+NUM_TILE_TYPES :: 8
 
-TILE_COLORS :: [NUM_TILE_TYPES]rl.Color{rl.BLACK, rl.GREEN, rl.GRAY}
+TILESET_WIDTH :: 4
 
-TILE_INDICES :: [NUM_TILE_TYPES]int{0, 1, 2}
+PASSABLE :: [NUM_TILE_TYPES]bool{
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	false,
+	false,
+}
 
-PASSABLE :: [NUM_TILE_TYPES]bool{false, true, false}
-
-MAP_WIDTH :: 30
-MAP_HEIGHT :: 30
+MAP_WIDTH :: WORLD_WIDTH
+MAP_HEIGHT :: WORLD_HEIGHT
 
 Map_Layer :: distinct [MAP_WIDTH][MAP_HEIGHT]int
 
@@ -24,7 +31,7 @@ build_map :: proc() -> Map {
 
 	for i in 1 ..= MAP_WIDTH - 2 {
 		for j in 1 ..= MAP_HEIGHT - 2 {
-			m[i][j] = 1
+			m[i][j] = 4
 			if abs(MAP_WIDTH / 2 - i) > 8 || abs(MAP_HEIGHT / 2 - j) > 8 {
 				m[i][j] = rand.int_max(NUM_TILE_TYPES)
 			}
@@ -35,12 +42,22 @@ build_map :: proc() -> Map {
 }
 
 draw_map :: proc(m: Map) {
-	colors := TILE_COLORS
 	for i in 0 ..< MAP_WIDTH {
 		for j in 0 ..< MAP_HEIGHT {
-			rl.DrawRectangleV(tile_to_pixel(Tile_Coord{i, j}), TILE_DIM, colors[m[i][j]])
+			draw_tile(m[i][j], tile_to_pixel(Tile_Coord{i, j}))
 		}
 	}
+}
+
+draw_tile :: proc(t: int, pos: Pixel_Coord) {
+	x := t % TILESET_WIDTH
+	y := t / TILESET_WIDTH
+	source := tileset_terrain[x][y]
+	dest := Rect{pos.x, pos.y, TILE_SIZE, TILE_SIZE}
+	origin : Pixel_Coord
+	rotation : f32
+
+	rl.DrawTexturePro(atlas, source, dest, origin, rotation, rl.WHITE)
 }
 
 valid_tile_coord :: proc(t: Tile_Coord) -> bool {
