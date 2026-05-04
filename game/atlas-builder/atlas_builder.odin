@@ -48,11 +48,11 @@ ATLAS_CROP :: true
 
 // The NxN size of each tile (you can import tilesets by giving textures the prefix `tileset_`)
 // Note that the width and height of the tileset image must be multiple of TILE_SIZE.
-TILE_SIZE :: 8
+TILE_SIZE :: 16
 
 // Add padding to tiles by adding a pixel border around it and copying there.
 // This helps with bleeding when doing subpixel camera movements.
-TILE_ADD_PADDING :: true
+TILE_ADD_PADDING :: false
 
 // for package line at top of atlas Odin metadata file
 PACKAGE_NAME :: "game"
@@ -244,6 +244,8 @@ load_png_tileset :: proc(filename: string) -> (Tileset, bool) {
 	if error != os.ERROR_NONE {
 		log.error("Failed loading tileset", filename)
 		return {}, false
+	} else {
+		log.info("Loaded tileset", filename)
 	}
 
 	defer delete(data)
@@ -284,6 +286,8 @@ load_tileset :: proc(filename: string) -> (Tileset, bool) {
 	if error != os.ERROR_NONE {
 		log.error("Failed loading tileset", filename)
 		return {}, false
+	} else {
+		log.info("Loaded ASE tileset", filename)
 	}
 	defer delete(data)
 
@@ -346,7 +350,7 @@ load_tileset :: proc(filename: string) -> (Tileset, bool) {
 			#partial switch &cv in c {
 			case ase.Cel_Chunk:
 				if cv.layer_index in visible_layers {
-					if _, ok := cv.cel.(ase.Com_Image_Cel); !ok {
+					if _, ok := cv.cel.(ase.Com_Image_Cel); ok {
 						append(&cels, &cv)
 					}
 				}
