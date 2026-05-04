@@ -211,6 +211,7 @@ start_level :: proc(l: Level) {
 	case .LEVEL_2:
 		start_level_2()
 	}
+	camera_entity = pc_entity
 	time.stopwatch_stop(&stopwatch)
 	fmt.println("Loaded level", l, "in", time.stopwatch_duration(stopwatch))
 }

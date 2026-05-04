@@ -3,12 +3,27 @@ package game
 import hm "core:container/handle_map"
 import "core:fmt"
 
+import rl "vendor:raylib"
+
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map
 pc_entity: Entity_Handle
 runner := Runner{}
 
+camera_entity: Entity_Handle
+
 draw_world :: proc() {
+	world_camera : rl.Camera2D
+	if camera, ok := hm.get(&entities, camera_entity); ok {
+	world_camera = {
+		zoom = 2,
+		target = get_entity_pixel(camera^),
+		offset = { WINDOW_WIDTH/2, WINDOW_HEIGHT/2 },
+	}
+	}
+
+	rl.BeginMode2D(world_camera)
+
 	draw_map(m)
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
@@ -16,6 +31,7 @@ draw_world :: proc() {
 			draw_entity(e)
 		}
 	}
+	rl.EndMode2D()
 }
 
 update_world :: proc(dt: f32) {

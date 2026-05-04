@@ -156,6 +156,10 @@ tile_in_front :: proc(e: ^Entity) -> Tile_Coord {
 	return e.k.tile + e.k.face
 }
 
+get_entity_pixel :: proc(e: Entity) -> Pixel_Coord {
+	return tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease
+}
+
 player_control :: proc(_: f32, p: ^Entity) {
 	input := get_direction_input()
 	if (input.x != 0 || input.y != 0) {
