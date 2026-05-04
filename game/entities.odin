@@ -29,6 +29,7 @@ Visual_Facing_Animation :: struct {
 }
 
 Visual :: union {
+	Animation,
 	Facing_Animation,
 	Visual_Solid_Circle,
 	Visual_Solid_Rect,
@@ -79,6 +80,8 @@ draw_entity :: proc(e: ^Entity) {
 			draw_solid_circle(e.k, v)
 		case Visual_Solid_Rect:
 			draw_solid_rect(e.k, v)
+		case Animation:
+			draw_animation(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
 		case Facing_Animation:
 			draw_facing_animation(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
 		}
@@ -111,6 +114,8 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 update_entity :: proc(dt: f32, e: ^Entity) {
 	update_kinematics(dt, &e.k)
  #partial switch &v in e.v {
+ case Animation:
+	 animation_update(&v, dt)
  case Facing_Animation:
 	 facing_animation_update(&v, e.k.d, dt)
  }

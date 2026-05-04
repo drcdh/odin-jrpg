@@ -94,10 +94,10 @@ start_level_0 :: proc() {
 		&entities,
 		Entity {
 			id = 3,
-			k = Kinematics{tile = Tile_Coord{10, 10}},
+			k = Kinematics{tile = Tile_Coord{12, 12}},
 			n = "warp",
 			script = WARP_TO_1[:],
-			v = Visual_Solid_Circle{color = rl.Color{200, 0, 200, 255}, radius = TILE_SIZE / 2},
+			v = animation_create(.Warp),
 		},
 	)
 
@@ -123,7 +123,7 @@ start_level_1 :: proc() {
 			k = Kinematics{tile = Tile_Coord{15, 11}},
 			n = "warp",
 			script = WARP_TO_2[:],
-			v = Visual_Solid_Circle{color = rl.Color{200, 0, 200, 255}, radius = TILE_SIZE / 2},
+			v = animation_create(.Warp),
 		},
 	)
 }
@@ -188,7 +188,7 @@ start_level_2 :: proc() {
 			k = Kinematics{tile = Tile_Coord{12, 12}},
 			n = "warp",
 			script = WARP_TO_0[:],
-			v = Visual_Solid_Circle{color = rl.Color{200, 0, 200, 255}, radius = TILE_SIZE / 2},
+			v = animation_create(.Warp),
 		},
 	)
 }
