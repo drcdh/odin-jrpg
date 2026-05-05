@@ -12,9 +12,7 @@ WINDOW_HEIGHT :: TILE_SIZE * WORLD_HEIGHT
 
 ATLAS_DATA :: #load("atlas.png")
 
-grid: bool
 running: bool
-text_test: bool
 quitting := false // todo: transitions
 
 init :: proc() {
@@ -52,20 +50,7 @@ draw :: proc() {
 		// draw_menus()
 	}
 
-	if grid {
-		for g in 0..<WORLD_WIDTH {
-			g := i32(g*TILE_SIZE)
-			rl.DrawLine(g, 0, g, WINDOW_WIDTH, {200, 50, 100, 100})
-			rl.DrawLine(0, g, WINDOW_HEIGHT, g, {200, 50, 100, 100})
-		}
-	}
-
-	if text_test {
-		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, 16, 0, rl.WHITE)
-		rl.DrawLine(0, 16, WINDOW_WIDTH, 16, rl.WHITE)
-		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 16}, 32, 0, rl.WHITE)
-		rl.DrawLine(0, 16 + 32, WINDOW_WIDTH, 16 + 32, rl.WHITE)
-	}
+	draw_debug()
 
 	rl.EndDrawing()
 }
@@ -74,9 +59,6 @@ update :: proc() {
 	dt := rl.GetFrameTime()
 
 	update_input_state(dt)
-
-	if rl.IsKeyPressed(.G) {grid = !grid}
-	if rl.IsKeyPressed(.T) {text_test = !text_test}
 
 	if battle_active {
 		update_battle(dt)
@@ -95,6 +77,8 @@ update :: proc() {
 			update_dialogue()
 		}
 	}
+
+	update_debug()
 
 	free_all(context.temp_allocator)
 	running = !(quitting || rl.IsKeyDown(.Q))
