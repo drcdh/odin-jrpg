@@ -20,7 +20,7 @@ world_menu_options := [4]string{"Characters", "Skills", "Items", "System"}
 world_menu_icon: Animation
 
 init_world_menu :: proc() {
-	world_menu_icon = animation_create(.Select_Icon)
+	world_menu_icon = animation_create(.Select_Icon_Circle)
 }
 
 draw_world_menu :: proc() {
