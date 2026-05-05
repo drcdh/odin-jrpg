@@ -14,8 +14,8 @@ debug_text: bool
 
 draw_debug :: proc() {
 	if debug_framerate {
-		h := tile_size
-		origin := view_bottomleft + {0, -h}
+		h :f32= 20
+		origin := Pixel_Coord{0, view_dim.y-h}
 		rl.DrawRectangleV(origin, {view_dim.x, h}, rl.BLACK)
 		mean: f32 = 0
 		if debug_framerate_sum > 0 {

@@ -15,7 +15,7 @@ running: bool
 quitting: bool // todo: transitions
 
 init :: proc() {
-	set_window_mode(z=4, fullscreen=false)
+	set_window_mode(z=4)
 
 	rl.InitWindow(window_w, window_h, "JRPG")
 	rl.InitAudioDevice()
@@ -79,6 +79,10 @@ update :: proc() {
 		}
 	}
 
+	if rl.IsKeyPressed(.F6) {
+		rl.ToggleFullscreen()
+	}
+
 	update_debug()
 
 	free_all(context.temp_allocator)
@@ -95,27 +99,12 @@ tear_down :: proc() {
 	rl.CloseWindow()
 }
 
-set_window_mode :: proc(z: i32, fullscreen:=false) {
-	if fullscreen ~ rl.IsWindowFullscreen() {
-		rl.ToggleFullscreen()
-	}
-	if rl.IsWindowFullscreen() {
-		window_w = rl.GetScreenWidth()
-		window_h = rl.GetScreenHeight()
-		zw := window_w/(VIEW_TILES_W*TILE_SIZE)
-		zh := window_h/(VIEW_TILES_H*TILE_SIZE)
-		if zw < zh {
-			zoom = f32(zw)
-		}
-		view_origin.x = (f32(window_w) - zoom*VIEW_TILES_W*TILE_SIZE)/2
-		view_origin.y = (f32(window_h) - zoom*VIEW_TILES_H*TILE_SIZE)/2
-	} else if z >= 1 {
-		zoom = f32(z)
-		window_w = VIEW_TILES_W * TILE_SIZE * z
-		window_h = VIEW_TILES_H * TILE_SIZE * z
-		view_origin.x = 0
-		view_origin.y = 0
-	}
+set_window_mode :: proc(z: i32) {
+	zoom = f32(z)
+	window_w = VIEW_TILES_W * TILE_SIZE * z
+	window_h = VIEW_TILES_H * TILE_SIZE * z
+	view_origin.x = 0
+	view_origin.y = 0
 	tile_size = f32(zoom*TILE_SIZE)
 	tile_dim = {tile_size, tile_size}
 	view_dim = {tile_size*VIEW_TILES_W, tile_size*VIEW_TILES_H}
