@@ -5,7 +5,8 @@ import "core:fmt"
 
 import rl "vendor:raylib"
 
-WORLD_ZOOM :: 2
+VIEW_TILES_W :: 16
+VIEW_TILES_H :: 14
 
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map
@@ -18,9 +19,9 @@ draw_world :: proc() {
 	world_camera: rl.Camera2D
 	if camera, ok := hm.get(&entities, camera_entity); ok {
 		world_camera = {
-			zoom   = WORLD_ZOOM,
+			zoom   = 1,
 			target = get_entity_pixel(camera^),
-			offset = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
+			offset = view_dim/2,
 		}
 	}
 

@@ -84,7 +84,7 @@ remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(rl.Rectangle{0, 24 * TILE_SIZE, 32 * TILE_SIZE, 4 * TILE_SIZE})
+	draw_menu(rl.Rectangle{0, 24 * tile_size, 32 * tile_size, 4 * tile_size})
 
 	for p in 0 ..< battle_num_pc {
 		draw_party_member_stats(p)
@@ -136,11 +136,11 @@ draw_battle_combatants :: proc() {
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
 		tc := TEXT_COLOR
-		x: f32 = TILE_SIZE
+		x: f32 = tile_size
 		if p >= 3 {
-			x += 14 * TILE_SIZE
+			x += 14 * tile_size
 		}
-		y := TILE_SIZE * (25.5 + f32(p % 3))
+		y := tile_size * (25.5 + f32(p % 3))
 		if c.character.stats.hitpoints <= 0 {
 			tc = rl.RED
 		}

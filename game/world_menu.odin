@@ -17,8 +17,6 @@ world_menu_selection: World_Menu_Selection
 
 world_menu_options := [4]string{"Characters", "Skills", "Items", "System"}
 
-TOP_MENU_HEIGHT :: 2 * TILE_SIZE
-
 world_menu_icon: Animation
 
 init_world_menu :: proc() {
@@ -26,15 +24,15 @@ init_world_menu :: proc() {
 }
 
 draw_world_menu :: proc() {
-	draw_menu({0, 0, f32(WINDOW_WIDTH), TOP_MENU_HEIGHT})
-	x: f32 = 2 * TILE_SIZE
-	y: f32 = .5 * TILE_SIZE
+	draw_menu({view_origin.x, view_origin.y, view_dim.x, 2*tile_size})
+	x: f32 = 2 * tile_size
+	y: f32 = .5 * tile_size
 	for i in 0 ..< 4 {
 		if world_menu_selection == World_Menu_Selection(i) {
-			draw_animation(world_menu_icon, {x - 1.5 * TILE_SIZE, y}, rl.WHITE)
+			draw_animation(world_menu_icon, {x - 1.5 * tile_size, y}, rl.WHITE)
 		}
 		rl.DrawTextEx(font, strings.clone_to_cstring(world_menu_options[i], context.allocator), {x, y}, 32, 0, rl.WHITE)
-		x += f32(WINDOW_WIDTH / 4)
+		x += view_dim.x / 4
 	}
 
 	switch world_menu_selection {
@@ -49,15 +47,13 @@ draw_world_menu :: proc() {
 	}
 }
 
-CHARACTER_CARD_DIM :: Pixel_Dim{10 * TILE_SIZE, 12 * TILE_SIZE}
-CHARACTER_CARD_TOP_LEFT :: Pixel_Coord{TILE_SIZE, TOP_MENU_HEIGHT + TILE_SIZE}
 draw_world_menu_characters :: proc() {
-	draw_menu({0, TOP_MENU_HEIGHT, f32(WINDOW_WIDTH), f32(WINDOW_HEIGHT) - TOP_MENU_HEIGHT})
+	draw_menu({0, 2*tile_size, view_dim.x, view_dim.y - 2*tile_size})
 	card := 0
 	row: f32 = 0
 	for i in 0 ..< NUM_PC {
 		{ 	//if character in party
-			card_origin := CHARACTER_CARD_TOP_LEFT + {f32(card % 3), row} * CHARACTER_CARD_DIM
+			card_origin := Pixel_Coord{tile_size, 3*tile_size} + {f32(card % 3), row} * Pixel_Coord{5 * tile_size, 6 * tile_size}
 			draw_character_card(PC(i), card_origin)
 			card += 1
 			if i == 2 {
@@ -70,7 +66,7 @@ draw_world_menu_characters :: proc() {
 
 draw_character_card :: proc(pc: PC, origin: Pixel_Coord) {
 	tint := pc_idle_anim_tint[pc]
-	rl.DrawRectangleLinesEx({origin.x, origin.y, CHARACTER_CARD_DIM.x, CHARACTER_CARD_DIM.y}, 2, tint)
+	rl.DrawRectangleLinesEx({origin.x, origin.y, 5 * tile_size, 6 * tile_size}, 2, tint)
 	pc := get_pc(pc)
 	rl.DrawTextEx(font, pc.name, origin, 32, 0, rl.WHITE)
 
@@ -78,7 +74,7 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord) {
 	rl.DrawTextureRec(
 		atlas,
 		texture_rect,
-		{origin.x + CHARACTER_CARD_DIM.x - TILE_SIZE - texture_rect.width, origin.y + 32},
+		{origin.x + 5*tile_size - tile_size - texture_rect.width, origin.y + 32},
 		tint,
 	)
 

@@ -10,8 +10,8 @@ TILESET_WIDTH :: 4
 
 PASSABLE :: [NUM_TILE_TYPES]bool{true, true, true, true, true, true, false, false}
 
-MAP_WIDTH :: WORLD_WIDTH
-MAP_HEIGHT :: WORLD_HEIGHT
+MAP_WIDTH :: 30
+MAP_HEIGHT :: 30
 
 Map_Layer :: distinct [MAP_WIDTH][MAP_HEIGHT]int
 
@@ -44,7 +44,7 @@ draw_tile :: proc(t: int, pos: Pixel_Coord) {
 	x := t % TILESET_WIDTH
 	y := t / TILESET_WIDTH
 	source := tileset_terrain[x][y]
-	dest := Rect{pos.x, pos.y, TILE_SIZE, TILE_SIZE}
+	dest := Rect{pos.x, pos.y, tile_size, tile_size}
 	origin: Pixel_Coord
 	rotation: f32
 

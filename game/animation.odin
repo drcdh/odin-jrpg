@@ -63,7 +63,7 @@ draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, flip_x
 		offset.x = anim_texture.offset_right
 	}
 
-	dest := Rect{pos.x + offset.x, pos.y + offset.y, SCALE * anim_texture.rect.width, SCALE * anim_texture.rect.height}
+	dest := Rect{pos.x + offset.x, pos.y + offset.y, zoom * anim_texture.rect.width, zoom * anim_texture.rect.height}
 
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }

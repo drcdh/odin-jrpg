@@ -70,7 +70,7 @@ draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
 }
 
 draw_solid_circle :: proc(k: Kinematics, v: Visual_Solid_Circle) {
-	rl.DrawCircleV(TILE_DIM / 2 + tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.radius, v.color)
+	rl.DrawCircleV(tile_dim / 2 + tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.radius, v.color)
 }
 
 draw_entity :: proc(e: ^Entity) {

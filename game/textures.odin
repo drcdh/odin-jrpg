@@ -3,6 +3,8 @@ package game
 import "core:slice"
 import rl "vendor:raylib"
 
+ATLAS_DATA :: #load("atlas.png")
+
 Rect :: rl.Rectangle // for the results of atlas_builder
 
 TEXT_COLOR := rl.Color{50, 10, 10, 255}
@@ -46,22 +48,6 @@ delete_atlased_font :: proc(font: rl.Font) {
 
 draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
 	atlas_rect := atlas_textures[v].rect
-	dest := rl.Rectangle{pos.x, pos.y, SCALE * atlas_rect.width, SCALE * atlas_rect.height}
+	dest := rl.Rectangle{pos.x, pos.y, zoom * atlas_rect.width, zoom * atlas_rect.height}
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
-
-// textures: map[string]rl.Texture
-//
-// load_texture :: proc(path: string) -> rl.Texture {
-// 	if t, t_ok := textures[path]; t_ok {
-// 		return t
-// 	}
-//
-// 	t := rl.LoadTexture(strings.clone_to_cstring(strings.concatenate({ASSETS_ROOT, path}), context.temp_allocator))
-//
-// 	if t.id != 0 {
-// 		textures[path] = t
-// 	}
-//
-// 	return t
-// }

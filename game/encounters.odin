@@ -36,7 +36,7 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 			&battle_combatants,
 			Combatant {
 				character = &battle_baddies[battle_num_baddies],
-				coord = Pixel_Coord{2 * TILE_SIZE, 4 * TILE_SIZE * f32(1 + battle_num_baddies)},
+				coord = Pixel_Coord{2 * tile_size, 4 * tile_size * f32(1 + battle_num_baddies)},
 				enabled = true,
 				turn = template.turn,
 				visual = {variant = template.texture, tint = rl.WHITE},
@@ -54,9 +54,9 @@ start_encounter :: proc(i: int) {
 		add_baddy_combatant(baddy_id)
 	}
 
-	dy: f32 = 6 * TILE_SIZE
-	y0: f32 = 4 * TILE_SIZE
-	x: f32 = 19 * TILE_SIZE
+	dy: f32 = 6 * tile_size
+	y0: f32 = 4 * tile_size
+	x: f32 = 19 * tile_size
 	y: f32 = y0
 	for pc_idx in 0 ..< NUM_PC {
 		battle_pc_handles[battle_num_pc] = hm.add(
@@ -71,11 +71,11 @@ start_encounter :: proc(i: int) {
 			},
 		)
 		battle_num_pc += 1
-		x += TILE_SIZE
+		x += tile_size
 		if battle_num_pc != 3 {
 			y += dy
 		} else {
-			x += 4 * TILE_SIZE
+			x += 4 * tile_size
 			y = y0 + dy / 2
 		}
 	}

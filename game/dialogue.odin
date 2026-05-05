@@ -41,11 +41,11 @@ draw_dialogue :: proc() {
 		str := strings.to_string(dialogue_builder)
 		if substr, ok := strings.substring_to(str, dialogue_end); ok {
 			cstr := strings.clone_to_cstring(substr, context.temp_allocator)
-			draw_menu({TILE_SIZE / 2, TILE_SIZE / 2, f32(WINDOW_WIDTH) - TILE_SIZE, 4 * TILE_SIZE})
-			rl.DrawTextEx(font, cstr, {TILE_SIZE, TILE_SIZE}, 32, 0, rl.WHITE)
+			draw_menu({tile_size / 2, tile_size / 2, view_dim.x - tile_size, 4 * tile_size})
+			rl.DrawTextEx(font, cstr, {tile_size, tile_size}, 32, 0, rl.WHITE)
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
-			draw_animation(dialogue_icon, {f32(WINDOW_WIDTH) - 2 * TILE_SIZE, 3 * TILE_SIZE}, rl.WHITE)
+			draw_animation(dialogue_icon, {view_dim.x - 2 * tile_size, 3 * tile_size}, rl.WHITE)
 		}
 	}
 }

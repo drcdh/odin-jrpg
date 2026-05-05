@@ -112,7 +112,7 @@ start_level_0 :: proc() {
 			n = "Dude",
 			script = DUDE_SCRIPT_0[:],
 			state = Pacing{route = 0, pause = 1},
-			v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
+			v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
 		},
 	)
 
@@ -134,7 +134,7 @@ start_level_0 :: proc() {
 			k = Kinematics{tile = PLAYER_SPAWN + {1, 1}},
 			n = "Button 1",
 			script = BUTTON_1_SCRIPT[:],
-			v = Visual_Solid_Rect{color = rl.Color{200, 50, 50, 255}, size = TILE_DIM / 2},
+			v = Visual_Solid_Rect{color = rl.Color{200, 50, 50, 255}, size = tile_dim / 2},
 		},
 	)
 
@@ -145,7 +145,7 @@ start_level_0 :: proc() {
 			k = Kinematics{tile = PLAYER_SPAWN + {2, 1}},
 			n = "Button 2",
 			script = BUTTON_2_SCRIPT[:],
-			v = Visual_Solid_Circle{color = rl.Color{50, 200, 50, 255}, radius = TILE_SIZE / 2},
+			v = Visual_Solid_Circle{color = rl.Color{50, 200, 50, 255}, radius = tile_size / 2},
 		},
 	)
 
@@ -196,7 +196,7 @@ start_level_2 :: proc() {
 				id = 100 + i,
 				k = Kinematics{tile = Tile_Coord{i, 1}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 1},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
+				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
 			},
 		)
 		_ = hm.add(
@@ -205,7 +205,7 @@ start_level_2 :: proc() {
 				id = 200 + i,
 				k = Kinematics{tile = Tile_Coord{i, MAP_HEIGHT - 3}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 3},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
+				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
 			},
 		)
 	}
@@ -216,7 +216,7 @@ start_level_2 :: proc() {
 				id = 300 + j,
 				k = Kinematics{tile = Tile_Coord{1, j}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 0},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
+				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
 			},
 		)
 		_ = hm.add(
@@ -225,7 +225,7 @@ start_level_2 :: proc() {
 				id = 400 + j,
 				k = Kinematics{tile = Tile_Coord{MAP_WIDTH - 3, j}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 2},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = TILE_DIM},
+				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
 			},
 		)
 	}

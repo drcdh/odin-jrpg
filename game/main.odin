@@ -2,21 +2,22 @@ package game
 
 import rl "vendor:raylib"
 
-WORLD_WIDTH :: 32
-WORLD_HEIGHT :: 28
+zoom : f32 = 1
 
-SCALE :: 2
+view_dim: Pixel_Dim
+view_origin: Pixel_Coord
+view_bottomleft: Pixel_Coord
 
-WINDOW_WIDTH :: TILE_SIZE * WORLD_WIDTH
-WINDOW_HEIGHT :: TILE_SIZE * WORLD_HEIGHT
-
-ATLAS_DATA :: #load("atlas.png")
+window_w : i32
+window_h : i32
 
 running: bool
-quitting := false // todo: transitions
+quitting: bool // todo: transitions
 
 init :: proc() {
-	rl.InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "JRPG")
+	set_window_mode(z=4, fullscreen=false)
+
+	rl.InitWindow(window_w, window_h, "JRPG")
 	rl.InitAudioDevice()
 
 	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
@@ -92,4 +93,31 @@ tear_down :: proc() {
 	rl.UnloadTexture(atlas)
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
+}
+
+set_window_mode :: proc(z: i32, fullscreen:=false) {
+	if fullscreen ~ rl.IsWindowFullscreen() {
+		rl.ToggleFullscreen()
+	}
+	if rl.IsWindowFullscreen() {
+		window_w = rl.GetScreenWidth()
+		window_h = rl.GetScreenHeight()
+		zw := window_w/(VIEW_TILES_W*TILE_SIZE)
+		zh := window_h/(VIEW_TILES_H*TILE_SIZE)
+		if zw < zh {
+			zoom = f32(zw)
+		}
+		view_origin.x = (f32(window_w) - zoom*VIEW_TILES_W*TILE_SIZE)/2
+		view_origin.y = (f32(window_h) - zoom*VIEW_TILES_H*TILE_SIZE)/2
+	} else if z >= 1 {
+		zoom = f32(z)
+		window_w = VIEW_TILES_W * TILE_SIZE * z
+		window_h = VIEW_TILES_H * TILE_SIZE * z
+		view_origin.x = 0
+		view_origin.y = 0
+	}
+	tile_size = f32(zoom*TILE_SIZE)
+	tile_dim = {tile_size, tile_size}
+	view_dim = {tile_size*VIEW_TILES_W, tile_size*VIEW_TILES_H}
+	view_bottomleft = view_origin + {0, view_dim.y}
 }

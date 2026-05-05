@@ -12,8 +12,9 @@ Tile_T :: int
 Tile_Coord :: [2]Tile_T
 Tile_Offset :: Pixel_Coord
 
-TILE_SIZE :: 16 * SCALE
-TILE_DIM :: Pixel_Dim{TILE_SIZE, TILE_SIZE}
+TILE_SIZE :: 16
+tile_size : Pixel
+tile_dim : Pixel_Dim
 
 Direction :: enum {
 	None,
@@ -40,7 +41,7 @@ Direction_Vectors :: [Direction]Tile_Coord {
 }
 
 tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
-	return Pixel_Coord{cast(Pixel)(t.x) * TILE_SIZE, cast(Pixel)(t.y) * TILE_SIZE}
+	return Pixel_Coord{cast(Pixel)(t.x) * tile_size, cast(Pixel)(t.y) * tile_size}
 }
 
 get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
