@@ -102,7 +102,8 @@ dialogue_done :: proc() -> bool {
 }
 
 queue_dialogue :: proc(text: string, hurry: bool, pause: f32) {
-	strings.write_string(&dialogue_builder, text)
+	ftext, _ := strings.replace(text, "$player", game_data.protagonist_name, -1, context.temp_allocator)
+	strings.write_string(&dialogue_builder, ftext)
 	dialogue_hurry = hurry
 	dialogue_pause = pause
 	dialogue_state = Dialogue_Marquee {

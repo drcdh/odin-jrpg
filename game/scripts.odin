@@ -11,6 +11,14 @@ End :: struct {}
 Pause_Runner :: struct {
 	duration: f32,
 }
+Set_Bool :: struct {
+	k: Bool_Datum,
+	v: bool
+}
+Set_Int :: struct {
+	k: Int_Datum,
+	v: i32,
+}
 Set_Entity_Busy :: struct {
 	id:   Id,
 	busy: bool,
@@ -36,6 +44,8 @@ Event :: union {
 	Close_Dialogue,
 	End,
 	Pause_Runner,
+	Set_Bool,
+	Set_Int,
 	Set_Entity_Busy,
 	Set_Entity_Script,
 	Set_Entity_State,
@@ -102,6 +112,10 @@ update_runner :: proc(dt: f32) {
 			clear_dialogue()
 		case Close_Dialogue:
 			close_dialogue()
+		case Set_Bool:
+			set_game_data(event.k, event.v)
+		case Set_Int:
+			set_game_data(event.k, event.v)
 		case Set_Entity_Busy:
 			set_entity_busy(event.id, event.busy)
 		case Set_Entity_Script:

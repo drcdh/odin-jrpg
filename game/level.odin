@@ -30,6 +30,7 @@ DUDE_SCRIPT_0 := [?]Event {
 	Clear_Text{},
 	Set_Entity_Script{id = DUDE_ID, script = DUDE_SCRIPT_1[:]},
 	Set_Entity_State{id = DUDE_ID, state = Pacing{route = 1}},
+	Set_Bool{k = .Met_Dude, v=true},
 	Set_Entity_Busy{id = DUDE_ID, busy = false},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
@@ -79,6 +80,7 @@ welcome := [?]Event {
 	Append_Text{text = "[Press Z to start]"},
 	Close_Dialogue{},
 	Clear_Text{},
+	Set_Bool{k = .Introduction, v=true},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
@@ -115,6 +117,19 @@ start_level_0 :: proc() {
 
 	add_pc_entity(PLAYER_SPAWN, .South)
 
+	if get_game_data(Bool_Datum.Met_Dude) {
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = DUDE_ID,
+			k = Kinematics{face = Direction_Vectors[.South], tile = {10, 10}, speed = 2},
+			n = "Dude",
+			script = DUDE_SCRIPT_1[:],
+			state = Pacing{route = 1, pause = 1},
+			v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+		},
+	)
+	} else {
 	_ = hm.add(
 		&entities,
 		Entity {
@@ -126,6 +141,7 @@ start_level_0 :: proc() {
 			v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
 		},
 	)
+	}
 
 	_ = hm.add(
 		&entities,
@@ -171,7 +187,9 @@ start_level_0 :: proc() {
 		}
 	)
 
-	start_script(welcome[:])
+	if !get_game_data(Bool_Datum.Introduction) {
+		start_script(welcome[:])
+	}
 }
 
 start_level_1 :: proc() {
