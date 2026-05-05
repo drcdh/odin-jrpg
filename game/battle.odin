@@ -84,7 +84,7 @@ remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(rl.Rectangle{0, 24 * tile_size, 32 * tile_size, 4 * tile_size})
+	draw_menu(rl.Rectangle{0, view_dim.y - 2 * tile_size, view_dim.x, 2 * tile_size})
 
 	for p in 0 ..< battle_num_pc {
 		draw_party_member_stats(p)
@@ -127,7 +127,7 @@ draw_battle_combatants :: proc() {
 			case Texture_Name:
 				draw_texture(v, c.coord, c.visual.tint)
 			}
-			pos := Pixel_Coord{c.coord.x, c.coord.y - 32}
+			pos := Pixel_Coord{c.coord.x, c.coord.y - tile_size}
 			rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
 		}
 	}
@@ -138,9 +138,9 @@ draw_party_member_stats :: proc(p: int) {
 		tc := TEXT_COLOR
 		x: f32 = tile_size
 		if p >= 3 {
-			x += 14 * tile_size
+			x += 8 * tile_size
 		}
-		y := tile_size * (25.5 + f32(p % 3))
+		y := tile_size * (10 + f32(p % 3))
 		if c.character.stats.hitpoints <= 0 {
 			tc = rl.RED
 		}

@@ -23,6 +23,9 @@ Set_Entity_State :: struct {
 	id:    Id,
 	state: State,
 }
+Start_Encounter :: struct {
+	encounter: int,
+}
 Start_Level :: struct {
 	level: Level,
 }
@@ -36,6 +39,7 @@ Event :: union {
 	Set_Entity_Busy,
 	Set_Entity_Script,
 	Set_Entity_State,
+	Start_Encounter,
 	Start_Level,
 }
 
@@ -104,6 +108,8 @@ update_runner :: proc(dt: f32) {
 			set_entity_script(event.id, event.script)
 		case Set_Entity_State:
 			set_entity_state(event.id, event.state)
+		case Start_Encounter:
+			start_encounter(event.encounter)
 		case Start_Level:
 			start_level(event.level)
 		}

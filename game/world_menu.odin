@@ -70,13 +70,7 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord) {
 	pc := get_pc(pc)
 	rl.DrawTextEx(font, pc.name, origin, 32, 0, rl.WHITE)
 
-	texture_rect := atlas_textures[.Pc0].rect
-	rl.DrawTextureRec(
-		atlas,
-		texture_rect,
-		{origin.x + 5*tile_size - tile_size - texture_rect.width, origin.y + 32},
-		tint,
-	)
+	draw_texture(.Protagonist_Battle0, {origin.x + 3*tile_size, origin.y + 32}, tint)
 
 	stats_origin := Pixel_Coord{origin.x, origin.y + 64}
 	stats_font_size: f32 = 24

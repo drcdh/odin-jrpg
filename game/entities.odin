@@ -31,6 +31,7 @@ Visual_Facing_Animation :: struct {
 Visual :: union {
 	Animation,
 	Facing_Animation,
+	Texture_Name,
 	Visual_Solid_Circle,
 	Visual_Solid_Rect,
 }
@@ -84,6 +85,8 @@ draw_entity :: proc(e: ^Entity) {
 			draw_animation(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
 		case Facing_Animation:
 			draw_facing_animation(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
+		case Texture_Name:
+			draw_texture(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
 		}
 	}
 }

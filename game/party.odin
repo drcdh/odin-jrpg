@@ -61,6 +61,13 @@ get_pc :: proc(pc: PC) -> ^Character {
 	return nil
 }
 
-pc_idle_anim := [NUM_PC]Animation_Name{.Pc, .Pc, .Pc, .Pc, .Pc, .Pc}
+pc_idle_anim := [NUM_PC]Animation_Name{
+	.Protagonist_Battle,
+	.Protagonist_Battle,
+	.Protagonist_Battle,
+	.Protagonist_Battle,
+	.Protagonist_Battle,
+	.Protagonist_Battle,
+}
 
 pc_idle_anim_tint := [NUM_PC]rl.Color{rl.BLACK, rl.RED, rl.BLUE, rl.PURPLE, rl.PINK, rl.ORANGE}

@@ -54,9 +54,9 @@ start_encounter :: proc(i: int) {
 		add_baddy_combatant(baddy_id)
 	}
 
-	dy: f32 = 6 * tile_size
-	y0: f32 = 4 * tile_size
-	x: f32 = 19 * tile_size
+	dy: f32 = 3 * tile_size
+	y0: f32 = 2 * tile_size
+	x: f32 = 9.5 * tile_size
 	y: f32 = y0
 	for pc_idx in 0 ..< NUM_PC {
 		battle_pc_handles[battle_num_pc] = hm.add(
@@ -75,7 +75,7 @@ start_encounter :: proc(i: int) {
 		if battle_num_pc != 3 {
 			y += dy
 		} else {
-			x += 4 * tile_size
+			// x += 4 * tile_size
 			y = y0 + dy / 2
 		}
 	}

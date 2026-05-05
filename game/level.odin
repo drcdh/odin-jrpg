@@ -54,12 +54,23 @@ BUTTON_1_SCRIPT := [?]Event {
 }
 
 BUTTON_2_SCRIPT := [?]Event {
-	// Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Clear_Text{},
 	Append_Text{text = "*Boop*", pause = .5, hurry = true},
 	Close_Dialogue{},
 	Clear_Text{},
-	// Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
+MONSTER_IN_A_BOX := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text{text = "Monster in a box!"},
+	Start_Encounter{encounter=0},
+	Close_Dialogue{},
+	Clear_Text{},
+	Append_Text{text = "Didja win?"},
+	Close_Dialogue{},
+	Clear_Text{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
 
@@ -149,6 +160,16 @@ start_level_0 :: proc() {
 		},
 	)
 
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 100,
+			k = Kinematics{tile = PLAYER_SPAWN + {-2, 0}},
+			n = "Monster in a box",
+			script = MONSTER_IN_A_BOX[:],
+			v = Texture_Name.Box,
+		}
+	)
 
 	start_script(welcome[:])
 }
