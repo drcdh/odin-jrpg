@@ -1,7 +1,7 @@
 package game
 
 Append_Text :: struct {
-	text: string,
+	text:  string,
 	hurry: bool,
 	pause: f32,
 }

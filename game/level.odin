@@ -35,16 +35,16 @@ DUDE_SCRIPT_0 := [?]Event {
 	End{},
 }
 
-DUDE_SCRIPT_1 := [?]Event{
+DUDE_SCRIPT_1 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Append_Text{text = "Keep on keepin' on.", pause=.5, hurry=true},
+	Append_Text{text = "Keep on keepin' on.", pause = .5, hurry = true},
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
 
-BUTTON_1_SCRIPT := [?]Event{
+BUTTON_1_SCRIPT := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Append_Text{text = "*Beep*"},
 	Close_Dialogue{},
@@ -53,10 +53,10 @@ BUTTON_1_SCRIPT := [?]Event{
 	End{},
 }
 
-BUTTON_2_SCRIPT := [?]Event{
+BUTTON_2_SCRIPT := [?]Event {
 	// Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Clear_Text{},
-	Append_Text{text = "*Boop*", pause=.5, hurry=true},
+	Append_Text{text = "*Boop*", pause = .5, hurry = true},
 	Close_Dialogue{},
 	Clear_Text{},
 	// Set_Entity_Busy{id = PLAYER_ID, busy = false},
@@ -84,7 +84,7 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Direction) {
 		&entities,
 		Entity {
 			id = PLAYER_ID,
-			k = Kinematics{d=face, face = dv[face], tile = tile, speed = 3},
+			k = Kinematics{d = face, face = dv[face], tile = tile, speed = 3},
 			n = "Player",
 			script = nil,
 			state = Control{},
@@ -131,22 +131,22 @@ start_level_0 :: proc() {
 		&entities,
 		Entity {
 			id = 40,
-			k = Kinematics{tile = PLAYER_SPAWN+{1, 1}},
+			k = Kinematics{tile = PLAYER_SPAWN + {1, 1}},
 			n = "Button 1",
 			script = BUTTON_1_SCRIPT[:],
-			v = Visual_Solid_Rect{color = rl.Color{200, 50, 50, 255}, size=TILE_DIM/2},
-		}
+			v = Visual_Solid_Rect{color = rl.Color{200, 50, 50, 255}, size = TILE_DIM / 2},
+		},
 	)
 
 	_ = hm.add(
 		&entities,
 		Entity {
 			id = 50,
-			k = Kinematics{tile = PLAYER_SPAWN+{2, 1}},
+			k = Kinematics{tile = PLAYER_SPAWN + {2, 1}},
 			n = "Button 2",
 			script = BUTTON_2_SCRIPT[:],
-			v = Visual_Solid_Circle{color = rl.Color{50, 200, 50, 255}, radius=TILE_SIZE/2},
-		}
+			v = Visual_Solid_Circle{color = rl.Color{50, 200, 50, 255}, radius = TILE_SIZE / 2},
+		},
 	)
 
 

@@ -15,13 +15,13 @@ runner := Runner{}
 camera_entity: Entity_Handle
 
 draw_world :: proc() {
-	world_camera : rl.Camera2D
+	world_camera: rl.Camera2D
 	if camera, ok := hm.get(&entities, camera_entity); ok {
-	world_camera = {
-		zoom = WORLD_ZOOM,
-		target = get_entity_pixel(camera^),
-		offset = { WINDOW_WIDTH/2, WINDOW_HEIGHT/2 },
-	}
+		world_camera = {
+			zoom   = WORLD_ZOOM,
+			target = get_entity_pixel(camera^),
+			offset = {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2},
+		}
 	}
 
 	rl.BeginMode2D(world_camera)

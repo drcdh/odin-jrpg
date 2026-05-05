@@ -12,7 +12,7 @@ Tile_T :: int
 Tile_Coord :: [2]Tile_T
 Tile_Offset :: Pixel_Coord
 
-TILE_SIZE:: 16 * SCALE
+TILE_SIZE :: 16 * SCALE
 TILE_DIM :: Pixel_Dim{TILE_SIZE, TILE_SIZE}
 
 Direction :: enum {

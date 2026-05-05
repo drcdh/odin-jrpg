@@ -4,7 +4,7 @@ import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
 Kinematics :: struct {
-	d: Direction,
+	d:           Direction,
 	face:        Tile_Coord,
 	ghost:       bool,
 	moving:      bool,
@@ -25,7 +25,7 @@ Visual_Solid_Rect :: struct {
 }
 
 Visual_Facing_Animation :: struct {
-	left, right, up, down: Animation_Name
+	left, right, up, down: Animation_Name,
 }
 
 Visual :: union {
@@ -113,12 +113,12 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 
 update_entity :: proc(dt: f32, e: ^Entity) {
 	update_kinematics(dt, &e.k)
- #partial switch &v in e.v {
- case Animation:
-	 animation_update(&v, dt)
- case Facing_Animation:
-	 facing_animation_update(&v, e.k.d, dt)
- }
+	#partial switch &v in e.v {
+	case Animation:
+		animation_update(&v, dt)
+	case Facing_Animation:
+		facing_animation_update(&v, e.k.d, dt)
+	}
 	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
 		case Pacing:

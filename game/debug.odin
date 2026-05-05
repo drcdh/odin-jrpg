@@ -4,7 +4,7 @@ import "core:fmt"
 import rl "vendor:raylib"
 
 DEBUG_FRAMERATE_HEIGHT :: 32
-DEBUG_FRAMERATE_ORIGIN :: Pixel_Coord{0, WINDOW_HEIGHT-DEBUG_FRAMERATE_HEIGHT}
+DEBUG_FRAMERATE_ORIGIN :: Pixel_Coord{0, WINDOW_HEIGHT - DEBUG_FRAMERATE_HEIGHT}
 DEBUG_FRAMERATE_PERIOD :: 60 // seconds
 debug_framerate: bool
 debug_framerate_count: int
@@ -16,15 +16,22 @@ debug_text: bool
 draw_debug :: proc() {
 	if debug_framerate {
 		rl.DrawRectangleV(DEBUG_FRAMERATE_ORIGIN, {WINDOW_WIDTH, TILE_SIZE}, rl.BLACK)
-		mean :f32= 0
+		mean: f32 = 0
 		if debug_framerate_sum > 0 {
-			mean = f32(debug_framerate_count)/debug_framerate_sum
+			mean = f32(debug_framerate_count) / debug_framerate_sum
 		}
-		rl.DrawTextEx(font, fmt.caprintf("%f seconds | %d frames | %f fps", debug_framerate_sum, debug_framerate_count, mean), DEBUG_FRAMERATE_ORIGIN, DEBUG_FRAMERATE_HEIGHT, 0, rl.WHITE)
+		rl.DrawTextEx(
+			font,
+			fmt.caprintf("%f seconds | %d frames | %f fps", debug_framerate_sum, debug_framerate_count, mean),
+			DEBUG_FRAMERATE_ORIGIN,
+			DEBUG_FRAMERATE_HEIGHT,
+			0,
+			rl.WHITE,
+		)
 	}
 
 	if debug_grid {
-		for g : i32 = 0; g <= WINDOW_WIDTH; g += TILE_SIZE*WORLD_ZOOM {
+		for g: i32 = 0; g <= WINDOW_WIDTH; g += TILE_SIZE * WORLD_ZOOM {
 			rl.DrawLine(g, 0, g, WINDOW_HEIGHT, {100, 50, 50, 200})
 			rl.DrawLine(0, g, WINDOW_WIDTH, g, {100, 50, 50, 200})
 		}

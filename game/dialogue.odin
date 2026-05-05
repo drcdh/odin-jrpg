@@ -45,7 +45,7 @@ draw_dialogue :: proc() {
 			rl.DrawTextEx(font, cstr, {TILE_SIZE, TILE_SIZE}, 32, 0, rl.WHITE)
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
-			draw_animation(dialogue_icon, {f32(WINDOW_WIDTH) - 2 * TILE_SIZE, 3*TILE_SIZE}, rl.WHITE)
+			draw_animation(dialogue_icon, {f32(WINDOW_WIDTH) - 2 * TILE_SIZE, 3 * TILE_SIZE}, rl.WHITE)
 		}
 	}
 }

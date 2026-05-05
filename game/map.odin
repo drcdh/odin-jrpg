@@ -8,16 +8,7 @@ NUM_TILE_TYPES :: 8
 
 TILESET_WIDTH :: 4
 
-PASSABLE :: [NUM_TILE_TYPES]bool{
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	false,
-	false,
-}
+PASSABLE :: [NUM_TILE_TYPES]bool{true, true, true, true, true, true, false, false}
 
 MAP_WIDTH :: WORLD_WIDTH
 MAP_HEIGHT :: WORLD_HEIGHT
@@ -54,8 +45,8 @@ draw_tile :: proc(t: int, pos: Pixel_Coord) {
 	y := t / TILESET_WIDTH
 	source := tileset_terrain[x][y]
 	dest := Rect{pos.x, pos.y, TILE_SIZE, TILE_SIZE}
-	origin : Pixel_Coord
-	rotation : f32
+	origin: Pixel_Coord
+	rotation: f32
 
 	rl.DrawTexturePro(atlas, source, dest, origin, rotation, rl.WHITE)
 }
