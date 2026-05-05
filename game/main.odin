@@ -2,6 +2,8 @@ package game
 
 import rl "vendor:raylib"
 
+THROTTLED_FPS :: 60
+throttle := true
 zoom : f32 = 1
 
 view_dim: Pixel_Dim
@@ -19,6 +21,9 @@ init :: proc() {
 
 	rl.InitWindow(window_w, window_h, "JRPG")
 	rl.InitAudioDevice()
+	if throttle {
+		rl.SetTargetFPS(THROTTLED_FPS)
+	}
 
 	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
 	atlas = rl.LoadTextureFromImage(atlas_image)

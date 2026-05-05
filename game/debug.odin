@@ -3,7 +3,7 @@ package game
 import "core:fmt"
 import rl "vendor:raylib"
 
-DEBUG_FRAMERATE_PERIOD :: 60 // seconds
+DEBUG_FRAMERATE_PERIOD :: 15 // seconds
 
 debug_framerate: bool
 debug_framerate_count: int
@@ -62,6 +62,16 @@ update_debug :: proc() {
 	if rl.IsKeyPressed(.F) {debug_framerate = !debug_framerate}
 	if rl.IsKeyPressed(.G) {debug_grid = !debug_grid}
 	if rl.IsKeyPressed(.T) {debug_text = !debug_text}
+
+	if rl.IsKeyPressed(.GRAVE) {
+		throttle = !throttle
+		if throttle {
+			rl.SetTargetFPS(THROTTLED_FPS)
+		} else {
+			rl.SetTargetFPS(5000)
+		}
+		fmt.println("FPS throttling", throttle)
+	}
 
 	if debug_framerate {
 		dt := rl.GetFrameTime()
