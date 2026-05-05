@@ -101,8 +101,10 @@ dialogue_done :: proc() -> bool {
 	return done
 }
 
-queue_dialogue :: proc(text: string) {
+queue_dialogue :: proc(text: string, hurry: bool, pause: f32) {
 	strings.write_string(&dialogue_builder, text)
+	dialogue_hurry = hurry
+	dialogue_pause = pause
 	dialogue_state = Dialogue_Marquee {
 		t = dialogue_speed,
 	}
@@ -114,7 +116,9 @@ set_next_dialogue_state :: proc() {
 			t = dialogue_pause,
 		}
 		dialogue_pause = 0
-	} else if !dialogue_hurry {
+	} else if dialogue_hurry {
+		dialogue_state = Dialogue_Done{}
+	} else {
 		dialogue_state = Dialogue_Wait{}
 	}
 }

@@ -2,6 +2,8 @@ package game
 
 Append_Text :: struct {
 	text: string,
+	hurry: bool,
+	pause: f32,
 }
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}
@@ -84,7 +86,7 @@ update_runner :: proc(dt: f32) {
 
 		switch event in runner.script[runner.step] {
 		case Append_Text:
-			queue_dialogue(event.text)
+			queue_dialogue(event.text, event.hurry, event.pause)
 			runner.state = Wait_Dialogue{}
 		case End:
 			runner.script = nil
