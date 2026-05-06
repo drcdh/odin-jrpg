@@ -49,11 +49,17 @@ draw_debug :: proc() {
 
 	if debug_text {
 		h0 := tile_size
+		h := h0
 		rl.DrawLineV({0, h0}, {view_dim.x, h0}, rl.WHITE)
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, h0, 0, rl.WHITE)
 		h1 := tile_size / 2
-		rl.DrawLineV({0, h0 + h1}, {view_dim.x, h0 + h1}, rl.WHITE)
-		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h0}, h1, 0, rl.WHITE)
+		h += h1
+		rl.DrawLineV({0, h}, {view_dim.x, h}, rl.WHITE)
+		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h-h1}, h1, 0, rl.WHITE)
+		h2 := tile_size / 4
+		h += h2
+		rl.DrawLineV({0, h}, {view_dim.x, h}, rl.WHITE)
+		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h-h2}, h2, 0, rl.WHITE)
 	}
 
 }
