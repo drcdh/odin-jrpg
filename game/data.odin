@@ -10,9 +10,9 @@ Int_Datum :: enum {
 	Kills_Rat_Sized_Mouse,
 }
 
-game_data : struct {
-	bool_data: [len(Bool_Datum)]bool,
-	int_data: [len(Int_Datum)]i32,
+game_data: struct {
+	bool_data:        [len(Bool_Datum)]bool,
+	int_data:         [len(Int_Datum)]i32,
 	protagonist_name: string,
 }
 
@@ -41,7 +41,7 @@ set_game_data_int :: proc(d: Int_Datum, v: i32) {
 	game_data.int_data[d] = v
 }
 
-set_game_data :: proc{
+set_game_data :: proc {
 	set_game_data_bool,
 	set_game_data_int,
 }

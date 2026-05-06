@@ -14,8 +14,8 @@ debug_text: bool
 
 draw_debug :: proc() {
 	if debug_framerate {
-		h :f32= 20
-		origin := Pixel_Coord{0, view_dim.y-h}
+		h: f32 = 20
+		origin := Pixel_Coord{0, view_dim.y - h}
 		rl.DrawRectangleV(origin, {view_dim.x, h}, rl.BLACK)
 		mean: f32 = 0
 		if debug_framerate_sum > 0 {
@@ -51,8 +51,8 @@ draw_debug :: proc() {
 		h0 := tile_size
 		rl.DrawLineV({0, h0}, {view_dim.x, h0}, rl.WHITE)
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, 0}, h0, 0, rl.WHITE)
-		h1 := tile_size/2
-		rl.DrawLineV({0, h0+h1}, {view_dim.x, h0+h1}, rl.WHITE)
+		h1 := tile_size / 2
+		rl.DrawLineV({0, h0 + h1}, {view_dim.x, h0 + h1}, rl.WHITE)
 		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h0}, h1, 0, rl.WHITE)
 	}
 

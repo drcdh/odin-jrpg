@@ -13,7 +13,7 @@ Pause_Runner :: struct {
 }
 Set_Bool :: struct {
 	k: Bool_Datum,
-	v: bool
+	v: bool,
 }
 Set_Int :: struct {
 	k: Int_Datum,

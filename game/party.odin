@@ -61,7 +61,7 @@ get_pc :: proc(pc: PC) -> ^Character {
 	return nil
 }
 
-pc_idle_anim := [NUM_PC]Animation_Name{
+pc_idle_anim := [NUM_PC]Animation_Name {
 	.Protagonist_Battle,
 	.Protagonist_Battle,
 	.Protagonist_Battle,

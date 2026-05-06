@@ -21,7 +21,7 @@ draw_world :: proc() {
 		world_camera = {
 			zoom   = 1,
 			target = get_entity_pixel(camera^),
-			offset = view_dim/2,
+			offset = view_dim / 2,
 		}
 	}
 

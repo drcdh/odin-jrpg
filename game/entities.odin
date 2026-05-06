@@ -55,11 +55,11 @@ State :: union {
 Entity_Handle :: distinct hm.Handle16
 
 Entity :: struct {
+	using k:  Kinematics,
 	busy:     bool, // script will not run if true
 	disabled: bool, // script will not run and will not be displayed if true
 	handle:   Entity_Handle,
 	id:       Id,
-	k:        Kinematics,
 	n:        Name,
 	script:   []Event,
 	state:    State,
@@ -78,17 +78,21 @@ draw_entity :: proc(e: ^Entity) {
 	if !e.disabled {
 		switch v in e.v {
 		case Visual_Solid_Circle:
-			draw_solid_circle(e.k, v)
+			draw_solid_circle(e, v)
 		case Visual_Solid_Rect:
-			draw_solid_rect(e.k, v)
+			draw_solid_rect(e, v)
 		case Animation:
-			draw_animation(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
+			draw_animation(v, entity_coord(e), rl.WHITE)
 		case Facing_Animation:
-			draw_facing_animation(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
+			draw_facing_animation(v, entity_coord(e), rl.WHITE)
 		case Texture_Name:
-			draw_texture(v, tile_to_pixel(e.k.tile) + e.k.offset * e.k.offset_ease, rl.WHITE)
+			draw_texture(v, entity_coord(e), rl.WHITE)
 		}
 	}
+}
+
+entity_coord :: proc(k: Kinematics) -> Pixel_Coord {
+	return tile_to_pixel(k.tile) + k.offset * k.offset_ease
 }
 
 set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {

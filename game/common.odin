@@ -13,8 +13,8 @@ Tile_Coord :: [2]Tile_T
 Tile_Offset :: Pixel_Coord
 
 TILE_SIZE :: 16
-tile_size : Pixel
-tile_dim : Pixel_Dim
+tile_size: Pixel
+tile_dim: Pixel_Dim
 
 Direction :: enum {
 	None,

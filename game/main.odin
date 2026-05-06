@@ -4,20 +4,20 @@ import rl "vendor:raylib"
 
 THROTTLED_FPS :: 60
 throttle := true
-zoom : f32 = 1
+zoom: f32 = 1
 
 view_dim: Pixel_Dim
 view_origin: Pixel_Coord
 view_bottomleft: Pixel_Coord
 
-window_w : i32
-window_h : i32
+window_w: i32
+window_h: i32
 
 running: bool
 quitting: bool // todo: transitions
 
 init :: proc() {
-	set_window_mode(z=4)
+	set_window_mode(z = 4)
 
 	rl.InitWindow(window_w, window_h, "JRPG")
 	rl.InitAudioDevice()
@@ -111,8 +111,8 @@ set_window_mode :: proc(z: i32) {
 	window_h = VIEW_TILES_H * TILE_SIZE * z
 	view_origin.x = 0
 	view_origin.y = 0
-	tile_size = f32(zoom*TILE_SIZE)
+	tile_size = f32(zoom * TILE_SIZE)
 	tile_dim = {tile_size, tile_size}
-	view_dim = {tile_size*VIEW_TILES_W, tile_size*VIEW_TILES_H}
+	view_dim = {tile_size * VIEW_TILES_W, tile_size * VIEW_TILES_H}
 	view_bottomleft = view_origin + {0, view_dim.y}
 }

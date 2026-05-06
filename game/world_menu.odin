@@ -24,7 +24,7 @@ init_world_menu :: proc() {
 }
 
 draw_world_menu :: proc() {
-	draw_menu({view_origin.x, view_origin.y, view_dim.x, 2*tile_size})
+	draw_menu({view_origin.x, view_origin.y, view_dim.x, 2 * tile_size})
 	x: f32 = 2 * tile_size
 	y: f32 = .5 * tile_size
 	for i in 0 ..< 4 {
@@ -48,12 +48,13 @@ draw_world_menu :: proc() {
 }
 
 draw_world_menu_characters :: proc() {
-	draw_menu({0, 2*tile_size, view_dim.x, view_dim.y - 2*tile_size})
+	draw_menu({0, 2 * tile_size, view_dim.x, view_dim.y - 2 * tile_size})
 	card := 0
 	row: f32 = 0
 	for i in 0 ..< NUM_PC {
 		{ 	//if character in party
-			card_origin := Pixel_Coord{tile_size, 3*tile_size} + {f32(card % 3), row} * Pixel_Coord{5 * tile_size, 6 * tile_size}
+			card_origin :=
+				Pixel_Coord{tile_size, 3 * tile_size} + {f32(card % 3), row} * Pixel_Coord{5 * tile_size, 6 * tile_size}
 			draw_character_card(PC(i), card_origin)
 			card += 1
 			if i == 2 {
@@ -70,7 +71,7 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord) {
 	pc := get_pc(pc)
 	rl.DrawTextEx(font, pc.name, origin, 32, 0, rl.WHITE)
 
-	draw_texture(.Protagonist_Battle0, {origin.x + 3*tile_size, origin.y + 32}, tint)
+	draw_texture(.Protagonist_Battle0, {origin.x + 3 * tile_size, origin.y + 32}, tint)
 
 	stats_origin := Pixel_Coord{origin.x, origin.y + 64}
 	stats_font_size: f32 = 24
