@@ -7,6 +7,7 @@ import rl "vendor:raylib"
 
 PLAYER_ID: Id = 0
 DUDE_ID: Id = 1
+BUTTON_1_ID: Id = 40
 
 DUDE_COLOR :: rl.Color{80, 80, 90, 255}
 PLAYER_COLOR :: rl.Color{200, 120, 120, 255}
@@ -47,10 +48,13 @@ DUDE_SCRIPT_1 := [?]Event {
 
 BUTTON_1_SCRIPT := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Set_Entity_Texture{id = BUTTON_1_ID, texture = .Button_Pressed},
 	Append_Text{text = "*Beep*"},
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	Pause_Runner{1},
+	Set_Entity_Texture{id = BUTTON_1_ID, texture = .Button},
 	End{},
 }
 
@@ -156,7 +160,7 @@ start_level_0 :: proc() {
 	_ = hm.add(
 		&entities,
 		Entity {
-			id = 40,
+			id = BUTTON_1_ID,
 			k = Kinematics{tile = PLAYER_SPAWN + {1, 1}},
 			n = "Button 1",
 			script = BUTTON_1_SCRIPT[:],

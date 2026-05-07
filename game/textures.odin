@@ -47,7 +47,10 @@ delete_atlased_font :: proc(font: rl.Font) {
 }
 
 draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
-	atlas_rect := atlas_textures[v].rect
-	dest := rl.Rectangle{pos.x, pos.y, zoom * atlas_rect.width, zoom * atlas_rect.height}
+	atlas_texture := atlas_textures[v]
+	atlas_rect := atlas_texture.rect
+	offset := Pixel_Coord{atlas_texture.offset_left, atlas_texture.offset_top}
+	offset *= zoom
+	dest := rl.Rectangle{pos.x +offset.x, pos.y + offset.y, zoom * atlas_rect.width, zoom * atlas_rect.height}
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }

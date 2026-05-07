@@ -31,6 +31,10 @@ Set_Entity_State :: struct {
 	id:    Id,
 	state: State,
 }
+Set_Entity_Texture :: struct {
+	id: Id,
+	texture: Texture_Name,
+}
 Start_Encounter :: struct {
 	encounter: int,
 }
@@ -49,6 +53,7 @@ Event :: union {
 	Set_Entity_Busy,
 	Set_Entity_Script,
 	Set_Entity_State,
+Set_Entity_Texture,
 	Start_Encounter,
 	Start_Level,
 }
@@ -122,6 +127,8 @@ update_runner :: proc(dt: f32) {
 			set_entity_script(event.id, event.script)
 		case Set_Entity_State:
 			set_entity_state(event.id, event.state)
+		case Set_Entity_Texture:
+			set_entity_visual(event.id, event.texture)
 		case Start_Encounter:
 			start_encounter(event.encounter)
 		case Start_Level:

@@ -88,3 +88,16 @@ set_entity_state :: proc(e_id: Id, state: State) {
 		}
 	}
 }
+
+set_entity_visual_texture :: proc(e_id: Id, texture: Texture_Name) {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		if e.id == e_id {
+			e.v = texture
+		}
+	}
+}
+
+set_entity_visual :: proc{
+	set_entity_visual_texture,
+}
