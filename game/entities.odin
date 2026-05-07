@@ -1,6 +1,7 @@
 package game
 
 import hm "core:container/handle_map"
+import "core:fmt"
 import rl "vendor:raylib"
 
 Kinematics :: struct {
@@ -11,7 +12,7 @@ Kinematics :: struct {
 	offset_ease: Pixel,
 	speed:       f32,
 	tile:        Tile_Coord,
-	z: int,
+	z:           int,
 }
 
 Visual_Solid_Circle :: struct {
@@ -61,9 +62,8 @@ Entity :: struct {
 	handle:   Entity_Handle,
 	id:       Id,
 	n:        Name,
-	activate_script:   []Event,
-	overlap_script: []Event,
-	tap_script: []Event,
+	talk:     []Event,
+	trap:     []Event,
 	state:    State,
 	v:        Visual,
 }
@@ -133,12 +133,18 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 }
 
 update_entity :: proc(dt: f32, e: ^Entity) {
-	update_kinematics(dt, &e.k)
 	#partial switch &v in e.v {
 	case Animation:
 		animation_update(&v, dt)
 	case Facing_Animation:
 		facing_animation_update(&v, e.k.face, dt)
+	}
+	if update_kinematics(dt, &e.k) {
+		// first frame completely on this tile
+		if trap, ok := get_entity_at_tile(e.tile, e.id).?; ok {
+			fmt.println("stepped onto", trap)
+			activate_entity_trap_script(trap)
+		}
 	}
 	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
@@ -159,14 +165,16 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	}
 }
 
-update_kinematics :: proc(dt: f32, k: ^Kinematics) {
+update_kinematics :: proc(dt: f32, k: ^Kinematics) -> bool {
 	if k.moving {
 		k.offset_ease -= dt * k.speed
 		if k.offset_ease < 0 {
 			k.offset_ease = 0
 			k.moving = false
+			return true
 		}
 	}
+	return false
 }
 
 entity_at_tile :: proc(e: Entity, t: Tile_Coord) -> bool {
@@ -197,7 +205,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 	} else {
 		if get_input(.ENTER) {
 			if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
-				activate_entity(entity_in_front)
+				activate_entity_talk_script(entity_in_front)
 			}
 		}
 	}

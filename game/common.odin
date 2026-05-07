@@ -4,6 +4,8 @@ import la "core:math/linalg"
 
 Id :: int
 
+NULL_ID :: 9999
+
 Pixel :: f32
 Pixel_Coord :: [2]Pixel
 Pixel_Dim :: [2]Pixel

@@ -35,7 +35,7 @@ draw_world :: proc() {
 
 	draw_map(m)
 
-	for z in 0..=Z_MAX {
+	for z in 0 ..= Z_MAX {
 		it := hm.iterator_make(&entities)
 		for e, _ in hm.iterate(&it) {
 			if !e.disabled && at_z(e, z) {
@@ -54,14 +54,18 @@ update_world :: proc(dt: f32) {
 	}
 }
 
-activate_entity :: proc(h: Entity_Handle) {
-	start_script(hm.get(&entities, h).activate_script)
+activate_entity_talk_script :: proc(h: Entity_Handle) {
+	start_script(hm.get(&entities, h).talk)
 }
 
-get_entity_at_tile :: proc(t: Tile_Coord) -> Maybe(Entity_Handle) {
+activate_entity_trap_script :: proc(h: Entity_Handle) {
+	start_script(hm.get(&entities, h).trap)
+}
+
+get_entity_at_tile :: proc(t: Tile_Coord, skip := NULL_ID) -> Maybe(Entity_Handle) {
 	it := hm.iterator_make(&entities)
 	for e, h in hm.iterate(&it) {
-		if e.k.tile == t {
+		if e.tile == t && e.id != skip {
 			return h
 		}
 	}
@@ -80,29 +84,20 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 	fmt.println("didn't find entity with id", e_id)
 }
 
-set_entity_activate_script :: proc(e_id: Id, script: []Event) {
+set_entity_talk_script :: proc(e_id: Id, script: []Event) {
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
-			e.activate_script = script
+			e.talk = script
 		}
 	}
 }
 
-set_entity_overlap_script :: proc(e_id: Id, script: []Event) {
+set_entity_trap_script :: proc(e_id: Id, script: []Event) {
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
-			e.overlap_script = script
-		}
-	}
-}
-
-set_entity_tap_script :: proc(e_id: Id, script: []Event) {
-	it := hm.iterator_make(&entities)
-	for e, _ in hm.iterate(&it) {
-		if e.id == e_id {
-			e.tap_script = script
+			e.trap = script
 		}
 	}
 }
@@ -125,6 +120,6 @@ set_entity_visual_texture :: proc(e_id: Id, texture: Texture_Name) {
 	}
 }
 
-set_entity_visual :: proc{
+set_entity_visual :: proc {
 	set_entity_visual_texture,
 }

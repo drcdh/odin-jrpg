@@ -23,15 +23,11 @@ Set_Entity_Busy :: struct {
 	id:   Id,
 	busy: bool,
 }
-Set_Entity_Activate_Script :: struct {
+Set_Entity_Talk_Script :: struct {
 	id:     Id,
 	script: []Event,
 }
-Set_Entity_Overlap_Script :: struct {
-	id:     Id,
-	script: []Event,
-}
-Set_Entity_Tap_Script :: struct {
+Set_Entity_Trap_Script :: struct {
 	id:     Id,
 	script: []Event,
 }
@@ -40,7 +36,7 @@ Set_Entity_State :: struct {
 	state: State,
 }
 Set_Entity_Texture :: struct {
-	id: Id,
+	id:      Id,
 	texture: Texture_Name,
 }
 Start_Encounter :: struct {
@@ -59,11 +55,10 @@ Event :: union {
 	Set_Bool,
 	Set_Int,
 	Set_Entity_Busy,
-	Set_Entity_Activate_Script,
-	Set_Entity_Overlap_Script,
-	Set_Entity_Tap_Script,
+	Set_Entity_Talk_Script,
+	Set_Entity_Trap_Script,
 	Set_Entity_State,
-Set_Entity_Texture,
+	Set_Entity_Texture,
 	Start_Encounter,
 	Start_Level,
 }
@@ -133,12 +128,10 @@ update_runner :: proc(dt: f32) {
 			set_game_data(event.k, event.v)
 		case Set_Entity_Busy:
 			set_entity_busy(event.id, event.busy)
-		case Set_Entity_Activate_Script:
-			set_entity_activate_script(event.id, event.script)
-		case Set_Entity_Overlap_Script:
-			set_entity_overlap_script(event.id, event.script)
-		case Set_Entity_Tap_Script:
-			set_entity_tap_script(event.id, event.script)
+		case Set_Entity_Talk_Script:
+			set_entity_talk_script(event.id, event.script)
+		case Set_Entity_Trap_Script:
+			set_entity_trap_script(event.id, event.script)
 		case Set_Entity_State:
 			set_entity_state(event.id, event.state)
 		case Set_Entity_Texture:
