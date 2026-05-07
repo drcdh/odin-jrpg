@@ -58,7 +58,7 @@ valid_tile_coord :: proc(t: Tile_Coord) -> bool {
 tile_free :: proc(t: Tile_Coord) -> bool {
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
-		if e.k.tile == t && !e.k.ghost {
+		if e.tile == t && !e.ghost {
 			return false
 		}
 	}

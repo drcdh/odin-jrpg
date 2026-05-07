@@ -45,7 +45,7 @@ update_world :: proc(dt: f32) {
 }
 
 activate_entity :: proc(h: Entity_Handle) {
-	start_script(hm.get(&entities, h).script)
+	start_script(hm.get(&entities, h).activate_script)
 }
 
 get_entity_at_tile :: proc(t: Tile_Coord) -> Maybe(Entity_Handle) {
@@ -70,12 +70,29 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 	fmt.println("didn't find entity with id", e_id)
 }
 
-set_entity_script :: proc(e_id: Id, script: []Event) {
+set_entity_activate_script :: proc(e_id: Id, script: []Event) {
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
-			e.script = script
-			fmt.println("set entity with script of len", e.n, len(e.script))
+			e.activate_script = script
+		}
+	}
+}
+
+set_entity_overlap_script :: proc(e_id: Id, script: []Event) {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		if e.id == e_id {
+			e.overlap_script = script
+		}
+	}
+}
+
+set_entity_tap_script :: proc(e_id: Id, script: []Event) {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		if e.id == e_id {
+			e.tap_script = script
 		}
 	}
 }

@@ -29,7 +29,7 @@ DUDE_SCRIPT_0 := [?]Event {
 	Append_Text{text = "Anyway, I'm going over there now."},
 	Close_Dialogue{},
 	Clear_Text{},
-	Set_Entity_Script{id = DUDE_ID, script = DUDE_SCRIPT_1[:]},
+	Set_Entity_Activate_Script{id = DUDE_ID, script = DUDE_SCRIPT_1[:]},
 	Set_Entity_State{id = DUDE_ID, state = Pacing{route = 1}},
 	Set_Bool{k = .Met_Dude, v = true},
 	Set_Entity_Busy{id = DUDE_ID, busy = false},
@@ -100,9 +100,10 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 		&entities,
 		Entity {
 			id = PLAYER_ID,
-			k = Kinematics{face = face, tile = tile, speed = 3},
+			face = face,
+			tile = tile,
+			speed = 3,
 			n = "Player",
-			script = nil,
 			state = Control{},
 			v = facing_animation_create(
 				.Protagonist_World_Left,
@@ -125,9 +126,11 @@ start_level_0 :: proc() {
 			&entities,
 			Entity {
 				id = DUDE_ID,
-				k = Kinematics{face = .Down, tile = {10, 10}, speed = 2},
+				face = .Down,
+				tile = {10, 10},
+				speed = 2,
 				n = "Dude",
-				script = DUDE_SCRIPT_1[:],
+				activate_script = DUDE_SCRIPT_1[:],
 				state = Pacing{route = 1, pause = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
@@ -137,9 +140,11 @@ start_level_0 :: proc() {
 			&entities,
 			Entity {
 				id = DUDE_ID,
-				k = Kinematics{face = .Down, tile = DUDE_SPAWN, speed = 2},
+				face = .Down,
+				tile = DUDE_SPAWN,
+				speed = 2,
 				n = "Dude",
-				script = DUDE_SCRIPT_0[:],
+				activate_script = DUDE_SCRIPT_0[:],
 				state = Pacing{route = 0, pause = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
@@ -150,9 +155,10 @@ start_level_0 :: proc() {
 		&entities,
 		Entity {
 			id = 3,
-			k = Kinematics{tile = Tile_Coord{12, 12}},
+			ghost=true,
+			tile = Tile_Coord{12, 12},
 			n = "warp",
-			script = WARP_TO_1[:],
+			overlap_script = WARP_TO_1[:],
 			v = animation_create(.Warp),
 		},
 	)
@@ -161,9 +167,9 @@ start_level_0 :: proc() {
 		&entities,
 		Entity {
 			id = BUTTON_1_ID,
-			k = Kinematics{tile = PLAYER_SPAWN + {1, 1}},
+			tile = PLAYER_SPAWN + {1, 1},
 			n = "Button 1",
-			script = BUTTON_1_SCRIPT[:],
+			activate_script = BUTTON_1_SCRIPT[:],
 			v = Texture_Name.Button,
 		},
 	)
@@ -172,9 +178,9 @@ start_level_0 :: proc() {
 		&entities,
 		Entity {
 			id = 50,
-			k = Kinematics{tile = PLAYER_SPAWN + {2, 1}},
+			tile = PLAYER_SPAWN + {2, 1},
 			n = "Button 2",
-			script = BUTTON_2_SCRIPT[:],
+			activate_script = BUTTON_2_SCRIPT[:],
 			v = Texture_Name.Button,
 		},
 	)
@@ -183,9 +189,9 @@ start_level_0 :: proc() {
 		&entities,
 		Entity {
 			id = 100,
-			k = Kinematics{tile = PLAYER_SPAWN + {-2, 0}},
+			tile = PLAYER_SPAWN + {-2, 0},
 			n = "Monster in a box",
-			script = MONSTER_IN_A_BOX[:],
+			activate_script = MONSTER_IN_A_BOX[:],
 			v = Texture_Name.Box,
 		},
 	)
@@ -211,9 +217,10 @@ start_level_1 :: proc() {
 		&entities,
 		Entity {
 			id = 3,
-			k = Kinematics{tile = Tile_Coord{15, 11}},
+			ghost=true,
+			tile = Tile_Coord{15, 11},
 			n = "warp",
-			script = WARP_TO_2[:],
+			overlap_script = WARP_TO_2[:],
 			v = animation_create(.Warp),
 		},
 	)
@@ -236,7 +243,8 @@ start_level_2 :: proc() {
 			&entities,
 			Entity {
 				id = 100 + i,
-				k = Kinematics{tile = Tile_Coord{i, 1}, speed = 2},
+				tile = Tile_Coord{i, 1},
+				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
@@ -245,7 +253,8 @@ start_level_2 :: proc() {
 			&entities,
 			Entity {
 				id = 200 + i,
-				k = Kinematics{tile = Tile_Coord{i, MAP_HEIGHT - 3}, speed = 2},
+				tile = Tile_Coord{i, MAP_HEIGHT - 3},
+				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 3},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
@@ -256,7 +265,8 @@ start_level_2 :: proc() {
 			&entities,
 			Entity {
 				id = 300 + j,
-				k = Kinematics{tile = Tile_Coord{1, j}, speed = 2},
+				tile = Tile_Coord{1, j},
+				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 0},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
@@ -265,7 +275,8 @@ start_level_2 :: proc() {
 			&entities,
 			Entity {
 				id = 400 + j,
-				k = Kinematics{tile = Tile_Coord{MAP_WIDTH - 3, j}, speed = 2},
+				tile = Tile_Coord{MAP_WIDTH - 3, j},
+				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 2},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
@@ -276,9 +287,10 @@ start_level_2 :: proc() {
 		&entities,
 		Entity {
 			id = 3,
-			k = Kinematics{tile = Tile_Coord{12, 12}},
+			ghost = true,
+			tile = Tile_Coord{12, 12},
 			n = "warp",
-			script = WARP_TO_0[:],
+			overlap_script = WARP_TO_0[:],
 			v = animation_create(.Warp),
 		},
 	)

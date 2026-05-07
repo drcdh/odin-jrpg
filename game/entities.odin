@@ -60,7 +60,9 @@ Entity :: struct {
 	handle:   Entity_Handle,
 	id:       Id,
 	n:        Name,
-	script:   []Event,
+	activate_script:   []Event,
+	overlap_script: []Event,
+	tap_script: []Event,
 	state:    State,
 	v:        Visual,
 }
