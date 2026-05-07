@@ -75,11 +75,11 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord) {
 
 	stats_origin := Pixel_Coord{origin.x, origin.y + 64}
 	stats_font_size: f32 = 24
-	rl.DrawTextEx(font, fmt.caprintf("HP: %d", pc.stats.hitpoints), stats_origin, stats_font_size, 0, rl.WHITE)
+	rl.DrawTextEx(font, fmt.caprintf("HP: %d", pc.stats.hitpoints, allocator= context.temp_allocator), stats_origin, stats_font_size, 0, rl.WHITE)
 	stats_origin.y += stats_font_size
-	rl.DrawTextEx(font, fmt.caprintf("Offense: %d", pc.stats.offense), stats_origin, stats_font_size, 0, rl.WHITE)
+	rl.DrawTextEx(font, fmt.caprintf("Offense: %d", pc.stats.offense, allocator= context.temp_allocator), stats_origin, stats_font_size, 0, rl.WHITE)
 	stats_origin.y += stats_font_size
-	rl.DrawTextEx(font, fmt.caprintf("Defense: %d", pc.stats.defense), stats_origin, stats_font_size, 0, rl.WHITE)
+	rl.DrawTextEx(font, fmt.caprintf("Defense: %d", pc.stats.defense, allocator= context.temp_allocator), stats_origin, stats_font_size, 0, rl.WHITE)
 }
 
 draw_world_menu_skills :: proc() {}

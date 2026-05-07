@@ -24,6 +24,10 @@ battle_cleanup :: proc() {
 	hm.clear(&battle_combatants)
 }
 
+battle_destroy :: proc() {
+	queue.destroy(&battle_event_queue)
+}
+
 check_win :: proc() -> bool {
 	// todo tie function to encounter
 	team_alive := [?]bool{false, false}
@@ -146,7 +150,7 @@ draw_party_member_stats :: proc(p: int) {
 		}
 		rl.DrawTextEx(
 			font,
-			fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t),
+			fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t, allocator=context.temp_allocator),
 			{x, y},
 			32,
 			0,

@@ -123,3 +123,7 @@ set_next_dialogue_state :: proc() {
 		dialogue_state = Dialogue_Wait{}
 	}
 }
+
+tear_down_dialogue :: proc() {
+	strings.builder_destroy(&dialogue_builder)
+}

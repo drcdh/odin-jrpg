@@ -126,8 +126,10 @@ update_transition :: proc() {
 }
 
 tear_down :: proc() {
+	battle_destroy()
 	delete_atlased_font(font)
 	delete_input()
+	tear_down_dialogue()
 	unload_sounds()
 
 	rl.UnloadTexture(atlas)
