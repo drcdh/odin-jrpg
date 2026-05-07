@@ -31,7 +31,7 @@ draw_world_menu :: proc() {
 		if world_menu_selection == World_Menu_Selection(i) {
 			draw_animation(world_menu_icon, {x - 1.5 * tile_size, y}, rl.WHITE)
 		}
-		rl.DrawTextEx(font, strings.clone_to_cstring(world_menu_options[i], context.allocator), {x, y}, 32, 0, rl.WHITE)
+		rl.DrawTextEx(font, strings.clone_to_cstring(world_menu_options[i], context.temp_allocator), {x, y}, 32, 0, rl.WHITE)
 		x += view_dim.x / 4
 	}
 
