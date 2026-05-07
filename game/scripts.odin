@@ -11,6 +11,8 @@ End :: struct {}
 Pause_Runner :: struct {
 	duration: f32,
 }
+Curtain_Down :: struct {}
+Curtain_Up :: struct {}
 Set_Bool :: struct {
 	k: Bool_Datum,
 	v: bool,
@@ -52,6 +54,8 @@ Event :: union {
 	Close_Dialogue,
 	End,
 	Pause_Runner,
+	Curtain_Down,
+	Curtain_Up,
 	Set_Bool,
 	Set_Int,
 	Set_Entity_Busy,
@@ -69,12 +73,14 @@ Pause :: struct {
 }
 Wait :: struct {}
 Wait_Dialogue :: struct {}
+Wait_Transition :: struct {}
 
 Script_State :: union {
 	Continue,
 	Pause,
 	Wait,
 	Wait_Dialogue,
+	Wait_Transition,
 }
 
 Runner :: struct {
@@ -106,6 +112,9 @@ update_runner :: proc(dt: f32) {
 		case Wait_Dialogue:
 			if dialogue_done() {runner.state = Continue{}}
 			return
+		case Wait_Transition:
+			if curtain_t <= 0 { runner.state = Continue{} }
+			return
 		}
 
 		switch event in runner.script[runner.step] {
@@ -122,6 +131,14 @@ update_runner :: proc(dt: f32) {
 			clear_dialogue()
 		case Close_Dialogue:
 			close_dialogue()
+		case Curtain_Down:
+			curtain_up = false
+			curtain_t = CURTAIN_TIME
+			runner.state = Wait_Transition{}
+		case Curtain_Up:
+			curtain_up = true
+			curtain_t = CURTAIN_TIME
+			runner.state = Wait_Transition{}
 		case Set_Bool:
 			set_game_data(event.k, event.v)
 		case Set_Int:

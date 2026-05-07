@@ -16,6 +16,10 @@ window_h: i32
 running: bool
 quitting: bool // todo: transitions
 
+CURTAIN_TIME :: 1 // seconds
+curtain_up : bool
+curtain_t : f32 = -1
+
 init :: proc() {
 	set_window_mode(z = 4)
 
@@ -57,6 +61,8 @@ draw :: proc() {
 		// draw_menus()
 	}
 
+	draw_transition()
+
 	draw_debug()
 
 	rl.EndDrawing()
@@ -89,10 +95,34 @@ update :: proc() {
 		rl.ToggleFullscreen()
 	}
 
+	update_transition()
+
 	update_debug()
 
 	free_all(context.temp_allocator)
 	running = !(quitting || rl.IsKeyDown(.Q))
+}
+
+draw_transition :: proc() {
+	if curtain_t > 0 {
+		ease := curtain_t/CURTAIN_TIME
+		if !curtain_up {ease = 1 - ease}
+		w := i32(ease * view_dim.x)
+		h := i32(ease * view_dim.y)
+		x0 := i32(view_dim.x/2) - w/2
+		y0 := i32(view_dim.y/2) - h/2
+		rl.DrawRectangle(x0, y0, w, h, rl.BLACK)
+	} else if !curtain_up {
+		w := i32(view_dim.x)
+		h := i32(view_dim.y)
+		rl.DrawRectangle(0, 0, w, h, rl.BLACK)
+	}
+}
+
+update_transition :: proc() {
+	if curtain_t > 0 {
+		curtain_t -= rl.GetFrameTime()
+	}
 }
 
 tear_down :: proc() {
