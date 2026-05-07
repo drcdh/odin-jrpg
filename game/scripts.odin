@@ -13,6 +13,9 @@ Pause_Runner :: struct {
 }
 Curtain_Down :: struct {}
 Curtain_Up :: struct {}
+Play_Sound :: struct {
+	sound: Sound_Name,
+}
 Set_Bool :: struct {
 	k: Bool_Datum,
 	v: bool,
@@ -56,6 +59,7 @@ Event :: union {
 	Pause_Runner,
 	Curtain_Down,
 	Curtain_Up,
+	Play_Sound,
 	Set_Bool,
 	Set_Int,
 	Set_Entity_Busy,
@@ -139,6 +143,8 @@ update_runner :: proc(dt: f32) {
 			curtain_up = true
 			curtain_t = CURTAIN_TIME
 			runner.state = Wait_Transition{}
+		case Play_Sound:
+			play_sound(event.sound)
 		case Set_Bool:
 			set_game_data(event.k, event.v)
 		case Set_Int:

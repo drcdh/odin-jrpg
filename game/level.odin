@@ -90,9 +90,9 @@ welcome := [?]Event {
 	End{},
 }
 
-WARP_TO_0 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Curtain_Down{}, Start_Level{level = .LEVEL_0}, Curtain_Up{}, End{}}
-WARP_TO_1 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Curtain_Down{}, Start_Level{level = .LEVEL_1}, Curtain_Up{}, End{}}
-WARP_TO_2 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Curtain_Down{}, Start_Level{level = .LEVEL_2}, Curtain_Up{}, End{}}
+WARP_TO_0 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Play_Sound{.Warp}, Curtain_Down{}, Start_Level{level = .LEVEL_0}, Curtain_Up{}, End{}}
+WARP_TO_1 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Play_Sound{.Warp}, Curtain_Down{}, Start_Level{level = .LEVEL_1}, Curtain_Up{}, End{}}
+WARP_TO_2 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Play_Sound{.Warp}, Curtain_Down{}, Start_Level{level = .LEVEL_2}, Curtain_Up{}, End{}}
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 	pc_entity = hm.add(

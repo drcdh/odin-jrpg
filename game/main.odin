@@ -16,7 +16,7 @@ window_h: i32
 running: bool
 quitting: bool // todo: transitions
 
-CURTAIN_TIME :: 1 // seconds
+CURTAIN_TIME :: .5 // seconds
 curtain_up : bool
 curtain_t : f32 = -1
 
