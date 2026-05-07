@@ -26,7 +26,7 @@ draw_world :: proc() {
 	if camera, ok := hm.get(&entities, camera_entity); ok {
 		world_camera = {
 			zoom   = 1,
-			target = get_entity_pixel(camera^) + tile_dim/2,
+			target = get_entity_pixel(camera^) + tile_dim / 2,
 			offset = view_dim / 2,
 		}
 	}

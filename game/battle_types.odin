@@ -29,7 +29,7 @@ Combatant_Visual :: struct {
 // EVENTS
 Battle_Animation :: struct {
 	animation: Animation_Name,
-	offset: Pixel_Coord,
+	offset:    Pixel_Coord,
 }
 
 Battle_Message :: struct {
@@ -61,8 +61,8 @@ Take_Turn :: struct {
 }
 Process_Battle_Animation :: struct {
 	animation: Animation,
-	offset: Pixel_Coord,
-	t:      f32,
+	offset:    Pixel_Coord,
+	t:         f32,
 }
 Process_Text_Effect :: struct {
 	coord: Pixel_Coord,

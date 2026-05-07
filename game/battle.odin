@@ -150,7 +150,13 @@ draw_party_member_stats :: proc(p: int) {
 		}
 		rl.DrawTextEx(
 			font,
-			fmt.caprintf("%s HP:%d T:%d", c.character.name, c.character.stats.hitpoints, c.t, allocator=context.temp_allocator),
+			fmt.caprintf(
+				"%s HP:%d T:%d",
+				c.character.name,
+				c.character.stats.hitpoints,
+				c.t,
+				allocator = context.temp_allocator,
+			),
 			{x, y},
 			32,
 			0,
@@ -206,7 +212,7 @@ update_battle :: proc(dt: f32) {
 			case Battle_Animation:
 				battle_state = Process_Battle_Animation {
 					animation = animation_create(e.animation),
-					offset = e.offset,
+					offset    = e.offset,
 				}
 			case Battle_Message:
 				// todo

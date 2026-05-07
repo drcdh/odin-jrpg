@@ -117,7 +117,7 @@ update_runner :: proc(dt: f32) {
 			if dialogue_done() {runner.state = Continue{}}
 			return
 		case Wait_Transition:
-			if curtain_t <= 0 { runner.state = Continue{} }
+			if curtain_t <= 0 {runner.state = Continue{}}
 			return
 		}
 

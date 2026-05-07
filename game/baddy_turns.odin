@@ -9,11 +9,13 @@ attack :: proc(actor, target: ^Combatant) {
 	// queue_battle_sound(Battle_Sound{sound = .Whack})
 	queue.push_back(&battle_event_queue, Battle_Sound{sound = .Whack})
 
-	queue_battle_animation(Battle_Animation{animation=.Whack, offset = target.coord})
+	queue_battle_animation(Battle_Animation{animation = .Whack, offset = target.coord})
 
 	hp_loss := max(1, actor.character.stats.offense - target.character.stats.defense)
 
-	queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss, allocator=context.temp_allocator)})
+	queue_text_effect(
+		Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss, allocator = context.temp_allocator)},
+	)
 
 	queue_character_effect(Character_Effect{character = target.character, effect = HP_LOSS{hp_loss = hp_loss}})
 
