@@ -91,13 +91,12 @@ WARP_TO_1 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Start_Level{
 
 WARP_TO_2 := [?]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Start_Level{level = .LEVEL_2}, End{}}
 
-add_pc_entity :: proc(tile: Tile_Coord, face: Direction) {
-	dv := Direction_Vectors
+add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 	pc_entity = hm.add(
 		&entities,
 		Entity {
 			id = PLAYER_ID,
-			k = Kinematics{d = face, face = dv[face], tile = tile, speed = 3},
+			k = Kinematics{face = face, tile = tile, speed = 3},
 			n = "Player",
 			script = nil,
 			state = Control{},
@@ -115,18 +114,18 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Direction) {
 start_level_0 :: proc() {
 	m = build_map()
 
-	add_pc_entity(PLAYER_SPAWN, .South)
+	add_pc_entity(PLAYER_SPAWN, .Down)
 
 	if get_game_data(Bool_Datum.Met_Dude) {
 		_ = hm.add(
 			&entities,
 			Entity {
 				id = DUDE_ID,
-				k = Kinematics{face = Direction_Vectors[.South], tile = {10, 10}, speed = 2},
+				k = Kinematics{face = .Down, tile = {10, 10}, speed = 2},
 				n = "Dude",
 				script = DUDE_SCRIPT_1[:],
 				state = Pacing{route = 1, pause = 1},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
 		)
 	} else {
@@ -134,11 +133,11 @@ start_level_0 :: proc() {
 			&entities,
 			Entity {
 				id = DUDE_ID,
-				k = Kinematics{face = Direction_Vectors[.South], tile = DUDE_SPAWN, speed = 2},
+				k = Kinematics{face = .Down, tile = DUDE_SPAWN, speed = 2},
 				n = "Dude",
 				script = DUDE_SCRIPT_0[:],
 				state = Pacing{route = 0, pause = 1},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
 		)
 	}
@@ -161,7 +160,7 @@ start_level_0 :: proc() {
 			k = Kinematics{tile = PLAYER_SPAWN + {1, 1}},
 			n = "Button 1",
 			script = BUTTON_1_SCRIPT[:],
-			v = Visual_Solid_Rect{color = rl.Color{200, 50, 50, 255}, size = tile_dim / 2},
+			v = Texture_Name.Button,
 		},
 	)
 
@@ -172,7 +171,7 @@ start_level_0 :: proc() {
 			k = Kinematics{tile = PLAYER_SPAWN + {2, 1}},
 			n = "Button 2",
 			script = BUTTON_2_SCRIPT[:],
-			v = Visual_Solid_Circle{color = rl.Color{50, 200, 50, 255}, radius = tile_size / 2},
+			v = Texture_Name.Button,
 		},
 	)
 
@@ -202,7 +201,7 @@ start_level_1 :: proc() {
 		}
 	}
 
-	add_pc_entity(Tile_Coord{11, 11}, .East)
+	add_pc_entity(Tile_Coord{11, 11}, .Right)
 
 	_ = hm.add(
 		&entities,
@@ -226,7 +225,7 @@ start_level_2 :: proc() {
 		}
 	}
 
-	add_pc_entity(Tile_Coord{14, 14}, .South)
+	add_pc_entity(Tile_Coord{14, 14}, .Down)
 
 	for i := 1; i <= MAP_WIDTH - 3; i += 2 {
 		_ = hm.add(
@@ -235,7 +234,7 @@ start_level_2 :: proc() {
 				id = 100 + i,
 				k = Kinematics{tile = Tile_Coord{i, 1}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 1},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
 		)
 		_ = hm.add(
@@ -244,7 +243,7 @@ start_level_2 :: proc() {
 				id = 200 + i,
 				k = Kinematics{tile = Tile_Coord{i, MAP_HEIGHT - 3}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 3},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
 		)
 	}
@@ -255,7 +254,7 @@ start_level_2 :: proc() {
 				id = 300 + j,
 				k = Kinematics{tile = Tile_Coord{1, j}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 0},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
 		)
 		_ = hm.add(
@@ -264,7 +263,7 @@ start_level_2 :: proc() {
 				id = 400 + j,
 				k = Kinematics{tile = Tile_Coord{MAP_WIDTH - 3, j}, speed = 2},
 				state = Pacing{route = 2, pause = 1, step = 2},
-				v = Visual_Solid_Rect{color = DUDE_COLOR, size = tile_dim},
+				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 			},
 		)
 	}

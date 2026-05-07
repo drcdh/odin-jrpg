@@ -55,11 +55,11 @@ draw_debug :: proc() {
 		h1 := tile_size / 2
 		h += h1
 		rl.DrawLineV({0, h}, {view_dim.x, h}, rl.WHITE)
-		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h-h1}, h1, 0, rl.WHITE)
+		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h - h1}, h1, 0, rl.WHITE)
 		h2 := tile_size / 4
 		h += h2
 		rl.DrawLineV({0, h}, {view_dim.x, h}, rl.WHITE)
-		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h-h2}, h2, 0, rl.WHITE)
+		rl.DrawTextEx(font, LETTERS_IN_FONT, {0, h - h2}, h2, 0, rl.WHITE)
 	}
 
 }

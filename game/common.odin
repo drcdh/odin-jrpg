@@ -40,20 +40,42 @@ Direction_Vectors :: [Direction]Tile_Coord {
 	.NorthWest = {-1, -1},
 }
 
+Face :: enum {
+	Left,
+	Right,
+	Up,
+	Down,
+}
+
+face_tile_coord :: proc(f: Face) -> Tile_Coord {
+	t: Tile_Coord
+	switch f {
+	case .Left:
+		t = {-1, 0}
+	case .Right:
+		t = {1, 0}
+	case .Up:
+		t = {0, -1}
+	case .Down:
+		t = {0, 1}
+	}
+	return t
+}
+
+get_adjacent_tile :: proc(t: Tile_Coord, f: Face) -> Tile_Coord {
+	return t + face_tile_coord(f)
+}
+
 tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
 	return Pixel_Coord{cast(Pixel)(t.x) * tile_size, cast(Pixel)(t.y) * tile_size}
 }
 
-get_moves_toward :: proc(f, t, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
-	v := la.sign(d - t)
+get_moves_toward :: proc(k: Kinematics, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {
+	v := la.sign(d - k.tile)
 	if (v.x == 0 || v.y == 0) {
 		return v, Tile_Coord{0, 0}
 	}
-	f := f
-	if f.x == 0 && f.y == 0 {
-		// projecting to {0, 0} causes a core dump :-(
-		f.x = 1
-	}
+	f := face_tile_coord(k.face)
 	move := la.projection(v, f)
 	alt := v - move
 	return move, alt

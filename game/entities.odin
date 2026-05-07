@@ -4,8 +4,7 @@ import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
 Kinematics :: struct {
-	d:           Direction,
-	face:        Tile_Coord,
+	face:        Face,
 	ghost:       bool,
 	moving:      bool,
 	offset:      Tile_Offset,
@@ -75,19 +74,17 @@ draw_solid_circle :: proc(k: Kinematics, v: Visual_Solid_Circle) {
 }
 
 draw_entity :: proc(e: ^Entity) {
-	if !e.disabled {
-		switch v in e.v {
-		case Visual_Solid_Circle:
-			draw_solid_circle(e, v)
-		case Visual_Solid_Rect:
-			draw_solid_rect(e, v)
-		case Animation:
-			draw_animation(v, entity_coord(e), rl.WHITE)
-		case Facing_Animation:
-			draw_facing_animation(v, entity_coord(e), rl.WHITE)
-		case Texture_Name:
-			draw_texture(v, entity_coord(e), rl.WHITE)
-		}
+	switch v in e.v {
+	case Visual_Solid_Circle:
+		draw_solid_circle(e, v)
+	case Visual_Solid_Rect:
+		draw_solid_rect(e, v)
+	case Animation:
+		draw_animation(v, entity_coord(e), rl.WHITE)
+	case Facing_Animation:
+		draw_facing_animation(v, entity_coord(e), rl.WHITE)
+	case Texture_Name:
+		draw_texture(v, entity_coord(e), rl.WHITE)
 	}
 }
 
@@ -102,8 +99,22 @@ set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 	k.moving = true
 }
 
+get_face_toward :: proc(d: Tile_Coord) -> Face {
+	switch d {
+	case {1, 0}:
+		return .Right
+	case {-1, 0}:
+		return .Left
+	case {0, 1}:
+		return .Down
+	case {0, -1}:
+		return .Up
+	}
+	return nil
+}
+
 try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
-	k.face = d
+	k.face = get_face_toward(d)
 	if tile_free(k.tile + d) {
 		set_destination(k, d)
 		return true
@@ -112,7 +123,7 @@ try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
 }
 
 try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
-	move, alt := get_moves_toward(k.face, k.tile, d)
+	move, alt := get_moves_toward(k^, d)
 	if !try_set_adjacent_destination(k, move) {
 		_ = try_set_adjacent_destination(k, alt)
 	}
@@ -124,7 +135,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	case Animation:
 		animation_update(&v, dt)
 	case Facing_Animation:
-		facing_animation_update(&v, e.k.d, dt)
+		facing_animation_update(&v, e.k.face, dt)
 	}
 	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
@@ -160,7 +171,7 @@ entity_at_tile :: proc(e: Entity, t: Tile_Coord) -> bool {
 }
 
 tile_in_front :: proc(e: ^Entity) -> Tile_Coord {
-	return e.k.tile + e.k.face
+	return get_adjacent_tile(e.tile, e.face)
 }
 
 get_entity_pixel :: proc(e: Entity) -> Pixel_Coord {
@@ -171,13 +182,13 @@ player_control :: proc(_: f32, p: ^Entity) {
 	input := get_direction_input()
 	if (input.x != 0 || input.y != 0) {
 		if input.y > 0 {
-			p.k.d = .South
+			p.k.face = .Down
 		} else if input.y < 0 {
-			p.k.d = .North
+			p.k.face = .Up
 		} else if input.x > 0 {
-			p.k.d = .East
+			p.k.face = .Right
 		} else if input.x < 0 {
-			p.k.d = .West
+			p.k.face = .Left
 		}
 		try_set_destination(&p.k, p.k.tile + input)
 	} else {

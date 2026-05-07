@@ -73,7 +73,7 @@ Facing_Animation :: struct {
 	right: Animation,
 	up:    Animation,
 	down:  Animation,
-	face:  Direction,
+	face:  Face,
 }
 
 facing_animation_create :: proc(
@@ -81,7 +81,7 @@ facing_animation_create :: proc(
 	right: Animation_Name,
 	up: Animation_Name,
 	down: Animation_Name,
-	face := Direction.South,
+	face := Face.Down,
 ) -> Facing_Animation {
 	left := animation_create(left)
 	right := animation_create(right)
@@ -90,7 +90,7 @@ facing_animation_create :: proc(
 	return {face = face, left = left, right = right, up = up, down = down}
 }
 
-facing_animation_update :: proc(a: ^Facing_Animation, face: Direction, dt: f32) {
+facing_animation_update :: proc(a: ^Facing_Animation, face: Face, dt: f32) {
 	animation_update(&a.left, dt)
 	animation_update(&a.right, dt)
 	animation_update(&a.up, dt)
@@ -99,14 +99,14 @@ facing_animation_update :: proc(a: ^Facing_Animation, face: Direction, dt: f32) 
 }
 
 draw_facing_animation :: proc(anim: Facing_Animation, pos: Pixel_Coord, tint: rl.Color, flip_x := false) {
-	#partial switch anim.face {
-	case .West:
+	switch anim.face {
+	case .Left:
 		draw_animation(anim.left, pos, tint, flip_x)
-	case .East:
+	case .Right:
 		draw_animation(anim.right, pos, tint, flip_x)
-	case .South:
+	case .Down:
 		draw_animation(anim.down, pos, tint, flip_x)
-	case .North:
+	case .Up:
 		draw_animation(anim.up, pos, tint, flip_x)
 	}
 }
