@@ -1,3 +1,4 @@
+odinfmt -w .
 pushd game
 odin run atlas-builder/
 popd
