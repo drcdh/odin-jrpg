@@ -114,7 +114,6 @@ get_face_toward :: proc(d: Tile_Coord) -> Face {
 }
 
 try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
-	k.face = get_face_toward(d)
 	if tile_free(k.tile + d) {
 		set_destination(k, d)
 		return true
@@ -124,6 +123,7 @@ try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
 
 try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 	move, alt := get_moves_toward(k^, d)
+	k.face = get_face_toward(move)
 	if !try_set_adjacent_destination(k, move) {
 		_ = try_set_adjacent_destination(k, alt)
 	}
