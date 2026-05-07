@@ -112,6 +112,7 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 				.Protagonist_World_Down,
 				face,
 			),
+			z = Z_MAX,
 		},
 	)
 }
@@ -133,6 +134,7 @@ start_level_0 :: proc() {
 				activate_script = DUDE_SCRIPT_1[:],
 				state = Pacing{route = 1, pause = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				z = Z_MAX,
 			},
 		)
 	} else {
@@ -147,6 +149,7 @@ start_level_0 :: proc() {
 				activate_script = DUDE_SCRIPT_0[:],
 				state = Pacing{route = 0, pause = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				z = Z_MAX,
 			},
 		)
 	}
@@ -247,6 +250,7 @@ start_level_2 :: proc() {
 				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				z = Z_MAX,
 			},
 		)
 		_ = hm.add(
@@ -257,6 +261,7 @@ start_level_2 :: proc() {
 				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 3},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				z = Z_MAX,
 			},
 		)
 	}
@@ -269,6 +274,7 @@ start_level_2 :: proc() {
 				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 0},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				z = Z_MAX,
 			},
 		)
 		_ = hm.add(
@@ -279,6 +285,7 @@ start_level_2 :: proc() {
 				speed = 2,
 				state = Pacing{route = 2, pause = 1, step = 2},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				z = Z_MAX,
 			},
 		)
 	}

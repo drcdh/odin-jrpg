@@ -11,6 +11,7 @@ Kinematics :: struct {
 	offset_ease: Pixel,
 	speed:       f32,
 	tile:        Tile_Coord,
+	z: int,
 }
 
 Visual_Solid_Circle :: struct {

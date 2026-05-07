@@ -8,12 +8,18 @@ import rl "vendor:raylib"
 VIEW_TILES_W :: 16
 VIEW_TILES_H :: 14
 
+Z_MAX :: 3
+
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 m: Map
 pc_entity: Entity_Handle
 runner := Runner{}
 
 camera_entity: Entity_Handle
+
+at_z :: proc(k: Kinematics, z: int) -> bool {
+	return (z == 0 && k.z <= 0) || (z == k.z) || (z == Z_MAX && k.z >= Z_MAX)
+}
 
 draw_world :: proc() {
 	world_camera: rl.Camera2D
@@ -28,12 +34,16 @@ draw_world :: proc() {
 	rl.BeginMode2D(world_camera)
 
 	draw_map(m)
-	it := hm.iterator_make(&entities)
-	for e, _ in hm.iterate(&it) {
-		if !e.disabled {
-			draw_entity(e)
+
+	for z in 0..=Z_MAX {
+		it := hm.iterator_make(&entities)
+		for e, _ in hm.iterate(&it) {
+			if !e.disabled && at_z(e, z) {
+				draw_entity(e)
+			}
 		}
 	}
+
 	rl.EndMode2D()
 }
 
