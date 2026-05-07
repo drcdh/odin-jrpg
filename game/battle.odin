@@ -72,7 +72,7 @@ draw_battle :: proc() {
 
 	#partial switch s in battle_state {
 	case Process_Battle_Animation:
-		s.draw(s.t, s.offset)
+		draw_animation(s.animation, s.offset, rl.WHITE)
 	case Process_Text_Effect:
 		pos := Pixel_Coord{s.coord.x - 32, s.coord.y - 32 * s.t}
 		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{0, 0, 0, u8(255 * (1 - s.t))})
@@ -205,7 +205,7 @@ update_battle :: proc(dt: f32) {
 			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Animation:
 				battle_state = Process_Battle_Animation {
-					draw   = e.draw,
+					animation = animation_create(e.animation),
 					offset = e.offset,
 				}
 			case Battle_Message:
@@ -230,8 +230,7 @@ update_battle :: proc(dt: f32) {
 			}
 		}
 	case Process_Battle_Animation:
-		s.t += dt
-		if s.t >= .5 {
+		if animation_update(&s.animation, dt) {
 			battle_state = Next_Event{}
 		}
 	case Process_Text_Effect:

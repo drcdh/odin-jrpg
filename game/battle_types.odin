@@ -28,8 +28,7 @@ Combatant_Visual :: struct {
 
 // EVENTS
 Battle_Animation :: struct {
-	draw:   proc(dt: f32, offset: Pixel_Coord),
-	// animation: Animation,
+	animation: Animation_Name,
 	offset: Pixel_Coord,
 }
 
@@ -61,8 +60,7 @@ Take_Turn :: struct {
 	actor_h: Combatant_Handle,
 }
 Process_Battle_Animation :: struct {
-	draw:   proc(dt: f32, offset: Pixel_Coord),
-	// animation: Animation,
+	animation: Animation,
 	offset: Pixel_Coord,
 	t:      f32,
 }

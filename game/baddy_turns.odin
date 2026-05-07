@@ -9,7 +9,7 @@ attack :: proc(actor, target: ^Combatant) {
 	// queue_battle_sound(Battle_Sound{sound = .Whack})
 	queue.push_back(&battle_event_queue, Battle_Sound{sound = .Whack})
 
-	queue_battle_animation(Battle_Animation{draw = draw_expanding_circle, offset = target.coord})
+	queue_battle_animation(Battle_Animation{animation=.Whack, offset = target.coord})
 
 	hp_loss := max(1, actor.character.stats.offense - target.character.stats.defense)
 

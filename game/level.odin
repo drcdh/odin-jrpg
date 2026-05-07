@@ -69,9 +69,9 @@ BUTTON_2_SCRIPT := [?]Event {
 MONSTER_IN_A_BOX := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Append_Text{text = "Monster in a box!"},
-	Start_Encounter{encounter = 0},
 	Close_Dialogue{},
 	Clear_Text{},
+	Start_Encounter{encounter = 0},
 	Append_Text{text = "Didja win?"},
 	Close_Dialogue{},
 	Clear_Text{},
