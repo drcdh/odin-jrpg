@@ -26,24 +26,23 @@ encounters := [?]Encounter {
 }
 
 add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
-	if template := get_baddy_template(baddy_id); template != nil {
-		fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
-		battle_baddies[battle_num_baddies] = Character {
-			name  = template.name,
-			stats = template.stats,
-		}
-		battle_baddy_handles[battle_num_baddies] = hm.add(
-			&battle_combatants,
-			Combatant {
-				character = &battle_baddies[battle_num_baddies],
-				coord = Pixel_Coord{2 * tile_size, 4 * tile_size * f32(1 + battle_num_baddies)},
-				enabled = true,
-				turn = template.turn,
-				visual = {variant = template.texture, tint = rl.WHITE},
-			},
-		)
-		battle_num_baddies += 1
+	template := baddy_templates[baddy_id]
+	fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
+	battle_baddies[battle_num_baddies] = Character {
+		name  = template.name,
+		stats = template.stats,
 	}
+	battle_baddy_handles[battle_num_baddies] = hm.add(
+		&battle_combatants,
+		Combatant {
+			character = &battle_baddies[battle_num_baddies],
+			coord = Pixel_Coord{2 * tile_size, 4 * tile_size * f32(1 + battle_num_baddies)},
+			enabled = true,
+			turn = template.turn,
+			visual = {variant = template.texture, tint = rl.WHITE},
+		},
+	)
+	battle_num_baddies += 1
 }
 
 start_encounter :: proc(i: int) {
