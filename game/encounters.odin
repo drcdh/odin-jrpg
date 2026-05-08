@@ -11,7 +11,7 @@ Encounter :: struct {
 }
 
 encounters := [?]Encounter {
-	{baddies = {.Mouse_Sized_Rat, .None, .None, .None, .None, .None}},
+	{baddies = {.Mouse_Sized_Rat, .Malicious_Mushroom, .Generic_Goblin_1, .None, .None, .None}},
 	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .None, .None, .None}},
 	{
 		baddies = {
@@ -32,6 +32,13 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 		name  = template.name,
 		stats = template.stats,
 	}
+	visual_variant : Combatant_Visual_Variant
+	switch t in template.texture {
+	case Texture_Name:
+		visual_variant = t
+	case Animation_Name:
+		visual_variant = animation_create(t)
+	}
 	battle_baddy_handles[battle_num_baddies] = hm.add(
 		&battle_combatants,
 		Combatant {
@@ -39,7 +46,7 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 			coord = Pixel_Coord{2 * tile_size, 4 * tile_size * f32(1 + battle_num_baddies)},
 			enabled = true,
 			turn = template.turn,
-			visual = {variant = template.texture, tint = rl.WHITE},
+			visual = {variant = visual_variant, tint = rl.WHITE},
 		},
 	)
 	battle_num_baddies += 1
