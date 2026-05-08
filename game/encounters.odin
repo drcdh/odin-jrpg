@@ -32,7 +32,7 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 		name  = template.name,
 		stats = template.stats,
 	}
-	visual_variant : Combatant_Visual_Variant
+	visual_variant: Combatant_Visual_Variant
 	switch t in template.texture {
 	case Texture_Name:
 		visual_variant = t

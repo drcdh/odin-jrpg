@@ -4,11 +4,28 @@ import hm "core:container/handle_map"
 import "core:math/rand"
 import rl "vendor:raylib"
 
-NUM_TILE_TYPES :: 8
+NUM_TILE_TYPES :: 16
 
 TILESET_WIDTH :: 4
 
-PASSABLE :: [NUM_TILE_TYPES]bool{true, true, true, true, true, true, false, false}
+PASSABLE :: [NUM_TILE_TYPES]bool {
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	true,
+	false,
+	false,
+	false,
+	false,
+}
 
 MAP_WIDTH :: 30
 MAP_HEIGHT :: 30

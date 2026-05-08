@@ -6,8 +6,8 @@ Baddy_Visual :: union {
 }
 
 Baddy_Template :: struct {
-	name:    cstring,
-	using stats:   Stats,
-	texture: Baddy_Visual,
-	turn:    Turn_Proc,
+	name:        cstring,
+	using stats: Stats,
+	texture:     Baddy_Visual,
+	turn:        Turn_Proc,
 }
