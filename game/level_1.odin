@@ -13,16 +13,16 @@ WARP_TO_2 := [?]Event {
 
 GUY_ID :: 80
 
-GUY_SCRIPT := [?]Event{
-	Set_Entity_Busy{id = PLAYER_ID, busy=true},
+GUY_SCRIPT := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Set_Entity_Busy{id = GUY_ID, busy = true},
-	Append_Text{text="Erm, hello, $player."},
+	Append_Text{text = "Erm, hello, $player."},
 	Clear_Text{},
-	Append_Text{text="Have you met Dude yet? "},
+	Append_Text{text = "Have you met Dude yet? "},
 	Skip_If{2, .Met_Dude},
-	Append_Text{text="No? Well."},
+	Append_Text{text = "No? Well."},
 	Skip{1},
-	Append_Text{text="Yes? Very good."},
+	Append_Text{text = "Yes? Very good."},
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Busy{id = GUY_ID, busy = false},
@@ -42,7 +42,7 @@ start_level_1 :: proc() {
 			n = "Guy",
 			talk = GUY_SCRIPT[:],
 			v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
-		}
+		},
 	)
 	_ = hm.add(
 		&entities,

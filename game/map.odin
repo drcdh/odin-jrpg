@@ -52,7 +52,7 @@ build_map :: proc() -> Map {
 draw_map :: proc(m: Map) {
 	for i in 0 ..< MAP_WIDTH {
 		for j in 0 ..< MAP_HEIGHT {
-			draw_tile(m[j][i]-1, tile_to_pixel(Tile_Coord{i, j}))
+			draw_tile(m[j][i] - 1, tile_to_pixel(Tile_Coord{i, j}))
 		}
 	}
 }

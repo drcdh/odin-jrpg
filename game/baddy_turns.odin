@@ -13,9 +13,7 @@ attack :: proc(actor, target: ^Combatant) {
 
 	hp_loss := max(1, actor.character.stats.offense - target.character.stats.defense)
 
-	queue_text_effect(
-		Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss)},
-	)
+	queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss)})
 
 	queue_character_effect(Character_Effect{character = target.character, effect = HP_LOSS{hp_loss = hp_loss}})
 

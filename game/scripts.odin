@@ -46,8 +46,13 @@ Set_Entity_Texture :: struct {
 	id:      Id,
 	texture: Texture_Name,
 }
-Skip :: struct {n: int}
-Skip_If :: struct {n: int, d: Bool_Datum}
+Skip :: struct {
+	n: int,
+}
+Skip_If :: struct {
+	n: int,
+	d: Bool_Datum,
+}
 Start_Encounter :: struct {
 	encounter: int,
 }
