@@ -1,9 +1,6 @@
 package game
 
 import hm "core:container/handle_map"
-import "core:fmt"
-import "core:time"
-import rl "vendor:raylib"
 
 DUDE_ID: Id = 1
 BUTTON_1_ID: Id = 40

@@ -3,7 +3,6 @@ package game
 import hm "core:container/handle_map"
 import "core:fmt"
 import "core:time"
-import rl "vendor:raylib"
 
 PLAYER_ID: Id = 0
 

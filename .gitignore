@@ -1,4 +1,5 @@
 baddy_data.odin
+level_*_data.odin
 .~lock.*
 
 ### atlas-builder ###
