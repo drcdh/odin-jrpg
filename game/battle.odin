@@ -242,6 +242,7 @@ update_battle :: proc(dt: f32) {
 	case Process_Text_Effect:
 		s.t += dt
 		if s.t >= 1 {
+			delete(s.text)
 			battle_state = Next_Event{}
 		}
 	}
