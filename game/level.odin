@@ -6,6 +6,8 @@ import "core:time"
 
 PLAYER_ID: Id = 0
 
+routes : [][]Tile_Coord
+
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 	pc_entity = hm.add(
 		&entities,
@@ -41,12 +43,15 @@ start_level :: proc(l: Level) {
 	switch l {
 	case .LEVEL_0:
 		m = level_0_map
+		routes = LEVEL_0_ROUTES
 		start_level_0()
 	case .LEVEL_1:
 		m = level_1_map
+		routes = LEVEL_1_ROUTES
 		start_level_1()
 	case .LEVEL_2:
 		m = level_2_map
+		routes = LEVEL_2_ROUTES
 		start_level_2()
 	}
 	camera_entity = pc_entity

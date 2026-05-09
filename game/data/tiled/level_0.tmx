@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1-8-g449813058" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="9">
+<map version="1.10" tiledversion="1.12.1-8-g449813058" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="11">
  <tileset firstgid="1" source="tileset_terrain.tsx"/>
  <layer id="1" name="Tile Layer 1" width="20" height="20">
   <data encoding="csv">
@@ -40,6 +40,12 @@
   </object>
   <object id="8" name="warp_spawn" x="57" y="25">
    <point/>
+  </object>
+  <object id="9" name="dude_route_0" x="168" y="39">
+   <polyline points="0,0 0,64"/>
+  </object>
+  <object id="10" name="dude_route_1" x="71" y="122">
+   <polygon points="0,0 1,78 -31,78 -31,62 -48,62 -47,-1"/>
   </object>
  </objectgroup>
 </map>

@@ -5,12 +5,6 @@ import hm "core:container/handle_map"
 DUDE_ID: Id = 1
 BUTTON_1_ID: Id = 40
 
-LEVEL_ROUTES := [][]Tile_Coord {
-	{{18, 10}, {18, 8}, {16, 8}, {16, 10}},
-	{{10, 10}, {10, 14}},
-	{{1, 1}, {MAP_WIDTH - 3, 1}, {MAP_WIDTH - 3, MAP_HEIGHT - 3}, {1, MAP_HEIGHT - 3}},
-}
-
 DUDE_SCRIPT_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Set_Entity_Busy{id = DUDE_ID, busy = true},
@@ -20,7 +14,7 @@ DUDE_SCRIPT_0 := [?]Event {
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Talk_Script{id = DUDE_ID, script = DUDE_SCRIPT_1[:]},
-	Set_Entity_State{id = DUDE_ID, state = Pacing{route = 1}},
+	Set_Entity_State{id = DUDE_ID, state = Pacing{route = LEVEL_0_DUDE_ROUTE_1}},
 	Set_Bool{k = .Met_Dude, v = true},
 	Set_Entity_Busy{id = DUDE_ID, busy = false},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
@@ -102,7 +96,7 @@ start_level_0 :: proc() {
 				speed = 2,
 				n = "Dude",
 				talk = DUDE_SCRIPT_1[:],
-				state = Pacing{route = 1, pause = 1},
+				state = Pacing{route = LEVEL_0_DUDE_ROUTE_1, pause = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 				z = Z_MAX,
 			},
@@ -117,7 +111,7 @@ start_level_0 :: proc() {
 				speed = 2,
 				n = "Dude",
 				talk = DUDE_SCRIPT_0[:],
-				state = Pacing{route = 0, pause = 1},
+				state = Pacing{route = LEVEL_0_DUDE_ROUTE_0, pause = 1},
 				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 				z = Z_MAX,
 			},

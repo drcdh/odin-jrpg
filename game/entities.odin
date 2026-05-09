@@ -149,13 +149,14 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
 		case Pacing:
-			destinations := LEVEL_ROUTES[s.route]
+			destinations := routes[s.route]
 			s.countdown -= dt
 			if s.countdown <= 0 {
 				if entity_at_tile(e^, destinations[s.step]) {
 					s.step += 1
 					if s.step >= len(destinations) {s.step = 0}
 				}
+				// fmt.println("step", s.step, "dest", destinations[s.step], "pos", e.tile)
 				try_set_destination(&e.k, destinations[s.step])
 				s.countdown = s.pause
 			}

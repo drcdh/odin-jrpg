@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1-8-g449813058" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="3">
+<map version="1.10" tiledversion="1.12.1-8-g449813058" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="4">
  <tileset firstgid="1" source="tileset_terrain.tsx"/>
  <layer id="1" name="Tile Layer 1" width="20" height="20">
   <data encoding="csv">
@@ -31,6 +31,9 @@
   </object>
   <object id="2" name="warp_spawn" x="167" y="73">
    <point/>
+  </object>
+  <object id="3" name="conga_line" x="25.3551" y="25">
+   <polygon points="0,0 270.645,0.992248 269.527,255.008 -3.3551,256"/>
   </object>
  </objectgroup>
 </map>

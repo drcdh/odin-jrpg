@@ -1,7 +1,6 @@
 package game
 
 import hm "core:container/handle_map"
-import "core:math/rand"
 import rl "vendor:raylib"
 
 NUM_TILE_TYPES :: 16
@@ -34,21 +33,6 @@ Map_Layer :: distinct [MAP_WIDTH][MAP_HEIGHT]int
 
 Map :: distinct Map_Layer
 
-build_map :: proc() -> Map {
-	m: Map
-
-	for i in 1 ..= MAP_WIDTH - 2 {
-		for j in 1 ..= MAP_HEIGHT - 2 {
-			m[i][j] = 4
-			if abs(MAP_WIDTH / 2 - i) > 8 || abs(MAP_HEIGHT / 2 - j) > 8 {
-				m[i][j] = rand.int_max(NUM_TILE_TYPES)
-			}
-		}
-	}
-
-	return m
-}
-
 draw_map :: proc(m: Map) {
 	for i in 0 ..< MAP_WIDTH {
 		for j in 0 ..< MAP_HEIGHT {
@@ -80,5 +64,5 @@ tile_free :: proc(t: Tile_Coord) -> bool {
 		}
 	}
 	p := PASSABLE
-	return p[m[t.x][t.y]]
+	return p[m[t.y][t.x]-1]
 }
