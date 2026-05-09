@@ -132,7 +132,7 @@ draw_battle_combatants :: proc() {
 				draw_texture(v, c.coord, c.visual.tint)
 			}
 			pos := Pixel_Coord{c.coord.x, c.coord.y - tile_size}
-			rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
+			// rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
 		}
 	}
 }

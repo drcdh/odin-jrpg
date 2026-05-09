@@ -6,26 +6,43 @@ import rl "vendor:raylib"
 
 MAX_ENCOUNTER_SIZE :: 6
 
+BATTLE_ORIGIN_TILE :: Tile_Coord{3, 3}
+
+Encounter_Spot :: struct {
+	tile: Tile_Coord,
+	baddy_id: Baddy_Id,
+}
+
 Encounter :: struct {
-	baddies: [MAX_ENCOUNTER_SIZE]Baddy_Id,
+	baddies: [MAX_ENCOUNTER_SIZE]Encounter_Spot,
 }
 
 encounters := [?]Encounter {
-	{baddies = {.Mouse_Sized_Rat, .Malicious_Mushroom, .Generic_Goblin_1, .None, .None, .None}},
-	{baddies = {.Mouse_Sized_Rat, .Mouse_Sized_Rat, .Rat_Sized_Mouse, .None, .None, .None}},
-	{
-		baddies = {
-			.Mouse_Sized_Rat,
-			.Mouse_Sized_Rat,
-			.Rat_Sized_Mouse,
-			.Mouse_Sized_Rat,
-			.Mouse_Sized_Rat,
-			.Mouse_Sized_Rat,
-		},
-	},
+	{baddies = {
+							 {{0, 0}, .Mouse_Sized_Rat},
+							 {{0, 3}, .Malicious_Mushroom},
+							 {{1, 1}, .Generic_Goblin_1},
+							 {},{},{}}},
+	{baddies = {
+							 {{0, 0}, .Mouse_Sized_Rat},
+							 {{1, 0}, .Mouse_Sized_Rat},
+							 {{2, 0}, .Mouse_Sized_Rat},
+							 {{0, 1}, .Mouse_Sized_Rat},
+							 {{1, 1}, .Mouse_Sized_Rat},
+							 {{2, 1}, .Mouse_Sized_Rat},
+						 }},
+	{baddies = {
+							 {{0, 0}, .Mouse_Sized_Rat},
+							 {{1, 0}, .Mouse_Sized_Rat},
+							 {{1, 1}, .Rat_Sized_Mouse},
+							 {{0, 2}, .Mouse_Sized_Rat},
+							 {{1, 2}, .Mouse_Sized_Rat},
+							 {{2, 2}, .Mouse_Sized_Rat},
+	}},
 }
 
-add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
+add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
+	if baddy_id == .None { return }
 	template := baddy_templates[baddy_id]
 	fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
 	battle_baddies[battle_num_baddies] = Character {
@@ -43,7 +60,7 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id) {
 		&battle_combatants,
 		Combatant {
 			character = &battle_baddies[battle_num_baddies],
-			coord = Pixel_Coord{2 * tile_size, 4 * tile_size * f32(1 + battle_num_baddies)},
+			coord = tile_to_pixel(BATTLE_ORIGIN_TILE + tile),
 			enabled = true,
 			turn = template.turn,
 			visual = {variant = visual_variant, tint = rl.WHITE},
@@ -56,8 +73,8 @@ start_encounter :: proc(i: int) {
 	battle_num_baddies = 0
 	battle_num_pc = 0
 
-	for baddy_id in encounters[i].baddies {
-		add_baddy_combatant(baddy_id)
+	for spot in encounters[i].baddies {
+		add_baddy_combatant(spot.baddy_id, spot.tile)
 	}
 
 	dy: f32 = 3 * tile_size
