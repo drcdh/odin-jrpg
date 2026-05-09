@@ -1,5 +1,7 @@
 package game
 
+import "core:fmt"
+
 Append_Text :: struct {
 	text:  string,
 	hurry: bool,
@@ -44,6 +46,8 @@ Set_Entity_Texture :: struct {
 	id:      Id,
 	texture: Texture_Name,
 }
+Skip :: struct {n: int}
+Skip_If :: struct {n: int, d: Bool_Datum}
 Start_Encounter :: struct {
 	encounter: int,
 }
@@ -67,6 +71,8 @@ Event :: union {
 	Set_Entity_Trap_Script,
 	Set_Entity_State,
 	Set_Entity_Texture,
+	Skip,
+	Skip_If,
 	Start_Encounter,
 	Start_Level,
 }
@@ -121,6 +127,7 @@ update_runner :: proc(dt: f32) {
 			return
 		}
 
+		fmt.println(runner.step, runner.script[runner.step])
 		switch event in runner.script[runner.step] {
 		case Append_Text:
 			queue_dialogue(event.text, event.hurry, event.pause)
@@ -159,6 +166,12 @@ update_runner :: proc(dt: f32) {
 			set_entity_state(event.id, event.state)
 		case Set_Entity_Texture:
 			set_entity_visual(event.id, event.texture)
+		case Skip:
+			runner.step += event.n
+		case Skip_If:
+			if get_game_data(event.d) {
+				runner.step += event.n
+			}
 		case Start_Encounter:
 			start_encounter(event.encounter)
 		case Start_Level:

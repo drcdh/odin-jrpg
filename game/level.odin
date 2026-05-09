@@ -218,6 +218,25 @@ start_level_0 :: proc() {
 	}
 }
 
+GUY_ID :: 80
+
+GUY_SCRIPT := [?]Event{
+	Set_Entity_Busy{id = PLAYER_ID, busy=true},
+	Set_Entity_Busy{id = GUY_ID, busy = true},
+	Append_Text{text="Erm, hello, $player."},
+	Clear_Text{},
+	Append_Text{text="Have you met Dude yet? "},
+	Skip_If{2, .Met_Dude},
+	Append_Text{text="No? Well."},
+	Skip{1},
+	Append_Text{text="Yes? Very good."},
+	Close_Dialogue{},
+	Clear_Text{},
+	Set_Entity_Busy{id = GUY_ID, busy = false},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
 start_level_1 :: proc() {
 	{
 		m = Map{}
@@ -230,6 +249,17 @@ start_level_1 :: proc() {
 
 	add_pc_entity(Tile_Coord{11, 11}, .Right)
 
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = GUY_ID,
+			face = .Down,
+			tile = {16, 11},
+			n = "Guy",
+			talk = GUY_SCRIPT[:],
+			v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+		}
+	)
 	_ = hm.add(
 		&entities,
 		Entity {
