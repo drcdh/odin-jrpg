@@ -1,7 +1,7 @@
-name,hitpoints,offense,defense,texture,turn
-Mouse-Sized Rat,5,2,2,,ATTACK_RANDOM_OPPONENT
-Rat-Sized Mouse,15,5,5,,ATTACK_RANDOM_OPPONENT
-Malicious Mushroom,6,3,2,mushroom,ATTACK_RANDOM_OPPONENT
-Generic Goblin,12,10,10,goblin_club,ATTACK_RANDOM_OPPONENT
-Generic Goblin,12,10,10,goblin_knife,ATTACK_RANDOM_OPPONENT
-Ghost,1,4,100,,ATTACK_RANDOM_OPPONENT
+name,hitpoints,offense,defense,pOffense,pDefense,speed,texture,turn
+Mouse-Sized Rat,5,2,2,0,1,15,,ATTACK_RANDOM_OPPONENT
+Rat-Sized Mouse,15,5,5,0,1,14,,ATTACK_RANDOM_OPPONENT
+Malicious Mushroom,6,3,2,10,5,10,mushroom,ATTACK_RANDOM_OPPONENT
+Generic Goblin,12,12,10,0,4,8,goblin_club,ATTACK_RANDOM_OPPONENT
+Generic Goblin,12,10,10,0,4,9,goblin_knife,ATTACK_RANDOM_OPPONENT
+Ghost,1,4,1,10,8,12,,ATTACK_RANDOM_OPPONENT

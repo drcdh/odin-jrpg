@@ -20,8 +20,8 @@ CURTAIN_TIME :: .5 // seconds
 curtain_up: bool
 curtain_t: f32 = -1
 
-init :: proc() {
-	set_window_mode(z = 4)
+init_rl :: proc(z: i32 = 4) {
+	set_window_mode(z)
 
 	rl.InitWindow(window_w, window_h, "JRPG")
 	rl.InitAudioDevice()
@@ -34,7 +34,10 @@ init :: proc() {
 	rl.UnloadImage(atlas_image)
 
 	font = load_atlased_font()
+}
 
+init :: proc() {
+	init_rl()
 	initialize_input()
 	init_dialogue()
 	init_world_menu()

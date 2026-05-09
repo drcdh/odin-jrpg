@@ -34,6 +34,9 @@ with open("data/baddies.csv") as f:
 	hitpoints = {hitpoints},
 	offense = {offense},
 	defense = {defense},
+	pOffense = {pOffense},
+	pDefense = {pDefense},
+	speed = {speed},
 	texture = .{texture},
 	turn = {turn},
 """.format(**row))
@@ -45,6 +48,8 @@ Baddy_Id :: enum {
 """)
 
 out_f.write(",\n".join(baddy_id_enums + [""]))
-out_f.write("}")
+out_f.write("}\n")
+
+out_f.write(f"NUM_BADDY_TEMPLATES :: {len(baddy_id_enums)}")
 
 out_f.close()
