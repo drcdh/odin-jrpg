@@ -69,6 +69,7 @@ FONT_FILENAME :: "font.ttf"
 // The font size of letters extracted from font
 FONT_SIZE :: 32
 
+SKIP_PREFIX :: "_"
 
 // ---------------------
 // ATLAS BUILDER PROGRAM
@@ -687,6 +688,10 @@ main :: proc() {
 	tilesets: [dynamic]Tileset
 
 	for fi in file_infos {
+		if strings.has_prefix(fi.name, SKIP_PREFIX) {
+			fmt.printf("skipping %s\n", fi.name)
+			continue
+		}
 		is_ase := strings.has_suffix(fi.name, ".ase") || strings.has_suffix(fi.name, ".aseprite")
 		is_png := strings.has_suffix(fi.name, ".png")
 		if is_ase || is_png {
