@@ -27,8 +27,8 @@ PASSABLE :: [NUM_TILE_TYPES]bool {
 	false,
 }
 
-MAP_WIDTH :: 30
-MAP_HEIGHT :: 30
+MAP_WIDTH :: 20
+MAP_HEIGHT :: 20
 
 Map_Layer :: distinct [MAP_WIDTH][MAP_HEIGHT]int
 
@@ -52,7 +52,7 @@ build_map :: proc() -> Map {
 draw_map :: proc(m: Map) {
 	for i in 0 ..< MAP_WIDTH {
 		for j in 0 ..< MAP_HEIGHT {
-			draw_tile(m[i][j], tile_to_pixel(Tile_Coord{i, j}))
+			draw_tile(m[j][i]-1, tile_to_pixel(Tile_Coord{i, j}))
 		}
 	}
 }
