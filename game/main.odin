@@ -131,7 +131,10 @@ tear_down :: proc() {
 	delete_input()
 	tear_down_dialogue()
 	unload_sounds()
+	tear_down_rl()
+}
 
+tear_down_rl :: proc() {
 	rl.UnloadTexture(atlas)
 	rl.CloseAudioDevice()
 	rl.CloseWindow()

@@ -53,6 +53,7 @@ main :: proc() {
 		rl.EndDrawing()
 		free_all(context.temp_allocator)
 	}
+	game.tear_down_rl()
 }
 
 coord :: game.Pixel_Coord{400, 100}
