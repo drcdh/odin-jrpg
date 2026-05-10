@@ -33,7 +33,7 @@ dialogue_builder: strings.Builder
 dialogue_icon: Animation
 
 init_dialogue :: proc() {
-	dialogue_icon = animation_create(.Dialogue_Icon)
+	dialogue_icon = animation_create(.Dialogue_Icon_Small)
 }
 
 draw_dialogue :: proc() {
@@ -45,7 +45,7 @@ draw_dialogue :: proc() {
 			rl.DrawTextEx(font, cstr, {tile_size / 2, tile_size / 2}, 32, 0, rl.WHITE)
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
-			draw_animation(dialogue_icon, {view_dim.x - 2 * tile_size, 3 * tile_size}, rl.WHITE)
+			draw_animation(dialogue_icon, {view_dim.x - tile_size, 2 * tile_size}, rl.WHITE)
 		}
 	}
 }
