@@ -3,11 +3,22 @@ package game
 import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
-NUM_TILE_TYPES :: 16
+Tileset_Id :: enum {
+	Tileset_Terrain,
+	Tileset_Town,
+}
 
-TILESET_WIDTH :: 4
+NUM_TILE_TYPES :: [2]int{
+	16,
+	36,
+}
 
-PASSABLE :: [NUM_TILE_TYPES]bool {
+tileset_widths := [2]int {
+	4,
+	6,
+}
+
+TILESET_TERRAIN_PASSABLE := [NUM_TILE_TYPES[0]]bool {
 	true,
 	true,
 	true,
@@ -20,6 +31,44 @@ PASSABLE :: [NUM_TILE_TYPES]bool {
 	true,
 	true,
 	true,
+	false,
+	false,
+	false,
+	false,
+}
+TILESET_TOWN_PASSABLE := [NUM_TILE_TYPES[1]]bool {
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	true, // door
+	false,
+	false,
+	false,
+	false,
+	false,
 	false,
 	false,
 	false,
@@ -31,20 +80,55 @@ MAP_HEIGHT :: 20
 
 Map_Layer :: distinct [MAP_WIDTH][MAP_HEIGHT]int
 
-Map :: distinct Map_Layer
+Map :: []Map_Layer
 
-draw_map :: proc(m: Map) {
+level_tilesets : []Tileset_Id
+p : [MAP_WIDTH][MAP_HEIGHT]bool
+num_map_levels : int
+
+load_map :: proc(next_map: Map, n: int) {
+	m = next_map
+	num_map_levels = n
 	for i in 0 ..< MAP_WIDTH {
 		for j in 0 ..< MAP_HEIGHT {
-			draw_tile(m[j][i] - 1, tile_to_pixel(Tile_Coord{i, j}))
+			p[j][i] = true
+			for l in 0..<num_map_levels {
+				m_ := m[l][j][i] - 1
+				if m_ < 0 { continue}
+				pl : bool
+				switch l{
+				case int(Tileset_Id.Tileset_Terrain):
+					pl = TILESET_TERRAIN_PASSABLE[m_]
+				case int(Tileset_Id.Tileset_Town):
+					pl = TILESET_TOWN_PASSABLE[m_]
+				}
+				p[j][i] = p[j][i] && pl
+			}
 		}
 	}
 }
 
-draw_tile :: proc(t: int, pos: Pixel_Coord) {
-	x := t % TILESET_WIDTH
-	y := t / TILESET_WIDTH
-	source := tileset_terrain[x][y]
+draw_map :: proc() {
+	for i in 0 ..< MAP_WIDTH {
+		for j in 0 ..< MAP_HEIGHT {
+			for l in 0..<num_map_levels {
+				draw_tile(int(level_tilesets[l]), m[l][j][i] - 1, tile_to_pixel(Tile_Coord{i, j}))
+			}
+		}
+	}
+}
+
+draw_tile :: proc(ts_idx, t: int, pos: Pixel_Coord) {
+	if t < 0 {return}
+	x := t % tileset_widths[ts_idx]
+	y := t / tileset_widths[ts_idx]
+	source : Rect
+	switch ts_idx {
+	case 0:
+		source = tileset_terrain[x][y]
+	case 1:
+		source = tileset_town[x][y]
+	}
 	dest := Rect{pos.x, pos.y, tile_size, tile_size}
 	origin: Pixel_Coord
 	rotation: f32
@@ -63,6 +147,5 @@ tile_free :: proc(t: Tile_Coord) -> bool {
 			return false
 		}
 	}
-	p := PASSABLE
-	return p[m[t.y][t.x] - 1]
+	return p[t.y][t.x]
 }

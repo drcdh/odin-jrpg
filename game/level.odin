@@ -42,15 +42,18 @@ start_level :: proc(l: Level) {
 	time.stopwatch_start(&stopwatch)
 	switch l {
 	case .LEVEL_0:
-		m = level_0_map
+		load_map(level_0_map[:], 1)
+		level_tilesets = LEVEL_0_TILESETS[:]
 		routes = LEVEL_0_ROUTES
 		start_level_0()
 	case .LEVEL_1:
-		m = level_1_map
+		load_map(level_1_map[:], 2)
+		level_tilesets = LEVEL_1_TILESETS[:]
 		routes = LEVEL_1_ROUTES
 		start_level_1()
 	case .LEVEL_2:
-		m = level_2_map
+		load_map(level_2_map[:], 1)
+		level_tilesets = LEVEL_2_TILESETS[:]
 		routes = LEVEL_2_ROUTES
 		start_level_2()
 	}

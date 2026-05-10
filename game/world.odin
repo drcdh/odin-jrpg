@@ -33,7 +33,7 @@ draw_world :: proc() {
 
 	rl.BeginMode2D(world_camera)
 
-	draw_map(m)
+	draw_map()
 
 	for z in 0 ..= Z_MAX {
 		it := hm.iterator_make(&entities)
