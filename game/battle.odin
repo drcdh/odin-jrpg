@@ -8,6 +8,8 @@ import rl "vendor:raylib"
 
 MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + NUM_PC
 
+TAKE_TURN_DELAY :: .5 // seconds
+
 battle_active := false
 battle_baddies: [MAX_ENCOUNTER_SIZE]Character
 battle_baddy_handles: [MAX_ENCOUNTER_SIZE]Combatant_Handle
@@ -18,6 +20,8 @@ battle_event_queue: queue.Queue(Battle_Event)
 battle_num_baddies := 0
 battle_num_pc := 0
 battle_state: Battle_State
+
+targeting_ease : f32
 
 battle_cleanup :: proc() {
 	queue.clear(&battle_event_queue)
@@ -99,40 +103,26 @@ draw_battle_combatants :: proc() {
 	it := hm.iterator_make(&battle_combatants)
 	for c, h in hm.iterate(&it) {
 		if c.enabled {
-			tc := rl.BLACK
+			tint := c.visual.tint
 			if c.character.stats.hitpoints <= 0 {
-				tc = rl.RED
+				tint = rl.RED
 			}
 			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-				r: Pixel_Dim
-				switch v in c.visual.variant {
-				case Animation:
-					r = atlas_textures[v.current_frame].document_size
-				case Texture_Name:
-					r = atlas_textures[v].document_size
-				}
-				rl.DrawRectangleV(c.coord - {2, 2}, r + {4, 4}, rl.GREEN)
+				tint = rl.YELLOW
+				tint.w = u8(targeting_ease*255)
 			}
 			if actor, ok := battle_state.(Take_Turn); ok {
 				if h == actor.actor_h {
-					r: Pixel_Dim
-					switch v in c.visual.variant {
-					case Animation:
-						r = atlas_textures[v.current_frame].document_size
-					case Texture_Name:
-						r = atlas_textures[v].document_size
-					}
-					rl.DrawRectangleV(c.coord - {2, 2}, r + {4, 4}, rl.YELLOW)
+					tint = rl.GREEN
 				}
 			}
 			switch v in c.visual.variant {
 			case Animation:
-				draw_animation(v, c.coord, c.visual.tint)
+				draw_animation(v, c.coord, tint)
 			case Texture_Name:
-				draw_texture(v, c.coord, c.visual.tint)
+				draw_texture(v, c.coord, tint)
 			}
 			pos := Pixel_Coord{c.coord.x, c.coord.y - tile_size}
-			// rl.DrawTextEx(font, c.character.name, pos, 20, 0, tc)
 		}
 	}
 }
@@ -187,6 +177,8 @@ get_next_combatant :: proc() -> Combatant_Handle {
 }
 
 update_battle :: proc(dt: f32) {
+	targeting_ease += dt/.5
+	if targeting_ease > 1 { targeting_ease = 0 }
 	switch &s in battle_state {
 	case Next_Turn:
 		if check_win() {
@@ -198,12 +190,14 @@ update_battle :: proc(dt: f32) {
 			}
 		}
 	case Take_Turn:
-		// fmt.println(s)
-		if actor, ok := hm.get(&battle_combatants, s.actor_h); ok {
-			actor.turn(actor)
-		} else {
-			fmt.println("tried to take turn but handle not in map")
-			battle_state = Next_Turn{}
+		s.t += dt
+		if s.t >= TAKE_TURN_DELAY {
+			if actor, ok := hm.get(&battle_combatants, s.actor_h); ok {
+				actor.turn(actor)
+			} else {
+				fmt.println("tried to take turn but handle not in map")
+				battle_state = Next_Turn{}
+			}
 		}
 	// action, done := actor.turn(actor_idx).?
 	case Next_Event:

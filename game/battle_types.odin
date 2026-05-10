@@ -58,6 +58,7 @@ Next_Event :: struct {}
 Next_Turn :: struct {}
 Take_Turn :: struct {
 	actor_h: Combatant_Handle,
+	t: f32
 }
 Process_Battle_Animation :: struct {
 	animation: Animation,

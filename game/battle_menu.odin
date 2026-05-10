@@ -15,4 +15,5 @@ change_target :: proc(d: int) {
 			if c.enabled {break}
 		}
 	}
+	targeting_ease = 0
 }
