@@ -4,7 +4,7 @@ import "core:fmt"
 
 Character :: struct {
 	name:   cstring,
-	stats:  Stats,
+	using stats:  Stats,
 	status: Status,
 }
 

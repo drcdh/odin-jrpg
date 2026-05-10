@@ -15,32 +15,62 @@ PC :: enum {
 
 PROTAGONIST := Character {
 	name = "Player",
-	stats = Stats{hitpoints = 10, offense = 5, defense = 5},
+	hitpoints = 10,
+	offense = 5,
+	defense = 5,
+	pOffense = 5,
+	pDefense = 5,
+	speed = 5,
 }
 
 ASSASSIN := Character {
 	name = "Assassin",
-	stats = Stats{hitpoints = 8, offense = 9, defense = 4},
+	hitpoints = 8,
+	offense = 9,
+	defense = 4,
+	pOffense = 7,
+	pDefense = 7,
+	speed = 10,
 }
 
 MUSICIAN := Character {
 	name = "Pete",
-	stats = Stats{hitpoints = 9, offense = 4, defense = 4},
+	hitpoints = 9,
+	offense = 4,
+	defense = 4,
+	pOffense = 6,
+	pDefense = 8,
+	speed = 9,
 }
 
 KILLER := Character {
 	name = "Killer",
-	stats = Stats{hitpoints = 5, offense = 9, defense = 2},
+	hitpoints = 5,
+	offense = 1,
+	defense = 2,
+	pOffense = 10,
+	pDefense = 10,
+	speed = 5,
 }
 
 MOURNER := Character {
 	name = "Mourner",
-	stats = Stats{hitpoints = 5, offense = 7, defense = 3},
+	hitpoints = 5,
+	offense = 3,
+	defense = 3,
+	pOffense = 10,
+	pDefense = 10,
+	speed = 5,
 }
 
 ZEALOT := Character {
 	name = "Zealot",
-	stats = Stats{hitpoints = 11, offense = 8, defense = 8},
+	hitpoints = 11,
+	offense = 8,
+	defense = 8,
+	pOffense = 4,
+	pDefense = 5,
+	speed = 7,
 }
 
 get_pc :: proc(pc: PC) -> ^Character {
