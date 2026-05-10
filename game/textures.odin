@@ -54,3 +54,24 @@ draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
 	dest := rl.Rectangle{pos.x + offset.x, pos.y + offset.y, zoom * atlas_rect.width, zoom * atlas_rect.height}
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
+
+draw_menu :: proc(l, t, w, h: Tile_T) {
+	r := l + w - 1
+	b := t + h - 1
+	tint := rl.WHITE
+	draw_texture(.Menu_Topleft,    tile_to_pixel({l, t}), tint)
+	draw_texture(.Menu_Topright,   tile_to_pixel({r, t}), tint)
+	draw_texture(.Menu_Bottomleft, tile_to_pixel({l, b}), tint)
+	draw_texture(.Menu_Bottomright, tile_to_pixel({r, b}), tint)
+	for x in l+1..<r {
+		draw_texture(.Menu_Topcenter, tile_to_pixel({x, t}), tint)
+		draw_texture(.Menu_Bottomcenter, tile_to_pixel({x, b}), tint)
+		for y in t+1..<b {
+			draw_texture(.Menu_Center, tile_to_pixel({x, y}), tint)
+		}
+	}
+	for y in t+1..<b {
+		draw_texture(.Menu_Centerleft, tile_to_pixel({l, y}), tint)
+		draw_texture(.Menu_Centerright, tile_to_pixel({r, y}), tint)
+	}
+}
