@@ -78,7 +78,7 @@ TILESET_TOWN_PASSABLE := [NUM_TILE_TYPES[1]]bool {
 MAP_WIDTH :: 20
 MAP_HEIGHT :: 20
 
-Map_Layer :: distinct [MAP_WIDTH][MAP_HEIGHT]int
+Map_Layer :: [MAP_WIDTH][MAP_HEIGHT]int
 
 Map :: []Map_Layer
 
