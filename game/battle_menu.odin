@@ -1,10 +1,9 @@
 package game
 
-import "core:fmt"
 import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
-battle_ui_state : Battle_UI_State
+battle_ui_state: Battle_UI_State
 
 Battle_UI_State :: union {
 	Action_Selection_State, // attack, skills, item, etc. indicated but not selected
@@ -16,10 +15,10 @@ Action_Selection_State :: struct {
 	s: int,
 }
 Skill_Selection_State :: struct {
-	s: int
+	s: int,
 }
 Item_Selection_State :: struct {
-	s: int
+	s: int,
 }
 Target_Selection_State :: struct {
 	ts: Target_Selection,
@@ -33,10 +32,18 @@ Target_Selection :: union {
 	Select_All_Allies,
 	Select_All_Combatants,
 }
-Select_Baddy :: struct { i: int }
-Select_All_Baddies :: struct {prev: int}
-Select_Ally :: struct { i: int }
-Select_All_Allies :: struct {prev: int}
+Select_Baddy :: struct {
+	i: int,
+}
+Select_All_Baddies :: struct {
+	prev: int,
+}
+Select_Ally :: struct {
+	i: int,
+}
+Select_All_Allies :: struct {
+	prev: int,
+}
 Select_All_Combatants :: struct {}
 Targeting_Type :: enum {
 	One_Opponent,
@@ -54,13 +61,13 @@ ITEM :: 2
 draw_battle_menu :: proc() {
 	switch state in battle_ui_state {
 	case Action_Selection_State:
-		draw_menu(VIEW_TILES_W/2-VIEW_TILES_W/4, VIEW_TILES_H-4, VIEW_TILES_W/4, 4)
-		x: f32 = tile_size*(VIEW_TILES_W/2-VIEW_TILES_W/4+.5)
-		y := tile_size * (VIEW_TILES_H-3.5)
-		rl.DrawTextEx(font, "Attack", {x, y}, tile_size/2, 0, TEXT_COLOR)
-		rl.DrawTextEx(font, "Skill", {x, y+tile_size/2}, tile_size/2, 0, TEXT_COLOR)
-		rl.DrawTextEx(font, "Item", {x, y+tile_size}, tile_size/2, 0, TEXT_COLOR)
-		rl.DrawRectangleLinesEx({x, y+f32(state.s)*tile_size/2, 100, tile_size/2}, 2, rl.ORANGE)
+		draw_menu(VIEW_TILES_W / 2 - VIEW_TILES_W / 4, VIEW_TILES_H - 4, VIEW_TILES_W / 4, 4)
+		x: f32 = tile_size * (VIEW_TILES_W / 2 - VIEW_TILES_W / 4 + .5)
+		y := tile_size * (VIEW_TILES_H - 3.5)
+		rl.DrawTextEx(font, "Attack", {x, y}, tile_size / 2, 0, TEXT_COLOR)
+		rl.DrawTextEx(font, "Skill", {x, y + tile_size / 2}, tile_size / 2, 0, TEXT_COLOR)
+		rl.DrawTextEx(font, "Item", {x, y + tile_size}, tile_size / 2, 0, TEXT_COLOR)
+		rl.DrawRectangleLinesEx({x, y + f32(state.s) * tile_size / 2, 100, tile_size / 2}, 2, rl.ORANGE)
 	case Skill_Selection_State:
 	case Item_Selection_State:
 	case Target_Selection_State:
@@ -70,8 +77,8 @@ draw_battle_menu :: proc() {
 change_ally_selection :: proc(t, d: int) -> int {
 	// todo: check party membership
 	target := t + d
-	if target < 0 { target = NUM_PC-1 }
-	if target >= NUM_PC { target = 0 }
+	if target < 0 {target = NUM_PC - 1}
+	if target >= NUM_PC {target = 0}
 	return target
 }
 
@@ -100,8 +107,8 @@ change_selection :: proc(dx, dy: int) {
 	case Action_Selection_State:
 		s := state.s
 		s += dy
-		if s < 0 { s = ITEM }
-		if s > ITEM { s = 0 }
+		if s < 0 {s = ITEM}
+		if s > ITEM {s = 0}
 		battle_ui_state = Action_Selection_State{s}
 	case Skill_Selection_State:
 	case Item_Selection_State:
@@ -132,12 +139,12 @@ change_selection :: proc(dx, dy: int) {
 				state.ts = Select_Ally{ts.prev}
 			}
 		case Select_All_Combatants:
-			// do nothing
+		// do nothing
 		}
 	}
 }
 
-skill_proc : proc(actor, target: ^Combatant)
+skill_proc: proc(actor, target: ^Combatant)
 
 pc_turn :: proc(actor: ^Combatant) {
 	if battle_ui_state == nil {
@@ -159,7 +166,7 @@ pc_turn :: proc(actor: ^Combatant) {
 			case ATTACK:
 				skill_proc = attack
 				// todo: check weapon target type
-				battle_ui_state = Target_Selection_State{
+				battle_ui_state = Target_Selection_State {
 					ts = Select_Baddy{select_first_baddy()},
 					tt = .One_Opponent,
 				}

@@ -21,7 +21,7 @@ battle_num_baddies := 0
 battle_num_pc := 0
 battle_state: Battle_State
 
-targeting_ease : f32
+targeting_ease: f32
 
 battle_cleanup :: proc() {
 	queue.clear(&battle_event_queue)
@@ -84,8 +84,8 @@ draw_battle :: proc() {
 	}
 
 	// debug
-	rl.DrawTextEx(font, fmt.caprint(battle_ui_state), {0, tile_size*(VIEW_TILES_H-6)}, 20, 0, rl.BLACK)
-	rl.DrawTextEx(font, fmt.caprint(battle_state),    {0, tile_size*(VIEW_TILES_H-5)}, 20, 0, rl.BLACK)
+	rl.DrawTextEx(font, fmt.caprint(battle_ui_state), {0, tile_size * (VIEW_TILES_H - 6)}, 20, 0, rl.BLACK)
+	rl.DrawTextEx(font, fmt.caprint(battle_state), {0, tile_size * (VIEW_TILES_H - 5)}, 20, 0, rl.BLACK)
 }
 
 draw_battle_background :: proc() {
@@ -97,7 +97,7 @@ remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(VIEW_TILES_W/2, VIEW_TILES_H-4, VIEW_TILES_W/2, 4)
+	draw_menu(VIEW_TILES_W / 2, VIEW_TILES_H - 4, VIEW_TILES_W / 2, 4)
 
 	for p in 0 ..< battle_num_pc {
 		draw_party_member_stats(p)
@@ -135,8 +135,8 @@ draw_battle_combatants :: proc() {
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
 		text_color := TEXT_COLOR
-		x: f32 = tile_size*(VIEW_TILES_W/2+.5)
-		y := tile_size * ((VIEW_TILES_H-3.5) + f32(p)/2)
+		x: f32 = tile_size * (VIEW_TILES_W / 2 + .5)
+		y := tile_size * ((VIEW_TILES_H - 3.5) + f32(p) / 2)
 		if c.character.stats.hitpoints <= 0 {
 			text_color = rl.RED
 		}
@@ -150,7 +150,7 @@ draw_party_member_stats :: proc(p: int) {
 				allocator = context.temp_allocator,
 			),
 			{x, y},
-			tile_size/2,
+			tile_size / 2,
 			0,
 			text_color,
 		)
@@ -179,8 +179,8 @@ get_next_combatant :: proc() -> Combatant_Handle {
 }
 
 update_battle :: proc(dt: f32) {
-	targeting_ease += dt/.5
-	if targeting_ease > 1 { targeting_ease = 0 }
+	targeting_ease += dt / .5
+	if targeting_ease > 1 {targeting_ease = 0}
 	switch &s in battle_state {
 	case Next_Turn:
 		if check_win() {

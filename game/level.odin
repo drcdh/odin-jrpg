@@ -6,7 +6,7 @@ import "core:time"
 
 PLAYER_ID: Id = 0
 
-routes : [][]Tile_Coord
+routes: [][]Tile_Coord
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 	pc_entity = hm.add(

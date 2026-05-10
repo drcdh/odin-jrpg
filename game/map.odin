@@ -64,5 +64,5 @@ tile_free :: proc(t: Tile_Coord) -> bool {
 		}
 	}
 	p := PASSABLE
-	return p[m[t.y][t.x]-1]
+	return p[m[t.y][t.x] - 1]
 }

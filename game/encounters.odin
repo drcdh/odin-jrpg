@@ -9,7 +9,7 @@ MAX_ENCOUNTER_SIZE :: 6
 BATTLE_ORIGIN_TILE :: Tile_Coord{3, 3}
 
 Encounter_Spot :: struct {
-	tile: Tile_Coord,
+	tile:     Tile_Coord,
 	baddy_id: Baddy_Id,
 }
 
@@ -18,32 +18,42 @@ Encounter :: struct {
 }
 
 encounters := [?]Encounter {
-	{baddies = {
-							 {{0, 0}, .Mouse_Sized_Rat},
-							 // {{0, 3}, .Malicious_Mushroom},
-							 // {{1, 1}, .Generic_Goblin_1},
-							 {},{},
-							 {},{},{}}},
-	{baddies = {
-							 {{0, 0}, .Mouse_Sized_Rat},
-							 {{1, 0}, .Mouse_Sized_Rat},
-							 {{2, 0}, .Mouse_Sized_Rat},
-							 {{0, 1}, .Mouse_Sized_Rat},
-							 {{1, 1}, .Mouse_Sized_Rat},
-							 {{2, 1}, .Mouse_Sized_Rat},
-						 }},
-	{baddies = {
-							 {{0, 0}, .Mouse_Sized_Rat},
-							 {{1, 0}, .Mouse_Sized_Rat},
-							 {{1, 1}, .Rat_Sized_Mouse},
-							 {{0, 2}, .Mouse_Sized_Rat},
-							 {{1, 2}, .Mouse_Sized_Rat},
-							 {{2, 2}, .Mouse_Sized_Rat},
-	}},
+	{
+		baddies = {
+			{{0, 0}, .Mouse_Sized_Rat},
+			// {{0, 3}, .Malicious_Mushroom},
+			// {{1, 1}, .Generic_Goblin_1},
+			{},
+			{},
+			{},
+			{},
+			{},
+		},
+	},
+	{
+		baddies = {
+			{{0, 0}, .Mouse_Sized_Rat},
+			{{1, 0}, .Mouse_Sized_Rat},
+			{{2, 0}, .Mouse_Sized_Rat},
+			{{0, 1}, .Mouse_Sized_Rat},
+			{{1, 1}, .Mouse_Sized_Rat},
+			{{2, 1}, .Mouse_Sized_Rat},
+		},
+	},
+	{
+		baddies = {
+			{{0, 0}, .Mouse_Sized_Rat},
+			{{1, 0}, .Mouse_Sized_Rat},
+			{{1, 1}, .Rat_Sized_Mouse},
+			{{0, 2}, .Mouse_Sized_Rat},
+			{{1, 2}, .Mouse_Sized_Rat},
+			{{2, 2}, .Mouse_Sized_Rat},
+		},
+	},
 }
 
 add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
-	if baddy_id == .None { return }
+	if baddy_id == .None {return}
 	template := baddy_templates[baddy_id]
 	fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
 	battle_baddies[battle_num_baddies] = Character {
