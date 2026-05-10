@@ -20,8 +20,9 @@ Encounter :: struct {
 encounters := [?]Encounter {
 	{baddies = {
 							 {{0, 0}, .Mouse_Sized_Rat},
-							 {{0, 3}, .Malicious_Mushroom},
-							 {{1, 1}, .Generic_Goblin_1},
+							 // {{0, 3}, .Malicious_Mushroom},
+							 // {{1, 1}, .Generic_Goblin_1},
+							 {},{},
 							 {},{},{}}},
 	{baddies = {
 							 {{0, 0}, .Mouse_Sized_Rat},
@@ -89,7 +90,7 @@ start_encounter :: proc(i: int) {
 				coord = {x, y},
 				enabled = true,
 				team = 1,
-				turn = PC_COMBATANT_TURN,
+				turn = pc_turn,
 				visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
 			},
 		)

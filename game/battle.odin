@@ -72,6 +72,7 @@ get_combatant_not_on_team :: proc(actor_team: int) -> ^Combatant {
 draw_battle :: proc() {
 	draw_battle_background()
 	draw_battle_party_stats()
+	draw_battle_menu()
 	draw_battle_combatants()
 
 	#partial switch s in battle_state {
@@ -81,6 +82,10 @@ draw_battle :: proc() {
 		pos := Pixel_Coord{s.coord.x - 32, s.coord.y - 32 * s.t}
 		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{0, 0, 0, u8(255 * (1 - s.t))})
 	}
+
+	// debug
+	rl.DrawTextEx(font, fmt.caprint(battle_ui_state), {0, tile_size*(VIEW_TILES_H-6)}, 20, 0, rl.BLACK)
+	rl.DrawTextEx(font, fmt.caprint(battle_state),    {0, tile_size*(VIEW_TILES_H-5)}, 20, 0, rl.BLACK)
 }
 
 draw_battle_background :: proc() {
@@ -107,10 +112,10 @@ draw_battle_combatants :: proc() {
 			if c.character.stats.hitpoints <= 0 {
 				tint = rl.RED
 			}
-			if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-				tint = rl.YELLOW
-				tint.w = u8(targeting_ease*255)
-			}
+			// if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
+			// 	tint = rl.YELLOW
+			// 	tint.w = u8(targeting_ease*255)
+			// }
 			if actor, ok := battle_state.(Take_Turn); ok {
 				if h == actor.actor_h {
 					tint = rl.GREEN
@@ -243,23 +248,6 @@ update_battle :: proc(dt: f32) {
 		#partial switch &v in c.visual.variant {
 		case Animation:
 			animation_update(&v, dt)
-		}
-	}
-}
-
-PC_COMBATANT_TURN :: proc(actor: ^Combatant) {
-	// fmt.printfln("actor %d target %d", actor_idx, target)
-	if target < 0 {target = 0}
-	if get_input(.UP) {
-		change_target(-1)
-	} else if get_input(.DOWN) {
-		change_target(1)
-	} else if get_input(.ENTER) {
-		if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[target]); ok {
-			attack(actor, target_cb)
-			target = -1
-			actor.t += 20
-			end_turn()
 		}
 	}
 }
