@@ -1,128 +1,142 @@
 package game
 
-import hm "core:container/handle_map"
+// import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
-Menu_Closed :: struct {}
+// Menu_Closed :: struct {}
 // Menu_Closing :: struct { t: f32 }
-Menu_Open :: struct {}
+// Menu_Open :: struct {}
 
-Menu_State :: union {
-	Menu_Closed,
-	// Menu_Closing,
-	Menu_Open,
-}
+// Menu_State :: union {
+// 	Menu_Closed,
+// 	// Menu_Closing,
+// 	Menu_Open,
+// }
 
-menu_0_forget := false
-menu_0_selection := 0
-menu_0_state: Menu_State
-menu_0_options := [?]cstring{"More", "Fight!", "Quit"}
-menu_0_proc :: proc() {
-	switch menu_0_selection {
-	case 0:
-		menu_1_state = Menu_Open{}
-	case 1:
-		menu_0_state = Menu_Closed{}
-		if menu_0_forget {menu_0_selection = 0}
-		start_encounter(0)
-	case 2:
-		menu_0_state = Menu_Closed{}
-		quitting = true //Quitting_State{.5}
-	}
-}
+// menu_0_forget := false
+// menu_0_selection := 0
+// menu_0_state: Menu_State
+// menu_0_options := [?]cstring{"More", "Fight!", "Quit"}
+// menu_0_proc :: proc() {
+// 	switch menu_0_selection {
+// 	case 0:
+// 		menu_1_state = Menu_Open{}
+// 	case 1:
+// 		menu_0_state = Menu_Closed{}
+// 		if menu_0_forget {menu_0_selection = 0}
+// 		start_encounter(0)
+// 	case 2:
+// 		menu_0_state = Menu_Closed{}
+// 		quitting = true //Quitting_State{.5}
+// 	}
+// }
 
-menu_1_forget := false
-menu_1_selection := 0
-menu_1_state: Menu_State
-menu_1_options := [?]cstring{"HP +9", "Back"}
-menu_1_proc :: proc() {
-	switch menu_1_selection {
-	case 0:
-		PROTAGONIST.stats.hitpoints += 9
-	case 1:
-		menu_1_state = Menu_Closed{}
-		if menu_1_forget {menu_1_selection = 0}
-	}
-}
+// menu_1_forget := false
+// menu_1_selection := 0
+// menu_1_state: Menu_State
+// menu_1_options := [?]cstring{"HP +9", "Back"}
+// menu_1_proc :: proc() {
+// 	switch menu_1_selection {
+// 	case 0:
+// 		PROTAGONIST.stats.hitpoints += 9
+// 	case 1:
+// 		menu_1_state = Menu_Closed{}
+// 		if menu_1_forget {menu_1_selection = 0}
+// 	}
+// }
 
-MENU_COLOR :: rl.Color{10, 150, 200, 255}
-MENU_ROUND :: .2
+MENU_COLOR :: rl.Color{1, 87, 155, 255}
 
-draw_menu :: proc(r: rl.Rectangle) {
-	rl.DrawRectangleRounded(r, MENU_ROUND, 0, rl.BLACK)
-	rl.DrawRectangleRounded(remove_margins(r, 4), MENU_ROUND, 0, rl.WHITE)
-	rl.DrawRectangleRounded(remove_margins(r, 8), MENU_ROUND, 0, MENU_COLOR)
-}
-
-draw_menus :: proc() {
-	switch s in menu_0_state {
-	case Menu_Closed:
-	case Menu_Open:
-		draw_menu({100, 100, 300, 300})
-		for opt, i in menu_0_options {
-			tc := TEXT_COLOR
-			if i == menu_0_selection {
-				tc = rl.Color{50, 100, 100, 255}
-			}
-			i := f32(i)
-			rl.DrawTextEx(font, opt, {120, 100 + i * 50}, 18, 0, tc)
+draw_menu :: proc(l, t, w, h: Tile_T) {
+	r := l + w - 1
+	b := t + h - 1
+	tint := rl.WHITE
+	draw_texture(.Menu_Topleft,    tile_to_pixel({l, t}), tint)
+	draw_texture(.Menu_Topright,   tile_to_pixel({r, t}), tint)
+	draw_texture(.Menu_Bottomleft, tile_to_pixel({l, b}), tint)
+	draw_texture(.Menu_Bottomright, tile_to_pixel({r, b}), tint)
+	for x in l+1..<r {
+		draw_texture(.Menu_Topcenter, tile_to_pixel({x, t}), tint)
+		draw_texture(.Menu_Bottomcenter, tile_to_pixel({x, b}), tint)
+		for y in t+1..<b {
+			draw_texture(.Menu_Center, tile_to_pixel({x, y}), tint)
 		}
 	}
-
-	switch s in menu_1_state {
-	case Menu_Closed:
-	case Menu_Open:
-		draw_menu({500, 100, 200, 200})
-		for opt, i in menu_1_options {
-			tc := TEXT_COLOR
-			if i == menu_1_selection {
-				tc = rl.Color{50, 100, 100, 255}
-			}
-			i := f32(i)
-			rl.DrawTextEx(font, opt, Pixel_Coord{520, 100 + i * 50}, 18, 0, tc)
-		}
+	for y in t+1..<b {
+		draw_texture(.Menu_Centerleft, tile_to_pixel({l, y}), tint)
+		draw_texture(.Menu_Centerright, tile_to_pixel({r, y}), tint)
 	}
 }
 
-change_menu_selection_vertical :: proc(s: ^int, n: int) {
-	if dy, ok := get_y_input().?; ok {
-		s^ = s^ + dy
-		if s^ >= n {s^ = 0}
-		if s^ < 0 {s^ = n - 1}
-	}
-}
+// draw_menus :: proc() {
+// 	switch s in menu_0_state {
+// 	case Menu_Closed:
+// 	case Menu_Open:
+// 		draw_menu({100, 100, 300, 300})
+// 		for opt, i in menu_0_options {
+// 			tc := TEXT_COLOR
+// 			if i == menu_0_selection {
+// 				tc = rl.Color{50, 100, 100, 255}
+// 			}
+// 			i := f32(i)
+// 			rl.DrawTextEx(font, opt, {120, 100 + i * 50}, 18, 0, tc)
+// 		}
+// 	}
+//
+// 	switch s in menu_1_state {
+// 	case Menu_Closed:
+// 	case Menu_Open:
+// 		draw_menu({500, 100, 200, 200})
+// 		for opt, i in menu_1_options {
+// 			tc := TEXT_COLOR
+// 			if i == menu_1_selection {
+// 				tc = rl.Color{50, 100, 100, 255}
+// 			}
+// 			i := f32(i)
+// 			rl.DrawTextEx(font, opt, Pixel_Coord{520, 100 + i * 50}, 18, 0, tc)
+// 		}
+// 	}
+// }
+
+// change_menu_selection_vertical :: proc(s: ^int, n: int) {
+// 	if dy, ok := get_y_input().?; ok {
+// 		s^ = s^ + dy
+// 		if s^ >= n {s^ = 0}
+// 		if s^ < 0 {s^ = n - 1}
+// 	}
+// }
 
 
-update_menus :: proc(dt: f32) {
-	switch _ in menu_1_state {
-	case Menu_Closed:
-	case Menu_Open:
-		if get_input(.MENU) {
-			menu_1_state = Menu_Closed{}
-			if menu_1_forget {menu_1_selection = 0}
-		} else if get_input(.ENTER) {
-			menu_1_proc()
-		} else {
-			change_menu_selection_vertical(&menu_1_selection, len(menu_1_options))
-		}
-		return // don't let input get to menu 0
-	}
-
-	switch _ in menu_0_state {
-	case Menu_Closed:
-		if get_input(.MENU) {
-			if pc_entity, ok := hm.get(&entities, pc_entity); ok && !pc_entity.busy {
-				menu_0_state = Menu_Open{}
-			}
-		}
-	case Menu_Open:
-		if get_input(.MENU) {
-			menu_0_state = Menu_Closed{}
-			if menu_0_forget {menu_0_selection = 0}
-		} else if get_input(.ENTER) {
-			menu_0_proc()
-		} else {
-			change_menu_selection_vertical(&menu_0_selection, len(menu_0_options))
-		}
-	}
-}
+// update_menus :: proc(dt: f32) {
+// 	switch _ in menu_1_state {
+// 	case Menu_Closed:
+// 	case Menu_Open:
+// 		if get_input(.MENU) {
+// 			menu_1_state = Menu_Closed{}
+// 			if menu_1_forget {menu_1_selection = 0}
+// 		} else if get_input(.ENTER) {
+// 			menu_1_proc()
+// 		} else {
+// 			change_menu_selection_vertical(&menu_1_selection, len(menu_1_options))
+// 		}
+// 		return // don't let input get to menu 0
+// 	}
+//
+// 	switch _ in menu_0_state {
+// 	case Menu_Closed:
+// 		if get_input(.MENU) {
+// 			if pc_entity, ok := hm.get(&entities, pc_entity); ok && !pc_entity.busy {
+// 				menu_0_state = Menu_Open{}
+// 			}
+// 		}
+// 	case Menu_Open:
+// 		if get_input(.MENU) {
+// 			menu_0_state = Menu_Closed{}
+// 			if menu_0_forget {menu_0_selection = 0}
+// 		} else if get_input(.ENTER) {
+// 			menu_0_proc()
+// 		} else {
+// 			change_menu_selection_vertical(&menu_0_selection, len(menu_0_options))
+// 		}
+// 	}
+// }

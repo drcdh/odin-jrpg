@@ -77,7 +77,7 @@ start_encounter :: proc(i: int) {
 		add_baddy_combatant(spot.baddy_id, spot.tile)
 	}
 
-	dy: f32 = 3 * tile_size
+	dy: f32 = 2 * tile_size
 	y0: f32 = 2 * tile_size
 	x: f32 = 9.5 * tile_size
 	y: f32 = y0

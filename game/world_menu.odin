@@ -24,7 +24,7 @@ init_world_menu :: proc() {
 }
 
 draw_world_menu :: proc() {
-	draw_menu({view_origin.x, view_origin.y, view_dim.x, 2 * tile_size})
+	draw_menu(0, 0, VIEW_TILES_W, 1)
 	x: f32 = 2 * tile_size
 	y: f32 = .5 * tile_size
 	for i in 0 ..< 4 {
@@ -35,7 +35,7 @@ draw_world_menu :: proc() {
 			font,
 			strings.clone_to_cstring(world_menu_options[i], context.temp_allocator),
 			{x, y},
-			32,
+			16,
 			0,
 			rl.WHITE,
 		)
@@ -55,7 +55,7 @@ draw_world_menu :: proc() {
 }
 
 draw_world_menu_characters :: proc() {
-	draw_menu({0, 2 * tile_size, view_dim.x, view_dim.y - 2 * tile_size})
+	draw_menu(0, 2, VIEW_TILES_W, VIEW_TILES_H - 1)
 	card := 0
 	row: f32 = 0
 	for i in 0 ..< NUM_PC {

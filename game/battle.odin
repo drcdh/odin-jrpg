@@ -92,7 +92,7 @@ remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(rl.Rectangle{0, view_dim.y - 2 * tile_size, view_dim.x, 2 * tile_size})
+	draw_menu(VIEW_TILES_W/2, VIEW_TILES_H-4, VIEW_TILES_W/2, 4)
 
 	for p in 0 ..< battle_num_pc {
 		draw_party_member_stats(p)
@@ -122,35 +122,32 @@ draw_battle_combatants :: proc() {
 			case Texture_Name:
 				draw_texture(v, c.coord, tint)
 			}
-			pos := Pixel_Coord{c.coord.x, c.coord.y - tile_size}
+			// pos := Pixel_Coord{c.coord.x, c.coord.y - tile_size}
 		}
 	}
 }
 
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
-		tc := TEXT_COLOR
-		x: f32 = tile_size
-		if p >= 3 {
-			x += 8 * tile_size
-		}
-		y := tile_size * (10 + f32(p % 3))
+		text_color := TEXT_COLOR
+		x: f32 = tile_size*(VIEW_TILES_W/2+.5)
+		y := tile_size * ((VIEW_TILES_H-3.5) + f32(p)/2)
 		if c.character.stats.hitpoints <= 0 {
-			tc = rl.RED
+			text_color = rl.RED
 		}
 		rl.DrawTextEx(
 			font,
 			fmt.caprintf(
-				"%s HP:%d T:%d",
+				"%- 14s% 4d/% 4d",
 				c.character.name,
 				c.character.stats.hitpoints,
-				c.t,
+				c.character.stats.hitpoints,
 				allocator = context.temp_allocator,
 			),
 			{x, y},
-			32,
+			tile_size/2,
 			0,
-			tc,
+			text_color,
 		)
 	}
 }

@@ -42,9 +42,6 @@ init :: proc() {
 	init_dialogue()
 	init_world_menu()
 
-	menu_0_state = Menu_Closed{}
-	menu_1_state = Menu_Closed{}
-
 	init_new_game()
 	start_level(.LEVEL_0)
 
