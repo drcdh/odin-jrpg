@@ -61,6 +61,16 @@ activate_entity_trap_script :: proc(h: Entity_Handle) {
 	start_script(hm.get(&entities, h).trap)
 }
 
+get_entity :: proc(id: Id) -> Maybe(Entity_Handle) {
+	it := hm.iterator_make(&entities)
+	for e, h in hm.iterate(&it) {
+		if e.id == id && !e.disabled {
+			return h
+		}
+	}
+	return nil
+}
+
 get_entity_at_tile :: proc(t: Tile_Coord, skip := NULL_ID) -> Maybe(Entity_Handle) {
 	it := hm.iterator_make(&entities)
 	for e, h in hm.iterate(&it) {
@@ -69,6 +79,17 @@ get_entity_at_tile :: proc(t: Tile_Coord, skip := NULL_ID) -> Maybe(Entity_Handl
 		}
 	}
 	return nil
+}
+
+remove_entity :: proc(e_id: Id) {
+	hr : Entity_Handle
+	it := hm.iterator_make(&entities)
+	for e, h in hm.iterate(&it) {
+		if e.id == e_id {
+			hr = h
+		}
+	}
+	hm.remove(&entities, hr)
 }
 
 set_entity_busy :: proc(e_id: Id, busy: bool) {

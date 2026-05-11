@@ -39,6 +39,12 @@ Visual :: union {
 
 Name :: cstring
 
+Approach_Entity :: struct {
+	id: Id,
+	countdown: f32,
+	pause:     f32,
+}
+
 Control :: struct {}
 
 Pacing :: struct {
@@ -49,6 +55,7 @@ Pacing :: struct {
 }
 
 State :: union {
+	Approach_Entity,
 	Control,
 	Pacing,
 }
@@ -132,6 +139,14 @@ try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
 	}
 }
 
+try_set_destination_toward :: proc(k: ^Kinematics, t: Kinematics) {
+	move, alt := get_moves_toward(k^, t.tile)
+	k.face = get_face_toward(move)
+	if !try_set_adjacent_destination(k, move) {
+		_ = try_set_adjacent_destination(k, alt)
+	}
+}
+
 update_entity :: proc(dt: f32, e: ^Entity) {
 	#partial switch &v in e.v {
 	case Animation:
@@ -148,6 +163,17 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	}
 	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
+		case Approach_Entity:
+			s.countdown -= dt
+			if s.countdown <= 0 {
+				if th, ok := get_entity(s.id).?; ok {
+					t := hm.get(&entities, th)
+					try_set_destination_toward(&e.k, t)
+				}
+				s.countdown = s.pause
+			}
+		case Control:
+			player_control(dt, e)
 		case Pacing:
 			destinations := routes[s.route]
 			s.countdown -= dt
@@ -160,8 +186,6 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 				try_set_destination(&e.k, destinations[s.step])
 				s.countdown = s.pause
 			}
-		case Control:
-			player_control(dt, e)
 		}
 	}
 }

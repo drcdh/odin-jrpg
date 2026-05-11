@@ -7,12 +7,29 @@ MAP_WIDTH :: LEVEL_2_WIDTH
 @(private="file")
 MAP_HEIGHT :: LEVEL_2_HEIGHT
 
+TRAP_ID :: 665
+TRAP_BADDY_ID :: 666
+
 WARP_TO_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Play_Sound{.Warp},
 	Curtain_Down{},
 	Start_Level{level = .LEVEL_0},
 	Curtain_Up{},
+	End{},
+}
+
+TRAP_BADDY_ACTIVATE := [?]Event {
+	Set_Entity_State{id = TRAP_BADDY_ID, state = Approach_Entity{id=PLAYER_ID}},
+	Remove_Entity{TRAP_ID},
+	End{},
+}
+
+TRAP_BADDY_ENCOUNTER := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Start_Encounter{0},
+	Remove_Entity{TRAP_BADDY_ID},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
 
@@ -78,5 +95,31 @@ start_level_2 :: proc() {
 			trap = WARP_TO_0[:],
 			v = animation_create(.Warp),
 		},
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = TRAP_ID,
+			ghost = true,
+			tile = LEVEL_2_TRAP_SPAWN,
+			n = "trap",
+			trap = TRAP_BADDY_ACTIVATE[:],
+		}
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = TRAP_BADDY_ID,
+			ghost = true,
+			face = .Right,
+			tile = LEVEL_2_BADDY_SPAWN,
+			n = "baddy",
+			speed = 3,
+			trap = TRAP_BADDY_ENCOUNTER[:],
+			v = facing_animation_create(.Baddy_World_Left, .Baddy_World_Right, .Baddy_World_Up, .Baddy_World_Down, .Right),
+			z = Z_MAX,
+		}
 	)
 }
