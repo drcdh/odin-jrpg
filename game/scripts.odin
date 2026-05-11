@@ -33,6 +33,10 @@ Set_Entity_Busy :: struct {
 	id:   Id,
 	busy: bool,
 }
+Set_Entity_Disabled :: struct {
+	id:   Id,
+	disabled: bool,
+}
 Set_Entity_Talk_Script :: struct {
 	id:     Id,
 	script: []Event,
@@ -76,6 +80,7 @@ Event :: union {
 	Set_Bool,
 	Set_Int,
 	Set_Entity_Busy,
+	Set_Entity_Disabled,
 	Set_Entity_Talk_Script,
 	Set_Entity_Trap_Script,
 	Set_Entity_State,
@@ -169,6 +174,8 @@ update_runner :: proc(dt: f32) {
 			set_game_data(event.k, event.v)
 		case Set_Entity_Busy:
 			set_entity_busy(event.id, event.busy)
+		case Set_Entity_Disabled:
+			set_entity_disabled(event.id, event.disabled)
 		case Set_Entity_Talk_Script:
 			set_entity_talk_script(event.id, event.script)
 		case Set_Entity_Trap_Script:

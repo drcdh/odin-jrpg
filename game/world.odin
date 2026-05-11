@@ -74,7 +74,7 @@ get_entity :: proc(id: Id) -> Maybe(Entity_Handle) {
 get_entity_at_tile :: proc(t: Tile_Coord, skip := NULL_ID) -> Maybe(Entity_Handle) {
 	it := hm.iterator_make(&entities)
 	for e, h in hm.iterate(&it) {
-		if e.tile == t && e.id != skip {
+		if e.tile == t && !e.disabled && e.id != skip {
 			return h
 		}
 	}
@@ -98,6 +98,18 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 		if e.id == e_id {
 			e.busy = busy
 			fmt.println("set entity busy", e.n, e.busy)
+			return
+		}
+	}
+	fmt.println("didn't find entity with id", e_id)
+}
+
+set_entity_disabled :: proc(e_id: Id, disabled: bool) {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		if e.id == e_id {
+			e.disabled = disabled
+			fmt.println("set entity", e.n, "disabled", e.busy)
 			return
 		}
 	}

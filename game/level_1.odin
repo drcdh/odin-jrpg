@@ -12,6 +12,7 @@ WARP_TO_2 := [?]Event {
 }
 
 GUY_ID :: 80
+WOMAN_ID :: 90
 
 GUY_SCRIPT := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -26,6 +27,25 @@ GUY_SCRIPT := [?]Event {
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Busy{id = GUY_ID, busy = false},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
+DOOR_KNOCK := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Pause_Runner{.5},
+	Play_Sound{.Door_Knock},
+	Pause_Runner{1},
+	Play_Sound{.Door_Open},
+	Set_Entity_Disabled{id = WOMAN_ID, disabled=false},
+	Pause_Runner{.5},
+	Append_Text{text = "We don't want any."},
+	Pause_Runner{.5},
+	Close_Dialogue{},
+	Clear_Text{},
+	Set_Entity_Disabled{id = WOMAN_ID, disabled=true},
+	Play_Sound{.Door_Shut},
+	Pause_Runner{.1},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
@@ -55,4 +75,25 @@ start_level_1 :: proc() {
 			v = animation_create(.Warp),
 		},
 	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = WOMAN_ID,
+			disabled = true,
+			face = .Down,
+			ghost = true,
+			tile = LEVEL_1_DOOR,
+			v = facing_animation_create(.Woman_World_Left, .Woman_World_Right, .Woman_World_Up, .Woman_World_Down, .Down),
+		},
+	)
+
+		_ = hm.add(
+			&entities,
+			Entity {
+				id = 1000,
+				tile = LEVEL_1_DOOR,
+				talk = DOOR_KNOCK[:],
+			},
+		)
 }
