@@ -6,7 +6,7 @@ import "core:time"
 
 PLAYER_ID: Id = 0
 
-current_level : Level
+current_level: Level
 routes: [][]Tile_Coord
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {

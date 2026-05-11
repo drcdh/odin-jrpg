@@ -26,14 +26,15 @@ draw_world_menu :: proc() {
 	draw_menu(0, 0, VIEW_TILES_W, 2)
 	x: f32 = 1 * tile_size
 	y: f32 = .75 * tile_size
-	rl.DrawTextEx(font,
-		strings.clone_to_cstring("Characters    Skills        Items         System", allocator=context.temp_allocator),
+	rl.DrawTextEx(
+		font,
+		strings.clone_to_cstring("Characters    Skills        Items         System", allocator = context.temp_allocator),
 		{x, y},
-		tile_size/2,
+		tile_size / 2,
 		0,
 		rl.WHITE,
 	)
-	draw_animation(world_menu_icon, {(.5+ f32(world_menu_selection) * 4) * tile_size, y}, rl.WHITE)
+	draw_animation(world_menu_icon, {(.5 + f32(world_menu_selection) * 4) * tile_size, y}, rl.WHITE)
 
 	switch world_menu_selection {
 	case .Characters:
@@ -73,7 +74,7 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord) {
 
 	draw_texture(.Protagonist_Battle0, {origin.x + 3 * tile_size, origin.y}, tint)
 
-	stats_origin := Pixel_Coord{origin.x, origin.y + 2*tile_size}
+	stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
 	stats_font_size: f32 = 24
 	for i in 0 ..< NUM_STATS {
 		rl.DrawTextEx(

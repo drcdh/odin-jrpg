@@ -3,9 +3,9 @@ package game
 import "core:fmt"
 
 Character :: struct {
-	name:   cstring,
-	using stats:  Stats,
-	status: Status,
+	name:        cstring,
+	using stats: Stats,
+	status:      Status,
 }
 
 Status :: struct {

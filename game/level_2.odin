@@ -2,9 +2,9 @@ package game
 
 import hm "core:container/handle_map"
 
-@(private="file")
+@(private = "file")
 MAP_WIDTH :: LEVEL_2_WIDTH
-@(private="file")
+@(private = "file")
 MAP_HEIGHT :: LEVEL_2_HEIGHT
 
 TRAP_ID :: 665
@@ -20,7 +20,7 @@ WARP_TO_0 := [?]Event {
 }
 
 TRAP_BADDY_ACTIVATE := [?]Event {
-	Set_Entity_State{id = TRAP_BADDY_ID, state = Approach_Entity{id=PLAYER_ID}},
+	Set_Entity_State{id = TRAP_BADDY_ID, state = Approach_Entity{id = PLAYER_ID}},
 	Remove_Entity{TRAP_ID},
 	End{},
 }
@@ -99,13 +99,7 @@ start_level_2 :: proc() {
 
 	_ = hm.add(
 		&entities,
-		Entity {
-			id = TRAP_ID,
-			ghost = true,
-			tile = LEVEL_2_TRAP_SPAWN,
-			n = "trap",
-			trap = TRAP_BADDY_ACTIVATE[:],
-		}
+		Entity{id = TRAP_ID, ghost = true, tile = LEVEL_2_TRAP_SPAWN, n = "trap", trap = TRAP_BADDY_ACTIVATE[:]},
 	)
 
 	_ = hm.add(
@@ -120,6 +114,6 @@ start_level_2 :: proc() {
 			trap = TRAP_BADDY_ENCOUNTER[:],
 			v = facing_animation_create(.Baddy_World_Left, .Baddy_World_Right, .Baddy_World_Up, .Baddy_World_Down, .Right),
 			z = Z_MAX,
-		}
+		},
 	)
 }

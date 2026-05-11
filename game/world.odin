@@ -82,7 +82,7 @@ get_entity_at_tile :: proc(t: Tile_Coord, skip := NULL_ID) -> Maybe(Entity_Handl
 }
 
 remove_entity :: proc(e_id: Id) {
-	hr : Entity_Handle
+	hr: Entity_Handle
 	it := hm.iterator_make(&entities)
 	for e, h in hm.iterate(&it) {
 		if e.id == e_id {

@@ -40,7 +40,7 @@ Visual :: union {
 Name :: cstring
 
 Approach_Entity :: struct {
-	id: Id,
+	id:        Id,
 	countdown: f32,
 	pause:     f32,
 }
