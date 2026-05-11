@@ -135,6 +135,7 @@ tear_down :: proc() {
 }
 
 tear_down_rl :: proc() {
+	rl.UnloadRenderTexture(map_rt)
 	rl.UnloadTexture(atlas)
 	rl.CloseAudioDevice()
 	rl.CloseWindow()
