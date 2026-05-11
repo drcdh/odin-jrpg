@@ -48,8 +48,8 @@ for level_name in ("level_0", "level_1", "level_2"):
 			print(f"unknown layer type {type(layer)}: {layer}")
 
 	num_layers = len(map_layers)
-	w_tiles = len(map_layers[0][1])
-	h_tiles = len(map_layers[0][1][0])
+	h_tiles = len(map_layers[0][1])
+	w_tiles = len(map_layers[0][1][0])
 
 	out_f.write(f"{prefix}WIDTH :: {w_tiles}\n")
 	out_f.write(f"{prefix}HEIGHT :: {h_tiles}\n")
@@ -59,7 +59,7 @@ for level_name in ("level_0", "level_1", "level_2"):
 		out_f.write(f"\t.{ts.title()},\n")
 	out_f.write(f"}}\n")
 
-	out_f.write(f"{level_name}_map := [{num_layers}][{w_tiles}][{h_tiles}]int{{\n")
+	out_f.write(f"{level_name}_map := [{num_layers}][{h_tiles}][{w_tiles}]int{{\n")
 	for i, (_, layer_data) in enumerate(map_layers):
 		out_f.write(f"{{")
 		for row in layer_data:
@@ -68,7 +68,7 @@ for level_name in ("level_0", "level_1", "level_2"):
 		out_f.write("},\n")
 	out_f.write("}\n")
 
-	out_f.write(f"{prefix}PASSABLE := [{w_tiles}][{h_tiles}]bool ")
+	out_f.write(f"{prefix}PASSABLE := [{h_tiles}][{w_tiles}]bool ")
 	out_f.write(str(passable.process(map_layers, tileset_firstgid)).replace("[","{").replace("]", "}").replace("1", "true").replace("0", "false"))
 	out_f.write("\n")
 
@@ -88,8 +88,8 @@ render_{level_name} :: proc() {{
 	map_rt = rl.LoadRenderTexture({w_tiles}*i32(tile_size), {h_tiles}*i32(tile_size))
 	rl.BeginTextureMode(map_rt)
 	for l in 0..<{num_layers} {{
-		for j in 0..<{w_tiles} {{
-			for i in 0..<{h_tiles} {{
+		for j in 0..<{h_tiles} {{
+			for i in 0..<{w_tiles} {{
 				t := {level_name}_map[l][j][i] - 1
 				pos := tile_to_pixel({{i, j}})
 				draw_tile(l, t, pos)

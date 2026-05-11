@@ -62,5 +62,6 @@ start_level :: proc(l: Level) {
 	camera_entity = pc_entity
 	time.stopwatch_stop(&stopwatch)
 	fmt.println("Loaded level", l, "in", time.stopwatch_duration(stopwatch))
+	fmt.println("Level map dimensions are", map_dim)
 	current_level = l
 }

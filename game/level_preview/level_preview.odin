@@ -24,8 +24,6 @@ main :: proc() {
 
 	load(game.Level(li))
 
-	rl.SetWindowSize(w, h)
-
 	highlight_impassible : bool
 
 	for {
@@ -61,11 +59,13 @@ load :: proc(l: game.Level) {
 	h = i32(hf)
 	rl.UnloadRenderTexture(pTexture)
 	pTexture = rl.LoadRenderTexture(w, h)
+	rl.SetWindowSize(w, h)
 	render_passable()
 }
 
 render_passable :: proc() {
 	rl.BeginTextureMode(pTexture)
+	rl.ClearBackground({})
 	for j in 0..<game.map_dim.y {
 		for i in 0..<game.map_dim.x {
 			free : bool
