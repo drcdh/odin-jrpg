@@ -1,8 +1,12 @@
 import pathlib
 import pytiled_parser
 
+import passable
+
 def orderedpair_to_tile(c):
 	return int(c.x//16), int(c.y//16)
+
+levels_data = []
 
 for level_name in ("level_0", "level_1", "level_2"):
 	tmx_file = pathlib.Path(f"data/tiled/{level_name}.tmx")
@@ -10,6 +14,7 @@ for level_name in ("level_0", "level_1", "level_2"):
 	out_f = open(f"{level_name}_data.odin", "w")
 
 	out_f.write("package game\n")
+	out_f.write("import rl \"vendor:raylib\"\n")
 
 	map_layers = []
 	paths = []
@@ -42,12 +47,19 @@ for level_name in ("level_0", "level_1", "level_2"):
 		else:
 			print(f"unknown layer type {type(layer)}: {layer}")
 
-	out_f.write(f"{prefix}TILESETS := [{len(map_layers)}]Tileset_Id{{\n")
+	num_layers = len(map_layers)
+	w_tiles = len(map_layers[0][1])
+	h_tiles = len(map_layers[0][1][0])
+
+	out_f.write(f"{prefix}WIDTH :: {w_tiles}\n")
+	out_f.write(f"{prefix}HEIGHT :: {h_tiles}\n")
+
+	out_f.write(f"{prefix}TILESETS := [{num_layers}]Tileset_Id{{\n")
 	for ts, _ in map_layers:
 		out_f.write(f"\t.{ts.title()},\n")
 	out_f.write(f"}}\n")
 
-	out_f.write(f"{level_name}_map := [?]Map_Layer{{\n")
+	out_f.write(f"{level_name}_map := [{num_layers}][{w_tiles}][{h_tiles}]int{{\n")
 	for i, (_, layer_data) in enumerate(map_layers):
 		out_f.write(f"{{")
 		for row in layer_data:
@@ -55,6 +67,10 @@ for level_name in ("level_0", "level_1", "level_2"):
 			# out_f.write(f"{{ {str([max(0, r) for r in row])[1:-1]} }},\n")
 		out_f.write("},\n")
 	out_f.write("}\n")
+
+	out_f.write(f"{prefix}PASSABLE := [{w_tiles}][{h_tiles}]bool ")
+	out_f.write(str(passable.process(map_layers, tileset_firstgid)).replace("[","{").replace("]", "}").replace("1", "true").replace("0", "false"))
+	out_f.write("\n")
 
 	out_f.write(f"{prefix}ROUTES := [][]Tile_Coord{{\n")
 	for p in paths:
@@ -66,5 +82,22 @@ for level_name in ("level_0", "level_1", "level_2"):
 
 	for i, p in enumerate(paths_enum):
 		out_f.write(f"{prefix}{p.upper()} :: {i}\n")
+
+	out_f.write(f"""
+render_{level_name} :: proc() {{
+	map_rt = rl.LoadRenderTexture({w_tiles}*i32(tile_size), {h_tiles}*i32(tile_size))
+	rl.BeginTextureMode(map_rt)
+	for l in 0..<{num_layers} {{
+		for j in 0..<{w_tiles} {{
+			for i in 0..<{h_tiles} {{
+				t := {level_name}_map[l][j][i] - 1
+				pos := tile_to_pixel({{i, j}})
+				draw_tile(l, t, pos)
+			}}
+		}}
+	}}
+	rl.EndTextureMode()
+}}
+""")
 
 	out_f.close()

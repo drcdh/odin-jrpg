@@ -6,6 +6,7 @@ import "core:time"
 
 PLAYER_ID: Id = 0
 
+current_level : Level
 routes: [][]Tile_Coord
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
@@ -38,26 +39,28 @@ Level :: enum {
 
 start_level :: proc(l: Level) {
 	hm.clear(&entities)
+	unload_map()
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 	switch l {
 	case .LEVEL_0:
-		load_map(level_0_map[:], 1)
-		level_tilesets = LEVEL_0_TILESETS[:]
+		map_dim = {LEVEL_0_WIDTH, LEVEL_0_HEIGHT}
+		render_level_0()
 		routes = LEVEL_0_ROUTES
 		start_level_0()
 	case .LEVEL_1:
-		load_map(level_1_map[:], 2)
-		level_tilesets = LEVEL_1_TILESETS[:]
+		map_dim = {LEVEL_1_WIDTH, LEVEL_1_HEIGHT}
+		render_level_1()
 		routes = LEVEL_1_ROUTES
 		start_level_1()
 	case .LEVEL_2:
-		load_map(level_2_map[:], 1)
-		level_tilesets = LEVEL_2_TILESETS[:]
+		map_dim = {LEVEL_2_WIDTH, LEVEL_2_HEIGHT}
+		render_level_2()
 		routes = LEVEL_2_ROUTES
 		start_level_2()
 	}
 	camera_entity = pc_entity
 	time.stopwatch_stop(&stopwatch)
 	fmt.println("Loaded level", l, "in", time.stopwatch_duration(stopwatch))
+	current_level = l
 }

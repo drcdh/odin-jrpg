@@ -2,6 +2,11 @@ package game
 
 import hm "core:container/handle_map"
 
+@(private="file")
+MAP_WIDTH :: LEVEL_2_WIDTH
+@(private="file")
+MAP_HEIGHT :: LEVEL_2_HEIGHT
+
 WARP_TO_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Play_Sound{.Warp},

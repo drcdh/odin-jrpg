@@ -11,7 +11,6 @@ VIEW_TILES_H :: 14
 Z_MAX :: 3
 
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
-m: Map
 pc_entity: Entity_Handle
 runner := Runner{}
 

@@ -2,6 +2,9 @@ baddy_data.odin
 level_*_data.odin
 .~lock.*
 
+### Python ###
+__pycache__/
+
 ### atlas-builder ###
 atlas.odin
 atlas.png

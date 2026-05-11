@@ -39,10 +39,7 @@ main :: proc() {
 	rl.BeginTextureMode(pTexture)
 	for j in 0..<20 {
 		for i in 0..<20 {
-				p := true
-				for l in 0..<layers {
-					p = p && passable(l, game.level_1_map[l][j][i]-1)
-				}
+				p := game.LEVEL_1_PASSABLE[j][i]
 				if !p {
 					i := i32(i)
 					j := i32(j)
@@ -68,15 +65,4 @@ main :: proc() {
 	rl.UnloadRenderTexture(pTexture)
 
 	game.tear_down_rl()
-}
-
-passable :: proc(ts, t: int) -> bool {
-	if t < 0 { return true }
-	switch ts {
-	case int(game.Tileset_Id.Tileset_Terrain):
-		return game.TILESET_TERRAIN_PASSABLE[t]
-	case int(game.Tileset_Id.Tileset_Town):
-		return game.TILESET_TOWN_PASSABLE[t]
-	}
-	return false
 }

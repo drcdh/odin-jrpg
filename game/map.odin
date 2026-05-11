@@ -8,114 +8,20 @@ Tileset_Id :: enum {
 	Tileset_Town,
 }
 
-NUM_TILE_TYPES :: [2]int{
-	16,
-	36,
-}
-
 tileset_widths := [2]int {
 	4,
 	6,
 }
 
-TILESET_TERRAIN_PASSABLE := [NUM_TILE_TYPES[0]]bool {
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	true,
-	false,
-	false,
-	false,
-	false,
-}
-TILESET_TOWN_PASSABLE := [NUM_TILE_TYPES[1]]bool {
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	true, // door
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-	false,
-}
-
-MAP_WIDTH :: 20
-MAP_HEIGHT :: 20
-
-Map_Layer :: [MAP_WIDTH][MAP_HEIGHT]int
-
-Map :: []Map_Layer
-
-level_tilesets : []Tileset_Id
-p : [MAP_WIDTH][MAP_HEIGHT]bool
-num_map_levels : int
-
-load_map :: proc(next_map: Map, n: int) {
-	m = next_map
-	num_map_levels = n
-	for i in 0 ..< MAP_WIDTH {
-		for j in 0 ..< MAP_HEIGHT {
-			p[j][i] = true
-			for l in 0..<num_map_levels {
-				m_ := m[l][j][i] - 1
-				if m_ < 0 { continue}
-				pl : bool
-				switch l{
-				case int(Tileset_Id.Tileset_Terrain):
-					pl = TILESET_TERRAIN_PASSABLE[m_]
-				case int(Tileset_Id.Tileset_Town):
-					pl = TILESET_TOWN_PASSABLE[m_]
-				}
-				p[j][i] = p[j][i] && pl
-			}
-		}
-	}
-}
+map_dim : [2]Tile_T
+map_rt : rl.RenderTexture
 
 draw_map :: proc() {
-	for i in 0 ..< MAP_WIDTH {
-		for j in 0 ..< MAP_HEIGHT {
-			for l in 0..<num_map_levels {
-				draw_tile(int(level_tilesets[l]), m[l][j][i] - 1, tile_to_pixel(Tile_Coord{i, j}))
-			}
-		}
-	}
+	rl.DrawTexturePro(map_rt.texture, {0, 0, f32(map_rt.texture.width), -f32(map_rt.texture.height)}, {0, 0, f32(map_rt.texture.width), -f32(map_rt.texture.height)}, {}, 0, rl.WHITE)
+}
+
+unload_map :: proc() {
+	rl.UnloadRenderTexture(map_rt)
 }
 
 draw_tile :: proc(ts_idx, t: int, pos: Pixel_Coord) {
@@ -137,15 +43,26 @@ draw_tile :: proc(ts_idx, t: int, pos: Pixel_Coord) {
 }
 
 valid_tile_coord :: proc(t: Tile_Coord) -> bool {
-	return !(t.x < 0 || t.y < 0 || t.x >= MAP_WIDTH || t.y >= MAP_HEIGHT)
+	return !(t.x < 0 || t.y < 0 || t.x >= map_dim.x || t.y >= map_dim.y)
 }
 
-tile_free :: proc(t: Tile_Coord) -> bool {
+tile_free :: proc(t: Tile_Coord) -> (free : bool) {
+	switch current_level {
+	case .LEVEL_0:
+		free = LEVEL_0_PASSABLE[t.y][t.x]
+	case .LEVEL_1:
+		free = LEVEL_1_PASSABLE[t.y][t.x]
+	case .LEVEL_2:
+		free = LEVEL_2_PASSABLE[t.y][t.x]
+	}
+	if !free { return }
+
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {
 		if e.tile == t && !e.ghost {
-			return false
+			free = false
+			break
 		}
 	}
-	return p[t.y][t.x]
+	return
 }
