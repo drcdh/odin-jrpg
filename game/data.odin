@@ -21,8 +21,10 @@ game_data: struct {
 
 init_new_game :: proc() {
 	game_data.protagonist_name = "Hiro"
-	game_data.inventory[Item.Potion] = 10
-	game_data.inventory[Item.Super_Potion] = 10
+	game_data.inventory[Item.Potion] = 5
+	game_data.inventory[Item.Super_Potion] = 4
+	game_data.inventory[Item.Antidote] = 2
+	game_data.inventory[Item.Poisonous_Mushroom] = 2
 }
 
 get_game_data_bool :: proc(d: Bool_Datum) -> bool {

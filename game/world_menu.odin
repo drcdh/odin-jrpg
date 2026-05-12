@@ -111,16 +111,32 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 draw_world_menu_character :: proc(pc_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W-2, VIEW_TILES_H-2)
 	pc := get_pc(PC(pc_idx))
+	rl.DrawTextEx(
+		font,
+		pc.name,
+		{2*tile_size, 2*tile_size},
+		tile_size/2,
+		0,
+		rl.WHITE,
+	)
 	for i in 0 ..< NUM_STATS {
 		rl.DrawTextEx(
 			font,
 			strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator),
-			{2*tile_size, 2*tile_size + f32(i) * tile_size},
+			{2*tile_size, 3*tile_size + f32(i) * tile_size},
 			tile_size/2,
 			0,
 			rl.WHITE,
 		)
 	}
+	rl.DrawTextEx(
+		font,
+		get_status_cstring(pc^),
+		{2*tile_size, 3*tile_size + f32(NUM_STATS) * tile_size},
+		tile_size/2,
+		0,
+		rl.WHITE,
+	)
 }
 
 draw_world_menu_skills :: proc(pc_idx: int) {
@@ -202,8 +218,7 @@ update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
 				world_menu_state = World_Menu_State_Skills{pc_idx}
 			}
 		} else {
-			pc_idx := change_world_menu_pc_dx_from_input(pc_idx)
-			world_menu_state = World_Menu_State_Top{i, true, pc_idx}
+			world_menu_state = World_Menu_State_Top{i, true,  change_world_menu_pc_dx_from_input(pc_idx)}
 		}
 	} else {
 		if get_input(.CANCEL) {
@@ -235,6 +250,13 @@ update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
 update_world_menu_character :: proc(pc_idx: int) {
 	if get_input(.CANCEL) {
 		world_menu_state = World_Menu_State_Top{0, true, pc_idx}
+	} else {
+		m := get_menu_input()
+		pc_idx := pc_idx
+		pc_idx += m.x
+		if pc_idx < 0 { pc_idx = NUM_PC-1 }
+		if pc_idx >= NUM_PC { pc_idx = 0 }
+		world_menu_state = World_Menu_State_Character{pc_idx}
 	}
 }
 

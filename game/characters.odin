@@ -1,11 +1,12 @@
 package game
 
 import "core:fmt"
+import "core:strings"
 
 Character :: struct {
 	name:        cstring,
 	using stats: Stats,
-	status:      Status,
+	using status:      Status,
 }
 
 Status :: struct {
@@ -46,4 +47,15 @@ do_effect :: proc(ce: Character_Effect) {
 	case nil:
 		fmt.println("oops")
 	}
+}
+
+get_status_cstring :: proc(status: Status) -> cstring {
+	s := ""
+	if status.poison {
+		s = strings.concatenate({s, "P"}, context.temp_allocator)
+	}
+	if status.zombie {
+		s = strings.concatenate({s, "Z"}, context.temp_allocator)
+	}
+	return strings.clone_to_cstring(s)
 }
