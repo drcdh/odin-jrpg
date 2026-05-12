@@ -55,10 +55,9 @@ draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
 
-draw_menu :: proc(l, t, w, h: Tile_T) {
+draw_menu :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
 	r := l + w - 1
 	b := t + h - 1
-	tint := rl.WHITE
 	draw_texture(.Menu_Topleft, tile_to_pixel({l, t}), tint)
 	draw_texture(.Menu_Topright, tile_to_pixel({r, t}), tint)
 	draw_texture(.Menu_Bottomleft, tile_to_pixel({l, b}), tint)

@@ -115,7 +115,7 @@ get_direction_input :: proc() -> (m := Tile_Coord{}) {
 	return
 }
 
-get_menu_input :: proc() -> (m := Tile_Coord{}) {
+get_menu_input :: proc() -> (m := [2]int{}) {
 	if get_input(.UP) {
 		m.y -= 1
 	}

@@ -75,19 +75,17 @@ update :: proc() {
 
 	if battle_active {
 		update_battle(dt)
+	} else if world_menu_active {
+		update_world_menu()
 	} else {
-		if get_input(.MENU) {
-			world_menu_active = !world_menu_active
-		}
+		// text gets input priority
+		update_runner(dt)
+		update_world(dt)
+		// update_menus(dt)
+		update_dialogue()
 
-		if world_menu_active {
-			update_world_menu()
-		} else {
-			// text gets input priority
-			update_runner(dt)
-			update_world(dt)
-			// update_menus(dt)
-			update_dialogue()
+		if get_input(.MENU) {
+			world_menu_active = true
 		}
 	}
 
