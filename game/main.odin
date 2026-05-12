@@ -29,11 +29,7 @@ init_rl :: proc(z: i32 = 4) {
 		rl.SetTargetFPS(THROTTLED_FPS)
 	}
 
-	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
-	atlas = rl.LoadTextureFromImage(atlas_image)
-	rl.UnloadImage(atlas_image)
-
-	font = load_atlased_font()
+	init_atlases()
 }
 
 init :: proc() {

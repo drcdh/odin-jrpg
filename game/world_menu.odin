@@ -54,7 +54,7 @@ draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
 	y: f32 = .75 * tile_size
 	rl.DrawTextEx(
 		font,
-		strings.clone_to_cstring("Characters    Skills        Items         System", allocator = context.temp_allocator),
+		strings.clone_to_cstring("Info   Skills  Items  System", allocator = context.temp_allocator),
 		{x, y},
 		tile_size / 2,
 		0,
@@ -62,23 +62,35 @@ draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
 	)
 
 	if !next {
-		draw_animation(world_menu_icon, {(.5 + f32(i) * 4) * tile_size, y}, tint)
+		x_icon : f32
+		switch i {
+		case 0:
+			x_icon = .5*tile_size
+		case 1:
+			x_icon = 4*tile_size
+		case 2:
+			x_icon = 8*tile_size
+		case 3:
+			x_icon = 11.5*tile_size
+		}
+		draw_animation(world_menu_icon, {x_icon, y}, tint)
 	}
 
 	draw_menu(0, 2, VIEW_TILES_W, VIEW_TILES_H - 2, tint)
 	card := 0
 	row: f32 = 0
-	for i in 0 ..< NUM_PC {
+	for p in 0 ..< NUM_PC {
 		{ 	//if character in party
 			card_origin :=
 				Pixel_Coord{tile_size, 3 * tile_size} + {f32(card % 3), row} * Pixel_Coord{5 * tile_size, 5 * tile_size}
-			draw_character_card(PC(i), card_origin)
+			draw_character_card(PC(p), card_origin)
 			card += 1
-			if i == 2 {
+			if p == 2 {
 				card = 0
 				row += 1
 			}
-			if next && i == pc_idx {
+			if next && p == pc_idx {
+				card_origin.x -= .5*tile_size
 				draw_animation(world_menu_icon, card_origin, tint)
 			}
 		}
@@ -91,24 +103,24 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 	pc := get_pc(pc)
 	rl.DrawTextEx(font, pc.name, origin, 32, 0, tint)
 
-	draw_texture(.Protagonist_Battle0, {origin.x + 3 * tile_size, origin.y}, tint)
+	draw_texture(.Protagonist_Battle0, {origin.x + 3 * tile_size, origin.y+.5*tile_size}, tint)
 
-	stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
-	stats_font_size: f32 = 24
-	for i in 0 ..< NUM_STATS {
-		rl.DrawTextEx(
-			font,
-			strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator),
-			stats_origin + {0, f32(i) * stats_font_size},
-			stats_font_size,
-			0,
-			tint,
-		)
-	}
+	// stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
 }
 
 draw_world_menu_character :: proc(pc_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W-2, VIEW_TILES_H-2)
+	pc := get_pc(PC(pc_idx))
+	for i in 0 ..< NUM_STATS {
+		rl.DrawTextEx(
+			font,
+			strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator),
+			{2*tile_size, 2*tile_size + f32(i) * tile_size},
+			tile_size/2,
+			0,
+			rl.WHITE,
+		)
+	}
 }
 
 draw_world_menu_skills :: proc(pc_idx: int) {
@@ -147,7 +159,12 @@ update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
 		if get_input(.CANCEL) {
 			world_menu_state = World_Menu_State_Top{i, false, pc_idx}
 		} else if get_input(.ENTER) {
-			world_menu_state = World_Menu_State_Character{pc_idx}
+			switch i {
+			case 0:
+				world_menu_state = World_Menu_State_Character{pc_idx}
+			case 1:
+				world_menu_state = World_Menu_State_Skills{pc_idx}
+			}
 		} else {
 			m := get_menu_input()
 			pc_idx := pc_idx

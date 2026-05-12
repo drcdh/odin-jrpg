@@ -66,7 +66,7 @@ MONSTER_IN_A_BOX := [?]Event {
 welcome := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Curtain_Up{},
-	Append_Text{text = "[Press Z to start]"},
+	Append_Text{text = "You're new in town| Press Z to start!"},
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Bool{k = .Introduction, v = true},

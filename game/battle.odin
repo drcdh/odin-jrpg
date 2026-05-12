@@ -134,7 +134,7 @@ draw_battle_combatants :: proc() {
 
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
-		text_color := TEXT_COLOR
+		text_color := rl.WHITE
 		x: f32 = tile_size * (VIEW_TILES_W / 2 + .5)
 		y := tile_size * ((VIEW_TILES_H - 3.5) + f32(p) / 2)
 		if c.character.stats.hitpoints <= 0 {

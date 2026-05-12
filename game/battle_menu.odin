@@ -64,9 +64,9 @@ draw_battle_menu :: proc() {
 		draw_menu(VIEW_TILES_W / 2 - VIEW_TILES_W / 4, VIEW_TILES_H - 4, VIEW_TILES_W / 4, 4)
 		x: f32 = tile_size * (VIEW_TILES_W / 2 - VIEW_TILES_W / 4 + .5)
 		y := tile_size * (VIEW_TILES_H - 3.5)
-		rl.DrawTextEx(font, "Attack", {x, y}, tile_size / 2, 0, TEXT_COLOR)
-		rl.DrawTextEx(font, "Skill", {x, y + tile_size / 2}, tile_size / 2, 0, TEXT_COLOR)
-		rl.DrawTextEx(font, "Item", {x, y + tile_size}, tile_size / 2, 0, TEXT_COLOR)
+		rl.DrawTextEx(font, "Attack", {x, y}, tile_size / 2, 0, rl.WHITE)
+		rl.DrawTextEx(font, "Skill", {x, y + tile_size / 2}, tile_size / 2, 0, rl.WHITE)
+		rl.DrawTextEx(font, "Item", {x, y + tile_size}, tile_size / 2, 0, rl.WHITE)
 		rl.DrawRectangleLinesEx({x, y + f32(state.s) * tile_size / 2, 100, tile_size / 2}, 2, rl.ORANGE)
 	case Skill_Selection_State:
 	case Item_Selection_State:

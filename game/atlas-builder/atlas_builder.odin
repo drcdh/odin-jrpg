@@ -60,15 +60,6 @@ PACKAGE_NAME :: "game"
 // The folder within which to look for textures
 TEXTURES_DIR :: "textures"
 
-// The letters to extract from the font
-LETTERS_IN_FONT :: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890/?!@#$%^&*()[],.<>-_=+;:'"
-
-// The font to extract letters from
-FONT_FILENAME :: "font.ttf"
-
-// The font size of letters extracted from font
-FONT_SIZE :: 32
-
 SKIP_PREFIX :: "_"
 
 // ---------------------
@@ -722,7 +713,6 @@ main :: proc() {
 	rc_nodes: [ATLAS_SIZE]stbrp.Node
 	stbrp.init_target(&rc, ATLAS_SIZE, ATLAS_SIZE, raw_data(rc_nodes[:]), ATLAS_SIZE)
 
-	letters := utf8.string_to_runes(LETTERS_IN_FONT)
 	glyphs: []Glyph
 
 	Pack_Rect_Type :: enum {
@@ -741,51 +731,6 @@ main :: proc() {
 
 	pack_rects: [dynamic]stbrp.Rect
 	pack_rects_items: [dynamic]Pack_Rect_Item
-
-	if font_data, error := os.read_entire_file_from_path(FONT_FILENAME, context.allocator); error == os.ERROR_NONE {
-		fi: stbtt.fontinfo
-		if stbtt.InitFont(&fi, raw_data(font_data), 0) {
-			scale_factor := stbtt.ScaleForPixelHeight(&fi, FONT_SIZE)
-
-			ascent: c.int
-			stbtt.GetFontVMetrics(&fi, &ascent, nil, nil)
-
-			glyphs = make([]Glyph, len(letters))
-
-			for r, r_idx in letters {
-				w, h, ox, oy: c.int
-				data := stbtt.GetCodepointBitmap(&fi, scale_factor, scale_factor, r, &w, &h, &ox, &oy)
-				advance_x: c.int
-				stbtt.GetCodepointHMetrics(&fi, r, &advance_x, nil)
-
-				rgba_data := make([]Color, w * h)
-
-				for i in 0 ..< w * h {
-					a := data[i]
-					rgba_data[i].r = 255
-					rgba_data[i].g = 255
-					rgba_data[i].b = 255
-					rgba_data[i].a = a
-				}
-
-				glyphs[r_idx] = {
-					image = {data = rgba_data, width = int(w), height = int(h)},
-					value = r,
-					offset = {int(ox), int(f32(oy) + f32(ascent) * scale_factor)},
-					advance_x = int(f32(advance_x) * scale_factor),
-				}
-
-				append(
-					&pack_rects,
-					stbrp.Rect{id = i32(len(pack_rects_items)), w = stbrp.Coord(w) + 2, h = stbrp.Coord(h) + 2},
-				)
-
-				append(&pack_rects_items, Pack_Rect_Item{type = .Glyph, idx = r_idx})
-			}
-		}
-	} else {
-		log.warnf("No %s file found", FONT_FILENAME)
-	}
 
 	for t, idx in textures {
 		append(
@@ -1048,8 +993,6 @@ main :: proc() {
 	fmt.fprintln(f, "")
 
 	fmt.fprintf(f, "TEXTURE_ATLAS_FILENAME :: \"%s\"\n", ATLAS_PNG_OUTPUT_PATH)
-	fmt.fprintf(f, "ATLAS_FONT_SIZE :: %v\n", FONT_SIZE)
-	fmt.fprintf(f, "LETTERS_IN_FONT :: \"%s\"\n\n", LETTERS_IN_FONT)
 
 	fmt.fprintln(f, "// A generated square in the atlas you can use with rl.SetShapesTexture to make")
 	fmt.fprintln(f, "// raylib shapes such as rl.DrawRectangleRec() use the atlas.")
@@ -1200,35 +1143,6 @@ main :: proc() {
 
 		fmt.fprintln(f, "}\n")
 	}
-
-
-	fmt.fprintln(f, "Atlas_Glyph :: struct {")
-	fmt.fprintln(f, "\trect: Rect,")
-	fmt.fprintln(f, "\tvalue: rune,")
-	fmt.fprintln(f, "\toffset_x: int,")
-	fmt.fprintln(f, "\toffset_y: int,")
-	fmt.fprintln(f, "\tadvance_x: int,")
-	fmt.fprintln(f, "}")
-	fmt.fprintln(f, "")
-
-	fmt.fprintln(f, "atlas_glyphs: []Atlas_Glyph = {")
-
-	for ag in atlas_glyphs {
-		fmt.fprintf(
-			f,
-			"\t{{ rect = {{%v, %v, %v, %v}}, value = %q, offset_x = %v, offset_y = %v, advance_x = %v}},\n",
-			ag.rect.x,
-			ag.rect.y,
-			ag.rect.width,
-			ag.rect.height,
-			ag.glyph.value,
-			ag.glyph.offset.x,
-			ag.glyph.offset.y,
-			ag.glyph.advance_x,
-		)
-	}
-
-	fmt.fprintln(f, "}")
 
 	run_time_ms := time.duration_milliseconds(time.diff(start_time, time.now()))
 	log.infof(ATLAS_PNG_OUTPUT_PATH + " and " + ATLAS_ODIN_OUTPUT_PATH + " created in %.2f ms", run_time_ms)

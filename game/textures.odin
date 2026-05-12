@@ -4,19 +4,26 @@ import "core:slice"
 import rl "vendor:raylib"
 
 ATLAS_DATA :: #load("atlas.png")
+FONT_ATLAS_DATA :: #load("textures/_font.png")
 
 Rect :: rl.Rectangle // for the results of atlas_builder
 
-TEXT_COLOR := rl.Color{50, 10, 10, 255}
-
-// This is loaded in `main` from `ATLAS_DATA`
 atlas: rl.Texture
+font_atlas: rl.Texture
 
-// This is manually constructed in `main` from the font info in `atlas.odin`
 font: rl.Font
 
-// from Karl's atlas-builder example
-load_atlased_font :: proc() -> rl.Font {
+init_atlases :: proc() {
+	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
+	atlas = rl.LoadTextureFromImage(atlas_image)
+	rl.UnloadImage(atlas_image)
+
+	font_atlas_image := rl.LoadImageFromMemory(".png", raw_data(FONT_ATLAS_DATA), i32(len(FONT_ATLAS_DATA)))
+	font_atlas = rl.LoadTextureFromImage(font_atlas_image)
+	rl.UnloadImage(font_atlas_image)
+
+	// from Karl's atlas-builder example
+
 	num_glyphs := len(atlas_glyphs)
 	font_rects := make([]Rect, num_glyphs)
 	glyphs := make([]rl.GlyphInfo, num_glyphs)
@@ -31,11 +38,11 @@ load_atlased_font :: proc() -> rl.Font {
 		}
 	}
 
-	return {
-		baseSize = ATLAS_FONT_SIZE,
+	font = {
+		baseSize = 8,
 		glyphCount = i32(num_glyphs),
 		glyphPadding = 0,
-		texture = atlas,
+		texture = font_atlas,
 		recs = raw_data(font_rects),
 		glyphs = raw_data(glyphs),
 	}
