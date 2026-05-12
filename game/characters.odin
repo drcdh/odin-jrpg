@@ -4,9 +4,9 @@ import "core:fmt"
 import "core:strings"
 
 Character :: struct {
-	name:        cstring,
-	using stats: Stats,
-	using status:      Status,
+	name:         cstring,
+	using stats:  Stats,
+	using status: Status,
 }
 
 Status :: struct {

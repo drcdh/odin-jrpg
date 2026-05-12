@@ -39,12 +39,12 @@ init_atlases :: proc() {
 	}
 
 	font = {
-		baseSize = 8,
-		glyphCount = i32(num_glyphs),
+		baseSize     = 8,
+		glyphCount   = i32(num_glyphs),
 		glyphPadding = 0,
-		texture = font_atlas,
-		recs = raw_data(font_rects),
-		glyphs = raw_data(glyphs),
+		texture      = font_atlas,
+		recs         = raw_data(font_rects),
+		glyphs       = raw_data(glyphs),
 	}
 }
 

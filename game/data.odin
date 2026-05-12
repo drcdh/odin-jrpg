@@ -55,5 +55,5 @@ set_game_data :: proc {
 
 item_possession_cstring :: proc(i: Item) -> cstring {
 	item := item_data[i]
-	return fmt.caprintf("%s %2d", item.name, game_data.inventory[i], allocator=context.temp_allocator)
+	return fmt.caprintf("%s %2d", item.name, game_data.inventory[i], allocator = context.temp_allocator)
 }

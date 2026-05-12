@@ -37,13 +37,13 @@ DOOR_KNOCK := [?]Event {
 	Play_Sound{.Door_Knock},
 	Pause_Runner{1},
 	Play_Sound{.Door_Open},
-	Set_Entity_Disabled{id = WOMAN_ID, disabled=false},
+	Set_Entity_Disabled{id = WOMAN_ID, disabled = false},
 	Pause_Runner{.5},
 	Append_Text{text = "We don't want any."},
 	Pause_Runner{.5},
 	Close_Dialogue{},
 	Clear_Text{},
-	Set_Entity_Disabled{id = WOMAN_ID, disabled=true},
+	Set_Entity_Disabled{id = WOMAN_ID, disabled = true},
 	Play_Sound{.Door_Shut},
 	Pause_Runner{.1},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
@@ -88,12 +88,5 @@ start_level_1 :: proc() {
 		},
 	)
 
-		_ = hm.add(
-			&entities,
-			Entity {
-				id = 1000,
-				tile = LEVEL_1_DOOR,
-				talk = DOOR_KNOCK[:],
-			},
-		)
+	_ = hm.add(&entities, Entity{id = 1000, tile = LEVEL_1_DOOR, talk = DOOR_KNOCK[:]})
 }

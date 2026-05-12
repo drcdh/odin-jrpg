@@ -73,19 +73,19 @@ tile_to_pixel_Tile_Coord :: proc(t: Tile_Coord) -> Pixel_Coord {
 }
 
 tile_to_pixel_int_int :: proc(i, j: int) -> Pixel_Coord {
-	return {f32(i)*tile_size, f32(j)*tile_size}
+	return {f32(i) * tile_size, f32(j) * tile_size}
 }
 
 tile_to_pixel_f32_int :: proc(i: f32, j: int) -> Pixel_Coord {
-	return {i*tile_size, f32(j)*tile_size}
+	return {i * tile_size, f32(j) * tile_size}
 }
 
 tile_to_pixel_int_f32 :: proc(i: int, j: f32) -> Pixel_Coord {
-	return {f32(i)*tile_size, j*tile_size}
+	return {f32(i) * tile_size, j * tile_size}
 }
 
 tile_to_pixel_f32_f32 :: proc(i, j: f32) -> Pixel_Coord {
-	return {i*tile_size, j*tile_size}
+	return {i * tile_size, j * tile_size}
 }
 
 tile_to_pixel :: proc {

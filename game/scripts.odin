@@ -34,7 +34,7 @@ Set_Entity_Busy :: struct {
 	busy: bool,
 }
 Set_Entity_Disabled :: struct {
-	id:   Id,
+	id:       Id,
 	disabled: bool,
 }
 Set_Entity_Talk_Script :: struct {

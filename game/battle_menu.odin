@@ -44,7 +44,9 @@ Select_One_Ally :: struct {
 Select_All_Allies :: struct {
 	prev: int,
 }
-Select_One_Combatant :: struct {i: int}
+Select_One_Combatant :: struct {
+	i: int,
+}
 Select_All_Combatants :: struct {}
 Targeting_Type :: enum {
 	One_Opponent,

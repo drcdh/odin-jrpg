@@ -18,12 +18,12 @@ Sound_Name :: enum {
 
 sound_paths := [Sound_Name]string {
 	.Door_Knock = "629987__flem0527__knocking-on-wood-door-1.wav",
-	.Door_Open = "400329__n-razm__door_open.wav",
-	.Door_Shut = "96472__imitatia-dei__pine-door-shut-2-slam.wav",
-	.UI_Blip  = "sfx_menu_move2.wav",
-	.UI_Blip2 = "107156__bubaproducer__button-9-funny.wav",
-	.Warp     = "sfx_sound_bling.wav",
-	.Whack    = "sfx_sounds_impact1.wav",
+	.Door_Open  = "400329__n-razm__door_open.wav",
+	.Door_Shut  = "96472__imitatia-dei__pine-door-shut-2-slam.wav",
+	.UI_Blip    = "sfx_menu_move2.wav",
+	.UI_Blip2   = "107156__bubaproducer__button-9-funny.wav",
+	.Warp       = "sfx_sound_bling.wav",
+	.Whack      = "sfx_sounds_impact1.wav",
 }
 
 sounds: map[Sound_Name]rl.Sound

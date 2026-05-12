@@ -8,13 +8,13 @@ Item :: enum {
 }
 
 Item_Data :: struct {
-	name: string,
+	name:      string,
 	targeting: Targeting_Type,
-	effect: Effect_F,
-	power: int,
+	effect:    Effect_F,
+	power:     int,
 }
 
-item_data := [len(Item)]Item_Data{
+item_data := [len(Item)]Item_Data {
 	{"Potion", .One_Ally, effect_heal_hp_constant, 50},
 	{"Super Potion", .One_Ally, effect_heal_hp_constant, 500},
 	{"Antidote", .One_Ally, effect_remove_poison_constant, 100},
