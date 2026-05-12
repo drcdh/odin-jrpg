@@ -1,0 +1,1 @@
+odin run game/bestiary
