@@ -144,3 +144,17 @@ get_y_input :: proc() -> Maybe(int) {
 	}
 	return nil
 }
+
+change_world_menu_pc_dx_from_input :: proc(pc_idx: int) -> int {
+	m := get_menu_input()
+	pc_idx := pc_idx
+	if m.x > 0 {
+		if pc_idx == 2 || pc_idx == 5 { pc_idx -= 2 } else { pc_idx += 1 }
+	} else if m.x < 0 {
+		if pc_idx == 0 || pc_idx == 3 { pc_idx += 2 } else { pc_idx -= 1 }
+	}
+	if m.y != 0 {
+		if pc_idx < 3 { pc_idx += 3 } else { pc_idx -= 3 }
+	}
+	return pc_idx
+}

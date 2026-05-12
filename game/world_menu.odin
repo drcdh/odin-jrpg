@@ -7,7 +7,7 @@ import rl "vendor:raylib"
 World_Menu_State_Top :: struct {i: int, next: bool, pc_idx: int}
 World_Menu_State_Character :: struct {pc_idx: int }
 World_Menu_State_Skills :: struct {pc_idx: int }
-World_Menu_State_Items :: struct {i: int}
+World_Menu_State_Items :: struct {item_idx: int, targeting: bool, pc_idx: int}
 World_Menu_State_System :: struct {i: int}
 
 World_Menu_State :: union {
@@ -40,12 +40,12 @@ draw_world_menu :: proc() {
 		draw_world_menu_skills(state.pc_idx)
 	case World_Menu_State_Items:
 		draw_world_menu_top(2, true, 0, rl.GRAY)
-		draw_world_menu_items(state.i)
+		draw_world_menu_items(state.item_idx, state.targeting, state.pc_idx)
 	case World_Menu_State_System:
 		draw_world_menu_top(3, true, 0, rl.GRAY)
 		draw_world_menu_system(state.i)
 	}
-	rl.DrawText(fmt.caprint(world_menu_state, allocator=context.temp_allocator), i32(tile_size), i32(view_dim.y-tile_size), 32, rl.PURPLE)
+	rl.DrawText(fmt.caprint(world_menu_state, allocator=context.temp_allocator), i32(tile_size), i32(view_dim.y-tile_size), 20, rl.PURPLE)
 }
 
 draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
@@ -127,8 +127,44 @@ draw_world_menu_skills :: proc(pc_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W-2, VIEW_TILES_H-2)
 }
 
-draw_world_menu_items :: proc(i: int) {
-	draw_menu(1, 1, VIEW_TILES_W-2, VIEW_TILES_H-2)
+draw_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
+	tint := rl.WHITE
+	if targeting {tint = rl.GRAY}
+	draw_menu(1, 1, VIEW_TILES_W-2, VIEW_TILES_H-2, tint)
+	for i in 0 ..< len(Item) {
+		if i == item_idx {
+			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + i), tint)
+		}
+		rl.DrawTextEx(
+			font,
+			fmt.caprint(item_data[i].name, allocator=context.temp_allocator),
+			tile_to_pixel(2, 2+i),
+			tile_size/2,
+			0,
+			tint,
+		)
+		rl.DrawTextEx(
+			font,
+			fmt.caprintf("% 2d", game_data.inventory[i], allocator=context.temp_allocator),
+			tile_to_pixel(VIEW_TILES_W - 3, 2+i),
+			tile_size/2,
+			0,
+			tint,
+		)
+	}
+	if targeting {
+		draw_menu(8, 5, 7, 6)
+		row := f32(0)
+		for i in 0 ..< NUM_PC {
+			if i == 3 {
+				row += 1
+			}
+			draw_texture(.Protagonist_Battle0, tile_to_pixel(9 + 2*(f32(i) - 3*row), 6+2.5*row), rl.WHITE)
+			if i == pc_idx {
+				draw_animation(world_menu_icon, tile_to_pixel(8.5 + 2*(f32(i) - 3*row), 6+2.5*row), rl.WHITE)
+			}
+		}
+	}
 }
 
 draw_world_menu_system :: proc(i: int) {
@@ -147,7 +183,7 @@ update_world_menu :: proc() {
 	case World_Menu_State_Skills:
 		update_world_menu_skills(state.pc_idx)
 	case World_Menu_State_Items:
-		update_world_menu_items(state.i)
+		update_world_menu_items(state.item_idx, state.targeting, state.pc_idx)
 	case World_Menu_State_System:
 		update_world_menu_system(state.i)
 	}
@@ -166,16 +202,7 @@ update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
 				world_menu_state = World_Menu_State_Skills{pc_idx}
 			}
 		} else {
-			m := get_menu_input()
-			pc_idx := pc_idx
-			if m.x > 0 {
-				if pc_idx == 2 || pc_idx == 5 { pc_idx -= 2 } else { pc_idx += 1 }
-			} else if m.x < 0 {
-				if pc_idx == 0 || pc_idx == 3 { pc_idx += 2 } else { pc_idx -= 1 }
-			}
-			if m.y != 0 {
-				if pc_idx < 3 { pc_idx += 3 } else { pc_idx -= 3 }
-			}
+			pc_idx := change_world_menu_pc_dx_from_input(pc_idx)
 			world_menu_state = World_Menu_State_Top{i, true, pc_idx}
 		}
 	} else {
@@ -217,9 +244,39 @@ update_world_menu_skills :: proc(pc_idx: int) {
 	}
 }
 
-update_world_menu_items :: proc(i: int) {
+update_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
 	if get_input(.CANCEL) {
-		world_menu_state = World_Menu_State_Top{i=2}
+		if targeting {
+			world_menu_state = World_Menu_State_Items{item_idx, false, pc_idx}
+		} else {
+			world_menu_state = World_Menu_State_Top{i=2}
+		}
+	} else if get_input(.ENTER) {
+		if targeting {
+	 		item := item_data[item_idx]
+			play_sound(.Warp) // todo
+			item.effect(nil, get_pc(pc_idx), item.power)
+			game_data.inventory[item_idx] -= 1
+			if game_data.inventory[item_idx] == 0 {
+				world_menu_state = World_Menu_State_Items{item_idx, false, pc_idx}
+			}
+			fmt.printfln("Used item %s", item.name)
+		} else {
+			world_menu_state = World_Menu_State_Items{item_idx, true, 0}
+		}
+	} else {
+		if targeting {
+			world_menu_state = World_Menu_State_Items{item_idx, true, change_world_menu_pc_dx_from_input(pc_idx)}
+		} else {
+			item_idx := item_idx
+			m := get_menu_input()
+			if m.y != 0 {
+				item_idx += m.y
+				if item_idx < 0 {item_idx = len(Item)-1}
+				if item_idx >= len(Item) {item_idx = 0}
+				world_menu_state = World_Menu_State_Items{item_idx, targeting, pc_idx}
+			}
+		}
 	}
 }
 

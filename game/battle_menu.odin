@@ -26,24 +26,25 @@ Target_Selection_State :: struct {
 	// prev: Battle_UI_State,
 }
 Target_Selection :: union {
-	Select_Baddy,
-	Select_All_Baddies,
-	Select_Ally,
+	Select_One_Ally,
+	Select_One_Baddy,
 	Select_All_Allies,
+	Select_All_Baddies,
 	Select_All_Combatants,
 }
-Select_Baddy :: struct {
+Select_One_Baddy :: struct {
 	i: int,
 }
 Select_All_Baddies :: struct {
 	prev: int,
 }
-Select_Ally :: struct {
+Select_One_Ally :: struct {
 	i: int,
 }
 Select_All_Allies :: struct {
 	prev: int,
 }
+Select_One_Combatant :: struct {i: int}
 Select_All_Combatants :: struct {}
 Targeting_Type :: enum {
 	One_Opponent,
@@ -52,6 +53,7 @@ Targeting_Type :: enum {
 	One_Ally,
 	Some_Allies,
 	All_Allies,
+	One_Combatant,
 	All_Combatants,
 }
 ATTACK :: 0
@@ -114,29 +116,29 @@ change_selection :: proc(dx, dy: int) {
 	case Item_Selection_State:
 	case Target_Selection_State:
 		switch ts in state.ts {
-		case Select_Baddy:
+		case Select_One_Baddy:
 			if dy != 0 {
-				state.ts = Select_Baddy{change_baddy_selection(ts.i, dy)}
+				state.ts = Select_One_Baddy{change_baddy_selection(ts.i, dy)}
 			} else if dx < 0 {
 				state.ts = Select_All_Baddies{ts.i}
 			} else if dx > 0 {
-				state.ts = Select_Ally{}
+				state.ts = Select_One_Ally{}
 			}
 		case Select_All_Baddies:
 			if dx > 0 {
-				state.ts = Select_Baddy{ts.prev}
+				state.ts = Select_One_Baddy{ts.prev}
 			}
-		case Select_Ally:
+		case Select_One_Ally:
 			if dy != 0 {
-				state.ts = Select_Ally{change_ally_selection(ts.i, dy)}
+				state.ts = Select_One_Ally{change_ally_selection(ts.i, dy)}
 			} else if dx > 0 {
 				state.ts = Select_All_Allies{ts.i}
 			} else if dx < 0 {
-				state.ts = Select_Baddy{}
+				state.ts = Select_One_Baddy{}
 			}
 		case Select_All_Allies:
 			if dx < 0 {
-				state.ts = Select_Ally{ts.prev}
+				state.ts = Select_One_Ally{ts.prev}
 			}
 		case Select_All_Combatants:
 		// do nothing
@@ -167,7 +169,7 @@ pc_turn :: proc(actor: ^Combatant) {
 				skill_proc = attack
 				// todo: check weapon target type
 				battle_ui_state = Target_Selection_State {
-					ts = Select_Baddy{select_first_baddy()},
+					ts = Select_One_Baddy{select_first_baddy()},
 					tt = .One_Opponent,
 				}
 			case SKILL:
@@ -177,7 +179,7 @@ pc_turn :: proc(actor: ^Combatant) {
 		case Item_Selection_State:
 		case Target_Selection_State:
 			switch ts in state.ts {
-			case Select_Baddy:
+			case Select_One_Baddy:
 				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
 					skill_proc(actor, target_cb)
 					battle_ui_state = Battle_UI_State{}
@@ -185,7 +187,7 @@ pc_turn :: proc(actor: ^Combatant) {
 					end_turn()
 				}
 			case Select_All_Baddies:
-			case Select_Ally:
+			case Select_One_Ally:
 			case Select_All_Allies:
 			case Select_All_Combatants:
 			}

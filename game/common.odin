@@ -68,8 +68,32 @@ get_adjacent_tile :: proc(t: Tile_Coord, f: Face) -> Tile_Coord {
 	return t + face_tile_coord(f)
 }
 
-tile_to_pixel :: proc(t: Tile_Coord) -> Pixel_Coord {
-	return Pixel_Coord{cast(Pixel)(t.x) * tile_size, cast(Pixel)(t.y) * tile_size}
+tile_to_pixel_Tile_Coord :: proc(t: Tile_Coord) -> Pixel_Coord {
+	return {cast(Pixel)(t.x) * tile_size, cast(Pixel)(t.y) * tile_size}
+}
+
+tile_to_pixel_int_int :: proc(i, j: int) -> Pixel_Coord {
+	return {f32(i)*tile_size, f32(j)*tile_size}
+}
+
+tile_to_pixel_f32_int :: proc(i: f32, j: int) -> Pixel_Coord {
+	return {i*tile_size, f32(j)*tile_size}
+}
+
+tile_to_pixel_int_f32 :: proc(i: int, j: f32) -> Pixel_Coord {
+	return {f32(i)*tile_size, j*tile_size}
+}
+
+tile_to_pixel_f32_f32 :: proc(i, j: f32) -> Pixel_Coord {
+	return {i*tile_size, j*tile_size}
+}
+
+tile_to_pixel :: proc {
+	tile_to_pixel_Tile_Coord,
+	tile_to_pixel_int_int,
+	tile_to_pixel_f32_int,
+	tile_to_pixel_int_f32,
+	tile_to_pixel_f32_f32,
 }
 
 get_moves_toward :: proc(k: Kinematics, d: Tile_Coord) -> (Tile_Coord, Tile_Coord) {

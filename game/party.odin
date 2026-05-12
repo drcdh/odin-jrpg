@@ -73,7 +73,7 @@ ZEALOT := Character {
 	speed     = 7,
 }
 
-get_pc :: proc(pc: PC) -> ^Character {
+get_pc_PC :: proc(pc: PC) -> ^Character {
 	switch pc {
 	case .Protagonist:
 		return &PROTAGONIST
@@ -89,6 +89,15 @@ get_pc :: proc(pc: PC) -> ^Character {
 		return &ZEALOT
 	}
 	return nil
+}
+
+get_pc_int :: proc(pc: int) -> ^Character {
+	return get_pc_PC(PC(pc))
+}
+
+get_pc :: proc {
+	get_pc_PC,
+	get_pc_int,
 }
 
 pc_idle_anim := [NUM_PC]Animation_Name {
