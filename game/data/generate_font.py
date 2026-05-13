@@ -6,7 +6,7 @@ letters = [
 	"abcdefghijklm",
 	"nopqrstuvwxyz",
 	"0123456789",
-	"!?%/'.-|:",
+	"!?%/'.-|:,",
 ]
 
 out_f = open("font.odin", "w")
