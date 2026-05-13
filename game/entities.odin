@@ -107,7 +107,7 @@ set_destination :: proc(e: ^Entity, d: Tile_Coord) {
 	e.offset = -tile_to_pixel(d)
 	e.offset_ease = 1
 	e.moving = true
-	fmt.printfln("% 4d: Set destination of entity %s to %w", frame_count, e.n, d)
+	fmt.printfln("% 4d: Set destination of entity %s by %w to %w", frame_count, e.n, d, e.tile)
 }
 
 get_face_toward :: proc(d: Tile_Coord) -> Face {

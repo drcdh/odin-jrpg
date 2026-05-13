@@ -19,14 +19,50 @@ map_dim: [2]Tile_T
 map_rt: rl.RenderTexture
 
 draw_map :: proc() {
+	w := f32(map_rt.texture.width)
+	h := f32(map_rt.texture.height)
 	rl.DrawTexturePro(
 		map_rt.texture,
-		{0, 0, f32(map_rt.texture.width), -f32(map_rt.texture.height)},
-		{0, 0, f32(map_rt.texture.width), -f32(map_rt.texture.height)},
+		{0, 0, w, -h},
+		{0, 0, w, -h},
 		{},
 		0,
 		rl.WHITE,
 	)
+	if level_map_wrap {
+		rl.DrawTexturePro(
+			map_rt.texture,
+			{0, 0, w, -h},
+			{0, -h, w, -h},
+			{},
+			0,
+			rl.WHITE,
+		)
+		rl.DrawTexturePro(
+			map_rt.texture,
+			{0, 0, w, -h},
+			{0, h, w, -h},
+			{},
+			0,
+			rl.WHITE,
+		)
+		rl.DrawTexturePro(
+			map_rt.texture,
+			{0, 0, w, -h},
+			{-w, 0, w, -h},
+			{},
+			0,
+			rl.WHITE,
+		)
+		rl.DrawTexturePro(
+			map_rt.texture,
+			{0, 0, w, -h},
+			{w, 0, w, -h},
+			{},
+			0,
+			rl.WHITE,
+		)
+	}
 }
 
 unload_map :: proc() {
