@@ -102,11 +102,12 @@ entity_coord :: proc(k: Kinematics) -> Pixel_Coord {
 	return tile_to_pixel(k.tile) + k.offset * k.offset_ease
 }
 
-set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
-	k.tile += d
-	k.offset = -tile_to_pixel(d)
-	k.offset_ease = 1
-	k.moving = true
+set_destination :: proc(e: ^Entity, d: Tile_Coord) {
+	e.tile += d
+	e.offset = -tile_to_pixel(d)
+	e.offset_ease = 1
+	e.moving = true
+	fmt.printfln("% 4d: Set destination of entity %s to %w", frame_count, e.n, d)
 }
 
 get_face_toward :: proc(d: Tile_Coord) -> Face {
@@ -123,27 +124,27 @@ get_face_toward :: proc(d: Tile_Coord) -> Face {
 	return nil
 }
 
-try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
-	if tile_outside(k.tile + d) || tile_free(k.tile + d) {
-		set_destination(k, d)
+try_set_adjacent_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
+	if tile_outside(e.tile + d) || tile_free(e.tile + d) {
+		set_destination(e, d)
 		return true
 	}
 	return false
 }
 
-try_set_destination :: proc(k: ^Kinematics, d: Tile_Coord) {
-	move, alt := get_moves_toward(k^, d)
-	k.face = get_face_toward(move)
-	if !try_set_adjacent_destination(k, move) {
-		_ = try_set_adjacent_destination(k, alt)
+try_set_destination :: proc(e: ^Entity, d: Tile_Coord) {
+	move, alt := get_moves_toward(e^, d)
+	e.face = get_face_toward(move)
+	if !try_set_adjacent_destination(e, move) {
+		_ = try_set_adjacent_destination(e, alt)
 	}
 }
 
-try_set_destination_toward :: proc(k: ^Kinematics, t: Kinematics) {
-	move, alt := get_moves_toward(k^, t.tile)
-	k.face = get_face_toward(move)
-	if !try_set_adjacent_destination(k, move) {
-		_ = try_set_adjacent_destination(k, alt)
+try_set_destination_toward :: proc(e: ^Entity, t: Kinematics) {
+	move, alt := get_moves_toward(e^, t.tile)
+	e.face = get_face_toward(move)
+	if !try_set_adjacent_destination(e, move) {
+		_ = try_set_adjacent_destination(e, alt)
 	}
 }
 
@@ -161,7 +162,8 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 			activate_entity_trap_script(trap)
 		}
 		if tile_outside(e.tile) {
-			fmt.println(e.n, "leaving level")
+			fmt.printfln("% 4d: %s leaving level", frame_count, e.n)
+			set_entity_busy(e.id, true) // hack
 			prev_level = current_level
 			prev_level_tile = e.tile
 			current_level = .LEVEL_OVERWORLD
@@ -175,7 +177,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 			if s.countdown <= 0 {
 				if th, ok := get_entity(s.id).?; ok {
 					t := hm.get(&entities, th)
-					try_set_destination_toward(&e.k, t)
+					try_set_destination_toward(e, t)
 				}
 				s.countdown = s.pause
 			}
@@ -190,7 +192,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 					if s.step >= len(destinations) {s.step = 0}
 				}
 				// fmt.println("step", s.step, "dest", destinations[s.step], "pos", e.tile)
-				try_set_destination(&e.k, destinations[s.step])
+				try_set_destination(e, destinations[s.step])
 				s.countdown = s.pause
 			}
 		}
@@ -233,7 +235,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 		} else if input.x < 0 {
 			p.k.face = .Left
 		}
-		try_set_destination(&p.k, p.k.tile + input)
+		try_set_destination(p, p.k.tile + input)
 	} else {
 		if get_input(.ENTER) {
 			if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {

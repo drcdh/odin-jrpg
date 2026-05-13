@@ -88,8 +88,8 @@ start_level :: proc(l: Level) {
 	}
 	camera_entity = pc_entity
 	time.stopwatch_stop(&stopwatch)
-	fmt.println("Loaded level", l, "in", time.stopwatch_duration(stopwatch))
-	fmt.println("Level map dimensions are", map_dim)
-	fmt.println("Level map uses", len(level_tilesets), "tilesets")
+	fmt.printfln("% 4d: Loaded level %w in %w", frame_count, l, time.stopwatch_duration(stopwatch))
+	fmt.printfln("% 4d: Level map dimensions are %w", frame_count, map_dim)
+	fmt.printfln("% 4d: Level map uses %d tilesets", frame_count, len(level_tilesets))
 	current_level = l
 }

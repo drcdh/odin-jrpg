@@ -143,7 +143,7 @@ update_runner :: proc(dt: f32) {
 			return
 		}
 
-		fmt.println(runner.step, runner.script[runner.step])
+		fmt.printfln("% 4d: step %d - %w", frame_count, runner.step, runner.script[runner.step])
 		switch event in runner.script[runner.step] {
 		case Append_Text:
 			queue_dialogue(event.text, event.hurry, event.pause)

@@ -20,6 +20,9 @@ CURTAIN_TIME :: .5 // seconds
 curtain_up: bool
 curtain_t: f32 = -1
 
+frame_count : int
+FRAME_COUNT_MAX :: 10000
+
 init_rl :: proc(z: i32 = 4) {
 	set_window_mode(z)
 
@@ -95,6 +98,9 @@ update :: proc() {
 
 	free_all(context.temp_allocator)
 	running = !(quitting || rl.IsKeyDown(.Q))
+
+	frame_count += 1
+	frame_count %= FRAME_COUNT_MAX
 }
 
 draw_transition :: proc() {

@@ -97,7 +97,7 @@ set_entity_busy :: proc(e_id: Id, busy: bool) {
 	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
 			e.busy = busy
-			fmt.println("set entity busy", e.n, e.busy)
+			fmt.printfln("% 4d: set entity %s busy=%d", frame_count, e.n, e.busy)
 			return
 		}
 	}
@@ -109,7 +109,7 @@ set_entity_disabled :: proc(e_id: Id, disabled: bool) {
 	for e, _ in hm.iterate(&it) {
 		if e.id == e_id {
 			e.disabled = disabled
-			fmt.println("set entity", e.n, "disabled", e.busy)
+			fmt.printfln("% 4d: set entity %s disabled=%d", frame_count, e.n, e.disabled)
 			return
 		}
 	}
