@@ -35,7 +35,7 @@ main :: proc() {
 			load(game.Level(li))
 		} else if rl.IsKeyPressed(.UP) {
 			li -= 1
-			if li < 0 {li = len(game.Level)-1}
+			if li < 0 {li = len(game.Level) - 1}
 			load(game.Level(li))
 		}
 		rl.BeginDrawing()

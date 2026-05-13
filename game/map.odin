@@ -9,10 +9,10 @@ Tileset_Id :: enum {
 	Tileset_Overworld,
 }
 
-tileset_widths := [Tileset_Id]int{
-	.Tileset_Terrain=4,
-	.Tileset_Town=6,
-	.Tileset_Overworld=9,
+tileset_widths := [Tileset_Id]int {
+	.Tileset_Terrain   = 4,
+	.Tileset_Town      = 6,
+	.Tileset_Overworld = 9,
 }
 
 map_dim: [2]Tile_T
@@ -59,10 +59,10 @@ draw_tile_tmx :: proc(l, t: int, pos: Pixel_Coord) {
 }
 
 tmx_ts_tile :: proc(l, t: int) -> (Tileset_Id, int) {
-	if t <= 0 { return Tileset_Id(0), -1 }
+	if t <= 0 {return Tileset_Id(0), -1}
 	ts := 0
 	t := t
-	for ts + 1 < len(level_firstgids) && t >= level_firstgids[ts+1] {
+	for ts + 1 < len(level_firstgids) && t >= level_firstgids[ts + 1] {
 		ts += 1
 		t -= level_firstgids[ts] - 1
 	}
