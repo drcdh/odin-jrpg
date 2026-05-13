@@ -111,6 +111,14 @@ valid_tile_coord :: proc(t: Tile_Coord) -> bool {
 }
 
 tile_free :: proc(t: Tile_Coord) -> (free: bool) {
+	t := t
+	if level_map_wrap {
+		t.x %%= map_dim.x
+		t.y %%= map_dim.y
+	} else if tile_outside(t) {
+		free = true
+		return
+	}
 	switch current_level {
 	case .LEVEL_0:
 		free = LEVEL_0_PASSABLE[t.y][t.x]

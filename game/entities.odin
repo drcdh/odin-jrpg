@@ -125,7 +125,7 @@ get_face_toward :: proc(d: Tile_Coord) -> Face {
 }
 
 try_set_adjacent_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
-	if tile_outside(e.tile + d) || tile_free(e.tile + d) {
+	if tile_free(e.tile + d) {
 		set_destination(e, d)
 		return true
 	}
@@ -207,6 +207,10 @@ update_kinematics :: proc(dt: f32, k: ^Kinematics) -> bool {
 			k.moving = false
 			return true
 		}
+	}
+	if level_map_wrap {
+		k.tile.x %%= map_dim.x
+		k.tile.y %%= map_dim.y
 	}
 	return false
 }

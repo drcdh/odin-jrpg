@@ -44,6 +44,15 @@ draw_world :: proc() {
 	}
 
 	rl.EndMode2D()
+
+	// pc := hm.get(&entities, pc_entity)
+	// rl.DrawText(
+	// 	fmt.caprint(pc.tile, allocator = context.temp_allocator),
+	// 	i32(view_dim.x/2),
+	// 	i32(view_dim.y - tile_size),
+	// 	32,
+	// 	rl.BLACK,
+	// )
 }
 
 update_world :: proc(dt: f32) {
