@@ -96,3 +96,7 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 	}
 	return
 }
+
+tile_outside :: proc(t: Tile_Coord) -> bool {
+	return t.x < 0 || t.x >= map_dim.x || t.y < 0 || t.y >= map_dim.y
+}

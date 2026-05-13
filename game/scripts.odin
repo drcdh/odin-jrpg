@@ -66,6 +66,7 @@ Start_Encounter :: struct {
 Start_Level :: struct {
 	level: Level,
 }
+Start_Next_Level :: struct {}
 
 Event :: union {
 	Append_Text,
@@ -89,6 +90,7 @@ Event :: union {
 	Skip_If,
 	Start_Encounter,
 	Start_Level,
+	Start_Next_Level,
 }
 
 Continue :: struct {}
@@ -194,6 +196,8 @@ update_runner :: proc(dt: f32) {
 			start_encounter(event.encounter)
 		case Start_Level:
 			start_level(event.level)
+		case Start_Next_Level:
+			start_level(current_level)
 		}
 	}
 }

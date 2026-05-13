@@ -7,9 +7,20 @@ import "core:time"
 PLAYER_ID: Id = 0
 
 current_level: Level
+prev_level: Level
+prev_level_tile: Tile_Coord
+
 level_firstgids: []int
 level_tilesets: []Tileset_Id
 routes: [][]Tile_Coord
+
+CHANGE_LEVEL := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Curtain_Down{},
+	Start_Next_Level{},
+	Curtain_Up{},
+	End{},
+}
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 	pc_entity = hm.add(
@@ -72,7 +83,7 @@ start_level :: proc(l: Level) {
 		level_firstgids = LEVEL_OVERWORLD_FIRSTGIDS[:]
 		level_tilesets = LEVEL_OVERWORLD_TILESETS[:]
 		routes = LEVEL_OVERWORLD_ROUTES
-		// start_level_overworld()
+		start_level_overworld()
 		render_level_overworld()
 	}
 	camera_entity = pc_entity

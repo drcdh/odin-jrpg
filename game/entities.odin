@@ -124,7 +124,7 @@ get_face_toward :: proc(d: Tile_Coord) -> Face {
 }
 
 try_set_adjacent_destination :: proc(k: ^Kinematics, d: Tile_Coord) -> bool {
-	if tile_free(k.tile + d) {
+	if tile_outside(k.tile + d) || tile_free(k.tile + d) {
 		set_destination(k, d)
 		return true
 	}
@@ -157,8 +157,15 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	if update_kinematics(dt, &e.k) {
 		// first frame completely on this tile
 		if trap, ok := get_entity_at_tile(e.tile, e.id).?; ok {
-			fmt.println("stepped onto", trap)
+			fmt.println(e.n, "stepped onto", trap)
 			activate_entity_trap_script(trap)
+		}
+		if tile_outside(e.tile) {
+			fmt.println(e.n, "leaving level")
+			prev_level = current_level
+			prev_level_tile = e.tile
+			current_level = .LEVEL_OVERWORLD
+			start_script(CHANGE_LEVEL[:])
 		}
 	}
 	if !e.busy && !e.disabled && !e.k.moving {
