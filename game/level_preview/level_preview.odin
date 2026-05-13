@@ -15,7 +15,7 @@ wf: f32
 hf: f32
 
 main :: proc() {
-	game.init_rl(2)
+	game.init_rl(1)
 
 	tile_size = game.tile_size
 	tile_size_i = i32(tile_size)
@@ -31,11 +31,11 @@ main :: proc() {
 		if rl.IsKeyPressed(.P) {highlight_impassible = !highlight_impassible}
 		if rl.IsKeyPressed(.DOWN) {
 			li += 1
-			if li > 2 {li = 0}
+			if li >= len(game.Level) {li = 0}
 			load(game.Level(li))
 		} else if rl.IsKeyPressed(.UP) {
 			li -= 1
-			if li < 0 {li = 2}
+			if li < 0 {li = len(game.Level)-1}
 			load(game.Level(li))
 		}
 		rl.BeginDrawing()
@@ -52,6 +52,7 @@ main :: proc() {
 }
 
 load :: proc(l: game.Level) {
+	fmt.println("Loading", l)
 	game.start_level(l)
 	wf = f32(game.map_dim.x) * tile_size
 	hf = f32(game.map_dim.y) * tile_size
@@ -76,6 +77,8 @@ render_passable :: proc() {
 				free = game.LEVEL_1_PASSABLE[j][i]
 			case game.Level.LEVEL_2:
 				free = game.LEVEL_2_PASSABLE[j][i]
+			case game.Level.LEVEL_OVERWORLD:
+				free = game.LEVEL_OVERWORLD_PASSABLE[j][i]
 			}
 			if !free {
 				i := i32(i)

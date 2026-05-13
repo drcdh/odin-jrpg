@@ -1,3 +1,5 @@
+import fnmatch
+import os
 import pathlib
 import pytiled_parser
 
@@ -8,7 +10,7 @@ def orderedpair_to_tile(c):
 
 levels_data = []
 
-for level_name in ("level_0", "level_1", "level_2"):
+def process_tmx(level_name, overworld=False):
 	tmx_file = pathlib.Path(f"data/tiled/{level_name}.tmx")
 	prefix = level_name.upper() + "_"
 	out_f = open(f"{level_name}_data.odin", "w")
@@ -22,7 +24,7 @@ for level_name in ("level_0", "level_1", "level_2"):
 
 	tmap = pytiled_parser.parse_map(tmx_file)
 
-	tileset_firstgid = tuple(tmap.tilesets.keys())
+	tileset_firstgids = tuple((ts.name, ts.firstgid) for ts in tmap.tilesets.values())
 
 	for layer in tmap.layers:
 		if isinstance(layer, pytiled_parser.TileLayer):
@@ -54,22 +56,26 @@ for level_name in ("level_0", "level_1", "level_2"):
 	out_f.write(f"{prefix}WIDTH :: {w_tiles}\n")
 	out_f.write(f"{prefix}HEIGHT :: {h_tiles}\n")
 
-	out_f.write(f"{prefix}TILESETS := [{num_layers}]Tileset_Id{{\n")
-	for ts, _ in map_layers:
+	out_f.write(f"{prefix}TILESETS := [{len(tileset_firstgids)}]Tileset_Id{{\n")
+	for ts, _ in tileset_firstgids:
 		out_f.write(f"\t.{ts.title()},\n")
+	out_f.write(f"}}\n")
+
+	out_f.write(f"{prefix}FIRSTGIDS := [{len(tileset_firstgids)}]int{{\n")
+	for _, g in tileset_firstgids:
+		out_f.write(f"\t{g},\n")
 	out_f.write(f"}}\n")
 
 	out_f.write(f"{level_name}_map := [{num_layers}][{h_tiles}][{w_tiles}]int{{\n")
 	for i, (_, layer_data) in enumerate(map_layers):
 		out_f.write(f"{{")
 		for row in layer_data:
-			out_f.write(f"{{ {str([max(0, r-tileset_firstgid[i]+1) for r in row])[1:-1]} }},\n")
-			# out_f.write(f"{{ {str([max(0, r) for r in row])[1:-1]} }},\n")
+			out_f.write(f"{{ {str([max(0, r) for r in row])[1:-1]} }},\n")
 		out_f.write("},\n")
 	out_f.write("}\n")
 
 	out_f.write(f"{prefix}PASSABLE := [{h_tiles}][{w_tiles}]bool ")
-	out_f.write(str(passable.process(map_layers, tileset_firstgid)).replace("[","{").replace("]", "}").replace("1", "true").replace("0", "false"))
+	out_f.write(str(passable.process(map_layers, tileset_firstgids)).replace("[","{").replace("]", "}").replace("1", "true").replace("0", "false"))
 	out_f.write("\n")
 
 	out_f.write(f"{prefix}ROUTES := [][]Tile_Coord{{\n")
@@ -90,9 +96,9 @@ render_{level_name} :: proc() {{
 	for l in 0..<{num_layers} {{
 		for j in 0..<{h_tiles} {{
 			for i in 0..<{w_tiles} {{
-				t := {level_name}_map[l][j][i] - 1
+				t := {level_name}_map[l][j][i]
 				pos := tile_to_pixel({{i, j}})
-				draw_tile(l, t, pos)
+				draw_tile_tmx(l, t, pos)
 			}}
 		}}
 	}}
@@ -101,3 +107,14 @@ render_{level_name} :: proc() {{
 """)
 
 	out_f.close()
+
+def main():
+	for file in os.listdir('./data/tiled'):
+			if fnmatch.fnmatch(file, '*.tmx'):
+				print(f"processing {file}")
+				process_tmx(file[:-4])
+			else:
+				print(f"skipping {file}")
+
+if __name__ == "__main__":
+	main()
