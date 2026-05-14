@@ -74,8 +74,8 @@ def process_tmx(level_name, overworld=False):
 		out_f.write("},\n")
 	out_f.write("}\n")
 
-	out_f.write(f"{prefix}PASSABLE := [{h_tiles}][{w_tiles}]bool ")
-	out_f.write(str(passable.process(map_layers, tileset_firstgids)).replace("[","{").replace("]", "}").replace("1", "true").replace("0", "false"))
+	out_f.write(f"{prefix}PASSABLE := [{h_tiles}][{w_tiles}]u8 ")
+	out_f.write(str(passable.process(map_layers, tileset_firstgids)).replace("[","{").replace("]", "}"))
 	out_f.write("\n")
 
 	out_f.write(f"{prefix}ROUTES := [][]Tile_Coord{{\n")

@@ -9,6 +9,9 @@ Tileset_Id :: enum {
 	Tileset_Overworld,
 }
 
+PARTY_PASSABLE :: 1
+BOAT_PASSABLE :: 2
+
 tileset_widths := [Tileset_Id]int {
 	.Tileset_Terrain   = 4,
 	.Tileset_Town      = 6,
@@ -76,7 +79,6 @@ valid_tile_coord :: proc(t: Tile_Coord) -> bool {
 }
 
 tile_free :: proc(t: Tile_Coord) -> (free: bool) {
-	if boat_mode {return true} 	// FIXME
 	t := t
 	if level_map_wrap {
 		t.x %%= map_dim.x
@@ -85,15 +87,21 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 		free = true
 		return
 	}
+	p : u8
 	switch current_level {
 	case .LEVEL_0:
-		free = LEVEL_0_PASSABLE[t.y][t.x]
+		p = LEVEL_0_PASSABLE[t.y][t.x]
 	case .LEVEL_1:
-		free = LEVEL_1_PASSABLE[t.y][t.x]
+		p = LEVEL_1_PASSABLE[t.y][t.x]
 	case .LEVEL_2:
-		free = LEVEL_2_PASSABLE[t.y][t.x]
+		p = LEVEL_2_PASSABLE[t.y][t.x]
 	case .LEVEL_OVERWORLD:
-		free = LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
+		p = LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
+	}
+	if boat_mode {
+		free = p == BOAT_PASSABLE
+	}	else {
+		free = p == PARTY_PASSABLE
 	}
 	if !free {return}
 
