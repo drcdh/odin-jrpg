@@ -184,7 +184,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 		case Control:
 			player_control(dt, e)
 		case Pacing:
-			destinations := routes[s.route]
+			destinations := level_routes[s.route]
 			s.countdown -= dt
 			if s.countdown <= 0 {
 				if entity_at_tile(e^, destinations[s.step]) {

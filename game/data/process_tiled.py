@@ -8,9 +8,10 @@ import passable
 def orderedpair_to_tile(c):
 	return int(c.x//16), int(c.y//16)
 
-levels_data = []
+level_names = []
 
 def process_tmx(level_name, overworld=False):
+	level_names.append(level_name)
 	tmx_file = pathlib.Path(f"data/tiled/{level_name}.tmx")
 	prefix = level_name.upper() + "_"
 	out_f = open(f"{level_name}_data.odin", "w")
@@ -88,7 +89,6 @@ def process_tmx(level_name, overworld=False):
 
 	for i, p in enumerate(paths_enum):
 		out_f.write(f"{prefix}{p.upper()} :: {i}\n")
-
 	out_f.write(f"""
 render_{level_name} :: proc() {{
 	map_rt = rl.LoadRenderTexture({w_tiles}*i32(tile_size), {h_tiles}*i32(tile_size))
@@ -106,6 +106,18 @@ render_{level_name} :: proc() {{
 }}
 """)
 
+	out_f.write(f"""
+init_{level_name} :: proc() {{
+	level_firstgids = {prefix}FIRSTGIDS[:]
+	level_tilesets = {prefix}TILESETS[:]
+	map_dim.x = {prefix}WIDTH
+	map_dim.y = {prefix}HEIGHT
+	level_routes = {prefix}ROUTES[:]
+	start_{level_name}()
+	render_{level_name}()
+}}
+""")
+
 	out_f.close()
 
 def main():
@@ -115,6 +127,23 @@ def main():
 				process_tmx(file[:-4])
 			else:
 				print(f"skipping {file}")
+
+	with open(f"level_data.odin", "w") as levels_data_f:
+		levels_data_f.write(
+		f"""
+		package game
+		Level :: enum {{
+		""")
+		for lname in level_names:
+			levels_data_f.write(f"\t{lname.upper()},\n")
+		levels_data_f.write(
+			"""}
+		init_level :: proc(l: Level) {
+	switch l {
+	""")
+		for lname in level_names:
+			levels_data_f.write(f"case .{lname.upper()}:\n\tinit_{lname}()\n")
+		levels_data_f.write("}\n}")
 
 if __name__ == "__main__":
 	main()

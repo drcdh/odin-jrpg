@@ -1,6 +1,5 @@
-baddy_data.odin
+*_data.odin
 font.odin
-level_*_data.odin
 .~lock.*
 
 ### Python ###
