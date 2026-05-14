@@ -16,10 +16,12 @@ game_data: struct {
 	bool_data:        [len(Bool_Datum)]bool,
 	int_data:         [len(Int_Datum)]i32,
 	protagonist_name: string,
+	boat_coord:       Tile_Coord,
 	inventory:        [len(Item)]u8,
 }
 
 init_new_game :: proc() {
+	game_data.boat_coord = LEVEL_OVERWORLD_BOAT_SPAWN
 	game_data.protagonist_name = "Hiro"
 	game_data.inventory[Item.Potion] = 5
 	game_data.inventory[Item.Super_Potion] = 4

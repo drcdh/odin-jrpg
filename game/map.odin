@@ -111,6 +111,7 @@ valid_tile_coord :: proc(t: Tile_Coord) -> bool {
 }
 
 tile_free :: proc(t: Tile_Coord) -> (free: bool) {
+	if boat_mode { return true } // FIXME
 	t := t
 	if level_map_wrap {
 		t.x %%= map_dim.x

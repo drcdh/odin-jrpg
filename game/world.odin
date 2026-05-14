@@ -10,7 +10,10 @@ VIEW_TILES_H :: 14
 
 Z_MAX :: 3
 
+boat_mode: bool
+boat_handle: Entity_Handle
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
+party_handle: Entity_Handle
 pc_entity: Entity_Handle
 runner := Runner{}
 
@@ -45,14 +48,16 @@ draw_world :: proc() {
 
 	rl.EndMode2D()
 
-	// pc := hm.get(&entities, pc_entity)
-	// rl.DrawText(
-	// 	fmt.caprint(pc.tile, allocator = context.temp_allocator),
-	// 	i32(view_dim.x/2),
-	// 	i32(view_dim.y - tile_size),
-	// 	32,
-	// 	rl.BLACK,
-	// )
+	pc := hm.get(&entities, pc_entity)
+	rl.DrawText(
+		// fmt.caprintf("%s [%d,%d] %w", pc.n, pc.tile.x, pc.tile.y, pc.state, allocator = context.temp_allocator),
+		// fmt.caprintf("%s %w %w", pc.n, pc.state, pc.k, allocator = context.temp_allocator),
+		fmt.caprint(pc.n, pc.state, pc.k.tile.x, pc.k.tile.y, pc.k.moving, pc.k.offset, pc.k.offset_ease, allocator = context.temp_allocator),
+		0,
+		i32(view_dim.y - tile_size),
+		24,
+		rl.BLACK,
+	)
 }
 
 update_world :: proc(dt: f32) {
@@ -68,6 +73,16 @@ activate_entity_talk_script :: proc(h: Entity_Handle) {
 
 activate_entity_trap_script :: proc(h: Entity_Handle) {
 	start_script(hm.get(&entities, h).trap)
+}
+
+get_entity_p :: proc(id: Id) -> ^Entity {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		if e.id == id {
+			return e
+		}
+	}
+	return nil
 }
 
 get_entity :: proc(id: Id) -> Maybe(Entity_Handle) {

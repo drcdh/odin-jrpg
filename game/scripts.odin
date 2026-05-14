@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import hm "core:container/handle_map"
 
 Append_Text :: struct {
 	text:  string,
@@ -15,12 +16,16 @@ Pause_Runner :: struct {
 }
 Curtain_Down :: struct {}
 Curtain_Up :: struct {}
+Move_Entity_Here :: struct {
+	id: Id,
+}
 Play_Sound :: struct {
 	sound: Sound_Name,
 }
 Remove_Entity :: struct {
 	id: Id,
 }
+Set_Boat_Control :: struct {}
 Set_Bool :: struct {
 	k: Bool_Datum,
 	v: bool,
@@ -53,6 +58,7 @@ Set_Entity_Texture :: struct {
 	id:      Id,
 	texture: Texture_Name,
 }
+Set_Party_Control :: struct {}
 Skip :: struct {
 	n: int,
 }
@@ -76,8 +82,10 @@ Event :: union {
 	Pause_Runner,
 	Curtain_Down,
 	Curtain_Up,
+	Move_Entity_Here,
 	Play_Sound,
 	Remove_Entity,
+	Set_Boat_Control,
 	Set_Bool,
 	Set_Int,
 	Set_Entity_Busy,
@@ -86,6 +94,7 @@ Event :: union {
 	Set_Entity_Trap_Script,
 	Set_Entity_State,
 	Set_Entity_Texture,
+	Set_Party_Control,
 	Skip,
 	Skip_If,
 	Start_Encounter,
@@ -166,10 +175,22 @@ update_runner :: proc(dt: f32) {
 			curtain_up = true
 			curtain_t = CURTAIN_TIME
 			runner.state = Wait_Transition{}
+		case Move_Entity_Here:
+			moving_entity := get_entity_p(event.id)
+			if pc, ok := hm.get(&entities, pc_entity); ok {
+				moving_entity.tile = pc.tile
+				fmt.printfln("Moved entity %s to %s at %w", moving_entity, pc, pc.tile)
+			}
 		case Play_Sound:
 			play_sound(event.sound)
 		case Remove_Entity:
 			remove_entity(event.id)
+		case Set_Boat_Control:
+			boat := get_entity_p(BOAT_ID)
+			boat.state = Control{}
+			boat_mode = true
+			pc_entity = boat_handle
+			camera_entity = boat_handle
 		case Set_Bool:
 			set_game_data(event.k, event.v)
 		case Set_Int:
@@ -186,6 +207,16 @@ update_runner :: proc(dt: f32) {
 			set_entity_state(event.id, event.state)
 		case Set_Entity_Texture:
 			set_entity_visual(event.id, event.texture)
+		case Set_Party_Control:
+			boat := get_entity_p(BOAT_ID)
+			game_data.boat_coord = boat.tile
+			boat.state = nil
+			boat_mode = false
+			party := get_entity_p(PLAYER_ID)
+			party.disabled = false
+			party.state = Control{}
+			pc_entity = party_handle
+			camera_entity = party_handle
 		case Skip:
 			runner.step += event.n
 		case Skip_If:
