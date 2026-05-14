@@ -187,3 +187,15 @@ set_entity_visual_texture :: proc(e_id: Id, texture: Texture_Name) {
 set_entity_visual :: proc {
 	set_entity_visual_texture,
 }
+
+set_party_control :: proc() {
+	boat := get_entity_p(BOAT_ID)
+	game_data.boat_coord = boat.tile
+	boat.state = nil
+	boat_mode = false
+	party := get_entity_p(PLAYER_ID)
+	party.disabled = false
+	party.state = Control{}
+	pc_entity = party_handle
+	camera_entity = party_handle
+}

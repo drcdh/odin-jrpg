@@ -208,15 +208,7 @@ update_runner :: proc(dt: f32) {
 		case Set_Entity_Texture:
 			set_entity_visual(event.id, event.texture)
 		case Set_Party_Control:
-			boat := get_entity_p(BOAT_ID)
-			game_data.boat_coord = boat.tile
-			boat.state = nil
-			boat_mode = false
-			party := get_entity_p(PLAYER_ID)
-			party.disabled = false
-			party.state = Control{}
-			pc_entity = party_handle
-			camera_entity = party_handle
+			set_party_control()
 		case Skip:
 			runner.step += event.n
 		case Skip_If:

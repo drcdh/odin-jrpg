@@ -107,7 +107,7 @@ set_destination :: proc(e: ^Entity, d: Tile_Coord) {
 	e.offset = -tile_to_pixel(d)
 	e.offset_ease = 1
 	e.moving = true
-	fmt.printfln("% 4d: Set destination of entity %s by %w to %w", frame_count, e.n, d, e.tile)
+	// fmt.printfln("% 4d: Set destination of entity %s by %w to %w", frame_count, e.n, d, e.tile)
 }
 
 get_face_toward :: proc(d: Tile_Coord) -> Face {
@@ -244,6 +244,13 @@ player_control :: proc(_: f32, p: ^Entity) {
 		if get_input(.ENTER) {
 			if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
 				activate_entity_talk_script(entity_in_front)
+			}
+			if boat_mode {
+				t := tile_in_front(p)
+				p := LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
+				if p == PARTY_PASSABLE {
+					start_script(LEAVE_BOAT[:])
+				}
 			}
 		}
 	}

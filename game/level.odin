@@ -24,7 +24,7 @@ CHANGE_LEVEL := [?]Event {
 }
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
-	pc_entity = hm.add(
+	party_handle = hm.add(
 		&entities,
 		Entity {
 			id = PLAYER_ID,
@@ -43,6 +43,7 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 			z = Z_MAX,
 		},
 	)
+	pc_entity = party_handle
 }
 
 Level :: enum {
