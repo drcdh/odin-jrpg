@@ -70,16 +70,7 @@ draw_world_menu :: proc() {
 
 draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
 	draw_menu(0, 0, VIEW_TILES_W, 2, tint)
-	x: f32 = 1 * tile_size
-	y: f32 = .75 * tile_size
-	rl.DrawTextEx(
-		font,
-		strings.clone_to_cstring("Info   Skills  Items  System", allocator = context.temp_allocator),
-		{x, y},
-		tile_size / 2,
-		0,
-		tint,
-	)
+	draw_text(1, .75, strings.clone_to_cstring("Info   Skills  Items  System", allocator = context.temp_allocator), tint)
 
 	if !next {
 		x_icon: f32
@@ -93,7 +84,7 @@ draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
 		case 3:
 			x_icon = 11.5 * tile_size
 		}
-		draw_animation(world_menu_icon, {x_icon, y}, tint)
+		draw_animation(world_menu_icon, {x_icon, .75*tile_size}, tint)
 	}
 
 	draw_menu(0, 2, VIEW_TILES_W, VIEW_TILES_H - 2, tint)
@@ -131,25 +122,11 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 draw_world_menu_character :: proc(pc_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
 	pc := get_pc(PC(pc_idx))
-	rl.DrawTextEx(font, pc.name, {2 * tile_size, 2 * tile_size}, tile_size / 2, 0, rl.WHITE)
+	draw_text(2, 2, pc.name)
 	for i in 0 ..< NUM_STATS {
-		rl.DrawTextEx(
-			font,
-			strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator),
-			{2 * tile_size, 3 * tile_size + f32(i) * tile_size},
-			tile_size / 2,
-			0,
-			rl.WHITE,
-		)
+		draw_text(2, 3+f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
 	}
-	rl.DrawTextEx(
-		font,
-		get_status_cstring(pc^),
-		{2 * tile_size, 3 * tile_size + f32(NUM_STATS) * tile_size},
-		tile_size / 2,
-		0,
-		rl.WHITE,
-	)
+	draw_text(2, 3+NUM_STATS, get_status_cstring(pc^))
 }
 
 draw_world_menu_skills :: proc(pc_idx: int) {
@@ -164,21 +141,15 @@ draw_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
 		if i == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + i), tint)
 		}
-		rl.DrawTextEx(
-			font,
+		draw_text(
+			2, 2 + f32(i),
 			fmt.caprint(item_data[i].name, allocator = context.temp_allocator),
-			tile_to_pixel(2, 2 + i),
-			tile_size / 2,
-			0,
-			tint,
+			tint=tint,
 		)
-		rl.DrawTextEx(
-			font,
+		draw_text(
+			VIEW_TILES_W - 3, 2 + f32(i),
 			fmt.caprintf("% 2d", game_data.inventory[i], allocator = context.temp_allocator),
-			tile_to_pixel(VIEW_TILES_W - 3, 2 + i),
-			tile_size / 2,
-			0,
-			tint,
+			tint=tint,
 		)
 	}
 	if targeting {

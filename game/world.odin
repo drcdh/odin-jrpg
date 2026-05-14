@@ -48,24 +48,24 @@ draw_world :: proc() {
 
 	rl.EndMode2D()
 
-	pc := hm.get(&entities, pc_entity)
-	rl.DrawText(
-		// fmt.caprintf("%s [%d,%d] %w", pc.n, pc.tile.x, pc.tile.y, pc.state, allocator = context.temp_allocator),
-		fmt.caprint(// fmt.caprintf("%s %w %w", pc.n, pc.state, pc.k, allocator = context.temp_allocator),
-			pc.n,
-			pc.state,
-			pc.k.tile.x,
-			pc.k.tile.y,
-			pc.k.moving,
-			pc.k.offset,
-			pc.k.offset_ease,
-			allocator = context.temp_allocator,
-		),
-		0,
-		i32(view_dim.y - tile_size),
-		24,
-		rl.BLACK,
-	)
+	// pc := hm.get(&entities, pc_entity)
+	// rl.DrawText(
+	// 	// fmt.caprintf("%s [%d,%d] %w", pc.n, pc.tile.x, pc.tile.y, pc.state, allocator = context.temp_allocator),
+	// 	fmt.caprint(// fmt.caprintf("%s %w %w", pc.n, pc.state, pc.k, allocator = context.temp_allocator),
+	// 		pc.n,
+	// 		pc.state,
+	// 		pc.k.tile.x,
+	// 		pc.k.tile.y,
+	// 		pc.k.moving,
+	// 		pc.k.offset,
+	// 		pc.k.offset_ease,
+	// 		allocator = context.temp_allocator,
+	// 	),
+	// 	0,
+	// 	i32(view_dim.y - tile_size),
+	// 	24,
+	// 	rl.BLACK,
+	// )
 }
 
 update_world :: proc(dt: f32) {

@@ -65,13 +65,10 @@ ITEM :: 2
 draw_battle_menu :: proc() {
 	switch state in battle_ui_state {
 	case Action_Selection_State:
-		draw_menu(VIEW_TILES_W / 2 - VIEW_TILES_W / 4, VIEW_TILES_H - 4, VIEW_TILES_W / 4, 4)
-		x: f32 = tile_size * (VIEW_TILES_W / 2 - VIEW_TILES_W / 4 + .5)
-		y := tile_size * (VIEW_TILES_H - 3.5)
-		rl.DrawTextEx(font, "Attack", {x, y}, tile_size / 2, 0, rl.WHITE)
-		rl.DrawTextEx(font, "Skill", {x, y + tile_size / 2}, tile_size / 2, 0, rl.WHITE)
-		rl.DrawTextEx(font, "Item", {x, y + tile_size}, tile_size / 2, 0, rl.WHITE)
-		rl.DrawRectangleLinesEx({x, y + f32(state.s) * tile_size / 2, 100, tile_size / 2}, 2, rl.ORANGE)
+		draw_menu(4.0, 10, 4, 4)
+		draw_text(4.5, 10.5, "Attack", rl.YELLOW if state.s == 0 else rl.WHITE)
+		draw_text(4.5, 11.0, "Skill", rl.YELLOW if state.s == 1 else rl.WHITE)
+		draw_text(4.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
 	case Skill_Selection_State:
 	case Item_Selection_State:
 	case Target_Selection_State:

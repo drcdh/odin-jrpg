@@ -81,3 +81,11 @@ draw_menu :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
 		draw_texture(.Menu_Centerright, tile_to_pixel({r, y}), tint)
 	}
 }
+
+draw_text ::proc(l, t: f32, text: cstring, tint := rl.WHITE) {
+	x := l*tile_size
+	y := t*tile_size
+	if x < 0 { x += view_dim.x }
+	if y < 0 { y += view_dim.y }
+	rl.DrawTextEx(font, text, {x, y}, tile_size / 2, 0, tint)
+}

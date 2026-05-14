@@ -84,8 +84,8 @@ draw_battle :: proc() {
 	}
 
 	// debug
-	rl.DrawTextEx(font, fmt.caprint(battle_ui_state), {0, tile_size * (VIEW_TILES_H - 6)}, 20, 0, rl.BLACK)
-	rl.DrawTextEx(font, fmt.caprint(battle_state), {0, tile_size * (VIEW_TILES_H - 5)}, 20, 0, rl.BLACK)
+	// draw_text(0, 8, fmt.caprint(battle_ui_state))
+	// draw_text(0, 9, fmt.caprint(battle_state))
 }
 
 draw_battle_background :: proc() {
@@ -135,13 +135,12 @@ draw_battle_combatants :: proc() {
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
 		text_color := rl.WHITE
-		x: f32 = tile_size * (VIEW_TILES_W / 2 + .5)
-		y := tile_size * ((VIEW_TILES_H - 3.5) + f32(p) / 2)
 		if c.character.stats.hitpoints <= 0 {
 			text_color = rl.RED
 		}
-		rl.DrawTextEx(
-			font,
+		draw_text(
+			VIEW_TILES_W / 2 + .5,
+			(VIEW_TILES_H - 3.5) + f32(p) / 2,
 			fmt.caprintf(
 				"%- 14s% 4d/% 4d",
 				c.character.name,
@@ -149,9 +148,6 @@ draw_party_member_stats :: proc(p: int) {
 				c.character.stats.hitpoints,
 				allocator = context.temp_allocator,
 			),
-			{x, y},
-			tile_size / 2,
-			0,
 			text_color,
 		)
 	}
