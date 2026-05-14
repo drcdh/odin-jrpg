@@ -1,7 +1,7 @@
 package game
 
-import "core:fmt"
 import hm "core:container/handle_map"
+import "core:fmt"
 
 Append_Text :: struct {
 	text:  string,

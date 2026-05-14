@@ -21,47 +21,12 @@ map_rt: rl.RenderTexture
 draw_map :: proc() {
 	w := f32(map_rt.texture.width)
 	h := f32(map_rt.texture.height)
-	rl.DrawTexturePro(
-		map_rt.texture,
-		{0, 0, w, -h},
-		{0, 0, w, -h},
-		{},
-		0,
-		rl.WHITE,
-	)
+	rl.DrawTexturePro(map_rt.texture, {0, 0, w, -h}, {0, 0, w, -h}, {}, 0, rl.WHITE)
 	if level_map_wrap {
-		rl.DrawTexturePro(
-			map_rt.texture,
-			{0, 0, w, -h},
-			{0, -h, w, -h},
-			{},
-			0,
-			rl.WHITE,
-		)
-		rl.DrawTexturePro(
-			map_rt.texture,
-			{0, 0, w, -h},
-			{0, h, w, -h},
-			{},
-			0,
-			rl.WHITE,
-		)
-		rl.DrawTexturePro(
-			map_rt.texture,
-			{0, 0, w, -h},
-			{-w, 0, w, -h},
-			{},
-			0,
-			rl.WHITE,
-		)
-		rl.DrawTexturePro(
-			map_rt.texture,
-			{0, 0, w, -h},
-			{w, 0, w, -h},
-			{},
-			0,
-			rl.WHITE,
-		)
+		rl.DrawTexturePro(map_rt.texture, {0, 0, w, -h}, {0, -h, w, -h}, {}, 0, rl.WHITE)
+		rl.DrawTexturePro(map_rt.texture, {0, 0, w, -h}, {0, h, w, -h}, {}, 0, rl.WHITE)
+		rl.DrawTexturePro(map_rt.texture, {0, 0, w, -h}, {-w, 0, w, -h}, {}, 0, rl.WHITE)
+		rl.DrawTexturePro(map_rt.texture, {0, 0, w, -h}, {w, 0, w, -h}, {}, 0, rl.WHITE)
 	}
 }
 
@@ -111,7 +76,7 @@ valid_tile_coord :: proc(t: Tile_Coord) -> bool {
 }
 
 tile_free :: proc(t: Tile_Coord) -> (free: bool) {
-	if boat_mode { return true } // FIXME
+	if boat_mode {return true} 	// FIXME
 	t := t
 	if level_map_wrap {
 		t.x %%= map_dim.x

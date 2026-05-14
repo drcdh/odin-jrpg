@@ -20,7 +20,7 @@ CURTAIN_TIME :: .5 // seconds
 curtain_up: bool
 curtain_t: f32 = -1
 
-frame_count : int
+frame_count: int
 FRAME_COUNT_MAX :: 10000
 
 init_rl :: proc(z: i32 = 4) {
