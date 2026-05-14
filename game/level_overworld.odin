@@ -4,7 +4,12 @@ import hm "core:container/handle_map"
 
 BOAT_ID :: 77
 
-BOARD_BOAT := [?]Event{Set_Entity_Disabled{id = PLAYER_ID, disabled = true}, Set_Boat_Control{}, End{}}
+BOARD_BOAT := [?]Event{
+	Set_Entity_Disabled{id = PLAYER_ID, disabled = true},
+	Set_Entity_Busy{id = BOAT_ID, busy = false},
+	Set_Boat_Control{},
+	End{},
+}
 
 LEAVE_BOAT := [?]Event {
 	Set_Entity_Busy{id = BOAT_ID, busy = true},

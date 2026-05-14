@@ -179,7 +179,7 @@ update_runner :: proc(dt: f32) {
 			moving_entity := get_entity_p(event.id)
 			if pc, ok := hm.get(&entities, pc_entity); ok {
 				moving_entity.tile = pc.tile
-				fmt.printfln("Moved entity %s to %s at %w", moving_entity, pc, pc.tile)
+				fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
 			}
 		case Play_Sound:
 			play_sound(event.sound)
