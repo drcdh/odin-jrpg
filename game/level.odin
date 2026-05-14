@@ -6,10 +6,6 @@ import "core:time"
 
 PLAYER_ID: Id = 0
 
-current_level: Level
-prev_level: Level
-prev_level_tile: Tile_Coord
-
 level_firstgids: []int
 level_map_wrap: bool
 level_tilesets: []Tileset_Id

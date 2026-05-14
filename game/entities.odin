@@ -158,7 +158,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	if update_kinematics(dt, &e.k) {
 		// first frame completely on this tile
 		if trap, ok := get_entity_at_tile(e.tile, e.id).?; ok {
-			fmt.println(e.n, "stepped onto", trap)
+			fmt.printfln("% 4d: %s stepped onto %w", frame_count, e.n, trap)
 			activate_entity_trap_script(trap)
 		}
 		if tile_outside(e.tile) {

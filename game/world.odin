@@ -17,6 +17,10 @@ party_handle: Entity_Handle
 pc_entity: Entity_Handle
 runner := Runner{}
 
+current_level: Level
+prev_level: Level
+prev_level_tile: Tile_Coord
+
 camera_entity: Entity_Handle
 
 at_z :: proc(k: Kinematics, z: int) -> bool {

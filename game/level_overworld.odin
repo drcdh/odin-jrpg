@@ -19,8 +19,43 @@ LEAVE_BOAT := [?]Event {
 	End{},
 }
 
+enter_grove := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Curtain_Down{},
+	Start_Level{level = .LEVEL_0},
+	Curtain_Up{},
+	End{},
+}
+
+enter_house := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Curtain_Down{},
+	Start_Level{level = .LEVEL_1},
+	Curtain_Up{},
+	End{},
+}
+
+enter_quarry := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Curtain_Down{},
+	Start_Level{level = .LEVEL_2},
+	Curtain_Up{},
+	End{},
+}
+
 start_level_overworld :: proc() {
-	add_pc_entity(LEVEL_OVERWORLD_GROVE + {1, 1}, .Down)
+	party_tile: Tile_Coord
+	switch prev_level {
+	case .LEVEL_0:
+		party_tile = LEVEL_OVERWORLD_GROVE
+	case .LEVEL_1:
+		party_tile = LEVEL_OVERWORLD_HOUSE
+	case .LEVEL_2:
+		party_tile = LEVEL_OVERWORLD_QUARRY
+	case .LEVEL_OVERWORLD:
+		// ?
+	}
+	add_pc_entity(party_tile, .Down)
 
 	boat_handle = hm.add(
 		&entities,
@@ -32,5 +67,38 @@ start_level_overworld :: proc() {
 			talk = BOARD_BOAT[:],
 			v = facing_animation_create(.Boat_Left, .Boat_Right, .Boat_Up, .Boat_Down, .Right),
 		},
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 2000,
+			ghost = true,
+			n = "grove",
+			tile = LEVEL_OVERWORLD_GROVE,
+			trap = enter_grove[:],
+		}
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 2001,
+			ghost = true,
+			n = "house",
+			tile = LEVEL_OVERWORLD_HOUSE,
+			trap = enter_house[:],
+		}
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 2002,
+			ghost = true,
+			n = "quarry",
+			tile = LEVEL_OVERWORLD_QUARRY,
+			trap = enter_quarry[:],
+		}
 	)
 }
