@@ -5,6 +5,7 @@ import "core:fmt"
 Bool_Datum :: enum {
 	Introduction,
 	Met_Dude,
+	Met_Woman,
 }
 
 Int_Datum :: enum {
@@ -15,6 +16,7 @@ Int_Datum :: enum {
 game_data: struct {
 	bool_data:        [len(Bool_Datum)]bool,
 	int_data:         [len(Int_Datum)]i32,
+	party_membership: [NUM_PC]bool,
 	protagonist_name: string,
 	boat_coord:       Tile_Coord,
 	inventory:        [len(Item)]u8,
@@ -22,6 +24,7 @@ game_data: struct {
 
 init_new_game :: proc() {
 	game_data.boat_coord = LEVEL_OVERWORLD_BOAT_SPAWN
+	game_data.party_membership[PC.Protagonist] = true
 	game_data.protagonist_name = "Hiro"
 	game_data.inventory[Item.Potion] = 5
 	game_data.inventory[Item.Super_Potion] = 4

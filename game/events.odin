@@ -80,6 +80,10 @@ Text_Effect :: struct {
 	coord: Pixel_Coord,
 	text:  cstring,
 }
+Toggle_Party_Member :: struct {
+	pc_idx: PC,
+	join:	  bool,
+}
 Wait_Encounter_R :: struct {}
 
 Event :: union {
@@ -111,5 +115,6 @@ Event :: union {
 	Start_Level,
 	Start_Next_Level,
 	// Text_Effect,
+	Toggle_Party_Member,
 	Wait_Encounter_R,
 }

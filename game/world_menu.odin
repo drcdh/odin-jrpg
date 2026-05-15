@@ -91,7 +91,7 @@ draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
 	card := 0
 	row: f32 = 0
 	for p in 0 ..< NUM_PC {
-		{ 	//if character in party
+		if game_data.party_membership[p] {
 			card_origin :=
 				Pixel_Coord{tile_size, 3 * tile_size} + {f32(card % 3), row} * Pixel_Coord{5 * tile_size, 5 * tile_size}
 			draw_character_card(PC(p), card_origin)

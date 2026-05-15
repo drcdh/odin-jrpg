@@ -131,6 +131,8 @@ update_runner :: proc(dt: f32) {
 			start_level(event.level)
 		case Start_Next_Level:
 			start_level(next_level)
+		case Toggle_Party_Member:
+			game_data.party_membership[event.pc_idx] = event.join
 		case Wait_Encounter_R:
 			runner.state = Wait_Encounter{}
 		}
