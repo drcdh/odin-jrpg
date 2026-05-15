@@ -108,13 +108,13 @@ draw_world_menu_top :: proc(i: int, next: bool, party_idx: int, tint := rl.WHITE
 	}
 }
 
-draw_character_card :: proc(pc: PC, origin: Pixel_Coord, tint := rl.WHITE) {
+draw_character_card :: proc(pc_idx: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 	// tint := pc_idle_anim_tint[pc]
 	// rl.DrawRectangleLinesEx({origin.x, origin.y, 5 * tile_size, 6 * tile_size}, 2, tint)
-	pc := get_pc(pc)
+	pc := get_pc(pc_idx)
 	rl.DrawTextEx(font, pc.name, origin, 32, 0, tint)
 
-	draw_texture(.Protagonist_Battle0, {origin.x + 3 * tile_size, origin.y + .5 * tile_size}, tint)
+	draw_texture(pc_idle_texture[pc_idx], {origin.x + 3 * tile_size, origin.y + .5 * tile_size}, tint)
 
 	// stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
 }
@@ -161,9 +161,11 @@ draw_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) {
 			if i == 3 {
 				row += 1
 			}
-			draw_texture(.Protagonist_Battle0, tile_to_pixel(9 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row), rl.WHITE)
-			if i == party_idx {
-				draw_animation(world_menu_icon, tile_to_pixel(8.5 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row), rl.WHITE)
+			if pc_idx, ok := get_party_member(i).?; ok {
+				draw_texture(pc_idle_texture[pc_idx], tile_to_pixel(9 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row), rl.WHITE)
+				if i == party_idx {
+					draw_animation(world_menu_icon, tile_to_pixel(8.5 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row), rl.WHITE)
+				}
 			}
 		}
 	}

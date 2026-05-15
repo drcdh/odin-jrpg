@@ -102,7 +102,8 @@ start_encounter :: proc(i: int, paused: bool) {
 					enabled = true,
 					team = 1,
 					turn = pc_turn,
-					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
+					// visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
+					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
 				},
 			)
 			battle_num_pc += 1

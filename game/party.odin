@@ -1,7 +1,5 @@
 package game
 
-import rl "vendor:raylib"
-
 NUM_PC :: 6
 
 PC :: enum {
@@ -24,7 +22,8 @@ PROTAGONIST := Character {
 }
 
 ASSASSIN := Character {
-	name      = "Assassin",
+	name      = "Paula",
+	// name      = "Assassin",
 	hitpoints = 8,
 	offense   = 9,
 	defense   = 4,
@@ -102,14 +101,21 @@ get_pc :: proc {
 
 pc_idle_anim := [NUM_PC]Animation_Name {
 	.Protagonist_Battle,
-	.Protagonist_Battle,
+	.Woman_Battle,
 	.Protagonist_Battle,
 	.Protagonist_Battle,
 	.Protagonist_Battle,
 	.Protagonist_Battle,
 }
 
-pc_idle_anim_tint := [NUM_PC]rl.Color{rl.BLACK, rl.RED, rl.BLUE, rl.PURPLE, rl.PINK, rl.ORANGE}
+pc_idle_texture := [NUM_PC]Texture_Name {
+	.Protagonist_Battle0,
+	.Woman_Battle0,
+	.Protagonist_Battle0,
+	.Protagonist_Battle0,
+	.Protagonist_Battle0,
+	.Protagonist_Battle0,
+}
 
 get_party_member :: proc(i: int) -> Maybe(PC) {
 	ii := -1
