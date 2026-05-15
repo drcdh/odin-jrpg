@@ -10,7 +10,7 @@ def orderedpair_to_tile(c):
 
 level_names = []
 
-def process_tmx(level_name, overworld=False):
+def process_tmx(level_name):
 	level_names.append(level_name)
 	tmx_file = pathlib.Path(f"data/tiled/{level_name}.tmx")
 	prefix = level_name.upper() + "_"

@@ -7,15 +7,17 @@ Tileset_Id :: enum {
 	Tileset_Terrain,
 	Tileset_Town,
 	Tileset_Overworld,
+	Tileset_Cave,
 }
 
-PARTY_PASSABLE :: 1
-BOAT_PASSABLE :: 2
+PARTY_IMPASSABLE :: 1
+BOAT_IMPASSABLE :: 2
 
 tileset_widths := [Tileset_Id]int {
 	.Tileset_Terrain   = 4,
 	.Tileset_Town      = 6,
 	.Tileset_Overworld = 9,
+	.Tileset_Cave      = 5,
 }
 
 map_dim: [2]Tile_T
@@ -49,6 +51,8 @@ draw_tile :: proc(ts: Tileset_Id, t: int, pos: Pixel_Coord) {
 		source = tileset_town[x][y]
 	case .Tileset_Overworld:
 		source = tileset_overworld[x][y]
+	case .Tileset_Cave:
+		source = tileset_cave[x][y]
 	}
 	dest := Rect{pos.x, pos.y, tile_size, tile_size}
 	origin: Pixel_Coord
@@ -97,11 +101,13 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 		p = LEVEL_2_PASSABLE[t.y][t.x]
 	case .LEVEL_OVERWORLD:
 		p = LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
+	case .LEVEL_CAVE:
+		p = LEVEL_CAVE_PASSABLE[t.y][t.x]
 	}
 	if boat_mode {
-		free = p == BOAT_PASSABLE
+		free = p & BOAT_IMPASSABLE == 0
 	}	else {
-		free = p == PARTY_PASSABLE
+		free = p & PARTY_IMPASSABLE == 0
 	}
 	if !free {return}
 

@@ -69,16 +69,18 @@ render_passable :: proc() {
 	rl.ClearBackground({})
 	for j in 0 ..< game.map_dim.y {
 		for i in 0 ..< game.map_dim.x {
-			free: bool
+			free := true
 			switch game.current_level {
 			case game.Level.LEVEL_0:
-				free = game.LEVEL_0_PASSABLE[j][i]
+				free &&= game.LEVEL_0_PASSABLE[j][i] == 0
 			case game.Level.LEVEL_1:
-				free = game.LEVEL_1_PASSABLE[j][i]
+				free &&= game.LEVEL_1_PASSABLE[j][i] == 0
 			case game.Level.LEVEL_2:
-				free = game.LEVEL_2_PASSABLE[j][i]
+				free &&= game.LEVEL_2_PASSABLE[j][i] == 0
 			case game.Level.LEVEL_OVERWORLD:
-				free = game.LEVEL_OVERWORLD_PASSABLE[j][i]
+				free &&= game.LEVEL_OVERWORLD_PASSABLE[j][i] == 0
+			case game.Level.LEVEL_CAVE:
+				free &&= game.LEVEL_CAVE_PASSABLE[j][i] == 0
 			}
 			if !free {
 				i := i32(i)

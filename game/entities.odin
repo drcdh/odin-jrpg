@@ -164,9 +164,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 		if tile_outside(e.tile) {
 			fmt.printfln("% 4d: %s leaving level", frame_count, e.n)
 			set_entity_busy(e.id, true) // hack
-			prev_level = current_level
-			prev_level_tile = e.tile
-			current_level = .LEVEL_OVERWORLD
+			next_level = .LEVEL_OVERWORLD
 			start_script(CHANGE_LEVEL[:])
 		}
 	}
@@ -248,7 +246,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 			if boat_mode {
 				t := tile_in_front(p)
 				p := LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
-				if p == PARTY_PASSABLE {
+				if p != PARTY_IMPASSABLE {
 					start_script(LEAVE_BOAT[:])
 				}
 			}

@@ -1,5 +1,5 @@
 package game
-
+import "core:fmt"
 import hm "core:container/handle_map"
 
 BOAT_ID :: 77
@@ -43,7 +43,16 @@ enter_quarry := [?]Event {
 	End{},
 }
 
+enter_cave := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Curtain_Down{},
+	Start_Level{level = .LEVEL_CAVE},
+	Curtain_Up{},
+	End{},
+}
+
 start_level_overworld :: proc() {
+	fmt.println(prev_level, prev_level_tile, current_level)
 	party_tile: Tile_Coord
 	switch prev_level {
 	case .LEVEL_0:
@@ -52,6 +61,8 @@ start_level_overworld :: proc() {
 		party_tile = LEVEL_OVERWORLD_HOUSE
 	case .LEVEL_2:
 		party_tile = LEVEL_OVERWORLD_QUARRY
+	case .LEVEL_CAVE:
+		party_tile = LEVEL_OVERWORLD_CAVE_ENTRANCE if prev_level_tile == LEVEL_CAVE_ENTRANCE else LEVEL_OVERWORLD_CAVE_EXIT
 	case .LEVEL_OVERWORLD:
 		// ?
 	}
@@ -99,6 +110,28 @@ start_level_overworld :: proc() {
 			n = "quarry",
 			tile = LEVEL_OVERWORLD_QUARRY,
 			trap = enter_quarry[:],
+		}
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 2003,
+			ghost = true,
+			n = "cave_entrance",
+			tile = LEVEL_OVERWORLD_CAVE_ENTRANCE,
+			trap = enter_cave[:],
+		}
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 2004,
+			ghost = true,
+			n = "cave_exit",
+			tile = LEVEL_OVERWORLD_CAVE_EXIT,
+			trap = enter_cave[:],
 		}
 	)
 }

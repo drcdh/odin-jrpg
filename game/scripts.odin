@@ -220,7 +220,7 @@ update_runner :: proc(dt: f32) {
 		case Start_Level:
 			start_level(event.level)
 		case Start_Next_Level:
-			start_level(current_level)
+			start_level(next_level)
 		}
 	}
 }

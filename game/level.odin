@@ -43,16 +43,20 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 }
 
 start_level :: proc(l: Level) {
+	if pc, ok := hm.get(&entities, pc_entity); ok {
+		prev_level_tile = pc.tile
+	}
+	prev_level = current_level
+	current_level = l
+	level_map_wrap = l == .LEVEL_OVERWORLD
 	hm.clear(&entities)
 	unload_map()
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 	init_level(l)
-	level_map_wrap = l == .LEVEL_OVERWORLD
 	camera_entity = pc_entity
 	time.stopwatch_stop(&stopwatch)
 	fmt.printfln("% 4d: Loaded level %w in %s", frame_count, l, time.stopwatch_duration(stopwatch))
 	fmt.printfln("% 4d: Level map dimensions are %w", frame_count, map_dim)
 	fmt.printfln("% 4d: Level map uses %d tilesets", frame_count, len(level_tilesets))
-	current_level = l
 }

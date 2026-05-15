@@ -18,6 +18,7 @@ pc_entity: Entity_Handle
 runner := Runner{}
 
 current_level: Level
+next_level: Level
 prev_level: Level
 prev_level_tile: Tile_Coord
 
