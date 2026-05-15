@@ -10,6 +10,7 @@ Combatant :: struct {
 	coord:     Pixel_Coord,
 	enabled:   bool,
 	handle:    Combatant_Handle,
+	id:        int,
 	t:         int,
 	team:      int,
 	turn:      Turn_Proc,

@@ -6,6 +6,9 @@ import rl "vendor:raylib"
 
 MAX_ENCOUNTER_SIZE :: 6
 
+BADDY_TEAM :: 0
+PLAYER_TEAM :: 1
+
 BATTLE_ORIGIN_TILE :: Tile_Coord{3, 3}
 
 Encounter_Spot :: struct {
@@ -21,9 +24,9 @@ encounters := [?]Encounter {
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
+			{{0, 1}, .Mouse_Sized_Rat},
 			// {{0, 3}, .Malicious_Mushroom},
 			// {{1, 1}, .Generic_Goblin_1},
-			{},
 			{},
 			{},
 			{},
@@ -73,6 +76,8 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
 			character = &battle_baddies[battle_num_baddies],
 			coord = tile_to_pixel(BATTLE_ORIGIN_TILE + tile),
 			enabled = true,
+			id = battle_num_baddies,
+			team = BADDY_TEAM,
 			turn = template.turn,
 			visual = {variant = visual_variant, tint = rl.WHITE},
 		},
@@ -100,7 +105,8 @@ start_encounter :: proc(i: int, paused: bool) {
 					character = get_pc(PC(pc_idx)),
 					coord = {x, y},
 					enabled = true,
-					team = 1,
+					id = battle_num_baddies + battle_num_pc,
+					team = PLAYER_TEAM,
 					turn = pc_turn,
 					// visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
 					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},

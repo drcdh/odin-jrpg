@@ -113,10 +113,10 @@ draw_battle_combatants :: proc() {
 			if c.character.stats.hitpoints <= 0 {
 				tint = rl.RED
 			}
-			// if target >= 0 && target < MAX_ENCOUNTER_SIZE && h == battle_baddy_handles[target] {
-			// 	tint = rl.YELLOW
-			// 	tint.w = u8(targeting_ease*255)
-			// }
+			if targeted(c.id, c.team) {
+				tint = rl.YELLOW
+				tint.w = u8(targeting_ease*255)
+			}
 			if actor, ok := battle_state.(Take_Turn); ok {
 				if h == actor.actor_h {
 					tint = rl.GREEN
@@ -251,4 +251,14 @@ process_battle_events :: proc(dt: f32) {
 			battle_state = Next_Event{}
 		}
 	}
+}
+
+targeted :: proc(id, team: int) -> bool {
+	if tss, ok := battle_ui_state.(Target_Selection_State); ok {
+		#partial switch ts in tss.ts {
+		case Select_One_Baddy:
+			return id == ts.i
+		}
+	}
+	return false
 }
