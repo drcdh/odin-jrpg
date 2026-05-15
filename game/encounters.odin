@@ -93,24 +93,26 @@ start_encounter :: proc(i: int, paused: bool) {
 	x: f32 = 9.5 * tile_size
 	y: f32 = y0
 	for pc_idx in 0 ..< NUM_PC {
-		battle_pc_handles[battle_num_pc] = hm.add(
-			&battle_combatants,
-			Combatant {
-				character = get_pc(PC(pc_idx)),
-				coord = {x, y},
-				enabled = true,
-				team = 1,
-				turn = pc_turn,
-				visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
-			},
-		)
-		battle_num_pc += 1
-		x += tile_size
-		if battle_num_pc != 3 {
-			y += dy
-		} else {
-			// x += 4 * tile_size
-			y = y0 + dy / 2
+		if game_data.party_membership[pc_idx] {
+			battle_pc_handles[battle_num_pc] = hm.add(
+				&battle_combatants,
+				Combatant {
+					character = get_pc(PC(pc_idx)),
+					coord = {x, y},
+					enabled = true,
+					team = 1,
+					turn = pc_turn,
+					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
+				},
+			)
+			battle_num_pc += 1
+			x += tile_size
+			if battle_num_pc != 3 {
+				y += dy
+			} else {
+				// x += 4 * tile_size
+				y = y0 + dy / 2
+			}
 		}
 	}
 	battle_active = true

@@ -24,7 +24,14 @@ game_data: struct {
 
 init_new_game :: proc() {
 	game_data.boat_coord = LEVEL_OVERWORLD_BOAT_SPAWN
-	game_data.party_membership[PC.Protagonist] = true
+	game_data.party_membership = {
+		true,
+		false,
+		false,
+		false,
+		false,
+		false,
+	}
 	game_data.protagonist_name = "Hiro"
 	game_data.inventory[Item.Potion] = 5
 	game_data.inventory[Item.Super_Potion] = 4

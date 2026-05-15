@@ -145,16 +145,35 @@ get_y_input :: proc() -> Maybe(int) {
 	return nil
 }
 
-change_world_menu_pc_dx_from_input :: proc(pc_idx: int) -> int {
+change_world_menu_party_idx_from_input :: proc(party_idx: int) -> int {
 	m := get_menu_input()
-	pc_idx := pc_idx
+	party_idx := party_idx
+	party_size := party_size()
 	if m.x > 0 {
-		if pc_idx == 2 || pc_idx == 5 {pc_idx -= 2} else {pc_idx += 1}
+		if party_idx == min(3, party_size)-1 {
+			party_idx = 0
+		} else if party_idx == min(6, party_size)-1 {
+			party_idx = 3
+		} else {
+			party_idx += 1
+		}
 	} else if m.x < 0 {
-		if pc_idx == 0 || pc_idx == 3 {pc_idx += 2} else {pc_idx -= 1}
+		if party_idx == 0 {
+			party_idx = min(3, party_size)-1
+		} else if party_idx == 3 {
+			party_idx = min(6, party_size)-1
+		} else {
+			party_idx -= 1
+		}
 	}
 	if m.y != 0 {
-		if pc_idx < 3 {pc_idx += 3} else {pc_idx -= 3}
+		if party_size < 4 {
+			// do nothing
+		} else if party_idx < 3 {
+			party_idx = min(3+party_idx, party_size-1)
+		} else {
+			party_idx -= 3
+		}
 	}
-	return pc_idx
+	return party_idx
 }

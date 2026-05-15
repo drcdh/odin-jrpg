@@ -7,18 +7,18 @@ import rl "vendor:raylib"
 World_Menu_State_Top :: struct {
 	i:      int,
 	next:   bool,
-	pc_idx: int,
+	party_idx: int,
 }
 World_Menu_State_Character :: struct {
-	pc_idx: int,
+	party_idx: int,
 }
 World_Menu_State_Skills :: struct {
-	pc_idx: int,
+	party_idx: int,
 }
 World_Menu_State_Items :: struct {
 	item_idx:  int,
 	targeting: bool,
-	pc_idx:    int,
+	party_idx:    int,
 }
 World_Menu_State_System :: struct {
 	i: int,
@@ -45,16 +45,16 @@ init_world_menu :: proc() {
 draw_world_menu :: proc() {
 	switch state in world_menu_state {
 	case World_Menu_State_Top:
-		draw_world_menu_top(state.i, state.next, state.pc_idx)
+		draw_world_menu_top(state.i, state.next, state.party_idx)
 	case World_Menu_State_Character:
-		draw_world_menu_top(0, true, state.pc_idx, rl.GRAY)
-		draw_world_menu_character(state.pc_idx)
+		draw_world_menu_top(0, true, state.party_idx, rl.GRAY)
+		draw_world_menu_character(state.party_idx)
 	case World_Menu_State_Skills:
-		draw_world_menu_top(1, true, state.pc_idx, rl.GRAY)
-		draw_world_menu_skills(state.pc_idx)
+		draw_world_menu_top(1, true, state.party_idx, rl.GRAY)
+		draw_world_menu_skills(state.party_idx)
 	case World_Menu_State_Items:
 		draw_world_menu_top(2, true, 0, rl.GRAY)
-		draw_world_menu_items(state.item_idx, state.targeting, state.pc_idx)
+		draw_world_menu_items(state.item_idx, state.targeting, state.party_idx)
 	case World_Menu_State_System:
 		draw_world_menu_top(3, true, 0, rl.GRAY)
 		draw_world_menu_system(state.i)
@@ -68,7 +68,7 @@ draw_world_menu :: proc() {
 	)
 }
 
-draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
+draw_world_menu_top :: proc(i: int, next: bool, party_idx: int, tint := rl.WHITE) {
 	draw_menu(0, 0, VIEW_TILES_W, 2, tint)
 	draw_text(1, .75, strings.clone_to_cstring("Info   Skills  Items  System", allocator = context.temp_allocator), tint)
 
@@ -90,17 +90,17 @@ draw_world_menu_top :: proc(i: int, next: bool, pc_idx: int, tint := rl.WHITE) {
 	draw_menu(0, 2, VIEW_TILES_W, VIEW_TILES_H - 2, tint)
 	card := 0
 	row: f32 = 0
-	for p in 0 ..< NUM_PC {
-		if game_data.party_membership[p] {
+	for p in 0 ..< party_size() {
+		if pc, ok := get_party_member(p).?; ok {
 			card_origin :=
 				Pixel_Coord{tile_size, 3 * tile_size} + {f32(card % 3), row} * Pixel_Coord{5 * tile_size, 5 * tile_size}
-			draw_character_card(PC(p), card_origin)
+			draw_character_card(pc, card_origin)
 			card += 1
 			if p == 2 {
 				card = 0
 				row += 1
 			}
-			if next && p == pc_idx {
+			if next && p == party_idx {
 				card_origin.x -= .5 * tile_size
 				draw_animation(world_menu_icon, card_origin, tint)
 			}
@@ -119,21 +119,23 @@ draw_character_card :: proc(pc: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 	// stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
 }
 
-draw_world_menu_character :: proc(pc_idx: int) {
+draw_world_menu_character :: proc(party_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
-	pc := get_pc(PC(pc_idx))
-	draw_text(2, 2, pc.name)
-	for i in 0 ..< NUM_STATS {
-		draw_text(2, 3+f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
+	if pc_idx, ok := get_party_member(party_idx).?; ok {
+		pc := get_pc(pc_idx)
+		draw_text(2, 2, pc.name)
+		for i in 0 ..< NUM_STATS {
+			draw_text(2, 3+f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
+		}
+		draw_text(2, 3+NUM_STATS, get_status_cstring(pc^))
 	}
-	draw_text(2, 3+NUM_STATS, get_status_cstring(pc^))
 }
 
-draw_world_menu_skills :: proc(pc_idx: int) {
+draw_world_menu_skills :: proc(party_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
 }
 
-draw_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
+draw_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) {
 	tint := rl.WHITE
 	if targeting {tint = rl.GRAY}
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2, tint)
@@ -155,12 +157,12 @@ draw_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
 	if targeting {
 		draw_menu(8, 5, 7, 6)
 		row := f32(0)
-		for i in 0 ..< NUM_PC {
+		for i in 0 ..< party_size() {
 			if i == 3 {
 				row += 1
 			}
 			draw_texture(.Protagonist_Battle0, tile_to_pixel(9 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row), rl.WHITE)
-			if i == pc_idx {
+			if i == party_idx {
 				draw_animation(world_menu_icon, tile_to_pixel(8.5 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row), rl.WHITE)
 			}
 		}
@@ -177,32 +179,32 @@ update_world_menu :: proc() {
 	}
 	switch state in world_menu_state {
 	case World_Menu_State_Top:
-		update_world_menu_top(state.i, state.next, state.pc_idx)
+		update_world_menu_top(state.i, state.next, state.party_idx)
 	case World_Menu_State_Character:
-		update_world_menu_character(state.pc_idx)
+		update_world_menu_character(state.party_idx)
 	case World_Menu_State_Skills:
-		update_world_menu_skills(state.pc_idx)
+		update_world_menu_skills(state.party_idx)
 	case World_Menu_State_Items:
-		update_world_menu_items(state.item_idx, state.targeting, state.pc_idx)
+		update_world_menu_items(state.item_idx, state.targeting, state.party_idx)
 	case World_Menu_State_System:
 		update_world_menu_system(state.i)
 	}
 	animation_update(&world_menu_icon, rl.GetFrameTime())
 }
 
-update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
+update_world_menu_top :: proc(i: int, next: bool, party_idx: int) {
 	if next {
 		if get_input(.CANCEL) {
-			world_menu_state = World_Menu_State_Top{i, false, pc_idx}
+			world_menu_state = World_Menu_State_Top{i, false, party_idx}
 		} else if get_input(.ENTER) {
 			switch i {
 			case 0:
-				world_menu_state = World_Menu_State_Character{pc_idx}
+				world_menu_state = World_Menu_State_Character{party_idx}
 			case 1:
-				world_menu_state = World_Menu_State_Skills{pc_idx}
+				world_menu_state = World_Menu_State_Skills{party_idx}
 			}
 		} else {
-			world_menu_state = World_Menu_State_Top{i, true, change_world_menu_pc_dx_from_input(pc_idx)}
+			world_menu_state = World_Menu_State_Top{i, true, change_world_menu_party_idx_from_input(party_idx)}
 		}
 	} else {
 		if get_input(.CANCEL) {
@@ -210,7 +212,7 @@ update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
 		} else if get_input(.ENTER) {
 			switch i {
 			case 0 ..= 1:
-				world_menu_state = World_Menu_State_Top{i, true, pc_idx}
+				world_menu_state = World_Menu_State_Top{i, true, party_idx}
 			case 2:
 				world_menu_state = World_Menu_State_Items{}
 			case 3:
@@ -223,37 +225,37 @@ update_world_menu_top :: proc(i: int, next: bool, pc_idx: int) {
 				i += m.x
 				if i < 0 {i = 3}
 				if i >= 4 {i = 0}
-				world_menu_state = World_Menu_State_Top{i, next, pc_idx}
+				world_menu_state = World_Menu_State_Top{i, next, party_idx}
 			} else if m.y > 0 {
-				world_menu_state = World_Menu_State_Top{i, true, pc_idx}
+				world_menu_state = World_Menu_State_Top{i, true, party_idx}
 			}
 		}
 	}
 }
 
-update_world_menu_character :: proc(pc_idx: int) {
+update_world_menu_character :: proc(party_idx: int) {
 	if get_input(.CANCEL) {
-		world_menu_state = World_Menu_State_Top{0, true, pc_idx}
+		world_menu_state = World_Menu_State_Top{0, true, party_idx}
 	} else {
 		m := get_menu_input()
-		pc_idx := pc_idx
-		pc_idx += m.x
-		if pc_idx < 0 {pc_idx = NUM_PC - 1}
-		if pc_idx >= NUM_PC {pc_idx = 0}
-		world_menu_state = World_Menu_State_Character{pc_idx}
+		party_idx := party_idx
+		party_idx += m.x
+		if party_idx < 0 {party_idx = party_size() - 1}
+		if party_idx >= party_size() {party_idx = 0}
+		world_menu_state = World_Menu_State_Character{party_idx}
 	}
 }
 
-update_world_menu_skills :: proc(pc_idx: int) {
+update_world_menu_skills :: proc(party_idx: int) {
 	if get_input(.CANCEL) {
-		world_menu_state = World_Menu_State_Top{1, true, pc_idx}
+		world_menu_state = World_Menu_State_Top{1, true, party_idx}
 	}
 }
 
-update_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
+update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) {
 	if get_input(.CANCEL) {
 		if targeting {
-			world_menu_state = World_Menu_State_Items{item_idx, false, pc_idx}
+			world_menu_state = World_Menu_State_Items{item_idx, false, party_idx}
 		} else {
 			world_menu_state = World_Menu_State_Top {
 				i = 2,
@@ -263,10 +265,10 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
 		if targeting {
 			item := item_data[item_idx]
 			play_sound(.Warp) // todo
-			item.effect(nil, get_pc(pc_idx), item.power)
+			item.effect(nil, get_pc(party_idx), item.power)
 			game_data.inventory[item_idx] -= 1
 			if game_data.inventory[item_idx] == 0 {
-				world_menu_state = World_Menu_State_Items{item_idx, false, pc_idx}
+				world_menu_state = World_Menu_State_Items{item_idx, false, party_idx}
 			}
 			fmt.printfln("Used item %s", item.name)
 		} else {
@@ -274,7 +276,7 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
 		}
 	} else {
 		if targeting {
-			world_menu_state = World_Menu_State_Items{item_idx, true, change_world_menu_pc_dx_from_input(pc_idx)}
+			world_menu_state = World_Menu_State_Items{item_idx, true, change_world_menu_party_idx_from_input(party_idx)}
 		} else {
 			item_idx := item_idx
 			m := get_menu_input()
@@ -282,7 +284,7 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, pc_idx: int) {
 				item_idx += m.y
 				if item_idx < 0 {item_idx = len(Item) - 1}
 				if item_idx >= len(Item) {item_idx = 0}
-				world_menu_state = World_Menu_State_Items{item_idx, targeting, pc_idx}
+				world_menu_state = World_Menu_State_Items{item_idx, targeting, party_idx}
 			}
 		}
 	}
