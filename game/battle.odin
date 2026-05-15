@@ -201,18 +201,15 @@ update_battle :: proc(dt: f32) {
 	case Next_Event:
 		if queue.len(battle_event_queue) > 0 {
 			switch e in queue.pop_front(&battle_event_queue) {
-			case Battle_Animation:
+			case Character_Effect:
+				do_effect(e)
+			case Play_Animation:
 				battle_state = Process_Battle_Animation {
 					animation = animation_create(e.animation),
 					offset    = e.offset,
 				}
-			case Battle_Message:
-				// todo
-				fmt.println(e.text)
-			case Battle_Sound:
+			case Play_Sound:
 				play_sound(e.sound)
-			case Character_Effect:
-				do_effect(e)
 			case Text_Effect:
 				battle_state = Process_Text_Effect {
 					coord = e.coord,

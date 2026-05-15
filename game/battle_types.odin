@@ -27,28 +27,9 @@ Combatant_Visual :: struct {
 }
 
 // EVENTS
-Battle_Animation :: struct {
-	animation: Animation_Name,
-	offset:    Pixel_Coord,
-}
-
-Battle_Message :: struct {
-	text: cstring,
-}
-
-Battle_Sound :: struct {
-	sound: Sound_Name,
-}
-
-Text_Effect :: struct {
-	coord: Pixel_Coord,
-	text:  cstring,
-}
-
 Battle_Event :: union {
-	Battle_Animation,
-	Battle_Message,
-	Battle_Sound,
+	Play_Animation,
+	Play_Sound,
 	Character_Effect,
 	Text_Effect,
 }
@@ -70,9 +51,6 @@ Process_Text_Effect :: struct {
 	t:     f32,
 	text:  cstring,
 }
-// Process_Battle_Message :: struct {
-// 	text: cstring,
-// }
 Battle_State :: union {
 	Next_Event,
 	Next_Turn,
