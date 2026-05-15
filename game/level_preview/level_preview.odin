@@ -41,7 +41,7 @@ main :: proc() {
 		rl.BeginDrawing()
 		game.draw_map()
 		if highlight_impassible {
-			rl.DrawTexturePro(pTexture.texture, {0, 0, wf, -hf}, {0, 0, wf, hf}, {}, 0, {0, 0, 0, 150})
+			rl.DrawTexturePro(pTexture.texture, {0, 0, wf, -hf}, {0, 0, wf, hf}, {}, 0, {255, 255, 255, 150})
 		}
 		rl.EndDrawing()
 	}
@@ -69,25 +69,27 @@ render_passable :: proc() {
 	rl.ClearBackground({})
 	for j in 0 ..< game.map_dim.y {
 		for i in 0 ..< game.map_dim.x {
-			free := true
+			p : u8
 			switch game.current_level {
 			case game.Level.LEVEL_0:
-				free &&= game.LEVEL_0_PASSABLE[j][i] == 0
+				p = game.LEVEL_0_PASSABLE[j][i]
 			case game.Level.LEVEL_1:
-				free &&= game.LEVEL_1_PASSABLE[j][i] == 0
+				p = game.LEVEL_1_PASSABLE[j][i]
 			case game.Level.LEVEL_2:
-				free &&= game.LEVEL_2_PASSABLE[j][i] == 0
+				p = game.LEVEL_2_PASSABLE[j][i]
 			case game.Level.LEVEL_OVERWORLD:
-				free &&= game.LEVEL_OVERWORLD_PASSABLE[j][i] == 0
+				p = game.LEVEL_OVERWORLD_PASSABLE[j][i]
 			case game.Level.LEVEL_CAVE:
-				free &&= game.LEVEL_CAVE_PASSABLE[j][i] == 0
+				p = game.LEVEL_CAVE_PASSABLE[j][i]
 			}
-			if !free {
-				i := i32(i)
-				j := i32(j)
-				// rl.DrawCircle(i*tile_size_i+tile_size_i/2, j*tile_size_i+tile_size_i/2, tile_size/2, rl.PURPLE)
-				rl.DrawRectangle(i * tile_size_i, j * tile_size_i, tile_size_i, tile_size_i, rl.PURPLE)
-			}
+			if p == 0 { continue }
+			c : rl.Color
+			if p == 1 { c = rl.RED }
+			else if p == 2 { c = rl.BLUE }
+			else if p == 3 { c = rl.PURPLE }
+			i := i32(i)
+			j := i32(j)
+			rl.DrawRectangle(i * tile_size_i, j * tile_size_i, tile_size_i, tile_size_i, c)
 		}
 	}
 	rl.EndTextureMode()
