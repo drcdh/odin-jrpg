@@ -19,6 +19,7 @@ battle_ending := false
 battle_event_queue: queue.Queue(Battle_Event)
 battle_num_baddies := 0
 battle_num_pc := 0
+battle_paused := false
 battle_state: Battle_State
 
 targeting_ease: f32
@@ -177,6 +178,21 @@ get_next_combatant :: proc() -> Combatant_Handle {
 update_battle :: proc(dt: f32) {
 	targeting_ease += dt / .5
 	if targeting_ease > 1 {targeting_ease = 0}
+
+	if !battle_paused {
+		process_battle_events(dt)
+	}
+
+	it := hm.iterator_make(&battle_combatants)
+	for c, _ in hm.iterate(&it) {
+		#partial switch &v in c.visual.variant {
+		case Animation:
+			animation_update(&v, dt)
+		}
+	}
+}
+
+process_battle_events :: proc(dt: f32) {
 	switch &s in battle_state {
 	case Next_Turn:
 		if check_win() {
@@ -233,14 +249,6 @@ update_battle :: proc(dt: f32) {
 		if s.t >= 1 {
 			delete(s.text)
 			battle_state = Next_Event{}
-		}
-	}
-
-	it := hm.iterator_make(&battle_combatants)
-	for c, _ in hm.iterate(&it) {
-		#partial switch &v in c.visual.variant {
-		case Animation:
-			animation_update(&v, dt)
 		}
 	}
 }

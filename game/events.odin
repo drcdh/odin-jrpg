@@ -5,6 +5,7 @@ Append_Text :: struct {
 	hurry: bool,
 	pause: f32,
 }
+Battle_Unpause :: struct {}
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}
 End :: struct {}
@@ -69,6 +70,7 @@ Skip_If :: struct {
 }
 Start_Encounter :: struct {
 	encounter: int,
+	paused: bool,
 }
 Start_Level :: struct {
 	level: Level,
@@ -78,9 +80,11 @@ Text_Effect :: struct {
 	coord: Pixel_Coord,
 	text:  cstring,
 }
+Wait_Encounter_R :: struct {}
 
 Event :: union {
 	Append_Text,
+	Battle_Unpause,
 	Clear_Text,
 	Close_Dialogue,
 	End,
@@ -107,4 +111,5 @@ Event :: union {
 	Start_Level,
 	Start_Next_Level,
 	// Text_Effect,
+	Wait_Encounter_R,
 }

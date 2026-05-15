@@ -50,15 +50,16 @@ init :: proc() {
 draw :: proc() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
+
 	if battle_active {
 		draw_battle()
 	} else if world_menu_active {
 		draw_world_menu()
 	} else {
 		draw_world()
-		draw_dialogue()
-		// draw_menus()
 	}
+
+	draw_dialogue()
 
 	draw_transition()
 
@@ -72,17 +73,15 @@ update :: proc() {
 
 	update_input_state(dt)
 
+	update_dialogue()
+	update_runner(dt)
+
 	if battle_active {
 		update_battle(dt)
 	} else if world_menu_active {
 		update_world_menu()
 	} else {
-		// text gets input priority
-		update_runner(dt)
 		update_world(dt)
-		// update_menus(dt)
-		update_dialogue()
-
 		if get_input(.MENU) {
 			world_menu_active = true
 		}

@@ -9,6 +9,7 @@ Pause :: struct {
 }
 Wait :: struct {}
 Wait_Dialogue :: struct {}
+Wait_Encounter :: struct {}
 Wait_Transition :: struct {}
 
 Script_State :: union {
@@ -16,6 +17,7 @@ Script_State :: union {
 	Pause,
 	Wait,
 	Wait_Dialogue,
+	Wait_Encounter,
 	Wait_Transition,
 }
 
@@ -48,6 +50,9 @@ update_runner :: proc(dt: f32) {
 		case Wait_Dialogue:
 			if dialogue_done() {runner.state = Continue{}}
 			return
+		case Wait_Encounter:
+			if !battle_active {runner.state = Continue{}}
+			return
 		case Wait_Transition:
 			if curtain_t <= 0 {runner.state = Continue{}}
 			return
@@ -64,6 +69,8 @@ update_runner :: proc(dt: f32) {
 			runner.state = Pause {
 				countdown = event.duration,
 			}
+		case Battle_Unpause:
+			battle_paused = false
 		case Clear_Text:
 			clear_dialogue()
 		case Close_Dialogue:
@@ -119,11 +126,13 @@ update_runner :: proc(dt: f32) {
 				runner.step += event.n
 			}
 		case Start_Encounter:
-			start_encounter(event.encounter)
+			start_encounter(event.encounter, event.paused)
 		case Start_Level:
 			start_level(event.level)
 		case Start_Next_Level:
 			start_level(next_level)
+		case Wait_Encounter_R:
+			runner.state = Wait_Encounter{}
 		}
 	}
 }

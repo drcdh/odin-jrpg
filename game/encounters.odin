@@ -80,7 +80,7 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
 	battle_num_baddies += 1
 }
 
-start_encounter :: proc(i: int) {
+start_encounter :: proc(i: int, paused: bool) {
 	battle_num_baddies = 0
 	battle_num_pc = 0
 
@@ -115,5 +115,6 @@ start_encounter :: proc(i: int) {
 	}
 	battle_active = true
 	battle_ending = false
+	battle_paused = paused
 	battle_state = Next_Turn{}
 }
