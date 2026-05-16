@@ -1,6 +1,6 @@
 package game
 
-Effect_F :: proc(actor, target: ^Character, value: int)
+Effect_Proc :: proc(actor, target: ^Character, value: int)
 
 effect_heal_hp_constant :: proc(actor, target: ^Character, amount: int) {
 	target.hitpoints += amount

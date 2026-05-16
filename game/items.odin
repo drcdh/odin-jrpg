@@ -10,7 +10,7 @@ Item :: enum {
 Item_Data :: struct {
 	name:      string,
 	targeting: Targeting_Type,
-	effect:    Effect_F,
+	effect:    Effect_Proc,
 	power:     int,
 }
 
