@@ -6,11 +6,11 @@ queue_battle_animation :: proc(event: Play_Animation) {
 	queue.push_back(&battle_event_queue, event)
 }
 
-// queue_battle_message :: proc(event: Battle_Message) {
-// 	queue.push_back(&battle_event_queue, event)
-// }
+queue_battle_effect :: proc(event: Effect_Event) {
+	queue.push_back(&battle_event_queue, event)
+}
 
-queue_character_effect :: proc(event: Character_Effect) {
+queue_battle_sound :: proc(event: Play_Sound) {
 	queue.push_back(&battle_event_queue, event)
 }
 

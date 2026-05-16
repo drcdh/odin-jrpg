@@ -14,6 +14,12 @@ Pause_Runner :: struct {
 }
 Curtain_Down :: struct {}
 Curtain_Up :: struct {}
+Effect_Event :: struct {
+	effect_name: Effect_Name,
+	actor:  ^Character,
+	target: ^Character,
+	value: int,
+}
 Move_Entity_Here :: struct {
 	id: Id,
 }

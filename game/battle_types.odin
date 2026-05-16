@@ -29,9 +29,9 @@ Combatant_Visual :: struct {
 
 // EVENTS
 Battle_Event :: union {
+	Effect_Event,
 	Play_Animation,
 	Play_Sound,
-	Character_Effect,
 	Text_Effect,
 }
 

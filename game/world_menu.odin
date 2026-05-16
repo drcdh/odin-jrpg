@@ -267,7 +267,7 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 		if targeting {
 			item := item_data[item_idx]
 			play_sound(.Warp) // todo
-			item.effect(nil, get_pc(party_idx), item.power)
+			do_effect(item.effect, nil, get_pc(party_idx), item.power)
 			game_data.inventory[item_idx] -= 1
 			if game_data.inventory[item_idx] == 0 {
 				world_menu_state = World_Menu_State_Items{item_idx, false, party_idx}
