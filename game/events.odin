@@ -1,5 +1,9 @@
 package game
 
+Add_Item :: struct {
+	item: Item,
+	number: u8,
+}
 Append_Text :: struct {
 	text:  string,
 	hurry: bool,
@@ -93,6 +97,7 @@ Toggle_Party_Member :: struct {
 Wait_Encounter_R :: struct {}
 
 Event :: union {
+	Add_Item,
 	Append_Text,
 	Battle_Unpause,
 	Clear_Text,

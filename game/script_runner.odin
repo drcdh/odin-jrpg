@@ -60,6 +60,8 @@ update_runner :: proc(dt: f32) {
 
 		fmt.printfln("% 4d: step %d - %w", frame_count, runner.step, runner.script[runner.step])
 		switch event in runner.script[runner.step] {
+		case Add_Item:
+			game_data.inventory[event.item] += event.number
 		case Append_Text:
 			queue_dialogue(event.text, event.hurry, event.pause)
 			runner.state = Wait_Dialogue{}

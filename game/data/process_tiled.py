@@ -16,9 +16,12 @@ def process_tmx(level_name):
 	prefix = level_name.upper() + "_"
 	out_f = open(f"{level_name}_data.odin", "w")
 
+	out_f.write("#+vet !unused\n")
 	out_f.write("package game\n")
+	out_f.write("import hm \"core:container/handle_map\"\n")
 	out_f.write("import rl \"vendor:raylib\"\n")
 
+	items = []
 	map_layers = []
 	paths = []
 	paths_enum = []
@@ -42,9 +45,12 @@ def process_tmx(level_name):
 					paths.append(tile_coords)
 					paths_enum.append(obj.name.title())
 				elif isinstance(obj, pytiled_parser.tiled_object.Point):
-					name = obj.name.upper()
-					pos = orderedpair_to_tile(obj.coordinates)
-					out_f.write(f"{prefix}{name} :: Tile_Coord{{ {pos[0]}, {pos[1]} }}\n")
+					if obj.name.startswith("item"):
+						items.append(obj)
+					else:
+						name = obj.name.upper()
+						pos = orderedpair_to_tile(obj.coordinates)
+						out_f.write(f"{prefix}{name} :: Tile_Coord{{ {pos[0]}, {pos[1]} }}\n")
 				else:
 					print(f"unknown object type {type(obj)}: {obj}")
 		else:
@@ -106,6 +112,40 @@ render_{level_name} :: proc() {{
 }}
 """)
 
+	for n, item in enumerate(items):
+		out_f.write(f"""{prefix}ITEM_SCRIPT_{n} := [?]Event {{
+			Set_Entity_Busy{{id = PLAYER_ID, busy = true}},
+		""")
+		for _item in item.properties["items"].split(","):
+			out_f.write(f"""
+	Add_Item{{item = .{_item}, number = 1}},
+	Append_Text{{text = "Got {_item}"}},
+	Close_Dialogue{{}},
+	Clear_Text{{}},
+	""")
+		out_f.write(f"""
+	Set_Entity_Busy{{id = PLAYER_ID, busy = false}},
+	End{{}},
+		}}
+		""")
+
+	out_f.write(f"""
+	{prefix}ITEM_ENTITIES := [{len(items)}]Entity{{
+	""")
+	for n, item in enumerate(items):
+		x, y = orderedpair_to_tile(item.coordinates)
+		out_f.write(f"""
+		Entity{{
+		id = {2000+n},
+		tile = {{ {x}, {y} }},
+		n = "items:{2000+n}",
+		talk = {prefix}ITEM_SCRIPT_{n}[:],
+		v = Texture_Name.Box,
+		}},
+		""")
+
+	out_f.write("}\n")
+
 	out_f.write(f"""
 init_{level_name} :: proc() {{
 	level_firstgids = {prefix}FIRSTGIDS[:]
@@ -113,6 +153,10 @@ init_{level_name} :: proc() {{
 	map_dim.x = {prefix}WIDTH
 	map_dim.y = {prefix}HEIGHT
 	level_routes = {prefix}ROUTES[:]
+	""")
+	for n, _ in enumerate(items):
+		out_f.write(f"_ = hm.add(&entities, {prefix}ITEM_ENTITIES[{n}])\n")
+	out_f.write(f"""
 	start_{level_name}()
 	render_{level_name}()
 }}
