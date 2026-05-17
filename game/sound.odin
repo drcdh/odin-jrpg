@@ -5,8 +5,9 @@ import rl "vendor:raylib"
 
 AUDIO_ASSETS_ROOT :: "game/audio/"
 
-
 Sound_Name :: enum {
+	Blerp,
+	Blerp2,
 	Door_Knock,
 	Door_Open,
 	Door_Shut,
@@ -17,6 +18,8 @@ Sound_Name :: enum {
 }
 
 sound_paths := [Sound_Name]string {
+	.Blerp      = "sfx_sounds_error3.wav",
+	.Blerp2     = "sfx_sounds_error10.wav",
 	.Door_Knock = "629987__flem0527__knocking-on-wood-door-1.wav",
 	.Door_Open  = "400329__n-razm__door_open.wav",
 	.Door_Shut  = "96472__imitatia-dei__pine-door-shut-2-slam.wav",

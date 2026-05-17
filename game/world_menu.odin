@@ -265,16 +265,24 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 		}
 	} else if get_input(.ENTER) {
 		if targeting {
-			item := item_data[item_idx]
-			play_sound(.Warp) // todo
-			do_effect(item.effect, nil, get_pc(party_idx), item.power)
-			game_data.inventory[item_idx] -= 1
-			if game_data.inventory[item_idx] == 0 {
-				world_menu_state = World_Menu_State_Items{item_idx, false, party_idx}
+			item_name := item_data[item_idx].name
+			if item, ok := item_data[item_idx].data.(Consumable); ok {
+				play_sound(.Warp) // todo
+				do_effect(item.effect, nil, get_pc(party_idx), item.power)
+				game_data.inventory[item_idx] -= 1
+				if game_data.inventory[item_idx] == 0 {
+					world_menu_state = World_Menu_State_Items{item_idx, false, party_idx}
+				}
+				fmt.printfln("Used item %s", item_name)
+			} else {
+				fmt.println("Uh oh! Tried to use non-consumable %s", item_name)
 			}
-			fmt.printfln("Used item %s", item.name)
 		} else {
-			world_menu_state = World_Menu_State_Items{item_idx, true, 0}
+			if _, consumable := item_data[item_idx].data.(Consumable); consumable {
+				world_menu_state = World_Menu_State_Items{item_idx, true, 0}
+			} else {
+				play_sound(.Blerp)
+			}
 		}
 	} else {
 		if targeting {
