@@ -21,7 +21,7 @@ def process_tmx(level_name):
 	out_f.write("import hm \"core:container/handle_map\"\n")
 	out_f.write("import rl \"vendor:raylib\"\n")
 
-	items = []
+	item_entities = []
 	map_layers = []
 	paths = []
 	paths_enum = []
@@ -46,7 +46,7 @@ def process_tmx(level_name):
 					paths_enum.append(obj.name.title())
 				elif isinstance(obj, pytiled_parser.tiled_object.Point):
 					if obj.name.startswith("item"):
-						items.append(obj)
+						item_entities.append(obj)
 					else:
 						name = obj.name.upper()
 						pos = orderedpair_to_tile(obj.coordinates)
@@ -112,37 +112,41 @@ render_{level_name} :: proc() {{
 }}
 """)
 
-	for n, item in enumerate(items):
-		out_f.write(f"""{prefix}ITEM_SCRIPT_{n} := [?]Event {{
-			Set_Entity_Busy{{id = PLAYER_ID, busy = true}},
-		""")
-		for _item in item.properties["items"].split(","):
+	for n, item_entity in enumerate(item_entities):
+		out_f.write(f"""
+{prefix}ITEM_{n} := [?]Event {{
+	Set_Entity_Busy{{id = PLAYER_ID, busy = true}},""")
+		items = item_entity.properties["items"].split(",")
+		for item in items:
 			out_f.write(f"""
-	Add_Item{{item = .{_item}, number = 1}},
-	Append_Text{{text = "Got {_item}"}},
+	Add_Item{{item = .{item}, number = 1}},""")
+		if len(items) > 1:
+			out_f.write(f"""
+	Append_Text{{text = "Got items: {", ".join(items)}"}},""")
+		else:
+			out_f.write(f"""
+	Append_Text{{text = "Got item: {items[0]}"}},""")
+		out_f.write(f"""
 	Close_Dialogue{{}},
-	Clear_Text{{}},
-	""")
+	Clear_Text{{}},""")
 		out_f.write(f"""
 	Set_Entity_Busy{{id = PLAYER_ID, busy = false}},
 	End{{}},
-		}}
-		""")
+}}
+""")
 
 	out_f.write(f"""
-	{prefix}ITEM_ENTITIES := [{len(items)}]Entity{{
-	""")
-	for n, item in enumerate(items):
-		x, y = orderedpair_to_tile(item.coordinates)
+{prefix}ITEM_ENTITIES := [{len(item_entities)}]Entity{{""")
+	for n, item_entity in enumerate(item_entities):
+		x, y = orderedpair_to_tile(item_entity.coordinates)
 		out_f.write(f"""
-		Entity{{
+	Entity{{
 		id = {2000+n},
 		tile = {{ {x}, {y} }},
 		n = "items:{2000+n}",
-		talk = {prefix}ITEM_SCRIPT_{n}[:],
+		talk = {prefix}ITEM_{n}[:],
 		v = Texture_Name.Box,
-		}},
-		""")
+	}},""")
 
 	out_f.write("}\n")
 
@@ -154,8 +158,8 @@ init_{level_name} :: proc() {{
 	map_dim.y = {prefix}HEIGHT
 	level_routes = {prefix}ROUTES[:]
 	""")
-	for n, _ in enumerate(items):
-		out_f.write(f"_ = hm.add(&entities, {prefix}ITEM_ENTITIES[{n}])\n")
+	for n, _ in enumerate(item_entities):
+		out_f.write(f"\n\t_ = hm.add(&entities, {prefix}ITEM_ENTITIES[{n}])")
 	out_f.write(f"""
 	start_{level_name}()
 	render_{level_name}()
