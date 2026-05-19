@@ -35,8 +35,6 @@ item_data := [len(Item)]Item_Data {
 	{"Super Potion", Consumable{.One_Ally, .Heal_Hp_Constant, 500}},
 	{"Antidote", Consumable{.One_Ally, .Remove_Poison, 100}},
 	{"Poisonous Mushroom", Consumable{.One_Ally, .Add_Poison, 100}},
-
 	{"Sword", Equipment{10}},
-
-	{name="Thingamajig"},
+	{name = "Thingamajig"},
 }

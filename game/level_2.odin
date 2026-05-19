@@ -27,7 +27,7 @@ TRAP_BADDY_ACTIVATE := [?]Event {
 
 TRAP_BADDY_ENCOUNTER := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Start_Encounter{encounter=0},
+	Start_Encounter{encounter = 0},
 	Remove_Entity{TRAP_BADDY_ID},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},

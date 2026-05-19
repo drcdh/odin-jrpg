@@ -1,10 +1,10 @@
 package game
-import "core:fmt"
 import hm "core:container/handle_map"
+import "core:fmt"
 
 BOAT_ID :: 77
 
-BOARD_BOAT := [?]Event{
+BOARD_BOAT := [?]Event {
 	Set_Entity_Disabled{id = PLAYER_ID, disabled = true},
 	Set_Entity_Busy{id = BOAT_ID, busy = false},
 	Set_Boat_Control{},
@@ -64,7 +64,7 @@ start_level_overworld :: proc() {
 	case .LEVEL_CAVE:
 		party_tile = LEVEL_OVERWORLD_CAVE_ENTRANCE if prev_level_tile == LEVEL_CAVE_ENTRANCE else LEVEL_OVERWORLD_CAVE_EXIT
 	case .LEVEL_OVERWORLD:
-		// ?
+	// ?
 	}
 	add_pc_entity(party_tile, .Down)
 
@@ -82,56 +82,26 @@ start_level_overworld :: proc() {
 
 	_ = hm.add(
 		&entities,
-		Entity {
-			id = 2000,
-			ghost = true,
-			n = "grove",
-			tile = LEVEL_OVERWORLD_GROVE,
-			trap = enter_grove[:],
-		}
+		Entity{id = 2000, ghost = true, n = "grove", tile = LEVEL_OVERWORLD_GROVE, trap = enter_grove[:]},
 	)
 
 	_ = hm.add(
 		&entities,
-		Entity {
-			id = 2001,
-			ghost = true,
-			n = "house",
-			tile = LEVEL_OVERWORLD_HOUSE,
-			trap = enter_house[:],
-		}
+		Entity{id = 2001, ghost = true, n = "house", tile = LEVEL_OVERWORLD_HOUSE, trap = enter_house[:]},
 	)
 
 	_ = hm.add(
 		&entities,
-		Entity {
-			id = 2002,
-			ghost = true,
-			n = "quarry",
-			tile = LEVEL_OVERWORLD_QUARRY,
-			trap = enter_quarry[:],
-		}
+		Entity{id = 2002, ghost = true, n = "quarry", tile = LEVEL_OVERWORLD_QUARRY, trap = enter_quarry[:]},
 	)
 
 	_ = hm.add(
 		&entities,
-		Entity {
-			id = 2003,
-			ghost = true,
-			n = "cave_entrance",
-			tile = LEVEL_OVERWORLD_CAVE_ENTRANCE,
-			trap = enter_cave[:],
-		}
+		Entity{id = 2003, ghost = true, n = "cave_entrance", tile = LEVEL_OVERWORLD_CAVE_ENTRANCE, trap = enter_cave[:]},
 	)
 
 	_ = hm.add(
 		&entities,
-		Entity {
-			id = 2004,
-			ghost = true,
-			n = "cave_exit",
-			tile = LEVEL_OVERWORLD_CAVE_EXIT,
-			trap = enter_cave[:],
-		}
+		Entity{id = 2004, ghost = true, n = "cave_exit", tile = LEVEL_OVERWORLD_CAVE_EXIT, trap = enter_cave[:]},
 	)
 }

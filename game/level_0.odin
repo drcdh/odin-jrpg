@@ -55,7 +55,7 @@ MONSTER_IN_A_BOX := [?]Event {
 	Append_Text{text = "Monster in a box!"},
 	Close_Dialogue{},
 	Clear_Text{},
-	Start_Encounter{encounter = 0, paused=true},
+	Start_Encounter{encounter = 0, paused = true},
 	Append_Text{text = "Oh noes!"},
 	Close_Dialogue{},
 	Clear_Text{},

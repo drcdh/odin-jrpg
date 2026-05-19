@@ -119,16 +119,16 @@ pc_idle_texture := [NUM_PC]Texture_Name {
 
 get_party_member :: proc(i: int) -> Maybe(PC) {
 	ii := -1
-	for pc_idx in 0..<NUM_PC {
-		if game_data.party_membership[pc_idx] { ii += 1 }
-		if ii == i { return PC(pc_idx) }
+	for pc_idx in 0 ..< NUM_PC {
+		if game_data.party_membership[pc_idx] {ii += 1}
+		if ii == i {return PC(pc_idx)}
 	}
 	return nil
 }
 
 party_size :: proc() -> int {
 	size := 0
-	for party_idx in 0..<NUM_PC {
+	for party_idx in 0 ..< NUM_PC {
 		if game_data.party_membership[party_idx] {
 			size += 1
 		}

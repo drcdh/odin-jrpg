@@ -69,7 +69,7 @@ render_passable :: proc() {
 	rl.ClearBackground({})
 	for j in 0 ..< game.map_dim.y {
 		for i in 0 ..< game.map_dim.x {
-			p : u8
+			p: u8
 			switch game.current_level {
 			case game.Level.LEVEL_0:
 				p = game.LEVEL_0_PASSABLE[j][i]
@@ -82,11 +82,9 @@ render_passable :: proc() {
 			case game.Level.LEVEL_CAVE:
 				p = game.LEVEL_CAVE_PASSABLE[j][i]
 			}
-			if p == 0 { continue }
-			c : rl.Color
-			if p == 1 { c = rl.RED }
-			else if p == 2 { c = rl.BLUE }
-			else if p == 3 { c = rl.PURPLE }
+			if p == 0 {continue}
+			c: rl.Color
+			if p == 1 {c = rl.RED} else if p == 2 {c = rl.BLUE} else if p == 3 {c = rl.PURPLE}
 			i := i32(i)
 			j := i32(j)
 			rl.DrawRectangle(i * tile_size_i, j * tile_size_i, tile_size_i, tile_size_i, c)

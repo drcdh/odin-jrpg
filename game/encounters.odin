@@ -100,17 +100,17 @@ start_encounter :: proc(i: int, paused: bool) {
 	for pc_idx in 0 ..< NUM_PC {
 		if game_data.party_membership[pc_idx] {
 			battle_pc_handles[battle_num_pc] = hm.add(
-				&battle_combatants,
-				Combatant {
-					character = get_pc(PC(pc_idx)),
-					coord = {x, y},
-					enabled = true,
-					id = battle_num_baddies + battle_num_pc,
-					team = PLAYER_TEAM,
-					turn = pc_turn,
-					// visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
-					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
-				},
+			&battle_combatants,
+			Combatant {
+				character = get_pc(PC(pc_idx)),
+				coord = {x, y},
+				enabled = true,
+				id = battle_num_baddies + battle_num_pc,
+				team = PLAYER_TEAM,
+				turn = pc_turn,
+				// visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
+				visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
+			},
 			)
 			battle_num_pc += 1
 			x += tile_size

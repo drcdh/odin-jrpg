@@ -91,7 +91,7 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 		free = true
 		return
 	}
-	p : u8
+	p: u8
 	switch current_level {
 	case .LEVEL_0:
 		p = LEVEL_0_PASSABLE[t.y][t.x]
@@ -106,7 +106,7 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 	}
 	if boat_mode {
 		free = p & BOAT_IMPASSABLE == 0
-	}	else {
+	} else {
 		free = p & PARTY_IMPASSABLE == 0
 	}
 	if !free {return}

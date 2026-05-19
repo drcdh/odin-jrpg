@@ -9,7 +9,7 @@ attack :: proc(actor, target: ^Combatant) {
 
 	// queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss)})
 
-	queue_battle_effect(Effect_Event{actor=actor.character, target = target.character, effect_name = .Attack})
+	queue_battle_effect(Effect_Event{actor = actor.character, target = target.character, effect_name = .Attack})
 
 	actor.t += 20
 }

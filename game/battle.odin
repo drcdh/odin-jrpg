@@ -115,7 +115,7 @@ draw_battle_combatants :: proc() {
 			}
 			if targeted(c.id, c.team) {
 				tint = rl.YELLOW
-				tint.w = u8(targeting_ease*255)
+				tint.w = u8(targeting_ease * 255)
 			}
 			if actor, ok := battle_state.(Take_Turn); ok {
 				if h == actor.actor_h {

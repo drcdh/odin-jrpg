@@ -5,8 +5,8 @@ import "core:strings"
 import rl "vendor:raylib"
 
 World_Menu_State_Top :: struct {
-	i:      int,
-	next:   bool,
+	i:         int,
+	next:      bool,
 	party_idx: int,
 }
 World_Menu_State_Character :: struct {
@@ -18,7 +18,7 @@ World_Menu_State_Skills :: struct {
 World_Menu_State_Items :: struct {
 	item_idx:  int,
 	targeting: bool,
-	party_idx:    int,
+	party_idx: int,
 }
 World_Menu_State_System :: struct {
 	i: int,
@@ -84,7 +84,7 @@ draw_world_menu_top :: proc(i: int, next: bool, party_idx: int, tint := rl.WHITE
 		case 3:
 			x_icon = 11.5 * tile_size
 		}
-		draw_animation(world_menu_icon, {x_icon, .75*tile_size}, tint)
+		draw_animation(world_menu_icon, {x_icon, .75 * tile_size}, tint)
 	}
 
 	draw_menu(0, 2, VIEW_TILES_W, VIEW_TILES_H - 2, tint)
@@ -125,9 +125,9 @@ draw_world_menu_character :: proc(party_idx: int) {
 		pc := get_pc(pc_idx)
 		draw_text(2, 2, pc.name)
 		for i in 0 ..< NUM_STATS {
-			draw_text(2, 3+f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
+			draw_text(2, 3 + f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
 		}
-		draw_text(2, 3+NUM_STATS, get_status_cstring(pc^))
+		draw_text(2, 3 + NUM_STATS, get_status_cstring(pc^))
 	}
 }
 
@@ -143,15 +143,12 @@ draw_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) {
 		if i == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + i), tint)
 		}
+		draw_text(2, 2 + f32(i), fmt.caprint(item_data[i].name, allocator = context.temp_allocator), tint = tint)
 		draw_text(
-			2, 2 + f32(i),
-			fmt.caprint(item_data[i].name, allocator = context.temp_allocator),
-			tint=tint,
-		)
-		draw_text(
-			VIEW_TILES_W - 3, 2 + f32(i),
+			VIEW_TILES_W - 3,
+			2 + f32(i),
 			fmt.caprintf("% 2d", game_data.inventory[i], allocator = context.temp_allocator),
-			tint=tint,
+			tint = tint,
 		)
 	}
 	if targeting {

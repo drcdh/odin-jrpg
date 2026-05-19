@@ -92,7 +92,7 @@ update_runner :: proc(dt: f32) {
 				fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
 			}
 		case Play_Animation:
-			// todo
+		// todo
 		case Play_Sound:
 			play_sound(event.sound)
 		case Remove_Entity:

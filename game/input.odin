@@ -150,18 +150,18 @@ change_world_menu_party_idx_from_input :: proc(party_idx: int) -> int {
 	party_idx := party_idx
 	party_size := party_size()
 	if m.x > 0 {
-		if party_idx == min(3, party_size)-1 {
+		if party_idx == min(3, party_size) - 1 {
 			party_idx = 0
-		} else if party_idx == min(6, party_size)-1 {
+		} else if party_idx == min(6, party_size) - 1 {
 			party_idx = 3
 		} else {
 			party_idx += 1
 		}
 	} else if m.x < 0 {
 		if party_idx == 0 {
-			party_idx = min(3, party_size)-1
+			party_idx = min(3, party_size) - 1
 		} else if party_idx == 3 {
-			party_idx = min(6, party_size)-1
+			party_idx = min(6, party_size) - 1
 		} else {
 			party_idx -= 1
 		}
@@ -170,7 +170,7 @@ change_world_menu_party_idx_from_input :: proc(party_idx: int) -> int {
 		if party_size < 4 {
 			// do nothing
 		} else if party_idx < 3 {
-			party_idx = min(3+party_idx, party_size-1)
+			party_idx = min(3 + party_idx, party_size - 1)
 		} else {
 			party_idx -= 3
 		}

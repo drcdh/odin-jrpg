@@ -36,7 +36,7 @@ do_hp_change :: proc(target: ^Character, amount: int) {
 }
 
 do_effect :: proc(e: Effect_Name, actor, target: ^Character, v: int) {
-	f : Effect_Proc
+	f: Effect_Proc
 	switch e {
 	case .Attack:
 		f = effect_attack

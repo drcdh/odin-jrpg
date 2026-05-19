@@ -1,7 +1,7 @@
 package game
 
 Add_Item :: struct {
-	item: Item,
+	item:   Item,
 	number: u8,
 }
 Append_Text :: struct {
@@ -20,9 +20,9 @@ Curtain_Down :: struct {}
 Curtain_Up :: struct {}
 Effect_Event :: struct {
 	effect_name: Effect_Name,
-	actor:  ^Character,
-	target: ^Character,
-	value: int,
+	actor:       ^Character,
+	target:      ^Character,
+	value:       int,
 }
 Move_Entity_Here :: struct {
 	id: Id,
@@ -80,7 +80,7 @@ Skip_If :: struct {
 }
 Start_Encounter :: struct {
 	encounter: int,
-	paused: bool,
+	paused:    bool,
 }
 Start_Level :: struct {
 	level: Level,
@@ -92,7 +92,7 @@ Text_Effect :: struct {
 }
 Toggle_Party_Member :: struct {
 	pc_idx: PC,
-	join:	  bool,
+	join:   bool,
 }
 Wait_Encounter_R :: struct {}
 
