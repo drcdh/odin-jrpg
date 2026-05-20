@@ -2,6 +2,7 @@ package game
 
 import hm "core:container/handle_map"
 import rl "vendor:raylib"
+import "core:strings"
 
 battle_ui_state: Battle_UI_State
 
@@ -65,11 +66,15 @@ ITEM :: 2
 draw_battle_menu :: proc() {
 	switch state in battle_ui_state {
 	case Action_Selection_State:
-		draw_menu(4.0, 10, 4, 4)
-		draw_text(4.5, 10.5, "Attack", rl.YELLOW if state.s == 0 else rl.WHITE)
-		draw_text(4.5, 11.0, "Skill", rl.YELLOW if state.s == 1 else rl.WHITE)
-		draw_text(4.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
+		draw_menu(0.0, 10, 4, 4)
+		draw_text(0.5, 10.5, "Attack", rl.YELLOW if state.s == 0 else rl.WHITE)
+		draw_text(0.5, 11.0, "Skill", rl.YELLOW if state.s == 1 else rl.WHITE)
+		draw_text(0.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
 	case Skill_Selection_State:
+		draw_menu(2, 8, 8, 6)
+		for i in 0..=6 {
+			draw_text(2.5, 8.5 + f32(i)*.5, strings.clone_to_cstring(item_data[state.s+i].name, context.temp_allocator), rl.YELLOW if state.s == i else rl.WHITE)
+		}
 	case Item_Selection_State:
 	case Target_Selection_State:
 	}
@@ -145,7 +150,8 @@ change_selection :: proc(dx, dy: int) {
 	}
 }
 
-skill_proc: proc(actor, target: ^Combatant)
+// skill_proc: proc(actor, target: ^Combatant)
+skill : Skill_Data
 
 pc_turn :: proc(actor: ^Combatant) {
 	if battle_ui_state == nil {
@@ -165,22 +171,31 @@ pc_turn :: proc(actor: ^Combatant) {
 		case Action_Selection_State:
 			switch state.s {
 			case ATTACK:
-				skill_proc = attack
+				// skill_proc = attack
+				skill = skill_data[Skill.Attack]
 				// todo: check weapon target type
 				battle_ui_state = Target_Selection_State {
 					ts = Select_One_Baddy{select_first_baddy()},
 					tt = .One_Opponent,
 				}
 			case SKILL:
+				battle_ui_state = Skill_Selection_State{}
 			case ITEM:
+				battle_ui_state = Item_Selection_State{}
 			}
 		case Skill_Selection_State:
+			skill = skill_data[state.s]
+			battle_ui_state = Target_Selection_State{tt = skill.targeting}
 		case Item_Selection_State:
+			if consumable, ok := item_data[state.s].data.(Consumable); ok {
+				skill = skill_data[consumable]
+				battle_ui_state = Target_Selection_State{tt = skill.targeting}
+			}
 		case Target_Selection_State:
 			switch ts in state.ts {
 			case Select_One_Baddy:
 				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
-					skill_proc(actor, target_cb)
+					do_effect(skill.effect, actor.character, target_cb.character, skill.power)
 					battle_ui_state = Battle_UI_State{}
 					actor.t += 20
 					end_turn()

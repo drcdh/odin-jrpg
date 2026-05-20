@@ -7,6 +7,7 @@ Effect_Name :: enum {
 	Heal_Hp_Constant,
 	Remove_Poison,
 	Add_Poison,
+	Fire,
 }
 
 effect_attack :: proc(actor, target: ^Character, v: int) {
@@ -28,6 +29,11 @@ effect_add_poison :: proc(actor, target: ^Character, change: int) {
 	target.poison = true
 }
 
+effect_fire_damage :: proc(actor, target: ^Character, power: int) {
+	hp_loss := max(0, power*actor.pOffense - target.pDefense)
+	target.hitpoints -= hp_loss
+}
+
 do_hp_change :: proc(target: ^Character, amount: int) {
 	// if combatant := get_combatant(target.id); combatant != nil {
 	// 	queue_text_effect(Text_Effect{coord = combatant.coord, text = fmt.caprintf("%d", hp_loss)})
@@ -46,6 +52,8 @@ do_effect :: proc(e: Effect_Name, actor, target: ^Character, v: int) {
 		f = effect_remove_poison
 	case .Add_Poison:
 		f = effect_add_poison
+	case .Fire:
+		f = effect_fire_damage
 	}
 	f(actor, target, v)
 }

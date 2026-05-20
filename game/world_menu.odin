@@ -263,9 +263,10 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 	} else if get_input(.ENTER) {
 		if targeting {
 			item_name := item_data[item_idx].name
-			if item, ok := item_data[item_idx].data.(Consumable); ok {
-				play_sound(.Warp) // todo
-				do_effect(item.effect, nil, get_pc(party_idx), item.power)
+			if consumable, ok := item_data[item_idx].data.(Consumable); ok {
+				skill = skill_data[consumable]
+				play_sound(skill.sound) // todo
+				do_effect(skill.effect, nil, get_pc(party_idx), skill.power)
 				game_data.inventory[item_idx] -= 1
 				if game_data.inventory[item_idx] == 0 {
 					world_menu_state = World_Menu_State_Items{item_idx, false, party_idx}

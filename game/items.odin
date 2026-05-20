@@ -19,11 +19,12 @@ Item_Variant :: union {
 	Equipment,
 }
 
-Consumable :: struct {
-	targeting: Targeting_Type,
-	effect:    Effect_Name,
-	power:     int,
-}
+Consumable :: Skill
+// Consumable :: struct {
+// 	targeting: Targeting_Type,
+// 	effect:    Effect_Name,
+// 	power:     int,
+// }
 
 Equipment :: struct {
 	power: int,
@@ -31,10 +32,12 @@ Equipment :: struct {
 }
 
 item_data := [len(Item)]Item_Data {
-	{"Potion", Consumable{.One_Ally, .Heal_Hp_Constant, 50}},
-	{"Super Potion", Consumable{.One_Ally, .Heal_Hp_Constant, 500}},
-	{"Antidote", Consumable{.One_Ally, .Remove_Poison, 100}},
-	{"Poisonous Mushroom", Consumable{.One_Ally, .Add_Poison, 100}},
+	{"Potion", .Heal_50},
+	{"Super Potion", .Heal_500},
+	{"Antidote", .Remove_Poison},
+	{"Poisonous Mushroom", .Add_Poison},
+
 	{"Sword", Equipment{10}},
-	{name = "Thingamajig"},
+
+	{"Thingamajig", nil},
 }
