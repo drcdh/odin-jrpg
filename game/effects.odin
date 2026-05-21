@@ -30,7 +30,7 @@ effect_add_poison :: proc(actor, target: ^Character, change: int) {
 }
 
 effect_fire_damage :: proc(actor, target: ^Character, power: int) {
-	hp_loss := max(0, power*actor.pOffense - target.pDefense)
+	hp_loss := max(0, power * actor.pOffense - target.pDefense)
 	target.hitpoints -= hp_loss
 }
 

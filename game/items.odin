@@ -36,8 +36,6 @@ item_data := [len(Item)]Item_Data {
 	{"Super Potion", .Heal_500},
 	{"Antidote", .Remove_Poison},
 	{"Poisonous Mushroom", .Add_Poison},
-
 	{"Sword", Equipment{10}},
-
 	{"Thingamajig", nil},
 }

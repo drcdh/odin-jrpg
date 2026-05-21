@@ -1,8 +1,8 @@
 package game
 
 import hm "core:container/handle_map"
-import rl "vendor:raylib"
 import "core:strings"
+import rl "vendor:raylib"
 
 battle_ui_state: Battle_UI_State
 
@@ -72,8 +72,13 @@ draw_battle_menu :: proc() {
 		draw_text(0.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
 	case Skill_Selection_State:
 		draw_menu(2, 8, 8, 6)
-		for i in 0..=6 {
-			draw_text(2.5, 8.5 + f32(i)*.5, strings.clone_to_cstring(item_data[state.s+i].name, context.temp_allocator), rl.YELLOW if state.s == i else rl.WHITE)
+		for i in 0 ..= 6 {
+			draw_text(
+				2.5,
+				8.5 + f32(i) * .5,
+				strings.clone_to_cstring(item_data[state.s + i].name, context.temp_allocator),
+				rl.YELLOW if state.s == i else rl.WHITE,
+			)
 		}
 	case Item_Selection_State:
 	case Target_Selection_State:
@@ -151,7 +156,7 @@ change_selection :: proc(dx, dy: int) {
 }
 
 // skill_proc: proc(actor, target: ^Combatant)
-skill : Skill_Data
+skill: Skill_Data
 
 pc_turn :: proc(actor: ^Combatant) {
 	if battle_ui_state == nil {
@@ -185,19 +190,32 @@ pc_turn :: proc(actor: ^Combatant) {
 			}
 		case Skill_Selection_State:
 			skill = skill_data[state.s]
-			battle_ui_state = Target_Selection_State{tt = skill.targeting}
+			battle_ui_state = Target_Selection_State {
+				tt = skill.targeting,
+			}
 		case Item_Selection_State:
 			if consumable, ok := item_data[state.s].data.(Consumable); ok {
 				skill = skill_data[consumable]
-				battle_ui_state = Target_Selection_State{tt = skill.targeting}
+				battle_ui_state = Target_Selection_State {
+					tt = skill.targeting,
+				}
 			}
 		case Target_Selection_State:
 			switch ts in state.ts {
 			case Select_One_Baddy:
 				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
-					do_effect(skill.effect, actor.character, target_cb.character, skill.power)
+					queue_battle_sound(Play_Sound{sound = (skill.sound if skill.sound != nil else .Whack)})
+					queue_battle_animation(
+						Play_Animation {
+							animation = (skill.animation if skill.animation != nil else .Ffvi_Stars),
+							offset = target_cb.coord,
+						},
+					)
+					queue_battle_effect(
+						Effect_Event{actor = actor.character, target = target_cb.character, effect_name = skill.effect},
+					)
+					actor.t += skill.time
 					battle_ui_state = Battle_UI_State{}
-					actor.t += 20
 					end_turn()
 				}
 			case Select_All_Baddies:
