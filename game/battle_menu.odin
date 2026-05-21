@@ -156,7 +156,7 @@ change_selection :: proc(dx, dy: int) {
 }
 
 // skill_proc: proc(actor, target: ^Combatant)
-skill: Skill_Data
+skill: Skill
 
 pc_turn :: proc(actor: ^Combatant) {
 	if battle_ui_state == nil {
@@ -177,7 +177,7 @@ pc_turn :: proc(actor: ^Combatant) {
 			switch state.s {
 			case ATTACK:
 				// skill_proc = attack
-				skill = skill_data[Skill.Attack]
+				skill = skills[Skill_Name.Attack]
 				// todo: check weapon target type
 				battle_ui_state = Target_Selection_State {
 					ts = Select_One_Baddy{select_first_baddy()},
@@ -189,13 +189,13 @@ pc_turn :: proc(actor: ^Combatant) {
 				battle_ui_state = Item_Selection_State{}
 			}
 		case Skill_Selection_State:
-			skill = skill_data[state.s]
+			skill = skills[state.s]
 			battle_ui_state = Target_Selection_State {
 				tt = skill.targeting,
 			}
 		case Item_Selection_State:
 			if consumable, ok := item_data[state.s].data.(Consumable); ok {
-				skill = skill_data[consumable]
+				skill = skills[consumable]
 				battle_ui_state = Target_Selection_State {
 					tt = skill.targeting,
 				}
@@ -204,16 +204,7 @@ pc_turn :: proc(actor: ^Combatant) {
 			switch ts in state.ts {
 			case Select_One_Baddy:
 				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
-					queue_battle_sound(Play_Sound{sound = (skill.sound if skill.sound != nil else .Whack)})
-					queue_battle_animation(
-						Play_Animation {
-							animation = (skill.animation if skill.animation != nil else .Ffvi_Stars),
-							offset = target_cb.coord,
-						},
-					)
-					queue_battle_effect(
-						Effect_Event{actor = actor.character, target = target_cb.character, effect_name = skill.effect},
-					)
+					queue_battle_skill(actor, target_cb, skill)
 					actor.t += skill.time
 					battle_ui_state = Battle_UI_State{}
 					end_turn()

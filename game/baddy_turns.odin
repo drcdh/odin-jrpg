@@ -4,12 +4,7 @@ ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
 	actor_team := actor.team
 	target := get_combatant_not_on_team(actor_team)
 
-	queue_battle_sound(Play_Sound{sound = .Whack})
-	queue_battle_animation(Play_Animation{animation = .Ffvi_Stars, offset = target.coord})
-	// queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_loss)})
-
-	queue_battle_effect(Effect_Event{actor = actor.character, target = target.character, effect_name = .Attack})
-
+	queue_battle_skill(actor, target, skill)
 	actor.t += 20
 
 	end_turn()

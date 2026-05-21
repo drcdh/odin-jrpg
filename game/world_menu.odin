@@ -264,7 +264,7 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 		if targeting {
 			item_name := item_data[item_idx].name
 			if consumable, ok := item_data[item_idx].data.(Consumable); ok {
-				skill = skill_data[consumable]
+				skill = skills[consumable]
 				play_sound(skill.sound) // todo
 				do_effect(skill.effect, nil, get_pc(party_idx), skill.power)
 				game_data.inventory[item_idx] -= 1

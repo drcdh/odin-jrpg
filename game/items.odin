@@ -19,12 +19,7 @@ Item_Variant :: union {
 	Equipment,
 }
 
-Consumable :: Skill
-// Consumable :: struct {
-// 	targeting: Targeting_Type,
-// 	effect:    Effect_Name,
-// 	power:     int,
-// }
+Consumable :: Skill_Name
 
 Equipment :: struct {
 	power: int,

@@ -1,6 +1,6 @@
 package game
 
-Skill :: enum {
+Skill_Name :: enum {
 	Attack,
 	Fire_10_25,
 	Heal_50,
@@ -9,7 +9,7 @@ Skill :: enum {
 	Add_Poison,
 }
 
-Skill_Data :: struct {
+Skill :: struct {
 	effect:    Effect_Name,
 	targeting: Targeting_Type,
 	power:     int,
@@ -18,7 +18,7 @@ Skill_Data :: struct {
 	sound:     Sound_Name,
 }
 
-skill_data := [len(Skill)]Skill_Data {
+skills := [len(Skill_Name)]Skill {
 	{.Attack, .One_Opponent, 0, 10, .Whack, .Whack},
 	{.Fire, .Some_Opponents, 10, 25, nil, nil},
 	{.Heal_Hp_Constant, .One_Ally, 50, 0, nil, .Warp},
