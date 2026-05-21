@@ -139,11 +139,11 @@ draw_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) {
 	tint := rl.WHITE
 	if targeting {tint = rl.GRAY}
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2, tint)
-	for i in 0 ..< len(Item) {
+	for i in 0 ..< len(Item_Name) {
 		if i == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + i), tint)
 		}
-		draw_text(2, 2 + f32(i), fmt.caprint(item_data[i].name, allocator = context.temp_allocator), tint = tint)
+		draw_text(2, 2 + f32(i), fmt.caprint(items[i].name, allocator = context.temp_allocator), tint = tint)
 		draw_text(
 			VIEW_TILES_W - 3,
 			2 + f32(i),
@@ -262,8 +262,8 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 		}
 	} else if get_input(.ENTER) {
 		if targeting {
-			item_name := item_data[item_idx].name
-			if consumable, ok := item_data[item_idx].data.(Consumable); ok {
+			item_name := items[item_idx].name
+			if consumable, ok := items[item_idx].data.(Consumable); ok {
 				skill = skills[consumable]
 				play_sound(skill.sound) // todo
 				do_effect(skill.effect, nil, get_pc(party_idx), skill.power)
@@ -276,7 +276,7 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 				fmt.println("Uh oh! Tried to use non-consumable %s", item_name)
 			}
 		} else {
-			if _, consumable := item_data[item_idx].data.(Consumable); consumable {
+			if _, consumable := items[item_idx].data.(Consumable); consumable {
 				world_menu_state = World_Menu_State_Items{item_idx, true, 0}
 			} else {
 				play_sound(.Blerp)
@@ -290,8 +290,8 @@ update_world_menu_items :: proc(item_idx: int, targeting: bool, party_idx: int) 
 			m := get_menu_input()
 			if m.y != 0 {
 				item_idx += m.y
-				if item_idx < 0 {item_idx = len(Item) - 1}
-				if item_idx >= len(Item) {item_idx = 0}
+				if item_idx < 0 {item_idx = len(Item_Name) - 1}
+				if item_idx >= len(Item_Name) {item_idx = 0}
 				world_menu_state = World_Menu_State_Items{item_idx, targeting, party_idx}
 			}
 		}

@@ -19,7 +19,7 @@ game_data: struct {
 	party_membership: [NUM_PC]bool,
 	protagonist_name: string,
 	boat_coord:       Tile_Coord,
-	inventory:        [len(Item)]u8,
+	inventory:        [len(Item_Name)]u8,
 }
 
 init_new_game :: proc() {
@@ -33,10 +33,10 @@ init_new_game :: proc() {
 		false,
 	}
 	game_data.protagonist_name = "Hiro"
-	game_data.inventory[Item.Potion] = 5
-	game_data.inventory[Item.Super_Potion] = 4
-	game_data.inventory[Item.Antidote] = 2
-	game_data.inventory[Item.Poisonous_Mushroom] = 2
+	game_data.inventory[Item_Name.Potion] = 5
+	game_data.inventory[Item_Name.Super_Potion] = 4
+	game_data.inventory[Item_Name.Antidote] = 2
+	game_data.inventory[Item_Name.Poisonous_Mushroom] = 2
 }
 
 get_game_data_bool :: proc(d: Bool_Datum) -> bool {
@@ -65,7 +65,7 @@ set_game_data :: proc {
 	set_game_data_int,
 }
 
-item_possession_cstring :: proc(i: Item) -> cstring {
-	item := item_data[i]
+item_possession_cstring :: proc(i: Item_Name) -> cstring {
+	item := items[i]
 	return fmt.caprintf("%s %2d", item.name, game_data.inventory[i], allocator = context.temp_allocator)
 }

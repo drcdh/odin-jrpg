@@ -1,6 +1,6 @@
 package game
 
-Item :: enum {
+Item_Name :: enum {
 	Potion,
 	Super_Potion,
 	Antidote,
@@ -9,7 +9,7 @@ Item :: enum {
 	Thingamajig,
 }
 
-Item_Data :: struct {
+Item :: struct {
 	name: string,
 	data: Item_Variant,
 }
@@ -26,7 +26,7 @@ Equipment :: struct {
 	// slot: Equipment_Slot,
 }
 
-item_data := [len(Item)]Item_Data {
+items := [len(Item_Name)]Item {
 	{"Potion", .Heal_50},
 	{"Super Potion", .Heal_500},
 	{"Antidote", .Remove_Poison},

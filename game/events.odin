@@ -1,7 +1,7 @@
 package game
 
 Add_Item :: struct {
-	item:   Item,
+	item:   Item_Name,
 	number: u8,
 }
 Append_Text :: struct {

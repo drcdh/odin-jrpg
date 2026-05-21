@@ -1,5 +1,6 @@
 package game
 
+import "core:fmt"
 import hm "core:container/handle_map"
 import "core:strings"
 import rl "vendor:raylib"
@@ -73,14 +74,26 @@ draw_battle_menu :: proc() {
 	case Skill_Selection_State:
 		draw_menu(2, 8, 8, 6)
 		for i in 0 ..= 6 {
+			if state.s + i >= len(Skill_Name) { break }
 			draw_text(
 				2.5,
 				8.5 + f32(i) * .5,
-				strings.clone_to_cstring(item_data[state.s + i].name, context.temp_allocator),
+				// strings.clone_to_cstring(skills[state.s + i].effect, context.temp_allocator),
+				fmt.caprint(skills[state.s + i].effect, allocator=context.temp_allocator),
 				rl.YELLOW if state.s == i else rl.WHITE,
 			)
 		}
 	case Item_Selection_State:
+		draw_menu(2, 8, 8, 6)
+		for i in 0 ..= 6 {
+			if state.s + i >= len(Item_Name) { break }
+			draw_text(
+				2.5,
+				8.5 + f32(i) * .5,
+				strings.clone_to_cstring(items[state.s + i].name, context.temp_allocator),
+				rl.YELLOW if state.s == i else rl.WHITE,
+			)
+		}
 	case Target_Selection_State:
 	}
 }
@@ -122,7 +135,17 @@ change_selection :: proc(dx, dy: int) {
 		if s > ITEM {s = 0}
 		battle_ui_state = Action_Selection_State{s}
 	case Skill_Selection_State:
+		s := state.s
+		s += dy
+		if s < 0 {s = len(Skill_Name)-1}
+		if s >= len(Skill_Name) { s = 0 }
+		battle_ui_state = Skill_Selection_State{s}
 	case Item_Selection_State:
+		s := state.s
+		s += dy
+		if s < 0 {s = len(Item_Name)-1}
+		if s >= len(Item_Name) { s = 0 }
+		battle_ui_state = Item_Selection_State{s}
 	case Target_Selection_State:
 		switch ts in state.ts {
 		case Select_One_Baddy:
@@ -191,12 +214,14 @@ pc_turn :: proc(actor: ^Combatant) {
 		case Skill_Selection_State:
 			skill = skills[state.s]
 			battle_ui_state = Target_Selection_State {
+				ts = Select_One_Baddy{},
 				tt = skill.targeting,
 			}
 		case Item_Selection_State:
-			if consumable, ok := item_data[state.s].data.(Consumable); ok {
+			if consumable, ok := items[state.s].data.(Consumable); ok {
 				skill = skills[consumable]
 				battle_ui_state = Target_Selection_State {
+					ts = Select_One_Ally{},
 					tt = skill.targeting,
 				}
 			}
@@ -211,6 +236,12 @@ pc_turn :: proc(actor: ^Combatant) {
 				}
 			case Select_All_Baddies:
 			case Select_One_Ally:
+				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
+					queue_battle_skill(actor, target_cb, skill)
+					actor.t += skill.time
+					battle_ui_state = Battle_UI_State{}
+					end_turn()
+				}
 			case Select_All_Allies:
 			case Select_All_Combatants:
 			}
