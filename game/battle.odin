@@ -213,7 +213,6 @@ process_battle_events :: proc(dt: f32) {
 				battle_state = Next_Turn{}
 			}
 		}
-	// action, done := actor.turn(actor_idx).?
 	case Next_Event:
 		if queue.len(battle_event_queue) > 0 {
 			switch e in queue.pop_front(&battle_event_queue) {

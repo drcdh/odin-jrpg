@@ -24,7 +24,7 @@ effect_remove_poison :: proc(actor, target: ^Character, chance: int) {
 	target.poison = false
 }
 
-effect_add_poison :: proc(actor, target: ^Character, change: int) {
+effect_add_poison :: proc(actor, target: ^Character, chance: int) {
 	// todo: random
 	target.poison = true
 }
