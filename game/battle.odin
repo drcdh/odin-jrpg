@@ -98,7 +98,7 @@ remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(VIEW_TILES_W / 2, VIEW_TILES_H - 4, VIEW_TILES_W / 2, 4)
+	draw_menu(4, VIEW_TILES_H - 4, VIEW_TILES_W - 4, 4)
 
 	for p in 0 ..< battle_num_pc {
 		draw_party_member_stats(p)
@@ -140,10 +140,10 @@ draw_party_member_stats :: proc(p: int) {
 			text_color = rl.RED
 		}
 		draw_text(
-			VIEW_TILES_W / 2 + .5,
+			4.5,
 			(VIEW_TILES_H - 3.5) + f32(p) / 2,
 			fmt.caprintf(
-				"%- 14s% 4d/% 4d",
+				"%- 13s% 4d/% 4d",
 				c.character.name,
 				c.character.stats.hitpoints,
 				c.character.stats.hitpoints,
