@@ -7,6 +7,11 @@ Item_Name :: enum {
 	Poisonous_Mushroom,
 	Sword,
 	Thingamajig,
+	Doodad,
+	Deluxe_Doodad,
+	Postcard,
+	Generic_Trinket,
+	Mundane_Tchotchke,
 }
 
 Item :: struct {
@@ -33,4 +38,9 @@ items := [len(Item_Name)]Item {
 	{"Poisonous Mushroom", .Add_Poison},
 	{"Sword", Equipment{10}},
 	{"Thingamajig", nil},
+	{"Doodad", nil},
+	{"Deluxe Doodad", nil},
+	{"Postcard", nil},
+	{"Generic Trinket", nil},
+	{"Mundane Tchotchke", nil},
 }

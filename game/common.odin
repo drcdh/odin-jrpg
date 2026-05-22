@@ -82,3 +82,20 @@ get_moves_toward :: proc(k: Kinematics, d: Tile_Coord) -> (Tile_Coord, Tile_Coor
 	alt := v - move
 	return move, alt
 }
+
+shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
+	s, w := s, w
+	s += d
+	if s < 0 {
+		s = N-1
+		w = max(0, N-W)
+	} else if s >= N {
+		s = 0
+		w = 0
+	} else if s >= w+W {
+		w = s - W + 1
+	} else if s < w {
+		w = s
+	}
+	return s, w
+}

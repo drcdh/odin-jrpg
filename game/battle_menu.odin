@@ -18,9 +18,11 @@ Action_Selection_State :: struct {
 }
 Skill_Selection_State :: struct {
 	s: int,
+	w: int,
 }
 Item_Selection_State :: struct {
 	s: int,
+	w: int,
 }
 Target_Selection_State :: struct {
 	ts: Target_Selection,
@@ -64,6 +66,9 @@ ATTACK :: 0
 SKILL :: 1
 ITEM :: 2
 
+BATTLE_MENU_SKILLS_ROWS :: 6
+BATTLE_MENU_ITEMS_ROWS :: 6
+
 draw_battle_menu :: proc() {
 	switch state in battle_ui_state {
 	case Action_Selection_State:
@@ -72,26 +77,26 @@ draw_battle_menu :: proc() {
 		draw_text(0.5, 11.0, "Skill", rl.YELLOW if state.s == 1 else rl.WHITE)
 		draw_text(0.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
 	case Skill_Selection_State:
-		draw_menu(2, 8, 8, 6)
-		for i in 0 ..= 6 {
-			if state.s + i >= len(Skill_Name) { break }
+		draw_menu(2, 8, 8, BATTLE_MENU_SKILLS_ROWS-2)
+		for r in 0 ..< BATTLE_MENU_SKILLS_ROWS {
+			if r >= len(Skill_Name) { break }
 			draw_text(
 				2.5,
-				8.5 + f32(i) * .5,
+				8.5 + f32(r) * .5,
 				// strings.clone_to_cstring(skills[state.s + i].effect, context.temp_allocator),
-				fmt.caprint(skills[state.s + i].effect, allocator=context.temp_allocator),
-				rl.YELLOW if state.s == i else rl.WHITE,
+				fmt.caprint(skills[state.w + r].effect, allocator=context.temp_allocator),
+				rl.YELLOW if state.s == state.w + r else rl.WHITE,
 			)
 		}
 	case Item_Selection_State:
-		draw_menu(2, 8, 8, 6)
-		for i in 0 ..= 6 {
-			if state.s + i >= len(Item_Name) { break }
+		draw_menu(2, 8, 8, BATTLE_MENU_ITEMS_ROWS-2)
+		for r in 0 ..< BATTLE_MENU_ITEMS_ROWS {
+			if r >= len(Item_Name) { break }
 			draw_text(
 				2.5,
-				8.5 + f32(i) * .5,
-				strings.clone_to_cstring(items[state.s + i].name, context.temp_allocator),
-				rl.YELLOW if state.s == i else rl.WHITE,
+				8.5 + f32(r) * .5,
+				strings.clone_to_cstring(items[state.w + r].name, context.temp_allocator),
+				rl.YELLOW if state.s == state.w + r else rl.WHITE,
 			)
 		}
 	case Target_Selection_State:
@@ -126,7 +131,7 @@ select_first_baddy :: proc() -> int {
 	return change_baddy_selection(MAX_ENCOUNTER_SIZE, 1)
 }
 
-change_selection :: proc(dx, dy: int) {
+battle_change_selection :: proc(dx, dy: int) {
 	switch &state in battle_ui_state {
 	case Action_Selection_State:
 		s := state.s
@@ -135,17 +140,11 @@ change_selection :: proc(dx, dy: int) {
 		if s > ITEM {s = 0}
 		battle_ui_state = Action_Selection_State{s}
 	case Skill_Selection_State:
-		s := state.s
-		s += dy
-		if s < 0 {s = len(Skill_Name)-1}
-		if s >= len(Skill_Name) { s = 0 }
-		battle_ui_state = Skill_Selection_State{s}
+		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_SKILLS_ROWS, len(Skill_Name))
+		battle_ui_state = Skill_Selection_State{s, w}
 	case Item_Selection_State:
-		s := state.s
-		s += dy
-		if s < 0 {s = len(Item_Name)-1}
-		if s >= len(Item_Name) { s = 0 }
-		battle_ui_state = Item_Selection_State{s}
+		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_ITEMS_ROWS, len(Item_Name))
+		battle_ui_state = Item_Selection_State{s, w}
 	case Target_Selection_State:
 		switch ts in state.ts {
 		case Select_One_Baddy:
@@ -187,13 +186,13 @@ pc_turn :: proc(actor: ^Combatant) {
 		return
 	}
 	if get_input(.UP) {
-		change_selection(0, -1)
+		battle_change_selection(0, -1)
 	} else if get_input(.DOWN) {
-		change_selection(0, 1)
+		battle_change_selection(0, 1)
 	} else if get_input(.LEFT) {
-		change_selection(-1, 0)
+		battle_change_selection(-1, 0)
 	} else if get_input(.RIGHT) {
-		change_selection(1, 0)
+		battle_change_selection(1, 0)
 	} else if get_input(.ENTER) {
 		switch state in battle_ui_state {
 		case Action_Selection_State:
@@ -236,7 +235,7 @@ pc_turn :: proc(actor: ^Combatant) {
 				}
 			case Select_All_Baddies:
 			case Select_One_Ally:
-				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
+				if target_cb, ok := hm.get(&battle_combatants, battle_pc_handles[ts.i]); ok {
 					queue_battle_skill(actor, target_cb, skill)
 					actor.t += skill.time
 					battle_ui_state = Battle_UI_State{}
@@ -245,6 +244,17 @@ pc_turn :: proc(actor: ^Combatant) {
 			case Select_All_Allies:
 			case Select_All_Combatants:
 			}
+		}
+	} else if get_input(.CANCEL) {
+		switch state in battle_ui_state {
+		case Action_Selection_State:
+			// do nothing
+		case Skill_Selection_State:
+			battle_ui_state = Action_Selection_State{SKILL}
+		case Item_Selection_State:
+			battle_ui_state = Action_Selection_State{ITEM}
+		case Target_Selection_State:
+			battle_ui_state = Action_Selection_State{ATTACK} //fixme
 		}
 	}
 }
