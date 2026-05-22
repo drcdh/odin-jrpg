@@ -234,6 +234,15 @@ pc_turn :: proc(actor: ^Combatant) {
 					end_turn()
 				}
 			case Select_All_Baddies:
+				for i in 0..<MAX_ENCOUNTER_SIZE {
+					c := hm.get(&battle_combatants, battle_baddy_handles[i]) or_continue
+					if combatant_alive(c) {
+						queue_battle_skill(actor, c, skill)
+					}
+				}
+				actor.t += skill.time
+				battle_ui_state = Battle_UI_State{}
+				end_turn()
 			case Select_One_Ally:
 				if target_cb, ok := hm.get(&battle_combatants, battle_pc_handles[ts.i]); ok {
 					queue_battle_skill(actor, target_cb, skill)
@@ -241,8 +250,29 @@ pc_turn :: proc(actor: ^Combatant) {
 					battle_ui_state = Battle_UI_State{}
 					end_turn()
 				}
+				actor.t += skill.time
+				battle_ui_state = Battle_UI_State{}
+				end_turn()
 			case Select_All_Allies:
+				for i in 0..<NUM_PC {
+					c := hm.get(&battle_combatants, battle_pc_handles[i]) or_continue
+					if combatant_alive(c) {
+						queue_battle_skill(actor, c, skill)
+					}
+				}
+				actor.t += skill.time
+				battle_ui_state = Battle_UI_State{}
+				end_turn()
 			case Select_All_Combatants:
+				it := hm.iterator_make(&battle_combatants)
+				for c, _ in hm.iterate(&it) {
+					if combatant_alive(c) {
+						queue_battle_skill(actor, c, skill)
+					}
+				}
+				actor.t += skill.time
+				battle_ui_state = Battle_UI_State{}
+				end_turn()
 			}
 		}
 	} else if get_input(.CANCEL) {
