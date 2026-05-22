@@ -255,9 +255,17 @@ process_battle_events :: proc(dt: f32) {
 
 targeted :: proc(id, team: int) -> bool {
 	if tss, ok := battle_ui_state.(Target_Selection_State); ok {
-		#partial switch ts in tss.ts {
+		switch ts in tss.ts {
 		case Select_One_Baddy:
-			return id == ts.i
+			return team == BADDY_TEAM && id == ts.i
+		case Select_One_Ally:
+			return team == PLAYER_TEAM && id == ts.i
+		case Select_All_Allies:
+			return team == PLAYER_TEAM
+		case Select_All_Baddies:
+			return team == BADDY_TEAM
+		case Select_All_Combatants:
+			return true
 		}
 	}
 	return false

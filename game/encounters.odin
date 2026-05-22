@@ -105,10 +105,9 @@ start_encounter :: proc(i: int, paused: bool) {
 				character = get_pc(PC(pc_idx)),
 				coord = {x, y},
 				enabled = true,
-				id = battle_num_baddies + battle_num_pc,
+				id = battle_num_pc,
 				team = PLAYER_TEAM,
 				turn = pc_turn,
-				// visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = pc_idle_anim_tint[pc_idx]},
 				visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
 			},
 			)
