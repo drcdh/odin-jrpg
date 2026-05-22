@@ -1,7 +1,7 @@
 package game
 
-import "core:fmt"
 import hm "core:container/handle_map"
+import "core:fmt"
 import "core:strings"
 import rl "vendor:raylib"
 
@@ -77,21 +77,21 @@ draw_battle_menu :: proc() {
 		draw_text(0.5, 11.0, "Skill", rl.YELLOW if state.s == 1 else rl.WHITE)
 		draw_text(0.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
 	case Skill_Selection_State:
-		draw_menu(2, 8, 8, BATTLE_MENU_SKILLS_ROWS-2)
+		draw_menu(2, 8, 8, BATTLE_MENU_SKILLS_ROWS - 2)
 		for r in 0 ..< BATTLE_MENU_SKILLS_ROWS {
-			if r >= len(Skill_Name) { break }
+			if r >= len(Skill_Name) {break}
 			draw_text(
 				2.5,
 				8.5 + f32(r) * .5,
 				// strings.clone_to_cstring(skills[state.s + i].effect, context.temp_allocator),
-				fmt.caprint(skills[state.w + r].effect, allocator=context.temp_allocator),
+				fmt.caprint(skills[state.w + r].effect, allocator = context.temp_allocator),
 				rl.YELLOW if state.s == state.w + r else rl.WHITE,
 			)
 		}
 	case Item_Selection_State:
-		draw_menu(2, 8, 8, BATTLE_MENU_ITEMS_ROWS-2)
+		draw_menu(2, 8, 8, BATTLE_MENU_ITEMS_ROWS - 2)
 		for r in 0 ..< BATTLE_MENU_ITEMS_ROWS {
-			if r >= len(Item_Name) { break }
+			if r >= len(Item_Name) {break}
 			draw_text(
 				2.5,
 				8.5 + f32(r) * .5,
@@ -178,7 +178,7 @@ battle_change_selection :: proc(dx, dy: int) {
 }
 
 default_target_selection :: proc(tt: Targeting_Type) -> Target_Selection {
-	ts : Target_Selection
+	ts: Target_Selection
 	switch tt {
 	case .One_Opponent:
 		ts = Select_One_Baddy{}
@@ -257,7 +257,7 @@ pc_turn :: proc(actor: ^Combatant) {
 					end_turn()
 				}
 			case Select_All_Baddies:
-				for i in 0..<MAX_ENCOUNTER_SIZE {
+				for i in 0 ..< MAX_ENCOUNTER_SIZE {
 					c := hm.get(&battle_combatants, battle_baddy_handles[i]) or_continue
 					if combatant_alive(c) {
 						queue_battle_skill(actor, c, skill)
@@ -277,7 +277,7 @@ pc_turn :: proc(actor: ^Combatant) {
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_All_Allies:
-				for i in 0..<NUM_PC {
+				for i in 0 ..< NUM_PC {
 					c := hm.get(&battle_combatants, battle_pc_handles[i]) or_continue
 					if combatant_alive(c) {
 						queue_battle_skill(actor, c, skill)
@@ -301,7 +301,7 @@ pc_turn :: proc(actor: ^Combatant) {
 	} else if get_input(.CANCEL) {
 		switch state in battle_ui_state {
 		case Action_Selection_State:
-			// do nothing
+		// do nothing
 		case Skill_Selection_State:
 			battle_ui_state = Action_Selection_State{SKILL}
 		case Item_Selection_State:

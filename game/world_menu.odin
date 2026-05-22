@@ -141,9 +141,9 @@ draw_world_menu_skills :: proc(party_idx: int) {
 draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_idx: int) {
 	tint := rl.WHITE
 	if targeting {tint = rl.GRAY}
-	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS+2, tint)
+	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS + 2, tint)
 	for r in 0 ..< WORLD_MENU_ITEMS_ROWS {
-		if r >= len(Item_Name) { break }
+		if r >= len(Item_Name) {break}
 		if r + origin_idx == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + r), tint)
 		}
@@ -288,7 +288,12 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 		}
 	} else {
 		if targeting {
-			world_menu_state = World_Menu_State_Items{item_idx, origin_idx, true, change_world_menu_party_idx_from_input(party_idx)}
+			world_menu_state = World_Menu_State_Items {
+				item_idx,
+				origin_idx,
+				true,
+				change_world_menu_party_idx_from_input(party_idx),
+			}
 		} else {
 			item_idx := item_idx
 			m := get_menu_input()

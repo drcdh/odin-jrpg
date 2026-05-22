@@ -32,6 +32,6 @@ queue_battle_skill :: proc(actor, target: ^Combatant, skill: Skill) {
 	sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 
 	queue_battle_sound(Play_Sound{sound = sound})
-	queue_battle_animation(Play_Animation { animation = animation, offset = target.coord })
+	queue_battle_animation(Play_Animation{animation = animation, offset = target.coord})
 	queue_battle_effect(skill.effect, actor.character, target.character, skill.power)
 }

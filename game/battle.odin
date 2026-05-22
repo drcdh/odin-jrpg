@@ -85,8 +85,8 @@ draw_battle :: proc() {
 	}
 
 	// debug
-	rl.DrawText(fmt.caprint(battle_ui_state, allocator=context.temp_allocator), 0, i32(7*tile_size), 16, rl.BLACK)
-	rl.DrawText(fmt.caprint(battle_state, allocator=context.temp_allocator), 0, i32(7.5*tile_size), 16, rl.BLACK)
+	rl.DrawText(fmt.caprint(battle_ui_state, allocator = context.temp_allocator), 0, i32(7 * tile_size), 16, rl.BLACK)
+	rl.DrawText(fmt.caprint(battle_state, allocator = context.temp_allocator), 0, i32(7.5 * tile_size), 16, rl.BLACK)
 }
 
 draw_battle_background :: proc() {

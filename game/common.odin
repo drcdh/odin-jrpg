@@ -87,12 +87,12 @@ shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
 	s, w := s, w
 	s += d
 	if s < 0 {
-		s = N-1
-		w = max(0, N-W)
+		s = N - 1
+		w = max(0, N - W)
 	} else if s >= N {
 		s = 0
 		w = 0
-	} else if s >= w+W {
+	} else if s >= w + W {
 		w = s - W + 1
 	} else if s < w {
 		w = s
