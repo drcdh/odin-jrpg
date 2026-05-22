@@ -150,31 +150,54 @@ battle_change_selection :: proc(dx, dy: int) {
 		case Select_One_Baddy:
 			if dy != 0 {
 				state.ts = Select_One_Baddy{change_baddy_selection(ts.i, dy)}
-			} else if dx < 0 {
+			} else if dx < 0 && state.tt != .One_Opponent && state.tt != .One_Combatant {
 				state.ts = Select_All_Baddies{ts.i}
-			} else if dx > 0 {
+			} else if dx > 0 && state.tt == .One_Combatant {
 				state.ts = Select_One_Ally{}
 			}
 		case Select_All_Baddies:
-			if dx > 0 {
+			if dx > 0 && state.tt != .All_Opponents {
 				state.ts = Select_One_Baddy{ts.prev}
 			}
 		case Select_One_Ally:
 			if dy != 0 {
 				state.ts = Select_One_Ally{change_ally_selection(ts.i, dy)}
-			} else if dx > 0 {
+			} else if dx > 0 && state.tt != .One_Ally && state.tt != .One_Combatant {
 				state.ts = Select_All_Allies{ts.i}
-			} else if dx < 0 {
+			} else if dx < 0 && state.tt == .One_Combatant {
 				state.ts = Select_One_Baddy{}
 			}
 		case Select_All_Allies:
-			if dx < 0 {
+			if dx < 0 && state.tt != .All_Allies {
 				state.ts = Select_One_Ally{ts.prev}
 			}
 		case Select_All_Combatants:
 		// do nothing
 		}
 	}
+}
+
+default_target_selection :: proc(tt: Targeting_Type) -> Target_Selection {
+	ts : Target_Selection
+	switch tt {
+	case .One_Opponent:
+		ts = Select_One_Baddy{}
+	case .Some_Opponents:
+		ts = Select_One_Baddy{}
+	case .All_Opponents:
+		ts = Select_All_Baddies{}
+	case .One_Combatant:
+		ts = Select_One_Baddy{}
+	case .One_Ally:
+		ts = Select_One_Ally{}
+	case .Some_Allies:
+		ts = Select_One_Ally{}
+	case .All_Allies:
+		ts = Select_All_Allies{}
+	case .All_Combatants:
+		ts = Select_All_Combatants{}
+	}
+	return ts
 }
 
 // skill_proc: proc(actor, target: ^Combatant)
@@ -213,14 +236,14 @@ pc_turn :: proc(actor: ^Combatant) {
 		case Skill_Selection_State:
 			skill = skills[state.s]
 			battle_ui_state = Target_Selection_State {
-				ts = Select_One_Baddy{},
+				ts = default_target_selection(skill.targeting),
 				tt = skill.targeting,
 			}
 		case Item_Selection_State:
 			if consumable, ok := items[state.s].data.(Consumable); ok {
 				skill = skills[consumable]
 				battle_ui_state = Target_Selection_State {
-					ts = Select_One_Ally{},
+					ts = default_target_selection(skill.targeting),
 					tt = skill.targeting,
 				}
 			}
