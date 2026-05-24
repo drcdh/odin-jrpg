@@ -88,6 +88,18 @@ WARP_TO_1 := [?]Event {
 	End{},
 }
 
+lorem_ipsum := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text {
+		// text = "Line 1.\nLine 2..\nLine 3...\nLine 4....\nLine 5.....",
+		text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+	},
+	Close_Dialogue{},
+	Clear_Text{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
 start_level_0 :: proc() {
 	add_pc_entity(LEVEL_0_PLAYER_SPAWN, .Down)
 
@@ -159,6 +171,17 @@ start_level_0 :: proc() {
 			n = "Monster in a box",
 			talk = MONSTER_IN_A_BOX[:],
 			v = Texture_Name.Box,
+		},
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 11,
+			tile = LEVEL_0_SIGN,
+			n = "Lorem Ipsum sign",
+			talk = lorem_ipsum[:],
+			v = Texture_Name.Sign,
 		},
 	)
 
