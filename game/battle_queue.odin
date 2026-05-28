@@ -49,7 +49,7 @@ center_rect_on_combatant :: proc(r1: Rect, c: Combatant) -> Rect {
 	rc.y = c.coord.y
 	rc.width = t.document_size.x
 	rc.height = t.document_size.y
-	fmt.printfln("centering on combatant with rect %w", rc)
+	// fmt.printfln("centering on combatant with rect %w", rc)
 	return center_rect_on_rect(r1, rc)
 }
 
@@ -58,7 +58,7 @@ center_animation_on_combatant :: proc(a: Animation_Name, c: Combatant) -> Rect {
 	ra: Rect
 	ra.width = t.document_size.x
 	ra.height = t.document_size.y
-	fmt.printfln("centering animation %s with dim %.0fx%.0f", a, ra.width, ra.height)
+	// fmt.printfln("centering animation %s with dim %.0fx%.0f", a, ra.width, ra.height)
 	return center_rect_on_combatant(ra, c)
 }
 
@@ -75,7 +75,7 @@ queue_battle_skill :: proc(actor, target: ^Combatant, skill: Skill) {
 	queue_battle_sound(Play_Sound{sound = sound})
 
 	r := center_animation_on_combatant(animation, target^)
-	fmt.println("centered rect is", r)
+	// fmt.println("centered rect is", r)
 	queue_battle_animation(Play_Animation{animation = animation, offset = {r.x, r.y}})
 	queue_battle_effect(skill.effect, actor.character, target.character, skill.power)
 }

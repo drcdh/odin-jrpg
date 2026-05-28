@@ -4,11 +4,13 @@ import "core:slice"
 import rl "vendor:raylib"
 
 ATLAS_DATA :: #load("atlas.png")
+BATTLE_BACKGROUND_DATA :: #load("textures/_battle_background.png")
 FONT_ATLAS_DATA :: #load("textures/_font.png")
 
 Rect :: rl.Rectangle // for the results of atlas_builder
 
 atlas: rl.Texture
+battle_background: rl.Texture
 font_atlas: rl.Texture
 
 font: rl.Font
@@ -17,6 +19,10 @@ init_atlases :: proc() {
 	atlas_image := rl.LoadImageFromMemory(".png", raw_data(ATLAS_DATA), i32(len(ATLAS_DATA)))
 	atlas = rl.LoadTextureFromImage(atlas_image)
 	rl.UnloadImage(atlas_image)
+
+	bb_image := rl.LoadImageFromMemory(".png", raw_data(BATTLE_BACKGROUND_DATA), i32(len(BATTLE_BACKGROUND_DATA)))
+	battle_background = rl.LoadTextureFromImage(bb_image)
+	rl.UnloadImage(bb_image)
 
 	font_atlas_image := rl.LoadImageFromMemory(".png", raw_data(FONT_ATLAS_DATA), i32(len(FONT_ATLAS_DATA)))
 	font_atlas = rl.LoadTextureFromImage(font_atlas_image)
@@ -53,7 +59,7 @@ delete_atlased_font :: proc(font: rl.Font) {
 	delete(slice.from_ptr(font.recs, int(font.glyphCount)))
 }
 
-draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
+draw_texture_atlas :: proc(v: Texture_Name, pos: Pixel_Coord, tint := rl.WHITE) {
 	atlas_texture := atlas_textures[v]
 	atlas_rect := atlas_texture.rect
 	offset := Pixel_Coord{atlas_texture.offset_left, atlas_texture.offset_top}
@@ -62,23 +68,35 @@ draw_texture :: proc(v: Texture_Name, pos: Pixel_Coord, tint: rl.Color) {
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
 
+draw_texture_rl :: proc(texture: rl.Texture, pos: Pixel_Coord, tint := rl.WHITE) {
+	w := f32(texture.width)
+	h := f32(texture.height)
+	dest := rl.Rectangle{pos.x, pos.y, zoom * w, zoom * h}
+	rl.DrawTexturePro(texture, {0, 0, w, h}, dest, {}, 0, tint)
+}
+
+draw_texture :: proc {
+	draw_texture_atlas,
+	draw_texture_rl,
+}
+
 draw_menu :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
 	r := l + w - 1
 	b := t + h - 1
-	draw_texture(.Menu_Topleft, tile_to_pixel({l, t}), tint)
-	draw_texture(.Menu_Topright, tile_to_pixel({r, t}), tint)
-	draw_texture(.Menu_Bottomleft, tile_to_pixel({l, b}), tint)
-	draw_texture(.Menu_Bottomright, tile_to_pixel({r, b}), tint)
+	draw_texture(Texture_Name.Menu_Topleft, tile_to_pixel({l, t}), tint)
+	draw_texture(Texture_Name.Menu_Topright, tile_to_pixel({r, t}), tint)
+	draw_texture(Texture_Name.Menu_Bottomleft, tile_to_pixel({l, b}), tint)
+	draw_texture(Texture_Name.Menu_Bottomright, tile_to_pixel({r, b}), tint)
 	for x in l + 1 ..< r {
-		draw_texture(.Menu_Topcenter, tile_to_pixel({x, t}), tint)
-		draw_texture(.Menu_Bottomcenter, tile_to_pixel({x, b}), tint)
+		draw_texture(Texture_Name.Menu_Topcenter, tile_to_pixel({x, t}), tint)
+		draw_texture(Texture_Name.Menu_Bottomcenter, tile_to_pixel({x, b}), tint)
 		for y in t + 1 ..< b {
-			draw_texture(.Menu_Center, tile_to_pixel({x, y}), tint)
+			draw_texture(Texture_Name.Menu_Center, tile_to_pixel({x, y}), tint)
 		}
 	}
 	for y in t + 1 ..< b {
-		draw_texture(.Menu_Centerleft, tile_to_pixel({l, y}), tint)
-		draw_texture(.Menu_Centerright, tile_to_pixel({r, y}), tint)
+		draw_texture(Texture_Name.Menu_Centerleft, tile_to_pixel({l, y}), tint)
+		draw_texture(Texture_Name.Menu_Centerright, tile_to_pixel({r, y}), tint)
 	}
 }
 

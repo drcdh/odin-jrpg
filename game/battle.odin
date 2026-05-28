@@ -90,7 +90,8 @@ draw_battle :: proc() {
 }
 
 draw_battle_background :: proc() {
-	rl.ClearBackground(rl.GRAY)
+	// rl.ClearBackground(rl.GRAY)
+	draw_texture(battle_background, {})
 }
 
 remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
