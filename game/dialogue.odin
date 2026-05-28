@@ -36,7 +36,7 @@ dialogue_marquee: strings.Builder
 dialogue_icon: Animation
 
 dialogue_lines: int = 4 // todo
-dialogue_line_width: int = 2*VIEW_TILES_W-2
+dialogue_line_width: int = 2 * VIEW_TILES_W - 2
 
 init_dialogue :: proc() {
 	dialogue_icon = animation_create(.Dialogue_Icon_Small)
@@ -47,7 +47,7 @@ draw_dialogue :: proc() {
 	if _, hidden := dialogue_state.(Dialogue_Hidden); !hidden {
 		str := strings.to_string(dialogue_marquee)
 		if substr, ok := strings.substring_to(str, dialogue_marquee_end); ok {
-			draw_menu(0, 0, VIEW_TILES_W, (dialogue_lines + 2)/2)
+			draw_menu(0, 0, VIEW_TILES_W, (dialogue_lines + 2) / 2)
 			draw_text(.5, .5, strings.clone_to_cstring(substr, context.temp_allocator))
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
@@ -101,8 +101,14 @@ refill_marquee :: proc() {
 	strings.builder_reset(&dialogue_marquee)
 	refill_start := dialogue_buffer_end
 	buffer := strings.to_string(dialogue_builder)
-	for l in 1..=dialogue_lines {
-		fmt.printf("line %d/%d: refill_start = %d; buffer len = %d\n", l, dialogue_lines, refill_start, strings.builder_len(dialogue_builder))
+	for l in 1 ..= dialogue_lines {
+		fmt.printf(
+			"line %d/%d: refill_start = %d; buffer len = %d\n",
+			l,
+			dialogue_lines,
+			refill_start,
+			strings.builder_len(dialogue_builder),
+		)
 		if refill_start >= strings.builder_len(dialogue_builder) {
 			break
 		}
@@ -114,7 +120,12 @@ refill_marquee :: proc() {
 			if next_newline < 0 {
 				next_newline = strings.last_index(max_substr, " ")
 			}
-			fmt.printf("next_newline in [%d, %d) = %d\n", refill_start, dialogue_line_width+refill_start, next_newline+refill_start)
+			fmt.printf(
+				"next_newline in [%d, %d) = %d\n",
+				refill_start,
+				dialogue_line_width + refill_start,
+				next_newline + refill_start,
+			)
 			fmt.printf("next_newline in [%d, %d) = %d\n", 0, dialogue_line_width, next_newline)
 			next_line, _ = strings.substring_to(max_substr, next_newline)
 		} else {
@@ -123,7 +134,12 @@ refill_marquee :: proc() {
 			if next_newline < 0 {
 				next_newline = strings.builder_len(dialogue_builder)
 			}
-			fmt.printf("next_newline in [%d, %d) = %d\n", refill_start, dialogue_line_width+refill_start, next_newline+refill_start)
+			fmt.printf(
+				"next_newline in [%d, %d) = %d\n",
+				refill_start,
+				dialogue_line_width + refill_start,
+				next_newline + refill_start,
+			)
 			fmt.printf("next_newline in [%d, %d) = %d\n", 0, dialogue_line_width, next_newline)
 			if next_newline < 0 {
 				// next_line, _ = strings.substring_from(buffer, refill_start)
@@ -135,7 +151,7 @@ refill_marquee :: proc() {
 		fmt.printf("appending line to marquee '%s'\n", next_line)
 		strings.write_string(&dialogue_marquee, next_line)
 		strings.write_string(&dialogue_marquee, "\n")
-		refill_start = next_newline+refill_start+1
+		refill_start = next_newline + refill_start + 1
 	}
 	dialogue_buffer_end = refill_start
 	dialogue_marquee_start = 0

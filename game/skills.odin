@@ -19,7 +19,7 @@ Skill :: struct {
 }
 
 skills := [len(Skill_Name)]Skill {
-	{.Attack, .One_Opponent, 0, 10, .Whack, .Whack},
+	{.Attack, .One_Opponent, 0, 10, .Smack, .Whack},
 	{.Fire, .Some_Opponents, 10, 25, .Small_Flame, nil},
 	{.Heal_Hp_Constant, .One_Ally, 50, 0, nil, .Warp},
 	{.Heal_Hp_Constant, .One_Ally, 500, 0, nil, .Warp},

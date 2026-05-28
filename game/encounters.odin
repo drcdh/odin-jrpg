@@ -53,6 +53,7 @@ encounters := [?]Encounter {
 			{{2, 2}, .Mouse_Sized_Rat},
 		},
 	},
+	{baddies = {{{0, 0}, .Bad_Box}, {{0, 3}, .Bad_Box}, {{0, 5}, .Bad_Box}, {}, {}, {}}},
 }
 
 add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
