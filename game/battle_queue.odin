@@ -1,7 +1,6 @@
 package game
 
 import "core:container/queue"
-import "core:fmt"
 
 queue_battle_animation :: proc(event: Play_Animation) {
 	queue.push_back(&battle_event_queue, event)
