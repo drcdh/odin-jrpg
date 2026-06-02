@@ -24,6 +24,16 @@ encounters := [?]Encounter {
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
+			{{0, 2}, .Mouse_Sized_Rat},
+			{},
+			{},
+			{},
+			{},
+		},
+	},
+	{
+		baddies = {
+			{{0, 0}, .Mouse_Sized_Rat},
 			{{0, 1}, .Mouse_Sized_Rat},
 			{{0, 3}, .Malicious_Mushroom},
 			{{1, 1}, .Generic_Goblin_1},

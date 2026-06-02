@@ -9,6 +9,12 @@ Append_Text :: struct {
 	hurry: bool,
 	pause: f32,
 }
+Battle_Effect_Event :: struct {
+	effect_name: Effect_Name,
+	actor:       ^Combatant,
+	target:      ^Combatant,
+	value:       int,
+}
 Battle_Unpause :: struct {}
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}

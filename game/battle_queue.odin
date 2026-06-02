@@ -6,12 +6,12 @@ queue_battle_animation :: proc(event: Play_Animation) {
 	queue.push_back(&battle_event_queue, event)
 }
 
-queue_battle_effect_ee :: proc(event: Effect_Event) {
+queue_battle_effect_ee :: proc(event: Battle_Effect_Event) {
 	queue.push_back(&battle_event_queue, event)
 }
 
-queue_battle_effect_aten :: proc(effect_name: Effect_Name, actor, target: ^Character, power: int) {
-	queue_battle_effect_ee(Effect_Event{effect_name, actor, target, power})
+queue_battle_effect_aten :: proc(effect_name: Effect_Name, actor, target: ^Combatant, power: int) {
+	queue_battle_effect_ee(Battle_Effect_Event{effect_name, actor, target, power})
 }
 
 queue_battle_effect :: proc {
@@ -76,5 +76,5 @@ queue_battle_skill :: proc(actor, target: ^Combatant, skill: Skill) {
 	r := center_animation_on_combatant(animation, target^)
 	// fmt.println("centered rect is", r)
 	queue_battle_animation(Play_Animation{animation = animation, offset = {r.x, r.y}})
-	queue_battle_effect(skill.effect, actor.character, target.character, skill.power)
+	queue_battle_effect(skill.effect, actor, target, skill.power)
 }
