@@ -22,8 +22,12 @@ End :: struct {}
 Pause_Runner :: struct {
 	duration: f32,
 }
-Curtain_Down :: struct {}
-Curtain_Up :: struct {}
+Curtain_Down :: struct {
+	type: Transition_Type,
+}
+Curtain_Up :: struct {
+	type: Transition_Type,
+}
 Effect_Event :: struct {
 	effect_name: Effect_Name,
 	actor:       ^Character,

@@ -54,7 +54,7 @@ update_runner :: proc(dt: f32) {
 			if !battle_active {runner.state = Continue{}}
 			return
 		case Wait_Transition:
-			if curtain_t <= 0 {runner.state = Continue{}}
+			if transition_done() {runner.state = Continue{}}
 			return
 		}
 
@@ -78,12 +78,10 @@ update_runner :: proc(dt: f32) {
 		case Close_Dialogue:
 			close_dialogue()
 		case Curtain_Down:
-			curtain_up = false
-			curtain_t = CURTAIN_TIME
+			curtain_down(event.type)
 			runner.state = Wait_Transition{}
 		case Curtain_Up:
-			curtain_up = true
-			curtain_t = CURTAIN_TIME
+			curtain_up(event.type)
 			runner.state = Wait_Transition{}
 		case Move_Entity_Here:
 			moving_entity := get_entity_p(event.id)

@@ -21,16 +21,7 @@ Encounter :: struct {
 }
 
 encounters := [?]Encounter {
-	{
-		baddies = {
-			{{0, 0}, .Mouse_Sized_Rat},
-			{{0, 2}, .Mouse_Sized_Rat},
-			{},
-			{},
-			{},
-			{},
-		},
-	},
+	{baddies = {{{0, 0}, .Mouse_Sized_Rat}, {{0, 2}, .Mouse_Sized_Rat}, {}, {}, {}, {}}},
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
