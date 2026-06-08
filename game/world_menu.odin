@@ -141,7 +141,8 @@ draw_world_menu_skills :: proc(party_idx: int) {
 draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_idx: int) {
 	tint := rl.WHITE
 	if targeting {tint = rl.GRAY}
-	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS + 2, tint)
+	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS + 3, tint)
+	draw_text(2, WORLD_MENU_ITEMS_ROWS + 3, fmt.caprintf("% 24s", fmt.caprintf("$ %d", game_data.money, allocator = context.temp_allocator), allocator = context.temp_allocator), tint = tint)
 	for r in 0 ..< WORLD_MENU_ITEMS_ROWS {
 		if r >= len(Item_Name) {break}
 		if r + origin_idx == item_idx {

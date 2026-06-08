@@ -20,6 +20,7 @@ game_data: struct {
 	protagonist_name: string,
 	boat_coord:       Tile_Coord,
 	inventory:        [len(Item_Name)]u8,
+	money:            i32,
 }
 
 init_new_game :: proc() {
@@ -37,6 +38,7 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Super_Potion] = 4
 	game_data.inventory[Item_Name.Antidote] = 2
 	game_data.inventory[Item_Name.Poisonous_Mushroom] = 2
+	game_data.money = 123
 }
 
 get_game_data_bool :: proc(d: Bool_Datum) -> bool {
