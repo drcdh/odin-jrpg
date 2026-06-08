@@ -51,6 +51,8 @@ draw_world :: proc() {
 		}
 	}
 
+	draw_overlay()
+
 	rl.EndMode2D()
 
 	// pc := hm.get(&entities, pc_entity)
@@ -78,6 +80,7 @@ update_world :: proc(dt: f32) {
 	for e, _ in hm.iterate(&it) {
 		update_entity(dt, e)
 	}
+	update_overlay()
 }
 
 activate_entity_talk_script :: proc(h: Entity_Handle) {

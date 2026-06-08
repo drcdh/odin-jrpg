@@ -29,6 +29,7 @@ init_rl :: proc(z: i32 = 4) {
 	}
 
 	init_atlases()
+	init_overlays()
 }
 
 init :: proc() {
