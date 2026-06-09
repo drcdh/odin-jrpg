@@ -181,6 +181,8 @@ start_level_0 :: proc() {
 		Entity{id = 11, tile = LEVEL_0_SIGN, n = "Lorem Ipsum sign", talk = lorem_ipsum[:], v = Texture_Name.Sign},
 	)
 
+	play_music(&music_state, .Town)
+
 	if !get_game_data(Bool_Datum.Introduction) {
 		start_script(welcome[:])
 	}

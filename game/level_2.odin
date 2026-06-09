@@ -116,4 +116,6 @@ start_level_2 :: proc() {
 			z = Z_MAX,
 		},
 	)
+
+	play_music(&music_state, .Town)
 }

@@ -104,4 +104,6 @@ start_level_overworld :: proc() {
 		&entities,
 		Entity{id = 2004, ghost = true, n = "cave_exit", tile = LEVEL_OVERWORLD_CAVE_EXIT, trap = enter_cave[:]},
 	)
+
+	play_music(&music_state, .Overworld)
 }

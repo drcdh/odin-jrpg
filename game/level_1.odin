@@ -96,4 +96,6 @@ start_level_1 :: proc() {
 	)
 
 	_ = hm.add(&entities, Entity{id = 1000, tile = LEVEL_1_DOOR, talk = DOOR_KNOCK[:]})
+
+	play_music(&music_state, .Town)
 }

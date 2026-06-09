@@ -125,4 +125,6 @@ start_encounter :: proc(i: int, paused: bool) {
 	battle_ending = false
 	battle_paused = paused
 	battle_state = Next_Turn{}
+
+	play_music(&music_state, .Battle)
 }

@@ -16,4 +16,6 @@ start_level_cave :: proc() {
 	_ = hm.add(&entities, Entity{id = 900, ghost = true, tile = LEVEL_CAVE_ENTRANCE, trap = LEAVE_CAVE[:]})
 
 	_ = hm.add(&entities, Entity{id = 901, ghost = true, tile = LEVEL_CAVE_EXIT, trap = LEAVE_CAVE[:]})
+
+	play_music(&music_state, .None)
 }

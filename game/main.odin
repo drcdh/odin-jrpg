@@ -19,6 +19,8 @@ quitting: bool // todo: transitions
 frame_count: int
 FRAME_COUNT_MAX :: 10000
 
+music_state: Music_State
+
 init_rl :: proc(z: i32 = 4) {
 	set_window_mode(z)
 
@@ -37,6 +39,8 @@ init :: proc() {
 	initialize_input()
 	init_dialogue()
 	init_world_menu()
+
+	music_init(&music_state)
 
 	init_new_game()
 	start_level(.LEVEL_0)
