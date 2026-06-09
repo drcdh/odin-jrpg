@@ -3,9 +3,10 @@ package game
 import "core:strings"
 
 Character :: struct {
-	name:         cstring,
-	using stats:  Stats,
-	using status: Status,
+	name:            cstring,
+	using equipment: Equipment,
+	using stats:     Stats,
+	using status:    Status,
 }
 
 Status :: struct {

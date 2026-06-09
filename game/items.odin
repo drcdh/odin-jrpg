@@ -12,6 +12,7 @@ Item_Name :: enum {
 	Postcard,
 	Generic_Trinket,
 	Mundane_Tchotchke,
+	None,
 }
 
 Item :: struct {
@@ -21,22 +22,24 @@ Item :: struct {
 
 Item_Variant :: union {
 	Consumable,
-	Equipment,
+	Equippable,
 }
 
 Consumable :: Skill_Name
 
-Equipment :: struct {
+Equippable :: struct {
 	power: int,
-	// slot: Equipment_Slot,
+	slot: Equipment_Slot,
 }
 
-items := [len(Item_Name)]Item {
+NUM_ITEMS :: len(Item_Name)-1
+
+items := [NUM_ITEMS]Item {
 	{"Potion", .Heal_50},
 	{"Super Potion", .Heal_500},
 	{"Antidote", .Remove_Poison},
 	{"Poisonous Mushroom", .Add_Poison},
-	{"Sword", Equipment{10}},
+	{"Sword", Equippable{10, .Mainhand}},
 	{"Thingamajig", nil},
 	{"Doodad", nil},
 	{"Deluxe Doodad", nil},

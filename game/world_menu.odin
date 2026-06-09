@@ -130,6 +130,9 @@ draw_world_menu_character :: proc(party_idx: int) {
 		for i in 0 ..< NUM_STATS {
 			draw_text(2, 3 + f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
 		}
+		for i in 0 ..< NUM_EQUIPMENT_SLOTS {
+			draw_text(2, 3 + NUM_STATS + f32(i), strings.clone_to_cstring(equipment_string(pc^, Equipment_Slot(i)), context.temp_allocator))
+		}
 		draw_text(2, 3 + NUM_STATS, get_status_cstring(pc^))
 	}
 }
@@ -144,7 +147,7 @@ draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_
 	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS + 3, tint)
 	draw_text(2, WORLD_MENU_ITEMS_ROWS + 3, fmt.caprintf("% 24s", fmt.caprintf("$ %d", game_data.money, allocator = context.temp_allocator), allocator = context.temp_allocator), tint = tint)
 	for r in 0 ..< WORLD_MENU_ITEMS_ROWS {
-		if r >= len(Item_Name) {break}
+		if r >= NUM_ITEMS {break}
 		if r + origin_idx == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + r), tint)
 		}
@@ -299,10 +302,7 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 			item_idx := item_idx
 			m := get_menu_input()
 			if m.y != 0 {
-				// item_idx += m.y
-				// if item_idx < 0 {item_idx = len(Item_Name) - 1}
-				// if item_idx >= len(Item_Name) {item_idx = 0}
-				s, w := shift_windowed_selection(m.y, item_idx, origin_idx, 10, len(Item_Name))
+				s, w := shift_windowed_selection(m.y, item_idx, origin_idx, 10, NUM_ITEMS)
 				world_menu_state = World_Menu_State_Items{s, w, targeting, party_idx}
 			}
 		}

@@ -19,7 +19,7 @@ game_data: struct {
 	party_membership: [NUM_PC]bool,
 	protagonist_name: string,
 	boat_coord:       Tile_Coord,
-	inventory:        [len(Item_Name)]u8,
+	inventory:        [NUM_ITEMS]u8,
 	money:            i32,
 }
 
@@ -39,6 +39,13 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Antidote] = 2
 	game_data.inventory[Item_Name.Poisonous_Mushroom] = 2
 	game_data.money = 123
+	unequip_all(&PROTAGONIST)
+	unequip_all(&ASSASSIN)
+	unequip_all(&MUSICIAN)
+	unequip_all(&KILLER)
+	unequip_all(&MOURNER)
+	unequip_all(&ZEALOT)
+	set_equipped_item(&PROTAGONIST, .Mainhand, .Sword, false, false)
 }
 
 get_game_data_bool :: proc(d: Bool_Datum) -> bool {
