@@ -21,30 +21,35 @@ Music_Name :: enum {
 
 Music_Asset :: struct {
 	filename: string,
-	data: []u8,
+	data:     []u8,
 }
 
 music := [Music_Name]Music_Asset {
 	.None = {},
-	.Overworld = {filename = "geoffharvey-finding-mithral-openworld-game-375527.mp3", data = #load("audio/geoffharvey-finding-mithral-openworld-game-375527.mp3") },
-	.Town = { filename = "phantasticbeats-rpg-city-8381.mp3", data = #load("audio/phantasticbeats-rpg-city-8381.mp3") },
-	.Battle = { filename = "vespidaze-upbeat-rpg-battle-460971.mp3", data = #load("audio/vespidaze-upbeat-rpg-battle-460971.mp3") },
+	.Overworld = {
+		filename = "geoffharvey-finding-mithral-openworld-game-375527.mp3",
+		data = #load("audio/geoffharvey-finding-mithral-openworld-game-375527.mp3"),
+	},
+	.Town = {filename = "phantasticbeats-rpg-city-8381.mp3", data = #load("audio/phantasticbeats-rpg-city-8381.mp3")},
+	.Battle = {
+		filename = "vespidaze-upbeat-rpg-battle-460971.mp3",
+		data = #load("audio/vespidaze-upbeat-rpg-battle-460971.mp3"),
+	},
 }
 
 Music_State :: struct {
-	new_name: Music_Name,
-	cur_name: Music_Name,
-	cur: rl.Music,
-	run_thread: bool,
-	thread: ^thread.Thread,
-	cur_volume: int,
-
-	fade_music: bool,
+	new_name:    Music_Name,
+	cur_name:    Music_Name,
+	cur:         rl.Music,
+	run_thread:  bool,
+	thread:      ^thread.Thread,
+	cur_volume:  int,
+	fade_music:  bool,
 	fade_volume: f32,
 }
 
 get_music_volume :: proc(s: ^Music_State) -> f32 {
-	return f32(s.cur_volume)/SOUND_MAX_VOLUME
+	return f32(s.cur_volume) / SOUND_MAX_VOLUME
 }
 
 // Taken from Cat & Onion by Karl Zylinski
@@ -64,7 +69,7 @@ music_thread :: proc(t: ^thread.Thread) {
 				s.fade_music = false
 				s.new_name = .None
 			} else if rl.IsMusicStreamPlaying(s.cur) {
-				rl.SetMusicVolume(s.cur, get_music_volume(s)*s.fade_volume)
+				rl.SetMusicVolume(s.cur, get_music_volume(s) * s.fade_volume)
 			}
 		} else if music_volume != s.cur_volume {
 			s.cur_volume = music_volume
@@ -91,7 +96,7 @@ music_thread :: proc(t: ^thread.Thread) {
 		}
 
 		rl.UpdateMusicStream(s.cur)
-		time.sleep(10*time.Millisecond)
+		time.sleep(10 * time.Millisecond)
 	}
 
 	rl.StopMusicStream(s.cur)

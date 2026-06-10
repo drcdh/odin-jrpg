@@ -29,10 +29,10 @@ Consumable :: Skill_Name
 
 Equippable :: struct {
 	power: int,
-	slot: Equipment_Slot,
+	slot:  Equipment_Slot,
 }
 
-NUM_ITEMS :: len(Item_Name)-1
+NUM_ITEMS :: len(Item_Name) - 1
 
 items := [NUM_ITEMS]Item {
 	{"Potion", .Heal_50},

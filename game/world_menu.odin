@@ -154,12 +154,7 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 					draw_animation(world_menu_icon, tile_to_pixel(10.5, 3 + r))
 				}
 				tint := rl.WHITE if fits_in_slot(items[r + origin_idx], Equipment_Slot(slot_idx)) else rl.GRAY
-				draw_text(
-					11,
-					3 + f32(r),
-					fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator),
-					tint,
-				)
+				draw_text(11, 3 + f32(r), fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator), tint)
 				// draw_text(
 				// 	VIEW_TILES_W - 3,
 				// 	4 + f32(r),
@@ -306,7 +301,9 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 				party_idx += m.x
 				if party_idx < 0 {party_idx = party_size() - 1}
 				if party_idx >= party_size() {party_idx = 0}
-				world_menu_state = World_Menu_State_Character{party_idx=party_idx}
+				world_menu_state = World_Menu_State_Character {
+					party_idx = party_idx,
+				}
 			} else if m.y != 0 {
 				slot_idx, _ := shift_windowed_selection(m.y, slot_idx, 0, NUM_EQUIPMENT_SLOTS, NUM_EQUIPMENT_SLOTS)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
