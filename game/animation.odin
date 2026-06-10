@@ -51,7 +51,7 @@ animation_atlas_texture :: proc(anim: Animation) -> Atlas_Texture {
 	return atlas_textures[anim.current_frame]
 }
 
-draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint: rl.Color, flip_x := false) {
+draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint := rl.WHITE, flip_x := false) {
 	anim_texture := animation_atlas_texture(anim)
 
 	atlas_rect := anim_texture.rect

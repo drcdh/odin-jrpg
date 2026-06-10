@@ -16,7 +16,13 @@ equipped_item :: proc(equipment: Equipment, slot: Equipment_Slot) -> Item_Name {
 	return equipment[slot]
 }
 
-set_equipped_item :: proc(equipment: ^Equipment, slot: Equipment_Slot, item: Item_Name, from_inventory := true, to_inventory := true) {
+set_equipped_item :: proc(
+	equipment: ^Equipment,
+	slot: Equipment_Slot,
+	item: Item_Name,
+	from_inventory := true,
+	to_inventory := true,
+) {
 	prev := equipment[slot]
 	equipment[slot] = item
 	if item != .None && from_inventory {
@@ -45,4 +51,28 @@ equipment_string :: proc(equipment: Equipment, slot: Equipment_Slot) -> string {
 		return fmt.aprintf("Accessory: %s", item_name)
 	}
 	return "bad_equipment_slot"
+}
+
+fits_in_slot_equippable :: proc(item: Equippable, slot: Equipment_Slot) -> bool {
+	return item.slot == slot
+}
+
+fits_in_slot_item :: proc(item: Item, slot: Equipment_Slot) -> bool {
+	switch v in item.data {
+	case Consumable:
+		return false
+	case Equippable:
+		return fits_in_slot_equippable(v, slot)
+	}
+	return false
+}
+
+fits_in_slot_item_name :: proc(item: Item_Name, slot: Equipment_Slot) -> bool {
+	return fits_in_slot_item(items[item], slot)
+}
+
+fits_in_slot :: proc {
+	fits_in_slot_equippable,
+	fits_in_slot_item,
+	fits_in_slot_item_name,
 }

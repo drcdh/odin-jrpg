@@ -10,7 +10,11 @@ World_Menu_State_Top :: struct {
 	party_idx: int,
 }
 World_Menu_State_Character :: struct {
-	party_idx: int,
+	party_idx:  int,
+	slot_idx:   int,
+	changing:   bool,
+	item_idx:   int,
+	origin_idx: int,
 }
 World_Menu_State_Skills :: struct {
 	party_idx: int,
@@ -51,7 +55,7 @@ draw_world_menu :: proc() {
 		draw_world_menu_top(state.i, state.next, state.party_idx)
 	case World_Menu_State_Character:
 		draw_world_menu_top(0, true, state.party_idx, rl.GRAY)
-		draw_world_menu_character(state.party_idx)
+		draw_world_menu_character(state.party_idx, state.slot_idx, state.changing, state.item_idx, state.origin_idx)
 	case World_Menu_State_Skills:
 		draw_world_menu_top(1, true, state.party_idx, rl.GRAY)
 		draw_world_menu_skills(state.party_idx)
@@ -122,7 +126,7 @@ draw_character_card :: proc(pc_idx: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 	// stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
 }
 
-draw_world_menu_character :: proc(party_idx: int) {
+draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item_idx, origin_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
 	if pc_idx, ok := get_party_member(party_idx).?; ok {
 		pc := get_pc(pc_idx)
@@ -131,9 +135,39 @@ draw_world_menu_character :: proc(party_idx: int) {
 			draw_text(2, 3 + f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
 		}
 		for i in 0 ..< NUM_EQUIPMENT_SLOTS {
-			draw_text(2, 3 + NUM_STATS + f32(i), strings.clone_to_cstring(equipment_string(pc^, Equipment_Slot(i)), context.temp_allocator))
+			if i == slot_idx {
+				draw_animation(world_menu_icon, tile_to_pixel(1.5, 3 + NUM_STATS + i), rl.GRAY if changing else rl.WHITE)
+			}
+			draw_text(
+				2,
+				3 + NUM_STATS + f32(i),
+				strings.clone_to_cstring(equipment_string(pc^, Equipment_Slot(i)), context.temp_allocator),
+			)
 		}
 		draw_text(2, 3 + NUM_STATS, get_status_cstring(pc^))
+
+		if changing {
+			draw_menu(10, 2, 6, 10)
+			for r in 0 ..< 8 {
+				if r >= NUM_ITEMS {break}
+				if r + origin_idx == item_idx {
+					draw_animation(world_menu_icon, tile_to_pixel(10.5, 3 + r))
+				}
+				tint := rl.WHITE if fits_in_slot(items[r + origin_idx], Equipment_Slot(slot_idx)) else rl.GRAY
+				draw_text(
+					11,
+					3 + f32(r),
+					fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator),
+					tint,
+				)
+				// draw_text(
+				// 	VIEW_TILES_W - 3,
+				// 	4 + f32(r),
+				// 	fmt.caprintf("% 2d", game_data.inventory[r + origin_idx], allocator = context.temp_allocator),
+				// 	tint,
+				// )
+			}
+		}
 	}
 }
 
@@ -145,7 +179,16 @@ draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_
 	tint := rl.WHITE
 	if targeting {tint = rl.GRAY}
 	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS + 3, tint)
-	draw_text(2, WORLD_MENU_ITEMS_ROWS + 3, fmt.caprintf("% 24s", fmt.caprintf("$ %d", game_data.money, allocator = context.temp_allocator), allocator = context.temp_allocator), tint = tint)
+	draw_text(
+		2,
+		WORLD_MENU_ITEMS_ROWS + 3,
+		fmt.caprintf(
+			"% 24s",
+			fmt.caprintf("$ %d", game_data.money, allocator = context.temp_allocator),
+			allocator = context.temp_allocator,
+		),
+		tint = tint,
+	)
 	for r in 0 ..< WORLD_MENU_ITEMS_ROWS {
 		if r >= NUM_ITEMS {break}
 		if r + origin_idx == item_idx {
@@ -188,7 +231,7 @@ update_world_menu :: proc() {
 	case World_Menu_State_Top:
 		update_world_menu_top(state.i, state.next, state.party_idx)
 	case World_Menu_State_Character:
-		update_world_menu_character(state.party_idx)
+		update_world_menu_character(state.party_idx, state.slot_idx, state.changing, state.item_idx, state.origin_idx)
 	case World_Menu_State_Skills:
 		update_world_menu_skills(state.party_idx)
 	case World_Menu_State_Items:
@@ -206,7 +249,7 @@ update_world_menu_top :: proc(i: int, next: bool, party_idx: int) {
 		} else if get_input(.ENTER) {
 			switch i {
 			case 0:
-				world_menu_state = World_Menu_State_Character{party_idx}
+				world_menu_state = World_Menu_State_Character{party_idx, 0, false, 0, 0}
 			case 1:
 				world_menu_state = World_Menu_State_Skills{party_idx}
 			}
@@ -240,16 +283,35 @@ update_world_menu_top :: proc(i: int, next: bool, party_idx: int) {
 	}
 }
 
-update_world_menu_character :: proc(party_idx: int) {
-	if get_input(.CANCEL) {
-		world_menu_state = World_Menu_State_Top{0, true, party_idx}
+update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item_idx, origin_idx: int) {
+	if changing {
+		if get_input(.CANCEL) {
+			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, item_idx, origin_idx}
+		} else {
+			m := get_menu_input()
+			if m.y != 0 {
+				item_idx, origin_idx := shift_windowed_selection(m.y, item_idx, origin_idx, 8, NUM_ITEMS)
+				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
+			}
+		}
 	} else {
-		m := get_menu_input()
-		party_idx := party_idx
-		party_idx += m.x
-		if party_idx < 0 {party_idx = party_size() - 1}
-		if party_idx >= party_size() {party_idx = 0}
-		world_menu_state = World_Menu_State_Character{party_idx}
+		if get_input(.CANCEL) {
+			world_menu_state = World_Menu_State_Top{0, true, party_idx}
+		} else if get_input(.ENTER) {
+			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, true, item_idx, origin_idx}
+		} else {
+			m := get_menu_input()
+			if m.x != 0 {
+				party_idx := party_idx
+				party_idx += m.x
+				if party_idx < 0 {party_idx = party_size() - 1}
+				if party_idx >= party_size() {party_idx = 0}
+				world_menu_state = World_Menu_State_Character{party_idx=party_idx}
+			} else if m.y != 0 {
+				slot_idx, _ := shift_windowed_selection(m.y, slot_idx, 0, NUM_EQUIPMENT_SLOTS, NUM_EQUIPMENT_SLOTS)
+				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
+			}
+		}
 	}
 }
 
