@@ -285,7 +285,8 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 		} else {
 			m := get_menu_input()
 			if m.y != 0 {
-				item_idx, origin_idx := shift_windowed_selection(m.y, item_idx, origin_idx, 8, NUM_ITEMS)
+				item_idx, origin_idx := item_idx, origin_idx
+				item_idx, origin_idx = shift_windowed_selection(m.y, item_idx, origin_idx, 8, NUM_ITEMS)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
 			}
 		}
@@ -305,7 +306,8 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 					party_idx = party_idx,
 				}
 			} else if m.y != 0 {
-				slot_idx, _ := shift_windowed_selection(m.y, slot_idx, 0, NUM_EQUIPMENT_SLOTS, NUM_EQUIPMENT_SLOTS)
+				slot_idx := slot_idx
+				slot_idx, _ = shift_windowed_selection(m.y, slot_idx, 0, NUM_EQUIPMENT_SLOTS, NUM_EQUIPMENT_SLOTS)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
 			}
 		}
