@@ -83,7 +83,7 @@ update :: proc() {
 		update_world_menu()
 	} else {
 		update_world(dt)
-		if get_input(.MENU) {
+		if !pc_busy() && get_input(.MENU) {
 			world_menu_active = true
 		}
 	}

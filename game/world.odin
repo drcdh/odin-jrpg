@@ -206,3 +206,10 @@ set_party_control :: proc() {
 	pc_entity = party_handle
 	camera_entity = party_handle
 }
+
+pc_busy :: proc() -> bool {
+	if pc, ok := hm.get(&entities, pc_entity); ok {
+		return pc.busy
+	}
+	return true
+}
