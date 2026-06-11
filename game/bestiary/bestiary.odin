@@ -66,8 +66,8 @@ draw :: proc() {
 	case game.Animation_Name:
 		game.draw_texture(game.atlas_animations[t].first_frame, coord, rl.WHITE)
 	}
-	draw_text(0, 0, fmt.caprintf("% 3d: %s", bid, bt.name))
+	game.draw_text(0, 0, fmt.caprintf("% 3d: %s", bid, bt.name))
 	for i in 0 ..< game.NUM_STATS {
-		draw_text(0, 0, strings.clone_to_cstring(game.stat_string(bt, game.Stat(i)), context.temp_allocator))
+		game.draw_text(0, f32(i + 1), strings.clone_to_cstring(game.stat_string(bt, game.Stat(i)), context.temp_allocator))
 	}
 }
