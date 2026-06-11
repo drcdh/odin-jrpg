@@ -50,7 +50,7 @@ draw_battle_transition :: proc() {
 		h := 10 * f32(ease * view_dim.y)
 		rl.DrawEllipse(i32(view_dim.x / 2), i32(view_dim.y / 2), h, w, rl.BLACK)
 	} else if !transition.curtain_up {
-		rl.ClearBackground(rl.BLACK)
+		rl.DrawRectangle(0, 0, i32(view_dim.x), i32(view_dim.y), rl.BLACK)
 	}
 }
 
@@ -64,7 +64,7 @@ draw_level_transition :: proc() {
 		y0 := i32(view_dim.y / 2) - h / 2
 		rl.DrawRectangle(x0, y0, w, h, rl.BLACK)
 	} else if !transition.curtain_up {
-		rl.ClearBackground(rl.BLACK)
+		rl.DrawRectangle(0, 0, i32(view_dim.x), i32(view_dim.y), rl.BLACK)
 	}
 }
 
