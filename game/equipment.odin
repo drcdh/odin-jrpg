@@ -12,8 +12,17 @@ NUM_EQUIPMENT_SLOTS :: len(Equipment_Slot)
 
 Equipment :: [len(Equipment_Slot)]Item_Name
 
-equipped_item :: proc(equipment: Equipment, slot: Equipment_Slot) -> Item_Name {
+equipped_item_int :: proc(equipment: Equipment, slot: int) -> Item_Name {
 	return equipment[slot]
+}
+
+equipped_item_slot :: proc(equipment: Equipment, slot: Equipment_Slot) -> Item_Name {
+	return equipment[slot]
+}
+
+equipped_item :: proc {
+	equipped_item_int,
+	equipped_item_slot,
 }
 
 set_equipped_item :: proc(

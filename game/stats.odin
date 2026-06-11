@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import "core:math"
 
 NUM_STATS :: 6
 
@@ -15,6 +16,82 @@ Stat :: enum {
 
 Stats :: struct {
 	hitpoints, offense, defense, pOffense, pDefense, speed: int,
+}
+
+get_stat :: proc(stats: Stats, i: Stat) -> int {
+	switch i {
+	case .Hitpoints:
+		return stats.hitpoints
+	case .Offense:
+		return stats.offense
+	case .Defense:
+		return stats.defense
+	case .PsyOffense:
+		return stats.pOffense
+	case .PsyDefense:
+		return stats.pDefense
+	case .Speed:
+		return stats.speed
+	}
+	return -1
+}
+
+get_stat_f :: proc(stats: Stats, i: Stat) -> f32 {
+	return f32(get_stat(stats, i))
+}
+
+set_stat :: proc(stats: ^Stats, i: Stat, v: int) {
+	switch i {
+	case .Hitpoints:
+		stats.hitpoints = v
+	case .Offense:
+		stats.offense = v
+	case .Defense:
+		stats.defense = v
+	case .PsyOffense:
+		stats.pOffense = v
+	case .PsyDefense:
+		stats.pDefense = v
+	case .Speed:
+		stats.speed = v
+	}
+}
+
+lfunc :: proc(level, base, points: int) -> int {
+	return base * level + points * int(math.sqrt(f32(level))) / 4
+}
+
+leveled_stats :: proc(level: int, base, points: Stats) -> (leveled: Stats) {
+	leveled.hitpoints = lfunc(level, base.hitpoints, points.hitpoints)
+	leveled.offense = lfunc(level, base.offense, points.offense)
+	leveled.defense = lfunc(level, base.defense, points.defense)
+	leveled.pOffense = lfunc(level, base.pOffense, points.pOffense)
+	leveled.pDefense = lfunc(level, base.pDefense, points.pDefense)
+	leveled.speed = lfunc(level, base.speed, points.speed)
+	return
+}
+
+equipped_stat :: proc(lstats: Stats, i: Stat, equipment: Equipment) -> int {
+	add := 0
+	mul: f32 = 100.0
+	lstat := get_stat_f(lstats, i)
+	for slot in 0 ..< NUM_EQUIPMENT_SLOTS {
+		item_name := equipped_item(equipment, slot)
+		if item_name == .None {continue}
+		item := items[item_name]
+		eq := item.data.(Equippable) or_continue
+		add += get_stat(eq.stats_add, i)
+		mul += get_stat_f(eq.stats_mul, i)
+	}
+	return int(lstat * mul / 100) + add
+}
+
+equipped_stats :: proc(lstats: Stats, equipment: Equipment) -> (final: Stats) {
+	for i in 0 ..< NUM_STATS {
+		i := Stat(i)
+		set_stat(&final, i, equipped_stat(lstats, i, equipment))
+	}
+	return
 }
 
 stat_string :: proc(s: Stats, i: Stat) -> string {

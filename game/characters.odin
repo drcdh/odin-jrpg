@@ -3,10 +3,19 @@ package game
 import "core:strings"
 
 Character :: struct {
+	base_stats:      Stats,
+	level:           int,
+	leveled_stats:   Stats,
 	name:            cstring,
 	using equipment: Equipment,
 	using stats:     Stats,
 	using status:    Status,
+}
+
+set_level :: proc(c: ^Character, level: int) {
+	c.level = level
+	c.leveled_stats = leveled_stats(c.level, c.base_stats, {})
+	c.stats = equipped_stats(c.leveled_stats, c.equipment)
 }
 
 Status :: struct {

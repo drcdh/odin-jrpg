@@ -46,6 +46,12 @@ init_new_game :: proc() {
 	unequip_all(&MOURNER, to_inventory = false)
 	unequip_all(&ZEALOT, to_inventory = false)
 	set_equipped_item(&PROTAGONIST, .Mainhand, .Sword, false, false)
+	set_level(&PROTAGONIST, 1)
+	set_level(&ASSASSIN, 1)
+	set_level(&MUSICIAN, 1)
+	set_level(&KILLER, 1)
+	set_level(&MOURNER, 1)
+	set_level(&ZEALOT, 1)
 }
 
 get_game_data_bool :: proc(d: Bool_Datum) -> bool {

@@ -28,8 +28,9 @@ Item_Variant :: union {
 Consumable :: Skill_Name
 
 Equippable :: struct {
-	power: int,
-	slot:  Equipment_Slot,
+	stats_add: Stats,
+	stats_mul: Stats,
+	slot:      Equipment_Slot,
 }
 
 NUM_ITEMS :: len(Item_Name) - 1
@@ -39,7 +40,7 @@ items := [NUM_ITEMS]Item {
 	{"Super Potion", .Heal_500},
 	{"Antidote", .Remove_Poison},
 	{"Poisonous Mushroom", .Add_Poison},
-	{"Sword", Equippable{10, .Mainhand}},
+	{"Sword", Equippable{{offense = 5}, {offense = 10}, .Mainhand}},
 	{"Thingamajig", nil},
 	{"Doodad", nil},
 	{"Deluxe Doodad", nil},

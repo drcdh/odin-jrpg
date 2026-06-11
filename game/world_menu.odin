@@ -130,7 +130,16 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
 	if pc_idx, ok := get_party_member(party_idx).?; ok {
 		pc := get_pc(pc_idx)
-		draw_text(2, 2, pc.name)
+		draw_text(
+			2,
+			2,
+			fmt.caprintf(
+				"%-12s %s",
+				pc.name,
+				fmt.caprintf("L% 2d", pc.level, allocator = context.temp_allocator),
+				allocator = context.temp_allocator,
+			),
+		)
 		for i in 0 ..< NUM_STATS {
 			draw_text(2, 3 + f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
 		}
