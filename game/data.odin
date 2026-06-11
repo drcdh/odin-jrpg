@@ -39,12 +39,12 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Antidote] = 2
 	game_data.inventory[Item_Name.Poisonous_Mushroom] = 2
 	game_data.money = 123
-	unequip_all(&PROTAGONIST)
-	unequip_all(&ASSASSIN)
-	unequip_all(&MUSICIAN)
-	unequip_all(&KILLER)
-	unequip_all(&MOURNER)
-	unequip_all(&ZEALOT)
+	unequip_all(&PROTAGONIST, to_inventory = false)
+	unequip_all(&ASSASSIN, to_inventory = false)
+	unequip_all(&MUSICIAN, to_inventory = false)
+	unequip_all(&KILLER, to_inventory = false)
+	unequip_all(&MOURNER, to_inventory = false)
+	unequip_all(&ZEALOT, to_inventory = false)
 	set_equipped_item(&PROTAGONIST, .Mainhand, .Sword, false, false)
 }
 
