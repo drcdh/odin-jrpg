@@ -2,6 +2,7 @@ package game
 
 import "core:fmt"
 import "core:math"
+import rl "vendor:raylib"
 
 NUM_STATS :: 6
 
@@ -110,4 +111,10 @@ stat_string :: proc(s: Stats, i: Stat) -> string {
 		return fmt.aprintf("Speed:      % 4d", s.speed)
 	}
 	return "bad_stat_index"
+}
+
+change_tint :: proc(prev, next: int) -> (tint := rl.WHITE) {
+	if next > prev {tint = rl.GREEN}
+	if next < prev {tint = rl.RED}
+	return
 }

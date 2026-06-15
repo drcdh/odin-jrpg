@@ -44,6 +44,8 @@ world_menu_state: World_Menu_State
 
 world_menu_icon: Animation
 
+changing_stats: Stats
+
 init_world_menu :: proc() {
 	world_menu_icon = animation_create(.Select_Icon_Small)
 	world_menu_state = World_Menu_State_Top{}
@@ -141,7 +143,18 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 			),
 		)
 		for i in 0 ..< NUM_STATS {
-			draw_text(2, 3 + f32(i), strings.clone_to_cstring(stat_string(pc^, Stat(i)), context.temp_allocator))
+			s := Stat(i)
+			if !changing {
+				draw_text(2, 3 + f32(i), strings.clone_to_cstring(stat_string(pc^, s), context.temp_allocator))
+			} else {
+				tint := change_tint(get_stat(pc^, s), get_stat(changing_stats, s))
+				draw_text(
+					2,
+					3 + f32(i),
+					strings.clone_to_cstring(stat_string(changing_stats, s), context.temp_allocator),
+					tint,
+				)
+			}
 		}
 		for i in 0 ..< NUM_EQUIPMENT_SLOTS {
 			if i == slot_idx {
@@ -158,18 +171,22 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 		if changing {
 			draw_menu(10, 2, 6, 10)
 			for r in 0 ..< 8 {
-				if r >= NUM_ITEMS {break}
+				if r >= NUM_ITEMS + 1 {break}
 				if r + origin_idx == item_idx {
 					draw_animation(world_menu_icon, tile_to_pixel(10.5, 3 + r))
 				}
-				tint := rl.WHITE if fits_in_slot(items[r + origin_idx], Equipment_Slot(slot_idx)) else rl.GRAY
-				draw_text(11, 3 + f32(r), fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator), tint)
-				// draw_text(
-				// 	VIEW_TILES_W - 3,
-				// 	4 + f32(r),
-				// 	fmt.caprintf("% 2d", game_data.inventory[r + origin_idx], allocator = context.temp_allocator),
-				// 	tint,
-				// )
+				tint := rl.WHITE if fits_in_slot(Item_Name(r + origin_idx), Equipment_Slot(slot_idx)) else rl.GRAY
+				if r + origin_idx == NUM_ITEMS {
+					draw_text(11, 3 + f32(r), "remove", tint)
+				} else {
+					draw_text(11, 3 + f32(r), fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator), tint)
+					// draw_text(
+					// 	VIEW_TILES_W - 3,
+					// 	4 + f32(r),
+					// 	fmt.caprintf("% 2d", game_data.inventory[r + origin_idx], allocator = context.temp_allocator),
+					// 	tint,
+					// )
+				}
 			}
 		}
 	}
@@ -294,8 +311,10 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 		} else {
 			m := get_menu_input()
 			if m.y != 0 {
+				pc := get_pc(party_idx)
 				item_idx, origin_idx := item_idx, origin_idx
-				item_idx, origin_idx = shift_windowed_selection(m.y, item_idx, origin_idx, 8, NUM_ITEMS)
+				item_idx, origin_idx = shift_windowed_selection(m.y, item_idx, origin_idx, 8, NUM_ITEMS + 1)
+				changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_idx, slot_idx))
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
 			}
 		}
@@ -303,6 +322,8 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 		if get_input(.CANCEL) {
 			world_menu_state = World_Menu_State_Top{0, true, party_idx}
 		} else if get_input(.ENTER) {
+			pc := get_pc(party_idx)
+			changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_idx, slot_idx))
 			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, true, item_idx, origin_idx}
 		} else {
 			m := get_menu_input()

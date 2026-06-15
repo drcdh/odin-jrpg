@@ -77,6 +77,7 @@ fits_in_slot_item :: proc(item: Item, slot: Equipment_Slot) -> bool {
 }
 
 fits_in_slot_item_name :: proc(item: Item_Name, slot: Equipment_Slot) -> bool {
+	if item == .None {return true}
 	return fits_in_slot_item(items[item], slot)
 }
 
@@ -84,4 +85,25 @@ fits_in_slot :: proc {
 	fits_in_slot_equippable,
 	fits_in_slot_item,
 	fits_in_slot_item_name,
+}
+
+changed_equipment_enum :: proc(equipment: Equipment, item: Item_Name, slot: Equipment_Slot) -> (changed: Equipment) {
+	for i in 0 ..< NUM_EQUIPMENT_SLOTS {
+		s := Equipment_Slot(i)
+		if s == slot && fits_in_slot(item, slot) {
+			set_equipped_item(&changed, s, item, false, false)
+		} else {
+			set_equipped_item(&changed, s, equipment[s], false, false)
+		}
+	}
+	return
+}
+
+changed_equipment_int :: proc(equipment: Equipment, item, slot: int) -> Equipment {
+	return changed_equipment_enum(equipment, Item_Name(item), Equipment_Slot(slot))
+}
+
+changed_equipment :: proc {
+	changed_equipment_enum,
+	changed_equipment_int,
 }
