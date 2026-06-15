@@ -7,6 +7,8 @@ MAP_WIDTH :: LEVEL_2_WIDTH
 @(private = "file")
 MAP_HEIGHT :: LEVEL_2_HEIGHT
 
+LEVEL_2_OVERLAY :: true
+
 TRAP_ID :: 665
 TRAP_BADDY_ID :: 666
 

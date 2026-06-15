@@ -152,6 +152,7 @@ render_{level_name} :: proc() {{
 
 	out_f.write(f"""
 init_{level_name} :: proc() {{
+	overlay = {prefix}OVERLAY
 	level_firstgids = {prefix}FIRSTGIDS[:]
 	level_tilesets = {prefix}TILESETS[:]
 	map_dim.x = {prefix}WIDTH

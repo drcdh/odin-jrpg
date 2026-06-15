@@ -2,6 +2,8 @@ package game
 import hm "core:container/handle_map"
 import "core:fmt"
 
+LEVEL_OVERWORLD_OVERLAY :: false
+
 BOAT_ID :: 77
 
 BOARD_BOAT := [?]Event {

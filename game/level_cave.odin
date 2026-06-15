@@ -2,6 +2,8 @@ package game
 
 import hm "core:container/handle_map"
 
+LEVEL_CAVE_OVERLAY :: false
+
 LEAVE_CAVE := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Curtain_Down{},

@@ -2,6 +2,8 @@ package game
 
 import hm "core:container/handle_map"
 
+LEVEL_0_OVERLAY :: true
+
 DUDE_ID: Id = 1
 BUTTON_1_ID: Id = 40
 

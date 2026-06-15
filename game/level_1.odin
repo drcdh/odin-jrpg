@@ -2,6 +2,8 @@ package game
 
 import hm "core:container/handle_map"
 
+LEVEL_1_OVERLAY :: true
+
 WARP_TO_2 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Play_Sound{.Warp},
