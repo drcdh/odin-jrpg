@@ -9,3 +9,5 @@ Skill :: struct {
 	animation: Animation_Name,
 	sound:     Sound_Name,
 }
+
+Skill_Set :: bit_set[Skill_Name]

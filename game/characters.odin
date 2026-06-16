@@ -10,6 +10,7 @@ Character :: struct {
 	using equipment: Equipment,
 	using stats:     Stats,
 	using status:    Status,
+	skills:          Skill_Set,
 }
 
 set_level :: proc(c: ^Character, level: int) {

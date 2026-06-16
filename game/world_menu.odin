@@ -17,7 +17,9 @@ World_Menu_State_Character :: struct {
 	origin_idx: int,
 }
 World_Menu_State_Skills :: struct {
-	party_idx: int,
+	party_idx:  int,
+	skill_idx:  int,
+	origin_idx: int,
 }
 World_Menu_State_Items :: struct {
 	item_idx:   int,
@@ -60,7 +62,7 @@ draw_world_menu :: proc() {
 		draw_world_menu_character(state.party_idx, state.slot_idx, state.changing, state.item_idx, state.origin_idx)
 	case World_Menu_State_Skills:
 		draw_world_menu_top(1, true, state.party_idx, rl.GRAY)
-		draw_world_menu_skills(state.party_idx)
+		draw_world_menu_skills(state.party_idx, state.skill_idx, state.origin_idx)
 	case World_Menu_State_Items:
 		draw_world_menu_top(2, true, 0, rl.GRAY)
 		draw_world_menu_items(state.item_idx, state.origin_idx, state.targeting, state.party_idx)
@@ -192,8 +194,18 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 	}
 }
 
-draw_world_menu_skills :: proc(party_idx: int) {
+draw_world_menu_skills :: proc(party_idx, skill_idx, origin_idx: int) {
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
+	pc_idx, ok := get_party_member(party_idx).?
+	if !ok {return}
+	pc := get_pc(pc_idx)
+	r := 0
+	for k in 0 ..< len(Skill_Name) {
+		if Skill_Name(k) in pc.skills {
+			draw_text(2, 2 + f32(r), fmt.caprint(skills[k].name, allocator = context.temp_allocator))
+			r += 1
+		}
+	}
 }
 
 draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_idx: int) {
@@ -272,7 +284,7 @@ update_world_menu_top :: proc(i: int, next: bool, party_idx: int) {
 			case 0:
 				world_menu_state = World_Menu_State_Character{party_idx, 0, false, 0, 0}
 			case 1:
-				world_menu_state = World_Menu_State_Skills{party_idx}
+				world_menu_state = World_Menu_State_Skills{party_idx, 0, 0}
 			}
 		} else {
 			world_menu_state = World_Menu_State_Top{i, true, change_world_menu_party_idx_from_input(party_idx)}
