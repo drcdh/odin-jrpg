@@ -38,10 +38,10 @@ Equippable :: struct {
 NUM_ITEMS :: len(Item_Name) - 1
 
 items := [NUM_ITEMS]Item {
-	{"Potion", .Heal_50},
-	{"Super Potion", .Heal_500},
-	{"Antidote", .Remove_Poison},
-	{"Poisonous Mushroom", .Add_Poison},
+	{"Potion", .Potion},
+	{"Super Potion", .Super_Potion},
+	{"Antidote", .Antidote},
+	{"Poisonous Mushroom", .Poisonous_Mushroom},
 	{"Sword", Equippable{{offense = 5}, {offense = 10}, .Mainhand}},
 	{"Chump Charm", Equippable{{-5, -5, -5, -5, -5, -5}, {-5, -5, -5, -5, -5, -5}, .Accessory}},
 	{

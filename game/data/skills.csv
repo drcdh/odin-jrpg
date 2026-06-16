@@ -1,0 +1,11 @@
+name,effect,targeting,power,time,animation,sound
+Potion,Heal_Hp_Constant,One_Ally,50,,,Warp
+Super Potion,Heal_Hp_Constant,One_Ally,500,,,Warp
+Antidote,Remove_Poison,One_Ally,100,,,Warp
+Poisonous Mushroom,Add_Poison,One_Ally,100,,,Warp
+Bite,Attack,One_Opponent,,,Ffvi_Stars,Whack
+Slash,Attack,One_Opponent,,,Slash,Whack
+Smash,Attack,One_Opponent,,,Smack,Whack
+Fire,Fire,Some_Opponents,,,Small_Flame,
+Pommel Strike,Add_Confuse,One_Opponent,100,,Smack,
+Mind Control,Add_Control,One_Opponent,100,,,Warp

@@ -19,8 +19,10 @@ set_level :: proc(c: ^Character, level: int) {
 }
 
 Status :: struct {
-	poison: bool,
-	zombie: bool,
+	confuse: bool,
+	control: bool,
+	poison:  bool,
+	zombie:  bool,
 }
 
 get_status_cstring :: proc(status: Status) -> cstring {

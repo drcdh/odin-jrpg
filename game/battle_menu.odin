@@ -222,7 +222,7 @@ pc_turn :: proc(actor: ^Combatant) {
 			switch state.s {
 			case ATTACK:
 				// skill_proc = attack
-				skill = skills[Skill_Name.Attack]
+				skill = skills[Skill_Name.Slash]
 				// todo: check weapon target type
 				battle_ui_state = Target_Selection_State {
 					ts = Select_One_Baddy{select_first_baddy()},

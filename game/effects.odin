@@ -9,6 +9,8 @@ Effect_Name :: enum {
 	Attack,
 	Heal_Hp_Constant,
 	Remove_Poison,
+	Add_Confuse,
+	Add_Control,
 	Add_Poison,
 	Fire,
 }
@@ -27,6 +29,18 @@ effect_heal_hp_constant :: proc(actor, target: ^Character, amount: int) -> (int,
 effect_remove_poison :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
 	// todo: random
 	target.poison = false
+	return 0, false
+}
+
+effect_add_confuse :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
+	// todo: random
+	target.confuse = true
+	return 0, false
+}
+
+effect_add_control :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
+	// todo: random
+	target.control = true
 	return 0, false
 }
 
@@ -51,6 +65,10 @@ do_effect :: proc(e: Effect_Name, actor, target: ^Character, v: int) -> (int, bo
 		f = effect_heal_hp_constant
 	case .Remove_Poison:
 		f = effect_remove_poison
+	case .Add_Confuse:
+		f = effect_add_confuse
+	case .Add_Control:
+		f = effect_add_control
 	case .Add_Poison:
 		f = effect_add_poison
 	case .Fire:
