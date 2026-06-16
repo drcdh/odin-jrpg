@@ -107,7 +107,7 @@ party_size :: proc() -> int {
 }
 
 get_skill_set :: proc(pc: PC, level: int, stats: Stats) -> Skill_Set {
-	f: proc(int, Stats) -> Skill_Set
+	f: proc(_: int, _: Stats) -> Skill_Set
 	switch pc {
 	case .Protagonist:
 		f = get_protagonist_skill_set
@@ -125,31 +125,31 @@ get_skill_set :: proc(pc: PC, level: int, stats: Stats) -> Skill_Set {
 	return f(level, stats)
 }
 
-get_protagonist_skill_set :: proc(level: int, stats: Stats) -> (skill_set : Skill_Set) {
+get_protagonist_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	skill_set += {.Slash}
 	skill_set += {.Pommel_Strike}
 	return
 }
 
-get_assassin_skill_set :: proc(level: int, stats: Stats) -> (skill_set : Skill_Set) {
+get_assassin_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	skill_set += {.Slash}
 	skill_set += {.Mind_Control}
 	return
 }
 
-get_musician_skill_set :: proc(level: int, stats: Stats) -> (skill_set : Skill_Set) {
+get_musician_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
-get_killer_skill_set :: proc(level: int, stats: Stats) -> (skill_set : Skill_Set) {
+get_killer_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
-get_mourner_skill_set :: proc(level: int, stats: Stats) -> (skill_set : Skill_Set) {
+get_mourner_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
-get_zealot_skill_set :: proc(level: int, stats: Stats) -> (skill_set : Skill_Set) {
+get_zealot_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
