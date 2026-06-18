@@ -6,15 +6,16 @@ import rl "vendor:raylib"
 Combatant_Handle :: distinct hm.Handle16
 
 Combatant :: struct {
-	character: ^Character,
-	coord:     Pixel_Coord,
-	enabled:   bool,
-	handle:    Combatant_Handle,
-	id:        int,
-	t:         int,
-	team:      int,
-	turn:      Turn_Proc,
-	visual:    Combatant_Visual,
+	using character: ^Character,
+	coord:           Pixel_Coord,
+	enabled:         bool,
+	handle:          Combatant_Handle,
+	id:              int,
+	t:               int,
+	team:            int,
+	turn:            Turn_Proc,
+	visual:          Combatant_Visual,
+	windup:          bool,
 }
 
 Combatant_Visual_Variant :: union {
@@ -25,6 +26,14 @@ Combatant_Visual_Variant :: union {
 Combatant_Visual :: struct {
 	tint:    rl.Color,
 	variant: Combatant_Visual_Variant,
+}
+
+// TURN
+Battle_Skill_Play :: struct {
+	actor:  ^Combatant,
+	target: ^Combatant, // TODO multiple targets
+	skill:  Skill,
+	windup: int,
 }
 
 // EVENTS

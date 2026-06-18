@@ -8,6 +8,8 @@ import rl "vendor:raylib"
 
 MAX_COMBATANTS :: MAX_ENCOUNTER_SIZE + NUM_PC
 
+READY_T :: 100
+
 TAKE_TURN_DELAY :: .5 // seconds
 
 battle_active := false
@@ -20,6 +22,7 @@ battle_event_queue: queue.Queue(Battle_Event)
 battle_num_baddies := 0
 battle_num_pc := 0
 battle_paused := false
+battle_skills: [dynamic]Battle_Skill_Play
 battle_state: Battle_State
 
 targeting_ease: f32
@@ -27,10 +30,15 @@ targeting_ease: f32
 battle_cleanup :: proc() {
 	queue.clear(&battle_event_queue)
 	hm.clear(&battle_combatants)
+	delete(battle_skills)
 }
 
 battle_destroy :: proc() {
 	queue.destroy(&battle_event_queue)
+}
+
+battle_init :: proc() {
+	battle_skills = make([dynamic]Battle_Skill_Play, 0, MAX_COMBATANTS)
 }
 
 check_win :: proc() -> bool {
@@ -57,6 +65,14 @@ check_win :: proc() -> bool {
 
 combatant_alive :: proc(c: ^Combatant) -> bool {
 	return c.enabled && c.character.stats.hitpoints > 0
+}
+
+combatant_downed :: proc(c: ^Combatant) -> bool {
+	return c.enabled && c.character.stats.hitpoints <= 0
+}
+
+combatant_winding_up :: proc(c: ^Combatant) -> bool {
+	return c.enabled && c.windup
 }
 
 get_combatant_not_on_team :: proc(actor_team: int) -> ^Combatant {
@@ -129,7 +145,7 @@ draw_battle_combatants :: proc() {
 			case Texture_Name:
 				draw_texture(v, c.coord, tint)
 			}
-			// pos := Pixel_Coord{c.coord.x, c.coord.y - tile_size}
+			// draw_text(c.coord.x/tile_size, c.coord.y/tile_size, fmt.caprintf("%d", c.t), rl.ORANGE)
 		}
 	}
 }
@@ -157,6 +173,47 @@ draw_party_member_stats :: proc(p: int) {
 
 end_turn :: proc() {
 	battle_state = Next_Event{}
+}
+
+battle_time_tick :: proc() {
+	for &s in battle_skills {
+		s.windup -= s.actor.speed
+	}
+
+	it := hm.iterator_make(&battle_combatants)
+	for c, _ in hm.iterate(&it) {
+		if !c.enabled {continue}
+		if combatant_downed(c) {continue}
+		if combatant_winding_up(c) {continue}
+		c.t += c.character.speed
+	}
+}
+
+get_ready_combatant :: proc() -> (lead: Combatant_Handle, ready := false) {
+	lead_t := 0
+	it := hm.iterator_make(&battle_combatants)
+	for c, h in hm.iterate(&it) {
+		if !c.enabled {continue}
+		if combatant_downed(c) {continue}
+		if combatant_winding_up(c) {continue}
+		if c.t >= lead_t {
+			lead = h
+			lead_t = c.t
+		}
+	}
+	if lead_t >= READY_T {
+		ready = true
+	}
+	return
+}
+
+get_ready_skill :: proc() -> (int, bool) {
+	for s, i in battle_skills {
+		if s.windup <= 0 {
+			return i, true
+		}
+	}
+	return 0, false
 }
 
 get_next_combatant :: proc() -> Combatant_Handle {
@@ -199,10 +256,16 @@ process_battle_events :: proc(dt: f32) {
 		if check_win() {
 			// todo: enqueue default or encounter-overriding events (exp gain etc.)
 			battle_state = Next_Event{}
-		} else {
+		} else if i, ready := get_ready_skill(); ready {
+			queue_battle_skill_events(battle_skills[i])
+			unordered_remove(&battle_skills, i)
+			battle_state = Next_Event{}
+		} else if c, ready := get_ready_combatant(); ready {
 			battle_state = Take_Turn {
-				actor_h = get_next_combatant(),
+				actor_h = c,
 			}
+		} else {
+			battle_time_tick()
 		}
 	case Take_Turn:
 		s.t += dt

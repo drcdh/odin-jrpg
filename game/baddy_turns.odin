@@ -6,7 +6,6 @@ ATTACK_RANDOM_OPPONENT :: proc(actor: ^Combatant) {
 	target := get_combatant_not_on_team(actor_team)
 
 	queue_battle_skill(actor, target, skill)
-	actor.t += 20
 
 	end_turn()
 }

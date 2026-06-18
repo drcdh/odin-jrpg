@@ -48,7 +48,6 @@ center_rect_on_combatant :: proc(r1: Rect, c: Combatant) -> Rect {
 	rc.y = c.coord.y
 	rc.width = t.document_size.x
 	rc.height = t.document_size.y
-	// fmt.printfln("centering on combatant with rect %w", rc)
 	return center_rect_on_rect(r1, rc)
 }
 
@@ -57,7 +56,6 @@ center_animation_on_combatant :: proc(a: Animation_Name, c: Combatant) -> Rect {
 	ra: Rect
 	ra.width = t.document_size.x
 	ra.height = t.document_size.y
-	// fmt.printfln("centering animation %s with dim %.0fx%.0f", a, ra.width, ra.height)
 	return center_rect_on_combatant(ra, c)
 }
 
@@ -68,13 +66,29 @@ center_rect :: proc {
 }
 
 queue_battle_skill :: proc(actor, target: ^Combatant, skill: Skill) {
+	append(&battle_skills, Battle_Skill_Play{actor, target, skill, skill.windup})
+}
+
+queue_battle_skill_events_fields :: proc(actor, target: ^Combatant, skill: Skill) {
 	animation := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
 	sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 
 	queue_battle_sound(Play_Sound{sound = sound})
 
 	r := center_animation_on_combatant(animation, target^)
-	// fmt.println("centered rect is", r)
+
 	queue_battle_animation(Play_Animation{animation = animation, offset = {r.x, r.y}})
 	queue_battle_effect(skill.effect, actor, target, skill.power)
+
+	actor.windup = false
+	actor.t -= skill.cost
+}
+
+queue_battle_skill_events_struct :: proc(play: Battle_Skill_Play) {
+	queue_battle_skill_events_fields(play.actor, play.target, play.skill)
+}
+
+queue_battle_skill_events :: proc {
+	queue_battle_skill_events_fields,
+	queue_battle_skill_events_struct,
 }

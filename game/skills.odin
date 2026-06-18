@@ -5,7 +5,9 @@ Skill :: struct {
 	effect:    Effect_Name,
 	targeting: Targeting_Type,
 	power:     int,
-	time:      int,
+	windup:    int,
+	cost:      int,
+	cooldown:  int,
 	animation: Animation_Name,
 	sound:     Sound_Name,
 }

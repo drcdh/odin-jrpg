@@ -252,7 +252,6 @@ pc_turn :: proc(actor: ^Combatant) {
 			case Select_One_Baddy:
 				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
 					queue_battle_skill(actor, target_cb, skill)
-					actor.t += skill.time
 					battle_ui_state = Battle_UI_State{}
 					end_turn()
 				}
@@ -263,17 +262,14 @@ pc_turn :: proc(actor: ^Combatant) {
 						queue_battle_skill(actor, c, skill)
 					}
 				}
-				actor.t += skill.time
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_One_Ally:
 				if target_cb, ok := hm.get(&battle_combatants, battle_pc_handles[ts.i]); ok {
 					queue_battle_skill(actor, target_cb, skill)
-					actor.t += skill.time
 					battle_ui_state = Battle_UI_State{}
 					end_turn()
 				}
-				actor.t += skill.time
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_All_Allies:
@@ -283,7 +279,6 @@ pc_turn :: proc(actor: ^Combatant) {
 						queue_battle_skill(actor, c, skill)
 					}
 				}
-				actor.t += skill.time
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_All_Combatants:
@@ -293,7 +288,6 @@ pc_turn :: proc(actor: ^Combatant) {
 						queue_battle_skill(actor, c, skill)
 					}
 				}
-				actor.t += skill.time
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			}

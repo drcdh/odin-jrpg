@@ -7,12 +7,14 @@ def odin_skill(row):
 		"effect": "." + row["effect"],
 		"targeting": "." + row["targeting"],
 		"power": row["power"] or 0,
-		"time": row["time"] or 0,
+		"windup": row["windup"] or 0,
+		"cost": row["cost"] or 0,
+		"cooldown": row["cooldown"] or 0,
 		"animation": ("." + row["animation"]) if row["animation"] else "nil",
 		"sound": ("." + row["sound"]) if row["sound"] else "nil",
 	}
 def write_skill(f, oskill):
-	f.write("\t{{ \"{name}\", {effect}, {targeting}, {power}, {time}, {animation}, {sound} }},\n".format(**oskill))
+	f.write("\t{{ \"{name}\", {effect}, {targeting}, {power}, {windup}, {cost}, {cooldown}, {animation}, {sound} }},\n".format(**oskill))
 
 in_f = open("data/skills.csv")
 reader = csv.DictReader(in_f, delimiter=",")
