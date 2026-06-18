@@ -120,14 +120,22 @@ draw_world_menu_top :: proc(i: int, next: bool, party_idx: int, tint := rl.WHITE
 }
 
 draw_character_card :: proc(pc_idx: PC, origin: Pixel_Coord, tint := rl.WHITE) {
-	// tint := pc_idle_anim_tint[pc]
 	// rl.DrawRectangleLinesEx({origin.x, origin.y, 5 * tile_size, 6 * tile_size}, 2, tint)
 	pc := get_pc(pc_idx)
 	rl.DrawTextEx(font, pc.name, origin, 32, 0, tint)
+	hp_tint := rl.WHITE
+	hp := pc.hitpoints
+	max_hp := pc.max_hitpoints
+	if hp <= 0 {
+		hp_tint = rl.RED
+	} else if hp <= max_hp / 4 {
+		hp_tint = rl.ORANGE
+	}
+	origin := origin
+	origin.y += tile_size
+	rl.DrawTextEx(font, fmt.caprintf("%d/%d", hp, max_hp, allocator = context.temp_allocator), origin, 32, 0, hp_tint)
 
 	draw_texture(pc_idle_texture[pc_idx], {origin.x + 3 * tile_size, origin.y + .5 * tile_size}, tint)
-
-	// stats_origin := Pixel_Coord{origin.x, origin.y + 2 * tile_size}
 }
 
 draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item_idx, origin_idx: int) {

@@ -47,8 +47,8 @@ items := [NUM_ITEMS]Item {
 	{
 		"Beef Bracer",
 		Equippable {
-			{hitpoints = 10, offense = 2, defense = 2, speed = -1},
-			{hitpoints = 10, offense = 5, defense = 5, speed = -5},
+			{max_hitpoints = 10, offense = 2, defense = 2, speed = -1},
+			{max_hitpoints = 10, offense = 5, defense = 5, speed = -5},
 			.Sidehand,
 		},
 	},

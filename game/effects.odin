@@ -23,6 +23,7 @@ effect_attack :: proc(actor, target: ^Character, v: int) -> (int, bool) {
 
 effect_heal_hp_constant :: proc(actor, target: ^Character, amount: int) -> (int, bool) {
 	target.hitpoints += amount
+	target.hitpoints = min(target.hitpoints, target.max_hitpoints) // TODO: put this everywhere
 	return amount, true
 }
 
@@ -51,7 +52,7 @@ effect_add_poison :: proc(actor, target: ^Character, chance: int) -> (int, bool)
 }
 
 effect_fire_damage :: proc(actor, target: ^Character, power: int) -> (int, bool) {
-	hp_change := -max(0, power * actor.pOffense - target.pDefense)
+	hp_change := -max(0, power * actor.psy_offense - target.psy_defense)
 	target.hitpoints += hp_change
 	return hp_change, true
 }

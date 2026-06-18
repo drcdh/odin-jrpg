@@ -31,11 +31,11 @@ with open("data/baddies.csv") as f:
 		out_f.write( "Baddy_Template {")
 		out_f.write("""
 	name = \"{name}\",
-	hitpoints = {hitpoints},
+	max_hitpoints = {hitpoints},
 	offense = {offense},
 	defense = {defense},
-	pOffense = {pOffense},
-	pDefense = {pDefense},
+	psy_offense = {pOffense},
+	psy_defense = {pDefense},
 	speed = {speed},
 	texture = .{texture},
 	turn = {turn},

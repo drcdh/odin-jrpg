@@ -4,6 +4,7 @@ import "core:strings"
 
 Character :: struct {
 	base_stats:      Stats,
+	hitpoints:       int,
 	level:           int,
 	leveled_stats:   Stats,
 	name:            cstring,

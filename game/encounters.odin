@@ -60,8 +60,9 @@ add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
 	template := baddy_templates[baddy_id]
 	fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
 	battle_baddies[battle_num_baddies] = Character {
-		name  = template.name,
-		stats = template.stats,
+		name      = template.name,
+		hitpoints = template.stats.max_hitpoints,
+		stats     = template.stats,
 	}
 	visual_variant: Combatant_Visual_Variant
 	switch t in template.texture {

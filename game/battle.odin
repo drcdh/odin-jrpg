@@ -73,11 +73,11 @@ check_win :: proc() -> bool {
 }
 
 combatant_alive :: proc(c: ^Combatant) -> bool {
-	return c.enabled && c.character.stats.hitpoints > 0
+	return c.enabled && c.character.hitpoints > 0
 }
 
 combatant_downed :: proc(c: ^Combatant) -> bool {
-	return c.enabled && c.character.stats.hitpoints <= 0
+	return c.enabled && c.character.hitpoints <= 0
 }
 
 combatant_winding_up :: proc(c: ^Combatant) -> bool {
@@ -137,7 +137,7 @@ draw_battle_combatants :: proc() {
 	for c, h in hm.iterate(&it) {
 		if c.enabled {
 			tint := c.visual.tint
-			if c.character.stats.hitpoints <= 0 {
+			if c.character.hitpoints <= 0 {
 				tint = rl.RED
 			}
 			if targeted(c.id, c.team) {
@@ -164,7 +164,7 @@ draw_battle_combatants :: proc() {
 draw_party_member_stats :: proc(p: int) {
 	if c, ok := hm.get(&battle_combatants, battle_pc_handles[p]); ok {
 		text_color := rl.WHITE
-		if c.character.stats.hitpoints <= 0 {
+		if c.character.hitpoints <= 0 {
 			text_color = rl.RED
 		}
 		draw_text(
@@ -173,8 +173,8 @@ draw_party_member_stats :: proc(p: int) {
 			fmt.caprintf(
 				"%- 13s% 4d/% 4d",
 				c.character.name,
-				c.character.stats.hitpoints,
-				c.character.stats.hitpoints,
+				c.character.hitpoints,
+				c.character.max_hitpoints,
 				allocator = context.temp_allocator,
 			),
 			text_color,

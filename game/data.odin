@@ -55,6 +55,7 @@ init_new_game :: proc() {
 	set_level(&MOURNER, 1)
 	set_level(&ZEALOT, 1)
 	set_all_skills()
+	heal_party()
 }
 
 get_game_data_bool :: proc(d: Bool_Datum) -> bool {
