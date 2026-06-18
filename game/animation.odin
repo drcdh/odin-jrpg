@@ -68,9 +68,9 @@ draw_animation :: proc(anim: Animation, pos: Pixel_Coord, tint := rl.WHITE, flip
 	dest := Rect{pos.x + offset.x, pos.y + offset.y, zoom * anim_texture.rect.width, zoom * anim_texture.rect.height}
 
 	// debug
-	rl.DrawRectangleLinesEx(dest, 2, rl.RED)
-	rl.DrawLineEx({pos.x, pos.y}, {pos.x + tile_size, pos.y}, 1, rl.BLUE)
-	rl.DrawLineEx({pos.x, pos.y}, {pos.x, pos.y + tile_size}, 1, rl.BLUE)
+	// rl.DrawRectangleLinesEx(dest, 2, rl.RED)
+	// rl.DrawLineEx({pos.x, pos.y}, {pos.x + tile_size, pos.y}, 1, rl.BLUE)
+	// rl.DrawLineEx({pos.x, pos.y}, {pos.x, pos.y + tile_size}, 1, rl.BLUE)
 	// end debug
 
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
