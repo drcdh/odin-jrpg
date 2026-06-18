@@ -301,6 +301,7 @@ pc_turn :: proc(actor: ^Combatant) {
 		case Item_Selection_State:
 			battle_ui_state = Action_Selection_State{ITEM}
 		case Target_Selection_State:
+			clear_staged_turn_order()
 			battle_ui_state = Action_Selection_State{ATTACK} //fixme
 		}
 	}

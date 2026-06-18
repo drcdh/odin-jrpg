@@ -3,6 +3,7 @@ package game
 import hm "core:container/handle_map"
 import "core:container/queue"
 import "core:fmt"
+import "core:slice"
 
 import rl "vendor:raylib"
 
@@ -24,6 +25,7 @@ battle_num_pc := 0
 battle_paused := false
 battle_skills: [dynamic]Battle_Skill_Play
 battle_state: Battle_State
+battle_turn_order: [dynamic]Battle_Turn_Order
 
 targeting_ease: f32
 
@@ -31,6 +33,7 @@ battle_cleanup :: proc() {
 	queue.clear(&battle_event_queue)
 	hm.clear(&battle_combatants)
 	delete(battle_skills)
+	delete(battle_turn_order)
 }
 
 battle_destroy :: proc() {
@@ -39,6 +42,12 @@ battle_destroy :: proc() {
 
 battle_init :: proc() {
 	battle_skills = make([dynamic]Battle_Skill_Play, 0, MAX_COMBATANTS)
+	battle_turn_order = make([dynamic]Battle_Turn_Order, 0, MAX_COMBATANTS)
+	it := hm.iterator_make(&battle_combatants)
+	for _, h in hm.iterate(&it) {
+		append(&battle_turn_order, Battle_Turn_Order{h = h})
+	}
+	calc_turn_order()
 }
 
 check_win :: proc() -> bool {
@@ -91,6 +100,7 @@ draw_battle :: proc() {
 	draw_battle_party_stats()
 	draw_battle_menu()
 	draw_battle_combatants()
+	draw_battle_turn_order()
 
 	#partial switch s in battle_state {
 	case Process_Battle_Animation:
@@ -145,7 +155,8 @@ draw_battle_combatants :: proc() {
 			case Texture_Name:
 				draw_texture(v, c.coord, tint)
 			}
-			// draw_text(c.coord.x/tile_size, c.coord.y/tile_size, fmt.caprintf("%d", c.t), rl.ORANGE)
+			// debug
+			draw_text(c.coord.x / tile_size, c.coord.y / tile_size, fmt.caprintf("%d", c.t), rl.ORANGE)
 		}
 	}
 }
@@ -171,6 +182,32 @@ draw_party_member_stats :: proc(p: int) {
 	}
 }
 
+draw_battle_turn_order :: proc() {
+	i := 0
+	for o in battle_turn_order {
+		c := hm.get(&battle_combatants, o.h)
+		if !combatant_alive(c) {continue}
+		t: Texture_Name
+		switch v in c.visual.variant {
+		case Animation:
+			t = v.current_frame
+		case Texture_Name:
+			t = v
+		}
+		i += 1
+		rl.DrawRectangle(i32(5 + i) * i32(tile_size), 0, i32(tile_size), i32(tile_size), rl.BLACK)
+		draw_texture_chunk(t, tile_to_pixel(5 + i, 0), rl.GRAY if o.staged else rl.WHITE)
+	}
+}
+
+turn_order_not_staged :: proc(o: Battle_Turn_Order) -> bool {
+	return !o.staged
+}
+
+clear_staged_turn_order :: proc() {
+	battle_turn_order = slice.into_dynamic(slice.filter(battle_turn_order[:], turn_order_not_staged))
+}
+
 end_turn :: proc() {
 	battle_state = Next_Event{}
 }
@@ -187,6 +224,8 @@ battle_time_tick :: proc() {
 		if combatant_winding_up(c) {continue}
 		c.t += c.character.speed
 	}
+
+	calc_turn_order()
 }
 
 get_ready_combatant :: proc() -> (lead: Combatant_Handle, ready := false) {
@@ -233,6 +272,16 @@ get_next_combatant :: proc() -> Combatant_Handle {
 	return actor_h
 }
 
+turn_order_cmp :: proc(lhs, rhs: Battle_Turn_Order) -> bool {
+	c_lhs := hm.get(&battle_combatants, lhs.h)
+	c_rhs := hm.get(&battle_combatants, rhs.h)
+	return c_lhs.t > c_rhs.t // this is backward on purpose
+}
+
+calc_turn_order :: proc() {
+	slice.sort_by(battle_turn_order[:], turn_order_cmp)
+}
+
 update_battle :: proc(dt: f32) {
 	targeting_ease += dt / .5
 	if targeting_ease > 1 {targeting_ease = 0}
@@ -256,11 +305,11 @@ process_battle_events :: proc(dt: f32) {
 		if check_win() {
 			// todo: enqueue default or encounter-overriding events (exp gain etc.)
 			battle_state = Next_Event{}
-		} else if i, ready := get_ready_skill(); ready {
+		} else if i, skill_ready := get_ready_skill(); skill_ready {
 			queue_battle_skill_events(battle_skills[i])
 			unordered_remove(&battle_skills, i)
 			battle_state = Next_Event{}
-		} else if c, ready := get_ready_combatant(); ready {
+		} else if c, c_ready := get_ready_combatant(); c_ready {
 			battle_state = Take_Turn {
 				actor_h = c,
 			}

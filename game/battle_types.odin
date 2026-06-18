@@ -36,6 +36,11 @@ Battle_Skill_Play :: struct {
 	windup: int,
 }
 
+Battle_Turn_Order :: struct {
+	h:      Combatant_Handle,
+	staged: bool,
+}
+
 // EVENTS
 Battle_Event :: union {
 	Battle_Effect_Event,

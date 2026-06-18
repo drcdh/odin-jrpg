@@ -68,6 +68,17 @@ draw_texture_atlas :: proc(v: Texture_Name, pos: Pixel_Coord, tint := rl.WHITE) 
 	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
 }
 
+draw_texture_chunk :: proc(v: Texture_Name, pos: Pixel_Coord, tint := rl.WHITE) {
+	atlas_texture := atlas_textures[v]
+	atlas_rect := atlas_texture.rect
+	atlas_rect.width = TILE_SIZE
+	atlas_rect.height = TILE_SIZE
+	offset := Pixel_Coord{atlas_texture.offset_left, atlas_texture.offset_top}
+	offset *= zoom
+	dest := rl.Rectangle{pos.x + offset.x, pos.y + offset.y, zoom * atlas_rect.width, zoom * atlas_rect.height}
+	rl.DrawTexturePro(atlas, atlas_rect, dest, {}, 0, tint)
+}
+
 draw_texture_rl :: proc(texture: rl.Texture, pos: Pixel_Coord, tint := rl.WHITE) {
 	w := f32(texture.width)
 	h := f32(texture.height)
