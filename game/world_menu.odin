@@ -328,6 +328,15 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 	if changing {
 		if get_input(.CANCEL) {
 			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, item_idx, origin_idx}
+		} else if get_input(.ENTER) {
+			equipment_slot := Equipment_Slot(slot_idx)
+			item_name := Item_Name(item_idx)
+			if fits_in_slot(item_name, equipment_slot) {
+				pc := get_pc(party_idx)
+				set_equipped_item(pc, equipment_slot, item_name)
+				pc.stats = equipped_stats(pc.leveled_stats, pc.equipment)
+				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, 0, 0}
+			}
 		} else {
 			m := get_menu_input()
 			if m.y != 0 {
