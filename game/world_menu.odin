@@ -336,6 +336,7 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 				pc := get_pc(party_idx)
 				set_equipped_item(pc, equipment_slot, item_name)
 				pc.stats = equipped_stats(pc.leveled_stats, pc.equipment)
+				pc.hitpoints = min(pc.hitpoints, pc.max_hitpoints)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, 0, 0}
 			} else {
 				fmt.println(item_name, " does not fit in ", equipment_slot)
