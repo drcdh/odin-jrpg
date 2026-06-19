@@ -1,7 +1,8 @@
 import csv
 
-baddy_id_enums = ["None"]
+from processing import name_to_enum
 
+baddy_id_enums = ["None"]
 
 out_f = open("baddy_data.odin", "w")
 
@@ -16,7 +17,7 @@ n = 1
 with open("data/baddies.csv") as f:
 	reader = csv.DictReader(f, delimiter=",")
 	for row in reader:
-		baddy_id_enum = row["name"].replace("-", "_").replace(" ", "_").title()
+		baddy_id_enum = name_to_enum(row["name"])
 		if not row["texture"]:
 			row["texture"] = baddy_id_enum
 		row["texture"] = row["texture"].title()

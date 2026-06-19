@@ -1,5 +1,7 @@
 import csv
 
+from processing import name_to_enum
+
 skills = []
 def odin_skill(row):
 	return {
@@ -27,7 +29,7 @@ out_f.write("package game\n\n")
 out_f.write("Skill_Name :: enum {\n")
 
 for skill in skills:
-	enum = skill["name"].replace("-", "_").replace(" ", "_").title()
+	enum = name_to_enum(skill["name"])
 	out_f.write(f"\t{enum},\n")
 out_f.write("}\n")
 

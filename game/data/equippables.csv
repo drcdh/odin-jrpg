@@ -1,0 +1,7 @@
+name,slot,mhp,ahp,mof,aof,mde,ade,mpo,apo,mpd,apd,msp,asp
+Sword,Mainhand,,,5,2,,,,,,,,
+Beef Bracer,Sidehand,10,10,5,2,5,2,,,,,-5,-1
+Chump Charm,Accessory,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5
+Knife,Mainhand,,,5,1,,,,,,,,
+Rat-Smashing Bat,Mainhand,,,5,2,5,1,,,,,,-1
+Beginner's Wand,Mainhand,,,,,,,5,2,5,1,,
