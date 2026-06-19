@@ -41,6 +41,7 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Chump_Charm] = 1
 	game_data.inventory[Item_Name.Beef_Bracer] = 1
 	game_data.money = 123
+	set_inventory_order()
 	unequip_all(&PROTAGONIST, to_inventory = false)
 	unequip_all(&ASSASSIN, to_inventory = false)
 	unequip_all(&MUSICIAN, to_inventory = false)

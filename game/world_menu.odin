@@ -181,15 +181,16 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 		if changing {
 			draw_menu(10, 2, 6, 10)
 			for r in 0 ..< 8 {
-				if r >= NUM_ITEMS + 1 {break}
+				if r >= len(equippables_order) {break}
 				if r + origin_idx == item_idx {
 					draw_animation(world_menu_icon, tile_to_pixel(10.5, 3 + r))
 				}
-				tint := rl.WHITE if fits_in_slot(Item_Name(r + origin_idx), Equipment_Slot(slot_idx)) else rl.GRAY
-				if r + origin_idx == NUM_ITEMS {
-					draw_text(11, 3 + f32(r), "remove", tint)
+				item_name := equippables_order[r + origin_idx]
+				if item_name == .None {
+					draw_text(11, 3 + f32(r), "remove", rl.WHITE)
 				} else {
-					draw_text(11, 3 + f32(r), fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator), tint)
+					tint := rl.WHITE if fits_in_slot(item_name, Equipment_Slot(slot_idx)) else rl.GRAY
+					draw_text(11, 3 + f32(r), fmt.caprint(items[item_name].name, allocator = context.temp_allocator), tint)
 					// draw_text(
 					// 	VIEW_TILES_W - 3,
 					// 	4 + f32(r),
@@ -231,15 +232,15 @@ draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_
 		tint = tint,
 	)
 	for r in 0 ..< WORLD_MENU_ITEMS_ROWS {
-		if r >= NUM_ITEMS {break}
+		if r >= len(inventory_order) {break}
 		if r + origin_idx == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + r), tint)
 		}
-		draw_text(2, 2 + f32(r), fmt.caprint(items[r + origin_idx].name, allocator = context.temp_allocator), tint = tint)
+		draw_text(2, 2 + f32(r), fmt.caprint(items[inventory_order[r + origin_idx]].name, allocator = context.temp_allocator), tint = tint)
 		draw_text(
 			VIEW_TILES_W - 3,
 			2 + f32(r),
-			fmt.caprintf("% 2d", game_data.inventory[r + origin_idx], allocator = context.temp_allocator),
+			fmt.caprintf("% 2d", game_data.inventory[inventory_order[r + origin_idx]], allocator = context.temp_allocator),
 			tint = tint,
 		)
 	}
@@ -330,20 +331,22 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, item_idx, origin_idx}
 		} else if get_input(.ENTER) {
 			equipment_slot := Equipment_Slot(slot_idx)
-			item_name := Item_Name(item_idx)
+			item_name := equippables_order[item_idx]
 			if fits_in_slot(item_name, equipment_slot) {
 				pc := get_pc(party_idx)
 				set_equipped_item(pc, equipment_slot, item_name)
 				pc.stats = equipped_stats(pc.leveled_stats, pc.equipment)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, 0, 0}
+			} else {
+				fmt.println(item_name, " does not fit in ", equipment_slot)
 			}
 		} else {
 			m := get_menu_input()
 			if m.y != 0 {
 				pc := get_pc(party_idx)
 				item_idx, origin_idx := item_idx, origin_idx
-				item_idx, origin_idx = shift_windowed_selection(m.y, item_idx, origin_idx, 8, NUM_ITEMS + 1)
-				changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_idx, slot_idx))
+				item_idx, origin_idx = shift_windowed_selection(m.y, item_idx, origin_idx, 8, len(equippables_order))
+				changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, equippables_order[item_idx], slot_idx))
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
 			}
 		}
@@ -352,7 +355,7 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 			world_menu_state = World_Menu_State_Top{0, true, party_idx}
 		} else if get_input(.ENTER) {
 			pc := get_pc(party_idx)
-			changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_idx, slot_idx))
+			changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, equippables_order[item_idx], slot_idx))
 			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, true, item_idx, origin_idx}
 		} else {
 			m := get_menu_input()
@@ -363,6 +366,7 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 				if party_idx >= party_size() {party_idx = 0}
 				world_menu_state = World_Menu_State_Character {
 					party_idx = party_idx,
+					slot_idx = slot_idx,
 				}
 			} else if m.y != 0 {
 				slot_idx := slot_idx
@@ -422,7 +426,7 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 			item_idx := item_idx
 			m := get_menu_input()
 			if m.y != 0 {
-				s, w := shift_windowed_selection(m.y, item_idx, origin_idx, 10, NUM_ITEMS)
+				s, w := shift_windowed_selection(m.y, item_idx, origin_idx, 10, len(inventory_order))
 				world_menu_state = World_Menu_State_Items{s, w, targeting, party_idx}
 			}
 		}

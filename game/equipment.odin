@@ -40,12 +40,14 @@ set_equipped_item :: proc(
 	if prev != .None && to_inventory {
 		game_data.inventory[prev] += 1
 	}
+	set_inventory_order()
 }
 
 unequip_all :: proc(equipment: ^Equipment, to_inventory := true) {
 	for s in 0 ..< NUM_EQUIPMENT_SLOTS {
 		set_equipped_item(equipment, Equipment_Slot(s), .None, false, to_inventory)
 	}
+	set_inventory_order()
 }
 
 equipment_string :: proc(equipment: Equipment, slot: Equipment_Slot) -> string {
@@ -87,7 +89,7 @@ fits_in_slot :: proc {
 	fits_in_slot_item_name,
 }
 
-changed_equipment_enum :: proc(equipment: Equipment, item: Item_Name, slot: Equipment_Slot) -> (changed: Equipment) {
+changed_equipment_enum_enum :: proc(equipment: Equipment, item: Item_Name, slot: Equipment_Slot) -> (changed: Equipment) {
 	for i in 0 ..< NUM_EQUIPMENT_SLOTS {
 		s := Equipment_Slot(i)
 		if s == slot && fits_in_slot(item, slot) {
@@ -99,11 +101,16 @@ changed_equipment_enum :: proc(equipment: Equipment, item: Item_Name, slot: Equi
 	return
 }
 
-changed_equipment_int :: proc(equipment: Equipment, item, slot: int) -> Equipment {
-	return changed_equipment_enum(equipment, Item_Name(item), Equipment_Slot(slot))
+changed_equipment_enum_int :: proc(equipment: Equipment, item: Item_Name, slot: int) -> Equipment {
+	return changed_equipment_enum_enum(equipment, item, Equipment_Slot(slot))
+}
+
+changed_equipment_int_int :: proc(equipment: Equipment, item, slot: int) -> Equipment {
+	return changed_equipment_enum_enum(equipment, Item_Name(item), Equipment_Slot(slot))
 }
 
 changed_equipment :: proc {
-	changed_equipment_enum,
-	changed_equipment_int,
+	changed_equipment_enum_enum,
+	changed_equipment_enum_int,
+	changed_equipment_int_int,
 }
