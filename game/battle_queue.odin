@@ -1,6 +1,7 @@
 package game
 
 import "core:container/queue"
+import "core:fmt"
 
 queue_battle_animation :: proc(event: Play_Animation) {
 	queue.push_back(&battle_event_queue, event)
@@ -10,8 +11,8 @@ queue_battle_effect_ee :: proc(event: Battle_Effect_Event) {
 	queue.push_back(&battle_event_queue, event)
 }
 
-queue_battle_effect_aten :: proc(effect_name: Effect_Name, actor, target: ^Combatant, power: int) {
-	queue_battle_effect_ee(Battle_Effect_Event{effect_name, actor, target, power})
+queue_battle_effect_aten :: proc(effect_name: Effect_Name, actor, target: ^Combatant, v: Skill_V) {
+	queue_battle_effect_ee(Battle_Effect_Event{effect_name, actor, target, v})
 }
 
 queue_battle_effect :: proc {
@@ -70,6 +71,8 @@ queue_battle_skill :: proc(actor, target: ^Combatant, skill: Skill) {
 }
 
 queue_battle_skill_events_fields :: proc(actor, target: ^Combatant, skill: Skill) {
+	fmt.println(actor.name, "uses", skill.name, "on", target.name)
+
 	animation := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
 	sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 
@@ -78,7 +81,7 @@ queue_battle_skill_events_fields :: proc(actor, target: ^Combatant, skill: Skill
 	r := center_animation_on_combatant(animation, target^)
 
 	queue_battle_animation(Play_Animation{animation = animation, offset = {r.x, r.y}})
-	queue_battle_effect(skill.effect, actor, target, skill.power)
+	queue_battle_effect(skill.effect, actor, target, skill.v)
 
 	actor.windup = false
 	actor.t -= skill.cost
@@ -91,4 +94,7 @@ queue_battle_skill_events_struct :: proc(play: Battle_Skill_Play) {
 queue_battle_skill_events :: proc {
 	queue_battle_skill_events_fields,
 	queue_battle_skill_events_struct,
+}
+
+roll_for_counter :: proc(actor, target: ^Character, risk := 1) {
 }

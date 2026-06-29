@@ -394,14 +394,14 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 			}
 		}
 	} else if get_input(.ENTER) {
+		item_name := inventory_order[item_idx]
 		if targeting {
-			item_name := items[item_idx].name
-			if consumable, ok := items[item_idx].data.(Consumable); ok {
+			if consumable, ok := items[item_name].data.(Consumable); ok {
 				skill = skills[consumable]
 				play_sound(skill.sound) // todo
-				do_effect(skill.effect, nil, get_pc(party_idx), skill.power)
-				game_data.inventory[item_idx] -= 1
-				if game_data.inventory[item_idx] == 0 {
+				do_effect(skill.effect, nil, get_pc(party_idx), skill.v)
+				game_data.inventory[item_name] -= 1
+				if game_data.inventory[item_name] == 0 {
 					world_menu_state = World_Menu_State_Items{item_idx, origin_idx, false, party_idx}
 				}
 				fmt.printfln("Used item %s", item_name)
@@ -409,9 +409,10 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 				fmt.println("Uh oh! Tried to use non-consumable %s", item_name)
 			}
 		} else {
-			if _, consumable := items[item_idx].data.(Consumable); consumable {
+			if _, consumable := items[item_name].data.(Consumable); consumable {
 				world_menu_state = World_Menu_State_Items{item_idx, origin_idx, true, 0}
 			} else {
+				fmt.printfln("Item %s isn't a Consumable", items[item_name])
 				play_sound(.Blerp)
 			}
 		}
@@ -424,7 +425,6 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 				change_world_menu_party_idx_from_input(party_idx),
 			}
 		} else {
-			item_idx := item_idx
 			m := get_menu_input()
 			if m.y != 0 {
 				s, w := shift_windowed_selection(m.y, item_idx, origin_idx, 10, len(inventory_order))

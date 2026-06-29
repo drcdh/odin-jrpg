@@ -3,7 +3,7 @@ package game
 import "core:fmt"
 
 // TODO, maybe: implement Effect_Result
-Effect_Proc :: proc(actor, target: ^Character, value: int) -> (int, bool)
+Effect_Proc :: proc(actor, target: ^Character, v: Skill_V) -> (int, bool)
 
 Effect_Name :: enum {
 	Attack,
@@ -13,51 +13,65 @@ Effect_Name :: enum {
 	Add_Control,
 	Add_Poison,
 	Fire,
+	Level_Up,
 }
 
-effect_attack :: proc(actor, target: ^Character, v: int) -> (int, bool) {
-	hp_change := -max(1, actor.offense - target.defense)
+effect_attack :: proc(actor, target: ^Character, v: Skill_V) -> (int, bool) {
+	power := (1 + v[0]/100)
+	risk := (1 + v[1]/100)
+	hp_change := -max(1, power*actor.offense - target.defense)
 	target.hitpoints += hp_change
+	roll_for_counter(target, actor, risk)
 	return hp_change, true
 }
 
-effect_heal_hp_constant :: proc(actor, target: ^Character, amount: int) -> (int, bool) {
+effect_heal_hp_constant :: proc(actor, target: ^Character, v: Skill_V) -> (int, bool) {
+	amount := v[0]
 	target.hitpoints += amount
 	target.hitpoints = min(target.hitpoints, target.max_hitpoints) // TODO: put this everywhere
 	return amount, true
 }
 
-effect_remove_poison :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
+effect_remove_poison :: proc(actor, target: ^Character, _: Skill_V) -> (int, bool) {
+	// chance := v[0]
 	// todo: random
 	target.poison = false
 	return 0, false
 }
 
-effect_add_confuse :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
+effect_add_confuse :: proc(actor, target: ^Character, _: Skill_V) -> (int, bool) {
 	// todo: random
 	target.confuse = true
 	return 0, false
 }
 
-effect_add_control :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
+effect_add_control :: proc(actor, target: ^Character, _: Skill_V) -> (int, bool) {
 	// todo: random
 	target.control = true
 	return 0, false
 }
 
-effect_add_poison :: proc(actor, target: ^Character, chance: int) -> (int, bool) {
+effect_add_poison :: proc(actor, target: ^Character, _: Skill_V) -> (int, bool) {
 	// todo: random
 	target.poison = true
 	return 0, false
 }
 
-effect_fire_damage :: proc(actor, target: ^Character, power: int) -> (int, bool) {
+effect_fire_damage :: proc(actor, target: ^Character, v: Skill_V) -> (int, bool) {
+	power := (1 + v[0]/100)
 	hp_change := -max(0, power * actor.psy_offense - target.psy_defense)
 	target.hitpoints += hp_change
 	return hp_change, true
 }
 
-do_effect :: proc(e: Effect_Name, actor, target: ^Character, v: int) -> (int, bool) {
+effect_level_up :: proc(_, target: ^Character, v: Skill_V) -> (int, bool) {
+	n := v[0]
+	set_level(target, target.level + n)
+	// set_skills(target)
+	return 0, false
+}
+
+do_effect :: proc(e: Effect_Name, actor, target: ^Character, v: Skill_V) -> (int, bool) {
 	f: Effect_Proc
 	switch e {
 	case .Attack:
@@ -74,11 +88,13 @@ do_effect :: proc(e: Effect_Name, actor, target: ^Character, v: int) -> (int, bo
 		f = effect_add_poison
 	case .Fire:
 		f = effect_fire_damage
+	case .Level_Up:
+		f = effect_level_up
 	}
 	return f(actor, target, v)
 }
 
-do_battle_effect :: proc(e: Effect_Name, actor, target: ^Combatant, v: int) {
+do_battle_effect :: proc(e: Effect_Name, actor, target: ^Combatant, v: Skill_V) {
 	if amount, hp_changed := do_effect(e, actor.character, target.character, v); hp_changed {
 		queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", amount)})
 	}

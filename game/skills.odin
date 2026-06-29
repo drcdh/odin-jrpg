@@ -4,7 +4,7 @@ Skill :: struct {
 	name:      string,
 	effect:    Effect_Name,
 	targeting: Targeting_Type,
-	power:     int,
+	v:         Skill_V, // defined in skill_data.odin
 	windup:    int,
 	cost:      int,
 	cooldown:  int,

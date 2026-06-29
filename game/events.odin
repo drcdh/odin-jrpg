@@ -13,7 +13,7 @@ Battle_Effect_Event :: struct {
 	effect_name: Effect_Name,
 	actor:       ^Combatant,
 	target:      ^Combatant,
-	value:       int,
+	v:           Skill_V,
 }
 Battle_Unpause :: struct {}
 Clear_Text :: struct {}

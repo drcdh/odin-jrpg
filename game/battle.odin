@@ -3,6 +3,7 @@ package game
 import hm "core:container/handle_map"
 import "core:container/queue"
 import "core:fmt"
+import "core:math"
 import "core:slice"
 
 import rl "vendor:raylib"
@@ -214,7 +215,7 @@ end_turn :: proc() {
 
 battle_time_tick :: proc() {
 	for &s in battle_skills {
-		s.windup -= s.actor.speed
+		s.windup -= int(math.sqrt(f32(s.actor.speed)))
 	}
 
 	it := hm.iterator_make(&battle_combatants)
@@ -222,7 +223,7 @@ battle_time_tick :: proc() {
 		if !c.enabled {continue}
 		if combatant_downed(c) {continue}
 		if combatant_winding_up(c) {continue}
-		c.t += c.character.speed
+		c.t += int(math.sqrt(f32(c.character.speed)))
 	}
 
 	calc_turn_order()
@@ -330,7 +331,7 @@ process_battle_events :: proc(dt: f32) {
 		if queue.len(battle_event_queue) > 0 {
 			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Effect_Event:
-				do_battle_effect(e.effect_name, e.actor, e.target, e.value)
+				do_battle_effect(e.effect_name, e.actor, e.target, e.v)
 			case Play_Animation:
 				battle_state = Process_Battle_Animation {
 					animation = animation_create(e.animation),
