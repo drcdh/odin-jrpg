@@ -17,9 +17,9 @@ Effect_Name :: enum {
 }
 
 effect_attack :: proc(actor, target: ^Character, v: Skill_V) -> (int, bool) {
-	power := (1 + v[0]/100)
-	risk := (1 + v[1]/100)
-	hp_change := -max(1, power*actor.offense - target.defense)
+	power := (1 + v[0] / 100)
+	risk := (1 + v[1] / 100)
+	hp_change := -max(1, power * actor.offense - target.defense)
 	target.hitpoints += hp_change
 	roll_for_counter(target, actor, risk)
 	return hp_change, true
@@ -58,7 +58,7 @@ effect_add_poison :: proc(actor, target: ^Character, _: Skill_V) -> (int, bool) 
 }
 
 effect_fire_damage :: proc(actor, target: ^Character, v: Skill_V) -> (int, bool) {
-	power := (1 + v[0]/100)
+	power := (1 + v[0] / 100)
 	hp_change := -max(0, power * actor.psy_offense - target.psy_defense)
 	target.hitpoints += hp_change
 	return hp_change, true

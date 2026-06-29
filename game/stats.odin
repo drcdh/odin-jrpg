@@ -60,12 +60,12 @@ set_stat :: proc(stats: ^Stats, i: Stat, v: int) {
 
 MAX_LEVEL :: 99
 MAX_LEVEL_F :: f32(99)
-LFUNC_POWER := math.log(10*MAX_LEVEL_F, MAX_LEVEL_F)
+LFUNC_POWER := math.log(10 * MAX_LEVEL_F, MAX_LEVEL_F)
 
 lfunc :: proc(level, base, points: int) -> int {
 	level := level
-	level = MAX_LEVEL*(level-1)/(MAX_LEVEL-1)
-	return base + base * int(math.pow(f32(level), LFUNC_POWER))/10 + points * int(math.sqrt(f32(level))) / 5
+	level = MAX_LEVEL * (level - 1) / (MAX_LEVEL - 1)
+	return base + base * int(math.pow(f32(level), LFUNC_POWER)) / 10 + points * int(math.sqrt(f32(level))) / 5
 }
 
 leveled_stats :: proc(level: int, base, points: Stats) -> (leveled: Stats) {

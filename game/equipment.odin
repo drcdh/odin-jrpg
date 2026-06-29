@@ -89,7 +89,13 @@ fits_in_slot :: proc {
 	fits_in_slot_item_name,
 }
 
-changed_equipment_enum_enum :: proc(equipment: Equipment, item: Item_Name, slot: Equipment_Slot) -> (changed: Equipment) {
+changed_equipment_enum_enum :: proc(
+	equipment: Equipment,
+	item: Item_Name,
+	slot: Equipment_Slot,
+) -> (
+	changed: Equipment,
+) {
 	for i in 0 ..< NUM_EQUIPMENT_SLOTS {
 		s := Equipment_Slot(i)
 		if s == slot && fits_in_slot(item, slot) {

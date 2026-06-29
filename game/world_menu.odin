@@ -236,7 +236,12 @@ draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_
 		if r + origin_idx == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + r), tint)
 		}
-		draw_text(2, 2 + f32(r), fmt.caprint(items[inventory_order[r + origin_idx]].name, allocator = context.temp_allocator), tint = tint)
+		draw_text(
+			2,
+			2 + f32(r),
+			fmt.caprint(items[inventory_order[r + origin_idx]].name, allocator = context.temp_allocator),
+			tint = tint,
+		)
 		draw_text(
 			VIEW_TILES_W - 3,
 			2 + f32(r),
@@ -347,7 +352,10 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 				pc := get_pc(party_idx)
 				item_idx, origin_idx := item_idx, origin_idx
 				item_idx, origin_idx = shift_windowed_selection(m.y, item_idx, origin_idx, 8, len(equippables_order))
-				changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, equippables_order[item_idx], slot_idx))
+				changing_stats = equipped_stats(
+					pc.leveled_stats,
+					changed_equipment(pc.equipment, equippables_order[item_idx], slot_idx),
+				)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, changing, item_idx, origin_idx}
 			}
 		}
@@ -356,7 +364,10 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 			world_menu_state = World_Menu_State_Top{0, true, party_idx}
 		} else if get_input(.ENTER) {
 			pc := get_pc(party_idx)
-			changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, equippables_order[item_idx], slot_idx))
+			changing_stats = equipped_stats(
+				pc.leveled_stats,
+				changed_equipment(pc.equipment, equippables_order[item_idx], slot_idx),
+			)
 			world_menu_state = World_Menu_State_Character{party_idx, slot_idx, true, item_idx, origin_idx}
 		} else {
 			m := get_menu_input()
@@ -367,7 +378,7 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 				if party_idx >= party_size() {party_idx = 0}
 				world_menu_state = World_Menu_State_Character {
 					party_idx = party_idx,
-					slot_idx = slot_idx,
+					slot_idx  = slot_idx,
 				}
 			} else if m.y != 0 {
 				slot_idx := slot_idx
