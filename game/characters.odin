@@ -20,6 +20,13 @@ set_level :: proc(c: ^Character, level: int) {
 	c.stats = equipped_stats(c.leveled_stats, c.equipment)
 }
 
+Status_Name :: enum {
+	Confuse,
+	Control,
+	Poison,
+	Zombie,
+}
+
 Status :: struct {
 	confuse: bool,
 	control: bool,
@@ -36,4 +43,30 @@ get_status_cstring :: proc(status: Status) -> cstring {
 		s = strings.concatenate({s, "Z"}, context.temp_allocator)
 	}
 	return strings.clone_to_cstring(s)
+}
+
+add_status :: proc(c: ^Character, status: Status_Name) {
+	switch status {
+	case .Confuse:
+		c.confuse = true
+	case .Control:
+		c.control = true
+	case .Poison:
+		c.poison = true
+	case .Zombie:
+		c.zombie = true
+	}
+}
+
+remove_status :: proc(c: ^Character, status: Status_Name) {
+	switch status {
+	case .Confuse:
+		c.confuse = false
+	case .Control:
+		c.control = false
+	case .Poison:
+		c.poison = false
+	case .Zombie:
+		c.zombie = false
+	}
 }

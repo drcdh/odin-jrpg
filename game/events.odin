@@ -10,10 +10,9 @@ Append_Text :: struct {
 	pause: f32,
 }
 Battle_Effect_Event :: struct {
-	effect_name: Effect_Name,
-	actor:       ^Combatant,
-	target:      ^Combatant,
-	v:           Skill_V,
+	actor:  ^Combatant,
+	target: ^Combatant,
+	effect: Effect,
 }
 Battle_Unpause :: struct {}
 Clear_Text :: struct {}

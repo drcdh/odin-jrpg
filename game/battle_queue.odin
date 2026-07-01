@@ -11,8 +11,8 @@ queue_battle_effect_ee :: proc(event: Battle_Effect_Event) {
 	queue.push_back(&battle_event_queue, event)
 }
 
-queue_battle_effect_aten :: proc(effect_name: Effect_Name, actor, target: ^Combatant, v: Skill_V) {
-	queue_battle_effect_ee(Battle_Effect_Event{effect_name, actor, target, v})
+queue_battle_effect_aten :: proc(actor, target: ^Combatant, effect: Effect) {
+	queue_battle_effect_ee(Battle_Effect_Event{actor, target, effect})
 }
 
 queue_battle_effect :: proc {
@@ -81,7 +81,7 @@ queue_battle_skill_events_fields :: proc(actor, target: ^Combatant, skill: Skill
 	r := center_animation_on_combatant(animation, target^)
 
 	queue_battle_animation(Play_Animation{animation = animation, offset = {r.x, r.y}})
-	queue_battle_effect(skill.effect, actor, target, skill.v)
+	queue_battle_effect(actor, target, skill.effect)
 
 	actor.windup = false
 	actor.t -= skill.cost

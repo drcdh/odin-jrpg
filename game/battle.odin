@@ -331,7 +331,7 @@ process_battle_events :: proc(dt: f32) {
 		if queue.len(battle_event_queue) > 0 {
 			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Effect_Event:
-				do_battle_effect(e.effect_name, e.actor, e.target, e.v)
+				do_battle_effect(e.actor, e.target, e.effect)
 			case Play_Animation:
 				battle_state = Process_Battle_Animation {
 					animation = animation_create(e.animation),

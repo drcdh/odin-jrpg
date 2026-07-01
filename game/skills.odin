@@ -2,9 +2,8 @@ package game
 
 Skill :: struct {
 	name:      string,
-	effect:    Effect_Name,
+	effect:    Effect,
 	targeting: Targeting_Type,
-	v:         Skill_V, // defined in skill_data.odin
 	windup:    int,
 	cost:      int,
 	cooldown:  int,
