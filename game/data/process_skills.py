@@ -2,33 +2,54 @@ import csv
 
 from processing import name_to_enum
 
+def constant_f(row):
+	return int(row["const"] or 0)
+def power_f(row):
+	return int(row["power"] or 0)
+def psy_power_f(row):
+	return int(row["psypow"] or 0)
+def pierce_f(row):
+	return int(row["pierce"] or 0)
+def psy_pierce_f(row):
+	return int(row["psyprc"] or 0)
+def chance_f(row):
+	return int(row["chance"] or 100)
+def risk_f(row):
+	return int(row["risk"] or 100)
+def ranged_f(row):
+	return "true" if row["risk"] else "false"
+def status_f(row):
+	return row["status"]
+def traits_f(row):
+	return row["traits"]
+
 def skill_effect(row):
 	effect = row["effect"]
 	if effect == "Attack":
-		constant = int(row["v0"] or 0)
-		power = int(row["v1"] or 0)
-		psy_power = int(row["v2"] or 0)
-		pierce = int(row["v3"] or 0)
-		psy_pierce = int(row["v4"] or 0)
-		accuracy = int(row["v5"] or 0)
-		risk = int(row["v6"] or 0)
-		# traits = row["v7"]
-		ranged = "true" if row["v8"] else "false"
+		constant = constant_f(row)
+		power = power_f(row)
+		psy_power = psy_power_f(row)
+		pierce = pierce_f(row)
+		psy_pierce = psy_pierce_f(row)
+		accuracy = chance_f(row)
+		risk = risk_f(row)
+		# traits = traits_f(row)
+		ranged = ranged_f(row)
 		return f"Effect_Attack{{ {constant=}, {power=}, {psy_power=}, {pierce=}, {psy_pierce=}, {accuracy=}, {risk=}, ranged={ranged} }}"
 	elif effect == "Heal_Hp":
-		constant = int(row["v0"] or 0)
-		power = int(row["v1"] or 0)
+		constant = constant_f(row)
+		power = power_f(row)
 		return f"Effect_Heal_Hp{{ {constant=}, {power=} }}"
 	elif effect == "Add_Status":
-		chance = int(row["v0"] or 0)
-		status = row["v1"]
+		chance = chance_f(row)
+		status = status_f(row)
 		return f"Effect_Add_Status{{ {chance=}, status={status} }}"
 	elif effect == "Remove_Status":
-		chance = int(row["v0"] or 0)
-		status = row["v1"]
+		chance = chance_f(row)
+		status = status_f(row)
 		return f"Effect_Remove_Status{{ {chance=}, status={status} }}"
 	elif effect == "Level_Up":
-		n = int(row["v0"] or 0)
+		n = constant_f(row)
 		return f"Effect_Level_Up{{ {n=} }}"
 
 skills = []

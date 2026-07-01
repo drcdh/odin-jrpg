@@ -106,8 +106,8 @@ party_size :: proc() -> int {
 	return size
 }
 
-get_skill_set :: proc(pc: PC, level: int, stats: Stats) -> Skill_Set {
-	f: proc(_: int, _: Stats) -> Skill_Set
+get_skill_set :: proc(pc: PC, equipment: Equipment, level: int, stats: Stats) -> Skill_Set {
+	f: proc(_: Equipment, _: int, _: Stats) -> Skill_Set
 	switch pc {
 	case .Protagonist:
 		f = get_protagonist_skill_set
@@ -122,41 +122,72 @@ get_skill_set :: proc(pc: PC, level: int, stats: Stats) -> Skill_Set {
 	case .Zealot:
 		f = get_zealot_skill_set
 	}
-	return f(level, stats)
+	return f(equipment, level, stats) | get_generic_skill_set(equipment, level, stats)
 }
 
-get_protagonist_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
-	skill_set += {.Slash}
-	skill_set += {.Pommel_Strike}
+get_generic_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
+	mh := equipped_item(equipment, Equipment_Slot.Mainhand)
+	if mh == .Sword || mh == .Knife {
+		skill_set += {.Slash}
+		if level >= 10 {
+			skill_set += {.Slash_All}
+		}
+	} else if mh == .Rat_Smashing_Bat {
+		skill_set += {.Smash}
+	} else if mh == .None {
+		skill_set += {.Punch}
+	}
 	return
 }
 
-get_assassin_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
-	skill_set += {.Slash}
+get_protagonist_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
+	mh := equipped_item(equipment, Equipment_Slot.Mainhand)
+	if mh == .Sword || mh == .Knife {
+		if level >= 2 {
+			skill_set += {.Pommel_Strike}
+		}
+	}
+	return
+}
+
+get_assassin_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	skill_set += {.Mind_Control}
 	return
 }
 
-get_musician_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
+get_musician_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
-get_killer_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
+get_killer_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
-get_mourner_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
+get_mourner_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
 }
 
-get_zealot_skill_set :: proc(level: int, stats: Stats) -> (skill_set: Skill_Set) {
+get_zealot_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
 	return
+}
+
+set_skills_int :: proc(i: int) {
+	pc := get_pc(i)
+	pc.skills = get_skill_set(PC(i), pc.equipment, pc.level, pc.stats)
+}
+
+set_skills_enum :: proc(i: PC) {
+	set_skills_int(int(i))
+}
+
+set_skills :: proc {
+	set_skills_int,
+	set_skills_enum,
 }
 
 set_all_skills :: proc() {
 	for i in 0 ..< len(PC) {
-		pc := get_pc(i)
-		pc.skills = get_skill_set(PC(i), pc.level, pc.stats)
+		set_skills(i)
 	}
 }
 

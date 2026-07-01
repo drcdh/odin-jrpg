@@ -1,14 +1,15 @@
-name,targeting,effect,v0,v1,v2,v3,v4,v5,v6,v7,v8,v9,windup,cost,cooldown,animation,,sound
-Potion,One_Ally,Heal_Hp,50,,,,,,,,,,10,25,,,,Warp
-Super Potion,One_Ally,Heal_Hp,500,,,,,,,,,,10,25,,,,Warp
-Antidote,One_Ally,Remove_Status,100,.Poison,,,,,,,,,10,25,,,,Warp
-Poisonous Mushroom,One_Ally,Add_Status,100,.Poison,,,,,,,,,10,25,,,,Warp
-Bite,One_Opponent,Attack,,100,,,,,,,,,,50,,Ffvi_Stars,,Whack
-Slash,One_Opponent,Attack,,100,,,,,,,,,,50,,Slash,,Whack
-Slash All,All_Opponents,Attack,,100,,,,,,,,,30,80,100,Slash,,Whack
-Smash,One_Opponent,Attack,,100,,,,,,,,,,50,,Smack,,Whack
-Fire,Some_Opponents,Attack,,,100,,,,,,,,,50,,Small_Flame,,
-Pommel Strike,One_Opponent,Add_Status,100,.Confuse,,,,,,,,,,60,,Smack,,
-Mind Control,One_Opponent,Add_Status,100,.Control,,,,,,,,,50,100,200,,,Warp
-Level Up,One_Ally,Level_Up,1,,,,,,,,,,,,,,,Warp
-Wild Swing,One_Opponent,Attack,,200,,,,,300,,,,,50,60,Slash,,Whack
+name,targeting,effect,const,power,psypow,pierce,psyprc,chance,risk,ranged,status,windup,cost,cooldown,animation,,sound
+Potion,One_Ally,Heal_Hp,50,,,,,,,,,10,25,,,,Warp
+Super Potion,One_Ally,Heal_Hp,500,,,,,,,,,10,25,,,,Warp
+Antidote,One_Ally,Remove_Status,100,,,,,,,,.Poison,10,25,,,,Warp
+Poisonous Mushroom,One_Ally,Add_Status,100,,,,,,,,.Poison,10,25,,,,Warp
+Bite,One_Opponent,Attack,,100,,,,,,,,,50,,Ffvi_Stars,,Whack
+Slash,One_Opponent,Attack,,100,,,,,,,,,50,,Slash,,Whack
+Slash All,All_Opponents,Attack,,100,,,,,,,,30,80,100,Slash,,Whack
+Smash,One_Opponent,Attack,,100,,,,,,,,,50,,Smack,,Whack
+Fire,Some_Opponents,Attack,,,100,,,,,ranged,,,50,,Small_Flame,,
+Pommel Strike,One_Opponent,Add_Status,100,,,,,,,,.Confuse,,60,,Smack,,
+Mind Control,One_Opponent,Add_Status,100,,,,,,,ranged,.Control,50,100,200,,,Warp
+Level Up,One_Ally,Level_Up,1,,,,,,,,,,,,,,Warp
+Wild Swing,One_Opponent,Attack,,200,,,,,300,,,,50,60,Slash,,Whack
+Punch,One_Opponent,Attack,,80,,,,,150,,,,50,,,,
