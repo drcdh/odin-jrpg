@@ -108,7 +108,7 @@ draw_battle :: proc() {
 		draw_animation(s.animation, s.offset, rl.WHITE)
 	case Process_Text_Effect:
 		pos := Pixel_Coord{s.coord.x - 32, s.coord.y - 32 * s.t}
-		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{0, 0, 0, u8(255 * (1 - s.t))})
+		rl.DrawTextEx(font, s.text, pos, 32, 0, rl.Color{s.color.x, s.color.y, s.color.z, u8(255 * (1 - s.t))})
 	}
 
 	// debug
@@ -341,6 +341,7 @@ process_battle_events :: proc(dt: f32) {
 				play_sound(e.sound)
 			case Text_Effect:
 				battle_state = Process_Text_Effect {
+					color = e.color,
 					coord = e.coord,
 					text  = e.text,
 				}

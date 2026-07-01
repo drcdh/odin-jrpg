@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import rl "vendor:raylib"
 
 // Effect_Proc :: proc(actor, target: ^Combatant, effect: Effect)
 
@@ -13,20 +14,20 @@ Effect_Name :: enum {
 }
 
 Effect_Attack :: struct {
-	constant: int,
-	power: int,
-	psy_power: int,
-	pierce: int,
+	constant:   int,
+	power:      int,
+	psy_power:  int,
+	pierce:     int,
 	psy_pierce: int,
-	accuracy: int,
-	risk: int,
+	accuracy:   int,
+	risk:       int,
 	// traits
-	ranged: bool,
+	ranged:     bool,
 }
 
 Effect_Heal_Hp :: struct {
 	constant: int,
-	power: int,
+	power:    int,
 }
 
 Effect_Add_Status :: struct {
@@ -57,28 +58,30 @@ effect_attack :: proc(actor, target: ^Combatant, effect: Effect_Attack) {
 	psy_power := (effect.psy_power / 100)
 	psy_pierce := (effect.psy_pierce / 100)
 	risk := (effect.risk / 100)
-	hp_change := -effect.constant - max(0, power * actor.offense - (1 - pierce)*target.defense) - max(0, psy_power * actor.psy_offense - (1 - psy_pierce)*target.psy_defense)
-	target.hitpoints += hp_change
-	queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", hp_change)})
+	hp_loss :=
+		effect.constant +
+		max(0, power * actor.offense - (1 - pierce) * target.defense) +
+		max(0, psy_power * actor.psy_offense - (1 - psy_pierce) * target.psy_defense)
+	target.hitpoints -= hp_loss
+	queue_text_effect(Text_Effect{color = rl.WHITE, coord = target.coord, text = fmt.caprintf("%d", hp_loss)})
 	roll_for_counter(target, actor, risk)
 }
 
 effect_heal_hp :: proc(actor, target: ^Character, effect: Effect_Heal_Hp) {
 	power := (effect.power / 100)
-	amount := effect.constant
+	hp_gain := effect.constant
 	if power > 0 {
-		amount += power * actor.psy_offense
+		hp_gain += power * actor.psy_offense
 	}
-	target.hitpoints += amount
-	target.hitpoints = min(target.hitpoints, target.max_hitpoints) // TODO: put this everywhere
+	hp_gain = max(0, hp_gain)
+	target.hitpoints = min(target.hitpoints + hp_gain, target.max_hitpoints) // TODO: put this everywhere
 }
 
 effect_heal_hp_combat :: proc(actor, target: ^Combatant, effect: Effect_Heal_Hp) {
 	power := (effect.power / 100)
-	amount := effect.constant + power * actor.psy_offense
-	target.hitpoints += amount
-	target.hitpoints = min(target.hitpoints, target.max_hitpoints) // TODO: put this everywhere
-	queue_text_effect(Text_Effect{coord = target.coord, text = fmt.caprintf("%d", amount)})
+	hp_gain := max(0, effect.constant + power * actor.psy_offense)
+	target.hitpoints = min(target.hitpoints + hp_gain, target.max_hitpoints) // TODO: put this everywhere
+	queue_text_effect(Text_Effect{color = rl.GREEN, coord = target.coord, text = fmt.caprintf("%d", hp_gain)})
 }
 
 effect_add_status :: proc(actor, target: ^Character, effect: Effect_Add_Status) {
@@ -144,14 +147,14 @@ do_battle_effect :: proc(actor, target: ^Combatant, effect: Effect) {
 }
 
 do_world_effect :: proc(actor, target: ^Character, effect: Effect) {
- #partial switch effect in effect {
- case Effect_Heal_Hp:
-	 effect_heal_hp(actor, target, effect)
+	#partial switch effect in effect {
+	case Effect_Heal_Hp:
+		effect_heal_hp(actor, target, effect)
 	case Effect_Add_Status:
 		effect_proc(actor, target, effect)
 	case Effect_Remove_Status:
 		effect_proc(actor, target, effect)
 	case Effect_Level_Up:
 		effect_proc(actor, target, effect)
- }
+	}
 }

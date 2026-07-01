@@ -1,5 +1,7 @@
 package game
 
+import rl "vendor:raylib"
+
 Add_Item :: struct {
 	item:   Item_Name,
 	number: u8,
@@ -96,6 +98,7 @@ Start_Level :: struct {
 }
 Start_Next_Level :: struct {}
 Text_Effect :: struct {
+	color: rl.Color,
 	coord: Pixel_Coord,
 	text:  cstring,
 }

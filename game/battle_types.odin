@@ -62,6 +62,7 @@ Process_Battle_Animation :: struct {
 	t:         f32,
 }
 Process_Text_Effect :: struct {
+	color: rl.Color,
 	coord: Pixel_Coord,
 	t:     f32,
 	text:  cstring,
