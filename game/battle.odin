@@ -21,6 +21,7 @@ battle_combatants: hm.Static_Handle_Map(64, Combatant, Combatant_Handle)
 battle_pc_handles: [NUM_PC]Combatant_Handle
 battle_ending := false
 battle_event_queue: queue.Queue(Battle_Event)
+battle_menu_skills: [dynamic]Skill_Name
 battle_num_baddies := 0
 battle_num_pc := 0
 battle_paused := false
@@ -393,4 +394,13 @@ targeted :: proc(id, team: int) -> bool {
 		}
 	}
 	return false
+}
+
+set_battle_skills :: proc(actor: ^Character) {
+	clear(&battle_menu_skills)
+	for s in 0 ..< len(skills) {
+		if Skill_Name(s) in actor.skills {
+			append(&battle_menu_skills, Skill_Name(s))
+		}
+	}
 }

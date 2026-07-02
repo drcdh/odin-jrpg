@@ -302,7 +302,7 @@ update_world_menu :: proc() {
 		}
 	}
 	if len(world_menu_text_effects) > 0 {
-		for i in len(world_menu_text_effects)-1 ..= 0 {
+		for i in len(world_menu_text_effects) - 1 ..= 0 {
 			if world_menu_text_effects[i].t >= 1 {
 				unordered_remove(&world_menu_text_effects, i)
 			}

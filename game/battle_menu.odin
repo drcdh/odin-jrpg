@@ -1,7 +1,6 @@
 package game
 
 import hm "core:container/handle_map"
-import "core:fmt"
 import "core:strings"
 import rl "vendor:raylib"
 
@@ -79,12 +78,11 @@ draw_battle_menu :: proc() {
 	case Skill_Selection_State:
 		draw_menu(2, 8, 8, BATTLE_MENU_SKILLS_ROWS - 2)
 		for r in 0 ..< BATTLE_MENU_SKILLS_ROWS {
-			if r >= len(Skill_Name) {break}
+			if r >= len(battle_menu_skills) {break}
 			draw_text(
 				2.5,
 				8.5 + f32(r) * .5,
-				// strings.clone_to_cstring(skills[state.s + i].effect, context.temp_allocator),
-				fmt.caprint(skills[state.w + r].effect, allocator = context.temp_allocator),
+				strings.clone_to_cstring(skills[battle_menu_skills[state.w + r]].name, context.temp_allocator),
 				rl.YELLOW if state.s == state.w + r else rl.WHITE,
 			)
 		}
@@ -140,7 +138,7 @@ battle_change_selection :: proc(dx, dy: int) {
 		if s > ITEM {s = 0}
 		battle_ui_state = Action_Selection_State{s}
 	case Skill_Selection_State:
-		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_SKILLS_ROWS, len(Skill_Name))
+		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_SKILLS_ROWS, len(battle_menu_skills))
 		battle_ui_state = Skill_Selection_State{s, w}
 	case Item_Selection_State:
 		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_ITEMS_ROWS, len(Item_Name))
@@ -230,11 +228,12 @@ pc_turn :: proc(actor: ^Combatant) {
 				}
 			case SKILL:
 				battle_ui_state = Skill_Selection_State{}
+				set_battle_skills(actor)
 			case ITEM:
 				battle_ui_state = Item_Selection_State{}
 			}
 		case Skill_Selection_State:
-			skill = skills[state.s]
+			skill = skills[battle_menu_skills[state.s]]
 			battle_ui_state = Target_Selection_State {
 				ts = default_target_selection(skill.targeting),
 				tt = skill.targeting,

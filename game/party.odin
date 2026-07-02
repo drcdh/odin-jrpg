@@ -205,7 +205,7 @@ get_world_menu_target_character_position :: proc(character: ^Character) -> (int,
 				if i < 3 {
 					return i, 0, true
 				} else {
-					return i-3, 1, true
+					return i - 3, 1, true
 				}
 			}
 		}
