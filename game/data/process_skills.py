@@ -17,7 +17,7 @@ def chance_f(row):
 def risk_f(row):
 	return int(row["risk"] or 100)
 def ranged_f(row):
-	return "true" if row["risk"] else "false"
+	return "true" if row["ranged"] else "false"
 def status_f(row):
 	return row["status"]
 def traits_f(row):
