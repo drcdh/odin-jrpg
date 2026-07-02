@@ -109,5 +109,5 @@ queue_battle_skill_events :: proc {
 	queue_battle_skill_events_struct,
 }
 
-roll_for_counter :: proc(actor, target: ^Character, risk := 1) {
+roll_for_counter :: proc(actor, target: ^Character, risk: f32 = 1) {
 }

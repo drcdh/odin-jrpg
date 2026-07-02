@@ -53,15 +53,35 @@ Effect :: union {
 }
 
 effect_attack :: proc(actor, target: ^Character, effect: Effect_Attack) {
-	power := (effect.power / 100)
-	pierce := (effect.pierce / 100)
-	psy_power := (effect.psy_power / 100)
-	psy_pierce := (effect.psy_pierce / 100)
-	risk := (effect.risk / 100)
-	hp_loss :=
-		effect.constant +
-		max(0, power * actor.offense - (1 - pierce) * target.defense) +
-		max(0, psy_power * actor.psy_offense - (1 - psy_pierce) * target.psy_defense)
+	constant := f16(effect.constant)
+	power := f16(effect.power) / 100
+	pierce := f16(effect.pierce) / 100
+	psy_power := f16(effect.psy_power) / 100
+	psy_pierce := f16(effect.psy_pierce) / 100
+	risk := f32(effect.risk) / 100
+	offense := f16(actor.offense)
+	defense := f16(target.defense)
+	psy_offense := f16(actor.psy_offense)
+	psy_defense := f16(target.psy_defense)
+	hp_loss_f :=
+		constant +
+		max(0, power * offense - (1 - pierce) * defense) +
+		max(0, psy_power * psy_offense - (1 - psy_pierce) * psy_defense)
+	fmt.printfln("%s -> %s: %v", actor.name, target.name, effect)
+	fmt.printfln(
+		"  hp_loss = %d + max(0, %.2f*%d - %.2f*%d) + max(0, %.2f*%d - %.2f*%d)",
+		effect.constant,
+		power,
+		actor.offense,
+		(1 - pierce),
+		target.defense,
+		psy_power,
+		actor.psy_offense,
+		(1 - psy_pierce),
+		target.psy_defense,
+	)
+	hp_loss := int(hp_loss_f)
+	fmt.printfln("  hp_loss = %f = %d", hp_loss_f, hp_loss)
 	target.hitpoints -= hp_loss
 	queue_text_effect_character(target, fmt.caprintf("%d", hp_loss))
 	roll_for_counter(target, actor, risk)
