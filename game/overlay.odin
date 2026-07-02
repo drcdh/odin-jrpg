@@ -2,7 +2,7 @@ package game
 
 import rl "vendor:raylib"
 
-CLOUDS_DATA :: #load("textures/overlay_clouds.png")
+CLOUDS_DATA :: #load("textures/_overlay_clouds.png")
 
 clouds: rl.Texture
 
