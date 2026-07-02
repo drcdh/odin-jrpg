@@ -2,6 +2,7 @@ package game
 
 import "core:container/queue"
 import "core:fmt"
+import rl "vendor:raylib"
 
 queue_battle_animation :: proc(event: Play_Animation) {
 	queue.push_back(&battle_event_queue, event)
@@ -26,6 +27,18 @@ queue_battle_sound :: proc(event: Play_Sound) {
 
 queue_text_effect :: proc(event: Text_Effect) {
 	queue.push_back(&battle_event_queue, event)
+}
+
+queue_text_effect_character :: proc(target: ^Character, text: cstring, color := rl.WHITE) {
+	if battle_active {
+		target := get_combatant(target)
+		queue_text_effect(Text_Effect{color = color, coord = target.coord, text = text})
+	} else if world_menu_active {
+		if i, row, ok := get_world_menu_target_character_position(target); ok {
+			coord := tile_to_pixel(9 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row)
+			append(&world_menu_text_effects, Process_Text_Effect{color = color, coord = coord, text = text})
+		}
+	}
 }
 
 center_rect_on_rect :: proc(r1, r2: Rect) -> (r: Rect) {

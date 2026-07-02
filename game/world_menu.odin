@@ -44,6 +44,8 @@ WORLD_MENU_ITEMS_ROWS :: 10
 world_menu_active: bool
 world_menu_state: World_Menu_State
 
+world_menu_text_effects: [dynamic]Process_Text_Effect
+
 world_menu_icon: Animation
 
 changing_stats: Stats
@@ -263,6 +265,10 @@ draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_
 				}
 			}
 		}
+		for te in world_menu_text_effects {
+			pos := Pixel_Coord{te.coord.x - 32, te.coord.y - 32 * te.t}
+			rl.DrawTextEx(font, te.text, pos, 32, 0, rl.Color{te.color.x, te.color.y, te.color.z, u8(255 * (1 - te.t))})
+		}
 	}
 }
 
@@ -287,6 +293,21 @@ update_world_menu :: proc() {
 		update_world_menu_system(state.i)
 	}
 	animation_update(&world_menu_icon, rl.GetFrameTime())
+	for &te in world_menu_text_effects {
+		te.t += rl.GetFrameTime()
+		if te.t >= 1 {
+			// for some reason, not doing this prevents the loop below from working
+			// but if we do this delete, then having multiple text effects simultaneously causes a bad free
+			delete(te.text)
+		}
+	}
+	if len(world_menu_text_effects) > 0 {
+		for i in len(world_menu_text_effects)-1 ..= 0 {
+			if world_menu_text_effects[i].t >= 1 {
+				unordered_remove(&world_menu_text_effects, i)
+			}
+		}
+	}
 }
 
 update_world_menu_top :: proc(i: int, next: bool, party_idx: int) {
@@ -399,7 +420,9 @@ update_world_menu_skills :: proc(party_idx: int) {
 update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_idx: int) {
 	if get_input(.CANCEL) {
 		if targeting {
-			world_menu_state = World_Menu_State_Items{item_idx, origin_idx, false, party_idx}
+			if len(world_menu_text_effects) == 0 {
+				world_menu_state = World_Menu_State_Items{item_idx, origin_idx, false, party_idx}
+			}
 		} else {
 			world_menu_state = World_Menu_State_Top {
 				i = 2,
@@ -411,7 +434,7 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 			if consumable, ok := items[item_name].data.(Consumable); ok {
 				skill = skills[consumable]
 				play_sound(skill.sound) // todo
-				do_world_effect(nil, get_pc(party_idx), skill.effect)
+				do_effect(nil, get_pc(party_idx), skill.effect)
 				game_data.inventory[item_name] -= 1
 				if game_data.inventory[item_name] == 0 {
 					world_menu_state = World_Menu_State_Items{item_idx, origin_idx, false, party_idx}

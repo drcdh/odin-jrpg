@@ -197,3 +197,18 @@ heal_party :: proc(f := 1) {
 		pc.hitpoints = pc.max_hitpoints / f
 	}
 }
+
+get_world_menu_target_character_position :: proc(character: ^Character) -> (int, f32, bool) {
+	for i in 0 ..< NUM_PC {
+		if pc, ok := get_party_member(i).?; ok {
+			if get_pc(pc) == character {
+				if i < 3 {
+					return i, 0, true
+				} else {
+					return i-3, 1, true
+				}
+			}
+		}
+	}
+	return 0, 0, false
+}

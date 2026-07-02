@@ -85,6 +85,16 @@ combatant_winding_up :: proc(c: ^Combatant) -> bool {
 	return c.enabled && c.windup
 }
 
+get_combatant :: proc(character: ^Character) -> ^Combatant {
+	it := hm.iterator_make(&battle_combatants)
+	for c, _ in hm.iterate(&it) {
+		if c.character == character {
+			return c
+		}
+	}
+	return nil
+}
+
 get_combatant_not_on_team :: proc(actor_team: int) -> ^Combatant {
 	// todo: just take first for now
 	it := hm.iterator_make(&battle_combatants)
@@ -331,7 +341,7 @@ process_battle_events :: proc(dt: f32) {
 		if queue.len(battle_event_queue) > 0 {
 			switch e in queue.pop_front(&battle_event_queue) {
 			case Battle_Effect_Event:
-				do_battle_effect(e.actor, e.target, e.effect)
+				do_effect(e.actor, e.target, e.effect)
 			case Play_Animation:
 				battle_state = Process_Battle_Animation {
 					animation = animation_create(e.animation),
