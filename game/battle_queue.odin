@@ -1,18 +1,17 @@
 package game
 
 import "core:container/queue"
-import "core:fmt"
 import rl "vendor:raylib"
 
 queue_battle_animation :: proc(event: Play_Animation) {
-	queue.push_back(&battle_event_queue, event)
+	queue.push_back(&battle.events, event)
 }
 
 queue_battle_effect_ee :: proc(event: Battle_Effect_Event) {
-	queue.push_back(&battle_event_queue, event)
+	queue.push_back(&battle.events, event)
 }
 
-queue_battle_effect_aten :: proc(actor, target: ^Combatant, effect: Effect) {
+queue_battle_effect_aten :: proc(actor, target: int, effect: Effect) {
 	queue_battle_effect_ee(Battle_Effect_Event{actor, target, effect})
 }
 
@@ -22,15 +21,15 @@ queue_battle_effect :: proc {
 }
 
 queue_battle_sound :: proc(event: Play_Sound) {
-	queue.push_back(&battle_event_queue, event)
+	queue.push_back(&battle.events, event)
 }
 
 queue_text_effect :: proc(event: Text_Effect) {
-	queue.push_back(&battle_event_queue, event)
+	queue.push_back(&battle.events, event)
 }
 
 queue_text_effect_character :: proc(target: ^Character, text: cstring, color := rl.WHITE) {
-	if battle_active {
+	if battle.active {
 		target := get_combatant(target)
 		queue_text_effect(Text_Effect{color = color, coord = target.coord, text = text})
 	} else if world_menu_active {
@@ -79,25 +78,25 @@ center_rect :: proc {
 	center_rect_on_rect,
 }
 
-queue_battle_skill :: proc(actor, target: ^Combatant, skill: Skill) {
-	append(&battle_skills, Battle_Skill_Play{actor, target, skill, skill.windup})
+queue_battle_skill :: proc(actor, target: int, skill: Skill) {
+	append(&battle.skills, Battle_Skill_Play{actor, target, skill, skill.windup})
 }
 
-queue_battle_skill_events_fields :: proc(actor, target: ^Combatant, skill: Skill) {
-	fmt.println(actor.name, "uses", skill.name, "on", target.name)
+queue_battle_skill_events_fields :: proc(actor, target: int, skill: Skill) {
+	// fmt.println(actor.name, "uses", skill.name, "on", target.name)
 
 	animation := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
 	sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 
 	queue_battle_sound(Play_Sound{sound = sound})
 
-	r := center_animation_on_combatant(animation, target^)
+	r := center_animation_on_combatant(animation, battle.combatants[target])
 
 	queue_battle_animation(Play_Animation{animation = animation, offset = {r.x, r.y}})
 	queue_battle_effect(actor, target, skill.effect)
 
-	actor.windup = false
-	actor.t -= skill.cost
+	battle.combatants[actor].windup = false
+	battle.combatants[actor].t -= skill.cost
 }
 
 queue_battle_skill_events_struct :: proc(play: Battle_Skill_Play) {

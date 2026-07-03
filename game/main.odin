@@ -52,7 +52,7 @@ draw :: proc() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
 
-	if battle_active {
+	if battle.active {
 		draw_battle()
 	} else if world_menu_active {
 		draw_world_menu()
@@ -77,7 +77,7 @@ update :: proc() {
 	update_dialogue()
 	update_runner(dt)
 
-	if battle_active {
+	if battle.active {
 		update_battle(dt)
 	} else if world_menu_active {
 		update_world_menu()

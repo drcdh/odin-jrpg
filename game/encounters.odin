@@ -1,6 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
 import "core:fmt"
 import rl "vendor:raylib"
 
@@ -55,66 +54,66 @@ encounters := [?]Encounter {
 	{baddies = {{{0, 0}, .Bad_Box}, {{0, 3}, .Bad_Box}, {{0, 5}, .Bad_Box}, {}, {}, {}}},
 }
 
-add_baddy_combatant :: proc(baddy_id: Baddy_Id, tile: Tile_Coord) {
-	if baddy_id == .None {return}
-	template := baddy_templates[baddy_id]
-	fmt.printfln("adding %s (baddy_id=%d) at index %d", template.name, baddy_id, battle_num_baddies)
-	battle_baddies[battle_num_baddies] = Character {
-		name      = template.name,
-		hitpoints = template.stats.max_hitpoints,
-		stats     = template.stats,
-	}
-	visual_variant: Combatant_Visual_Variant
-	switch t in template.texture {
-	case Texture_Name:
-		visual_variant = t
-	case Animation_Name:
-		visual_variant = animation_create(t)
-	}
-	battle_baddy_handles[battle_num_baddies] = hm.add(
-		&battle_combatants,
-		Combatant {
-			character = &battle_baddies[battle_num_baddies],
-			coord = tile_to_pixel(BATTLE_ORIGIN_TILE + tile),
-			enabled = true,
-			id = battle_num_baddies,
-			team = BADDY_TEAM,
-			turn = template.turn,
-			visual = {variant = visual_variant, tint = rl.WHITE},
-		},
-	)
-	battle_num_baddies += 1
-}
-
 start_encounter :: proc(i: int, paused: bool) {
-	battle_num_baddies = 0
-	battle_num_pc = 0
-
 	for spot in encounters[i].baddies {
-		add_baddy_combatant(spot.baddy_id, spot.tile)
+		baddy_id := spot.baddy_id
+		if baddy_id == .None { continue }
+		template := baddy_templates[baddy_id]
+		fmt.printfln("adding %s (baddy_id=%d)", template.name, baddy_id)
+		// baddy := Character {
+		// 	name      = template.name,
+		// 	hitpoints = template.stats.max_hitpoints,
+		// 	stats     = template.stats,
+		// })
+		baddy := new(Character)
+		baddy.name = template.name
+		baddy.hitpoints = template.stats.max_hitpoints
+		baddy.stats = template.stats
+		visual_variant: Combatant_Visual_Variant
+		switch t in template.texture {
+		case Texture_Name:
+			visual_variant = t
+		case Animation_Name:
+			visual_variant = animation_create(t)
+		}
+		append(&battle.baddies, len(battle.combatants))
+		append(
+			&battle.combatants,
+			Combatant {
+				character = baddy,
+				coord = tile_to_pixel(BATTLE_ORIGIN_TILE + spot.tile),
+				enabled = true,
+				// id = battle_num_baddies,
+				team = BADDY_TEAM,
+				turn = template.turn,
+				visual = {variant = visual_variant, tint = rl.WHITE},
+			},
+		)
 	}
 
 	dy: f32 = 2 * tile_size
 	y0: f32 = 2 * tile_size
 	x: f32 = 9.5 * tile_size
 	y: f32 = y0
+	party_idx := 0
 	for pc_idx in 0 ..< NUM_PC {
 		if game_data.party_membership[pc_idx] {
-			battle_pc_handles[battle_num_pc] = hm.add(
-				&battle_combatants,
+			append(&battle.allies, len(battle.combatants))
+			append(
+				&battle.combatants,
 				Combatant {
 					character = get_pc(PC(pc_idx)),
 					coord = {x, y},
 					enabled = true,
-					id = battle_num_pc,
+					// id = battle_num_pc,
 					team = PLAYER_TEAM,
 					turn = pc_turn,
 					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
 				},
 			)
-			battle_num_pc += 1
+			party_idx += 1
 			x += tile_size
-			if battle_num_pc != 3 {
+			if party_idx != 3 {
 				y += dy
 			} else {
 				// x += 4 * tile_size
@@ -122,10 +121,10 @@ start_encounter :: proc(i: int, paused: bool) {
 			}
 		}
 	}
-	battle_active = true
-	battle_ending = false
-	battle_paused = paused
-	battle_state = Next_Turn{}
+	battle.active = true
+	battle.ending = false
+	battle.paused = paused
+	battle.state = Next_Turn{}
 	battle_init()
 
 	play_music(&music_state, .Battle)

@@ -51,7 +51,7 @@ update_runner :: proc(dt: f32) {
 			if dialogue_done() {runner.state = Continue{}}
 			return
 		case Wait_Encounter:
-			if !battle_active {runner.state = Continue{}}
+			if !battle.active {runner.state = Continue{}}
 			return
 		case Wait_Transition:
 			if transition_done() {runner.state = Continue{}}
@@ -72,7 +72,7 @@ update_runner :: proc(dt: f32) {
 				countdown = event.duration,
 			}
 		case Battle_Unpause:
-			battle_paused = false
+			battle.paused = false
 		case Clear_Text:
 			clear_dialogue()
 		case Close_Dialogue:

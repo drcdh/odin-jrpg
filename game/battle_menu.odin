@@ -1,6 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
 import "core:strings"
 import rl "vendor:raylib"
 
@@ -78,11 +77,11 @@ draw_battle_menu :: proc() {
 	case Skill_Selection_State:
 		draw_menu(2, 8, 8, BATTLE_MENU_SKILLS_ROWS - 2)
 		for r in 0 ..< BATTLE_MENU_SKILLS_ROWS {
-			if r >= len(battle_menu_skills) {break}
+			if r >= len(battle.menu_skills) {break}
 			draw_text(
 				2.5,
 				8.5 + f32(r) * .5,
-				strings.clone_to_cstring(skills[battle_menu_skills[state.w + r]].name, context.temp_allocator),
+				strings.clone_to_cstring(skills[battle.menu_skills[state.w + r]].name, context.temp_allocator),
 				rl.YELLOW if state.s == state.w + r else rl.WHITE,
 			)
 		}
@@ -102,10 +101,9 @@ draw_battle_menu :: proc() {
 }
 
 change_ally_selection :: proc(t, d: int) -> int {
-	// todo: check party membership
 	target := t + d
-	if target < 0 {target = NUM_PC - 1}
-	if target >= NUM_PC {target = 0}
+	if target < 0 {target = len(battle.allies) - 1}
+	if target >= len(battle.allies) {target = 0}
 	return target
 }
 
@@ -113,12 +111,10 @@ change_baddy_selection :: proc(t, d: int) -> int {
 	initial_target := t
 	target := t + d
 	for {
-		if target < 0 {target = MAX_ENCOUNTER_SIZE - 1}
-		if target >= MAX_ENCOUNTER_SIZE {target = 0}
+		if target < 0 {target = len(battle.baddies) - 1}
+		if target >= len(battle.baddies) {target = 0}
 		if target == initial_target {break}
-		if c, ok := hm.get(&battle_combatants, battle_baddy_handles[target]); ok {
-			if c.enabled {break}
-		}
+		if battle.combatants[battle.baddies[target]].enabled {break}
 		target += d
 	}
 	return target
@@ -138,7 +134,7 @@ battle_change_selection :: proc(dx, dy: int) {
 		if s > ITEM {s = 0}
 		battle_ui_state = Action_Selection_State{s}
 	case Skill_Selection_State:
-		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_SKILLS_ROWS, len(battle_menu_skills))
+		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_SKILLS_ROWS, len(battle.menu_skills))
 		battle_ui_state = Skill_Selection_State{s, w}
 	case Item_Selection_State:
 		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_ITEMS_ROWS, len(Item_Name))
@@ -201,7 +197,7 @@ default_target_selection :: proc(tt: Targeting_Type) -> Target_Selection {
 // skill_proc: proc(actor, target: ^Combatant)
 skill: Skill
 
-pc_turn :: proc(actor: ^Combatant) {
+pc_turn :: proc(actor: int) {
 	if battle_ui_state == nil {
 		battle_ui_state = Action_Selection_State{}
 		return
@@ -228,12 +224,12 @@ pc_turn :: proc(actor: ^Combatant) {
 				}
 			case SKILL:
 				battle_ui_state = Skill_Selection_State{}
-				set_battle_skills(actor)
+				set_battle_skills(battle.combatants[actor])
 			case ITEM:
 				battle_ui_state = Item_Selection_State{}
 			}
 		case Skill_Selection_State:
-			skill = skills[battle_menu_skills[state.s]]
+			skill = skills[battle.menu_skills[state.s]]
 			battle_ui_state = Target_Selection_State {
 				ts = default_target_selection(skill.targeting),
 				tt = skill.targeting,
@@ -249,42 +245,37 @@ pc_turn :: proc(actor: ^Combatant) {
 		case Target_Selection_State:
 			switch ts in state.ts {
 			case Select_One_Baddy:
-				if target_cb, ok := hm.get(&battle_combatants, battle_baddy_handles[ts.i]); ok {
-					queue_battle_skill(actor, target_cb, skill)
-					battle_ui_state = Battle_UI_State{}
-					end_turn()
-				}
+				target_idx := battle.baddies[ts.i]
+				queue_battle_skill(actor, target_idx, skill)
+				battle_ui_state = Battle_UI_State{}
+				end_turn()
 			case Select_All_Baddies:
-				for i in 0 ..< MAX_ENCOUNTER_SIZE {
-					c := hm.get(&battle_combatants, battle_baddy_handles[i]) or_continue
+				for target_idx in battle.baddies {
+					c := battle.combatants[target_idx]
 					if combatant_alive(c) {
-						queue_battle_skill(actor, c, skill)
+						queue_battle_skill(actor, target_idx, skill)
 					}
 				}
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_One_Ally:
-				if target_cb, ok := hm.get(&battle_combatants, battle_pc_handles[ts.i]); ok {
-					queue_battle_skill(actor, target_cb, skill)
-					battle_ui_state = Battle_UI_State{}
-					end_turn()
-				}
+				target_idx := battle.allies[ts.i]
+				queue_battle_skill(actor, target_idx, skill)
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_All_Allies:
-				for i in 0 ..< NUM_PC {
-					c := hm.get(&battle_combatants, battle_pc_handles[i]) or_continue
+				for target_idx in battle.allies {
+					c := battle.combatants[target_idx]
 					if combatant_alive(c) {
-						queue_battle_skill(actor, c, skill)
+						queue_battle_skill(actor, target_idx, skill)
 					}
 				}
 				battle_ui_state = Battle_UI_State{}
 				end_turn()
 			case Select_All_Combatants:
-				it := hm.iterator_make(&battle_combatants)
-				for c, _ in hm.iterate(&it) {
+				for c, target_idx in battle.combatants {
 					if combatant_alive(c) {
-						queue_battle_skill(actor, c, skill)
+						queue_battle_skill(actor, target_idx, skill)
 					}
 				}
 				battle_ui_state = Battle_UI_State{}

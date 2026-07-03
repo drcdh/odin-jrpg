@@ -12,8 +12,8 @@ Append_Text :: struct {
 	pause: f32,
 }
 Battle_Effect_Event :: struct {
-	actor:  ^Combatant,
-	target: ^Combatant,
+	actor:  int,
+	target: int,
 	effect: Effect,
 }
 Battle_Unpause :: struct {}

@@ -65,6 +65,7 @@ draw_debug :: proc() {
 }
 
 update_debug :: proc() {
+	if rl.IsKeyPressed(.B) { fmt.printfln("%#v", battle) }
 	if rl.IsKeyPressed(.F) {debug_framerate = !debug_framerate}
 	if rl.IsKeyPressed(.G) {debug_grid = !debug_grid}
 	if rl.IsKeyPressed(.T) {debug_text = !debug_text}
