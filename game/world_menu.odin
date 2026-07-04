@@ -434,12 +434,13 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 			if consumable, ok := items[item_name].data.(Consumable); ok {
 				skill = skills[consumable]
 				play_sound(skill.sound) // todo
-				do_effect(nil, get_pc(party_idx), skill.effect)
+				pc := get_party_member(party_idx).?
+				do_effect(nil, get_pc(pc), skill.effect)
 				game_data.inventory[item_name] -= 1
 				if game_data.inventory[item_name] == 0 {
 					world_menu_state = World_Menu_State_Items{item_idx, origin_idx, false, party_idx}
 				}
-				fmt.printfln("Used item %s", item_name)
+				fmt.printfln("Used item %s on %s", item_name, pc)
 			} else {
 				fmt.println("Uh oh! Tried to use non-consumable %s", item_name)
 			}
