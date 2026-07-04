@@ -293,21 +293,31 @@ update_world_menu :: proc() {
 		update_world_menu_system(state.i)
 	}
 	animation_update(&world_menu_icon, rl.GetFrameTime())
-	for &te in world_menu_text_effects {
-		te.t += rl.GetFrameTime()
-		if te.t >= 1 {
-			// for some reason, not doing this prevents the loop below from working
-			// but if we do this delete, then having multiple text effects simultaneously causes a bad free
-			delete(te.text)
+	for text_idx := 0; text_idx < len(world_menu_text_effects); {
+		world_menu_text_effects[text_idx].t += rl.GetFrameTime()
+		if world_menu_text_effects[text_idx].t >= 1 {
+			delete(world_menu_text_effects[text_idx].text)
+			unordered_remove(&world_menu_text_effects, text_idx)
+		} else {
+			text_idx += 1
 		}
 	}
-	if len(world_menu_text_effects) > 0 {
-		for i in len(world_menu_text_effects) - 1 ..= 0 {
-			if world_menu_text_effects[i].t >= 1 {
-				unordered_remove(&world_menu_text_effects, i)
-			}
-		}
-	}
+	// for &te in world_menu_text_effects {
+	// 	te.t += rl.GetFrameTime()
+	// 	if te.t >= 1 {
+	// 		// FIXME
+	// 		// for some reason, not doing this prevents the loop below from working
+	// 		// but if we do this delete, then having multiple text effects simultaneously causes a bad free
+	// 		delete(te.text)
+	// 	}
+	// }
+	// if len(world_menu_text_effects) > 0 {
+	// 	for i in len(world_menu_text_effects) - 1 ..= 0 {
+	// 		if world_menu_text_effects[i].t >= 1 {
+	// 			unordered_remove(&world_menu_text_effects, i)
+	// 		}
+	// 	}
+	// }
 }
 
 update_world_menu_top :: proc(i: int, next: bool, party_idx: int) {

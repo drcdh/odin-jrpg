@@ -158,14 +158,14 @@ draw_battle_combatants :: proc() {
 			if c.character.hitpoints <= 0 {
 				tint = rl.RED
 			}
-			if targeted(c_idx, c.team) {
-				tint = rl.YELLOW
-				tint.w = u8(targeting_ease * 255)
-			}
 			if turn, ok := battle.state.(Take_Turn); ok {
 				if c_idx == turn.c_idx {
 					tint = rl.GREEN
 				}
+			}
+			if targeted(c_idx, c.team) {
+				tint = rl.YELLOW
+				tint.w = u8(targeting_ease * 255)
 			}
 			switch v in c.visual.variant {
 			case Animation:
@@ -174,7 +174,7 @@ draw_battle_combatants :: proc() {
 				draw_texture(v, c.coord, tint)
 			}
 			// debug
-			// draw_text(c.coord.x / tile_size, c.coord.y / tile_size, fmt.caprintf("%d", c.t), rl.ORANGE)
+			draw_text(c.coord.x / tile_size, c.coord.y / tile_size, fmt.caprintf("%d", c.t), rl.ORANGE)
 		}
 	}
 }
@@ -348,6 +348,12 @@ process_battle_state :: proc(dt: f32) {
 	}
 }
 
+blah :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int) {
+	r := center_animation_on_combatant(animation_name, battle.combatants[target_idx])
+	append(&battle.animations, Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}})
+	append(&battle.sounds, Play_Sound{sound = sound})
+}
+
 process_battle_skill :: proc() -> (done := false) {
 	if skill_state, ok := &battle.state.(Process_Skill); ok {
 		// fmt.printfln("% 4d: processing battle skill step %d", frame_count, skill_state.step)
@@ -379,12 +385,23 @@ process_battle_skill :: proc() -> (done := false) {
 		case 5:
 			animation_name := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
 			sound := Sound_Name.Whack if skill.sound == nil else skill.sound
-			// TODO: iterate over targets
-			{
-				target_idx := play.target
-				r := center_animation_on_combatant(animation_name, battle.combatants[target_idx])
-				append(&battle.animations, Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}})
-				append(&battle.sounds, Play_Sound{sound = sound})
+			switch targets in play.targets {
+			case Select_One_Ally:
+				blah(animation_name, sound, battle.allies[targets.i])
+			case Select_One_Baddy:
+				blah(animation_name, sound, battle.baddies[targets.i])
+			case Select_All_Allies:
+				for target_idx in battle.allies {
+					blah(animation_name, sound, target_idx)
+				}
+			case Select_All_Baddies:
+				for target_idx in battle.baddies {
+					blah(animation_name, sound, target_idx)
+				}
+			case Select_All_Combatants:
+				for _, target_idx in battle.combatants {
+					blah(animation_name, sound, target_idx)
+				}
 			}
 			skill_state.step += 1
 		case 6:
@@ -393,10 +410,27 @@ process_battle_skill :: proc() -> (done := false) {
 			}
 		case 7:
 			actor := battle.combatants[play.actor]
-			// TODO: iterate over targets
-			{
-				target := battle.combatants[play.target]
+			switch targets in play.targets {
+			case Select_One_Ally:
+				target := battle.combatants[battle.allies[targets.i]]
 				do_effect(&actor, &target, skill.effect)
+			case Select_One_Baddy:
+				target := battle.combatants[battle.baddies[targets.i]]
+				do_effect(&actor, &target, skill.effect)
+			case Select_All_Allies:
+				for target_idx in battle.allies {
+					target := battle.combatants[target_idx]
+					do_effect(&actor, &target, skill.effect)
+				}
+			case Select_All_Baddies:
+				for target_idx in battle.baddies {
+					target := battle.combatants[target_idx]
+					do_effect(&actor, &target, skill.effect)
+				}
+			case Select_All_Combatants:
+				for &target in battle.combatants {
+					do_effect(&actor, &target, skill.effect)
+				}
 			}
 			skill_state.step += 1
 		case 8:

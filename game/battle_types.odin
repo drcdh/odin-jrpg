@@ -26,10 +26,10 @@ Combatant_Visual :: struct {
 
 // TURN
 Battle_Skill_Play :: struct {
-	actor:  int,
-	target: int, // TODO multiple targets
-	skill:  Skill,
-	windup: int,
+	actor:   int,
+	targets: Target_Selection,
+	skill:   Skill,
+	windup:  int,
 }
 
 Battle_Turn_Order :: struct {

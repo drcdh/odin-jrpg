@@ -27,7 +27,7 @@ init_new_game :: proc() {
 	game_data.boat_coord = LEVEL_OVERWORLD_BOAT_SPAWN
 	game_data.party_membership = {
 		true,
-		true, //false,
+		false,
 		false,
 		false,
 		false,

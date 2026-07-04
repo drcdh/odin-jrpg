@@ -156,14 +156,17 @@ get_assassin_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -
 }
 
 get_musician_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
+	skill_set += {.Healing_Hymn}
 	return
 }
 
 get_killer_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
+	skill_set += {.Fire}
 	return
 }
 
 get_mourner_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> (skill_set: Skill_Set) {
+	skill_set += {.Heal, .Heal_All}
 	return
 }
 

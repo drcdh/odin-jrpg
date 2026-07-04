@@ -50,6 +50,7 @@ Select_One_Combatant :: struct {
 	i: int,
 }
 Select_All_Combatants :: struct {}
+
 Targeting_Type :: enum {
 	One_Opponent,
 	Some_Opponents,
@@ -243,44 +244,9 @@ pc_turn :: proc(actor: int) {
 				}
 			}
 		case Target_Selection_State:
-			switch ts in state.ts {
-			case Select_One_Baddy:
-				target_idx := battle.baddies[ts.i]
-				queue_battle_skill(actor, target_idx, skill)
-				battle_ui_state = Battle_UI_State{}
-				end_turn()
-			case Select_All_Baddies:
-				for target_idx in battle.baddies {
-					c := battle.combatants[target_idx]
-					if combatant_alive(c) {
-						queue_battle_skill(actor, target_idx, skill)
-					}
-				}
-				battle_ui_state = Battle_UI_State{}
-				end_turn()
-			case Select_One_Ally:
-				target_idx := battle.allies[ts.i]
-				queue_battle_skill(actor, target_idx, skill)
-				battle_ui_state = Battle_UI_State{}
-				end_turn()
-			case Select_All_Allies:
-				for target_idx in battle.allies {
-					c := battle.combatants[target_idx]
-					if combatant_alive(c) {
-						queue_battle_skill(actor, target_idx, skill)
-					}
-				}
-				battle_ui_state = Battle_UI_State{}
-				end_turn()
-			case Select_All_Combatants:
-				for c, target_idx in battle.combatants {
-					if combatant_alive(c) {
-						queue_battle_skill(actor, target_idx, skill)
-					}
-				}
-				battle_ui_state = Battle_UI_State{}
-				end_turn()
-			}
+			queue_battle_skill(actor, state.ts, skill)
+			battle_ui_state = Battle_UI_State{}
+			end_turn()
 		}
 	} else if get_input(.CANCEL) {
 		switch state in battle_ui_state {
