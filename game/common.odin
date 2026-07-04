@@ -1,6 +1,7 @@
 package game
 
 import la "core:math/linalg"
+import rl "vendor:raylib"
 
 Id :: int
 
@@ -99,3 +100,8 @@ shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
 	}
 	return s, w
 }
+
+remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
+	return {x = r.x + p, y = r.y + p, width = r.width - 2 * p, height = r.height - 2 * p}
+}
+

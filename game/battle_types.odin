@@ -63,12 +63,15 @@ Process_Text_Effect :: struct {
 	t:     f32,
 	text:  cstring,
 }
+Process_Skill :: struct {
+	skill_idx: int,
+	step:      int,
+	t:         f32,
+}
 Battle_State :: union {
-	Next_Event,
 	Next_Turn,
 	Take_Turn,
-	Process_Battle_Animation,
-	Process_Text_Effect,
+	Process_Skill,
 }
 
 Turn_Proc :: proc(actor_idx: int)

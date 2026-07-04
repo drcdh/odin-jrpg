@@ -3,8 +3,6 @@ package game
 import "core:fmt"
 import rl "vendor:raylib"
 
-// Effect_Proc :: proc(actor, target: ^Combatant, effect: Effect)
-
 Effect_Name :: enum {
 	Attack,
 	Heal_Hp,
@@ -115,7 +113,6 @@ effect_remove_status :: proc(actor, target: ^Character, effect: Effect_Remove_St
 }
 
 effect_level_up :: proc(_, target: ^Character, effect: Effect_Level_Up) {
-	// effect := Effect_Level_Up(effect)
 	n := effect.n
 	set_level(target, target.level + n)
 	// set_skills(target)
