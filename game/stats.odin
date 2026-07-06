@@ -104,17 +104,17 @@ equipped_stats :: proc(lstats: Stats, equipment: Equipment) -> (final: Stats) {
 stat_string :: proc(s: Stats, i: Stat) -> string {
 	switch i {
 	case .Hitpoints:
-		return fmt.aprintf("Max HP:     % 4d", s.max_hitpoints)
+		return fmt.aprintf("Max HP:     % 4d", s.max_hitpoints, allocator = context.temp_allocator)
 	case .Offense:
-		return fmt.aprintf("Offense:    % 4d", s.offense)
+		return fmt.aprintf("Offense:    % 4d", s.offense, allocator = context.temp_allocator)
 	case .Defense:
-		return fmt.aprintf("Defense:    % 4d", s.defense)
+		return fmt.aprintf("Defense:    % 4d", s.defense, allocator = context.temp_allocator)
 	case .PsyOffense:
-		return fmt.aprintf("P. Offense: % 4d", s.psy_offense)
+		return fmt.aprintf("P. Offense: % 4d", s.psy_offense, allocator = context.temp_allocator)
 	case .PsyDefense:
-		return fmt.aprintf("P. Defense: % 4d", s.psy_defense)
+		return fmt.aprintf("P. Defense: % 4d", s.psy_defense, allocator = context.temp_allocator)
 	case .Speed:
-		return fmt.aprintf("Speed:      % 4d", s.speed)
+		return fmt.aprintf("Speed:      % 4d", s.speed, allocator = context.temp_allocator)
 	}
 	return "bad_stat_index"
 }

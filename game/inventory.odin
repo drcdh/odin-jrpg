@@ -1,7 +1,7 @@
 package game
 
-inventory_order: [dynamic]Item_Name
 equippables_order: [dynamic]Item_Name
+inventory_order: [dynamic]Item_Name
 
 set_inventory_order :: proc() {
 	clear(&inventory_order)
@@ -17,4 +17,9 @@ set_inventory_order :: proc() {
 		}
 	}
 	append(&equippables_order, Item_Name.None)
+}
+
+delete_inventory_order :: proc() {
+	delete(equippables_order)
+	delete(inventory_order)
 }

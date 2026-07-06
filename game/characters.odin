@@ -42,7 +42,7 @@ get_status_cstring :: proc(status: Status) -> cstring {
 	if status.zombie {
 		s = strings.concatenate({s, "Z"}, context.temp_allocator)
 	}
-	return strings.clone_to_cstring(s)
+	return strings.clone_to_cstring(s, context.temp_allocator)
 }
 
 add_status :: proc(c: ^Character, status: Status_Name) {

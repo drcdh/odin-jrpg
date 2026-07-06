@@ -107,6 +107,7 @@ tear_down :: proc() {
 	battle_destroy()
 	delete_atlased_font(font)
 	delete_input()
+	delete_inventory_order()
 	tear_down_dialogue()
 	unload_sounds()
 	tear_down_rl()

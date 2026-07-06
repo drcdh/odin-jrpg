@@ -60,11 +60,6 @@ start_encounter :: proc(i: int, paused: bool) {
 		if baddy_id == .None {continue}
 		template := baddy_templates[baddy_id]
 		fmt.printfln("adding %s (baddy_id=%d)", template.name, baddy_id)
-		// baddy := Character {
-		// 	name      = template.name,
-		// 	hitpoints = template.stats.max_hitpoints,
-		// 	stats     = template.stats,
-		// })
 		baddy := new(Character)
 		baddy.name = template.name
 		baddy.hitpoints = template.stats.max_hitpoints
@@ -83,7 +78,6 @@ start_encounter :: proc(i: int, paused: bool) {
 				character = baddy,
 				coord = tile_to_pixel(BATTLE_ORIGIN_TILE + spot.tile),
 				enabled = true,
-				// id = battle_num_baddies,
 				team = BADDY_TEAM,
 				turn = template.turn,
 				visual = {variant = visual_variant, tint = rl.WHITE},
@@ -105,7 +99,6 @@ start_encounter :: proc(i: int, paused: bool) {
 					character = get_pc(PC(pc_idx)),
 					coord = {x, y},
 					enabled = true,
-					// id = battle_num_pc,
 					team = PLAYER_TEAM,
 					turn = pc_turn,
 					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},

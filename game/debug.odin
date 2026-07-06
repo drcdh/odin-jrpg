@@ -23,7 +23,7 @@ draw_debug :: proc() {
 		}
 		rl.DrawTextEx(
 			font,
-			fmt.caprintf("%f seconds | %d frames | %f fps", debug_framerate_sum, debug_framerate_count, mean),
+			fmt.caprintf("%f seconds | %d frames | %f fps", debug_framerate_sum, debug_framerate_count, mean, allocator = context.temp_allocator),
 			origin,
 			h,
 			0,
@@ -41,8 +41,8 @@ draw_debug :: proc() {
 			y := i32(view_dim.y)
 			rl.DrawLine(g, 0, g, y, c)
 			rl.DrawLine(0, g, x, g, c)
-			rl.DrawTextEx(font, fmt.caprintf("%X", t), {0, f32(g)}, tile_size, 0, c)
-			rl.DrawTextEx(font, fmt.caprintf("%X", t), {f32(g), 0}, tile_size, 0, c)
+			rl.DrawTextEx(font, fmt.caprintf("%X", t, allocator = context.temp_allocator), {0, f32(g)}, tile_size, 0, c)
+			rl.DrawTextEx(font, fmt.caprintf("%X", t, allocator = context.temp_allocator), {f32(g), 0}, tile_size, 0, c)
 			t += 1
 		}
 	}

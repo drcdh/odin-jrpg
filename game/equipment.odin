@@ -55,11 +55,11 @@ equipment_string :: proc(equipment: Equipment, slot: Equipment_Slot) -> string {
 	item_name := items[item].name if item != .None else ""
 	switch slot {
 	case .Mainhand:
-		return fmt.aprintf("Mainhand:  %s", item_name)
+		return fmt.aprintf("Mainhand:  %s", item_name, allocator = context.temp_allocator)
 	case .Sidehand:
-		return fmt.aprintf("Sidehand:  %s", item_name)
+		return fmt.aprintf("Sidehand:  %s", item_name, allocator = context.temp_allocator)
 	case .Accessory:
-		return fmt.aprintf("Accessory: %s", item_name)
+		return fmt.aprintf("Accessory: %s", item_name, allocator = context.temp_allocator)
 	}
 	return "bad_equipment_slot"
 }
