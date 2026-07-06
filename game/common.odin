@@ -104,4 +104,3 @@ shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
 remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 	return {x = r.x + p, y = r.y + p, width = r.width - 2 * p, height = r.height - 2 * p}
 }
-

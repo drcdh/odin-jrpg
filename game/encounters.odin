@@ -57,7 +57,7 @@ encounters := [?]Encounter {
 start_encounter :: proc(i: int, paused: bool) {
 	for spot in encounters[i].baddies {
 		baddy_id := spot.baddy_id
-		if baddy_id == .None { continue }
+		if baddy_id == .None {continue}
 		template := baddy_templates[baddy_id]
 		fmt.printfln("adding %s (baddy_id=%d)", template.name, baddy_id)
 		// baddy := Character {

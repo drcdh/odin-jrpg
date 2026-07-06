@@ -11,20 +11,20 @@ READY_T :: 100
 TAKE_TURN_DELAY :: .5 // seconds
 
 Battle :: struct {
-	active: bool,
-	allies: [dynamic]int,
-	animations: [dynamic]Process_Battle_Animation,
-	baddies: [dynamic]int,
-	combatants: [dynamic]Combatant,
-	encounter: int,
-	ending: bool,
+	active:      bool,
+	allies:      [dynamic]int,
+	animations:  [dynamic]Process_Battle_Animation,
+	baddies:     [dynamic]int,
+	combatants:  [dynamic]Combatant,
+	encounter:   int,
+	ending:      bool,
 	menu_skills: [dynamic]Skill_Name,
-	paused: bool,
+	paused:      bool,
 	skill_plays: [dynamic]Battle_Skill_Play,
-	sounds: [dynamic]Play_Sound,
-	state: Battle_State,
-	text: [dynamic]Process_Text_Effect,
-	turn_order: [dynamic]Battle_Turn_Order,
+	sounds:      [dynamic]Play_Sound,
+	state:       Battle_State,
+	text:        [dynamic]Process_Text_Effect,
+	turn_order:  [dynamic]Battle_Turn_Order,
 }
 
 battle: Battle
@@ -329,9 +329,13 @@ process_battle_state :: proc(dt: f32) {
 			// TODO: run default or encounter-overriding procedure (exp gain etc.)
 			// battle.state = Aftermath{}
 		} else if skill_idx, skill_ready := get_ready_skill(); skill_ready {
-			battle.state = Process_Skill{skill_idx = skill_idx}
+			battle.state = Process_Skill {
+				skill_idx = skill_idx,
+			}
 		} else if c_idx, c_ready := get_ready_combatant(); c_ready {
-			battle.state = Take_Turn{c_idx = c_idx}
+			battle.state = Take_Turn {
+				c_idx = c_idx,
+			}
 		} else {
 			battle_time_tick()
 		}
@@ -350,7 +354,10 @@ process_battle_state :: proc(dt: f32) {
 
 blah :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int) {
 	r := center_animation_on_combatant(animation_name, battle.combatants[target_idx])
-	append(&battle.animations, Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}})
+	append(
+		&battle.animations,
+		Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}},
+	)
 	append(&battle.sounds, Play_Sound{sound = sound})
 }
 
