@@ -81,7 +81,7 @@ effect_attack :: proc(actor, target: ^Character, effect: Effect_Attack) {
 	hp_loss := int(hp_loss_f)
 	fmt.printfln("  hp_loss = %f = %d", hp_loss_f, hp_loss)
 	target.hitpoints -= hp_loss
-	queue_text_effect_character(target, fmt.caprintf("%d", hp_loss, allocator = context.temp_allocator))
+	queue_text_effect_character(target, fmt.caprintf("%d", hp_loss))
 	roll_for_counter(target, actor, risk)
 }
 
@@ -93,7 +93,7 @@ effect_heal_hp :: proc(actor, target: ^Character, effect: Effect_Heal_Hp) {
 	}
 	hp_gain = max(0, hp_gain)
 	target.hitpoints = min(target.hitpoints + hp_gain, target.max_hitpoints) // TODO: put this everywhere
-	queue_text_effect_character(target, fmt.caprintf("%d", hp_gain, allocator = context.temp_allocator), rl.GREEN)
+	queue_text_effect_character(target, fmt.caprintf("%d", hp_gain), rl.GREEN)
 }
 
 effect_add_status :: proc(actor, target: ^Character, effect: Effect_Add_Status) {
@@ -116,7 +116,7 @@ effect_level_up :: proc(_, target: ^Character, effect: Effect_Level_Up) {
 	n := effect.n
 	set_level(target, target.level + n)
 	// set_skills(target)
-	queue_text_effect_character(target, fmt.caprintf("%d", n, allocator = context.temp_allocator), rl.PURPLE)
+	queue_text_effect_character(target, fmt.caprintf("%d", n), rl.PURPLE)
 }
 
 effect_proc :: proc {

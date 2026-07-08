@@ -92,11 +92,11 @@ get_combatant :: proc(character: ^Character) -> ^Combatant {
 	return nil
 }
 
-get_combatant_not_on_team :: proc(actor_team: int) -> Maybe(int) {
+select_one_random_ally :: proc() -> Maybe(Select_One_Ally) {
 	// TODO: just take first for now
-	for c, i in battle.combatants {
-		if combatant_alive(c) && c.team != actor_team {
-			return i
+	for c_idx, ally_idx in battle.allies {
+		if combatant_alive(battle.combatants[c_idx]) {
+			return Select_One_Ally{ally_idx}
 		}
 	}
 	return nil
