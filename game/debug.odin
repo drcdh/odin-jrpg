@@ -23,7 +23,13 @@ draw_debug :: proc() {
 		}
 		rl.DrawTextEx(
 			font,
-			fmt.caprintf("%f seconds | %d frames | %f fps", debug_framerate_sum, debug_framerate_count, mean, allocator = context.temp_allocator),
+			fmt.caprintf(
+				"%f seconds | %d frames | %f fps",
+				debug_framerate_sum,
+				debug_framerate_count,
+				mean,
+				allocator = context.temp_allocator,
+			),
 			origin,
 			h,
 			0,

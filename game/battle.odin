@@ -174,7 +174,12 @@ draw_battle_combatants :: proc() {
 				draw_texture(v, c.coord, tint)
 			}
 			// debug
-			draw_text(c.coord.x / tile_size, c.coord.y / tile_size, fmt.caprintf("%d", c.t, allocator = context.temp_allocator), rl.ORANGE)
+			draw_text(
+				c.coord.x / tile_size,
+				c.coord.y / tile_size,
+				fmt.caprintf("%d", c.t, allocator = context.temp_allocator),
+				rl.ORANGE,
+			)
 		}
 	}
 }
