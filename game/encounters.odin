@@ -100,7 +100,8 @@ start_encounter :: proc(i: int, paused: bool) {
 					coord = {x, y},
 					enabled = true,
 					team = PLAYER_TEAM,
-					turn = pc_turn,
+					// turn = pc_turn,
+					turn = ATTACK_RANDOM_OPPONENT,
 					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
 				},
 			)

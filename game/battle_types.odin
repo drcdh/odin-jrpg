@@ -32,11 +32,6 @@ Battle_Skill_Play :: struct {
 	windup:  int,
 }
 
-Battle_Turn_Order :: struct {
-	c_idx:  int,
-	staged: bool,
-}
-
 // EVENTS
 Battle_Event :: union {
 	Battle_Effect_Event,
@@ -64,7 +59,8 @@ Process_Text_Effect :: struct {
 	text:  cstring,
 }
 Process_Skill :: struct {
-	skill_idx: int,
+	active:    bool,
+	skill_plays_idx: int,
 	step:      int,
 	t:         f32,
 }
