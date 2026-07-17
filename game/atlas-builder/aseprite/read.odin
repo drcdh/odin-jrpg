@@ -61,7 +61,7 @@ read_dword :: proc(r: io.Reader, n: ^int) -> (data: DWORD, err: Read_Error) {
 	v, ok := endian.get_u32(buf[:], .Little)
 	if !ok {
 		err = .Unable_To_Decode_Data
-	};return v, err
+	}; return v, err
 }
 
 read_long :: proc(r: io.Reader, n: ^int) -> (data: LONG, err: Read_Error) {

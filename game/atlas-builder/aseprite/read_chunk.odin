@@ -220,7 +220,7 @@ read_cel :: proc(
 		br: bytes.Reader
 		bytes.reader_init(&br, buf.buf[:])
 		rr, ok := io.to_reader(bytes.reader_to_stream(&br))
-		if !ok {err = .Unable_Make_Reader;return}
+		if !ok {err = .Unable_Make_Reader; return}
 
 		cel.tiles = make([]TILE, cel.height * cel.width) or_return
 		read_tiles(rr, cel.tiles[:], cel.bitmask_id, rt) or_return
