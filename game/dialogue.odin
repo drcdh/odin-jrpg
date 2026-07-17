@@ -6,6 +6,7 @@ import rl "vendor:raylib"
 
 dialogue_speed: f32 = .05 // seconds
 
+Dialogue_Choose :: struct {}
 Dialogue_Hidden :: struct {}
 Dialogue_Marquee :: struct {
 	t: f32,
@@ -21,6 +22,7 @@ Dialogue_State :: union #no_nil {
 	Dialogue_Marquee,
 	Dialogue_Pause,
 	Dialogue_Wait,
+	Dialogue_Choose,
 	Dialogue_Done,
 }
 
@@ -38,12 +40,16 @@ dialogue_icon: Animation
 dialogue_lines: int = 4 // todo
 dialogue_line_width: int = 2 * VIEW_TILES_W - 2
 
+dialogue_choices: [dynamic]string
+dialogue_choice_made: Maybe(int)
+dialogue_choice_pending: int
+
 init_dialogue :: proc() {
 	dialogue_icon = animation_create(.Dialogue_Icon_Small)
 }
 
 draw_dialogue :: proc() {
-	// rl.DrawText(fmt.caprint(dialogue_state, allocator = context.temp_allocator), i32(6*tile_size), i32(12 * tile_size), 24, rl.BLACK) // debug
+	// rl.DrawText( fmt.caprint(dialogue_state, allocator = context.temp_allocator), i32(6 * tile_size), i32(12 * tile_size), 24, rl.BLACK,) // debug
 	if _, hidden := dialogue_state.(Dialogue_Hidden); !hidden {
 		str := strings.to_string(dialogue_marquee)
 		if substr, ok := strings.substring_to(str, dialogue_marquee_end); ok {
@@ -52,6 +58,32 @@ draw_dialogue :: proc() {
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
 			draw_animation(dialogue_icon, {view_dim.x - tile_size, 2 * tile_size}, rl.WHITE)
+		}
+		if _, choosing := dialogue_state.(Dialogue_Choose); choosing {
+			draw_choices()
+		}
+	}
+}
+
+draw_choices :: proc() {
+	if len(dialogue_choices) > 0 {
+		draw_menu(0, (dialogue_lines + 2) / 2, VIEW_TILES_W, (len(dialogue_choices) + 2) / 2)
+		for c, i in dialogue_choices {
+			if i == dialogue_choice_pending {
+				draw_text(
+					.5,
+					f32(i + dialogue_lines + 2) / 2 + .5,
+					strings.clone_to_cstring(c, context.temp_allocator),
+					rl.YELLOW,
+				)
+			} else {
+				draw_text(
+					.5,
+					f32(i + dialogue_lines + 2) / 2 + .5,
+					strings.clone_to_cstring(c, context.temp_allocator),
+					rl.GRAY,
+				)
+			}
 		}
 	}
 }
@@ -84,6 +116,19 @@ update_dialogue :: proc() {
 				dialogue_state = Dialogue_Marquee{}
 			} else {
 				dialogue_state = Dialogue_Done{}
+			}
+		}
+	case Dialogue_Choose:
+		if get_input(.ENTER) {
+			dialogue_choice_made = dialogue_choice_pending
+			clear(&dialogue_choices)
+			dialogue_state = Dialogue_Done{}
+		} else if dy, ok := get_y_input().?; ok {
+			dialogue_choice_pending += dy
+			if dialogue_choice_pending < 0 {
+				dialogue_choice_pending = len(dialogue_choices) - 1
+			} else if dialogue_choice_pending >= len(dialogue_choices) {
+				dialogue_choice_pending = 0
 			}
 		}
 	case Dialogue_Done:

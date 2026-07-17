@@ -11,6 +11,9 @@ Append_Text :: struct {
 	hurry: bool,
 	pause: f32,
 }
+Append_Choice :: struct {
+	text: string,
+}
 Battle_Effect_Event :: struct {
 	actor:  int,
 	target: int,
@@ -20,6 +23,7 @@ Battle_Unpause :: struct {}
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}
 End :: struct {}
+Get_Choice :: struct {}
 Pause_Runner :: struct {
 	duration: f32,
 }
@@ -89,6 +93,10 @@ Skip_If :: struct {
 	n: int,
 	d: Bool_Datum,
 }
+Skip_If_Choice :: struct {
+	n: int,
+	c: int,
+}
 Start_Encounter :: struct {
 	encounter: int,
 	paused:    bool,
@@ -110,11 +118,13 @@ Wait_Encounter_R :: struct {}
 
 Event :: union {
 	Add_Item,
+	Append_Choice,
 	Append_Text,
 	Battle_Unpause,
 	Clear_Text,
 	Close_Dialogue,
 	End,
+	Get_Choice,
 	Pause_Runner,
 	Curtain_Down,
 	Curtain_Up,
@@ -134,6 +144,7 @@ Event :: union {
 	Set_Party_Control,
 	Skip,
 	Skip_If,
+	Skip_If_Choice,
 	Start_Encounter,
 	Start_Level,
 	Start_Next_Level,

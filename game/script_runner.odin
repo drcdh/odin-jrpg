@@ -8,6 +8,7 @@ Pause :: struct {
 	countdown: f32,
 }
 Wait :: struct {}
+Wait_Choice :: struct {}
 Wait_Dialogue :: struct {}
 Wait_Encounter :: struct {}
 Wait_Transition :: struct {}
@@ -16,6 +17,7 @@ Script_State :: union {
 	Continue,
 	Pause,
 	Wait,
+	Wait_Choice,
 	Wait_Dialogue,
 	Wait_Encounter,
 	Wait_Transition,
@@ -47,6 +49,9 @@ update_runner :: proc(dt: f32) {
 		case Wait:
 			if get_input(Game_Input.ENTER) {runner.state = Continue{}}
 			return
+		case Wait_Choice:
+			if dialogue_choice_made != nil {runner.state = Continue{}}
+			return
 		case Wait_Dialogue:
 			if dialogue_done() {runner.state = Continue{}}
 			return
@@ -65,8 +70,14 @@ update_runner :: proc(dt: f32) {
 		case Append_Text:
 			queue_dialogue(event.text, event.hurry, event.pause)
 			runner.state = Wait_Dialogue{}
+		case Append_Choice:
+			append(&dialogue_choices, event.text)
 		case End:
 			runner.script = nil
+		case Get_Choice:
+			dialogue_choice_made = nil
+			dialogue_state = Dialogue_Choose{}
+			runner.state = Wait_Choice{}
 		case Pause_Runner:
 			runner.state = Pause {
 				countdown = event.duration,
@@ -123,6 +134,10 @@ update_runner :: proc(dt: f32) {
 			runner.step += event.n
 		case Skip_If:
 			if get_game_data(event.d) {
+				runner.step += event.n
+			}
+		case Skip_If_Choice:
+			if dialogue_choice_made == event.c {
 				runner.step += event.n
 			}
 		case Start_Encounter:
