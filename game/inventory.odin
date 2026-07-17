@@ -23,3 +23,13 @@ delete_inventory_order :: proc() {
 	delete(equippables_order)
 	delete(inventory_order)
 }
+
+add_item :: proc(item_name: Item_Name, n: u8) {
+	game_data.inventory[item_name] += n
+	set_inventory_order()
+}
+
+remove_item :: proc(item_name: Item_Name, n: u8) {
+	game_data.inventory[item_name] -= n
+	set_inventory_order()
+}

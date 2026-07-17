@@ -17,10 +17,27 @@ DUDE_SCRIPT_0 := [?]Event {
 	Append_Choice{"Tea"},
 	Get_Choice{},
 	Clear_Text{},
-	Skip_If_Choice{2, 1},
-	Append_Text{text = "Sludgy!"},
+	Skip_If_Choice{11, 1}, // goto: Tea
+	// Coffee
+	Append_Text{text = "Ooh, sludgy!"},
+	Append_Text{text = "With out without cream?"},
+	Append_Choice{"With!"},
+	Append_Choice{"Without."},
+	Get_Choice{},
+	Clear_Text{},
+	Skip_If_Choice{2, 1}, // goto: no cream
+	// yes cream
+	Append_Text{text = "So that's a coffee with cream? Cool, I dunno where a coffee shop is, though. Sorry!"},
 	Skip{1},
-	Append_Text{text = "Grassy!"},
+	// no cream
+	Append_Text{text = "So that's a black coffee? Cool, I dunno where a coffee shop is, though. Sorry!"},
+	Skip{5},
+	// Tea
+	Append_Text{text = "Ooh, grassy!"},
+	Append_Text{text = "Y'know what? I actually have an extra cup of hot tea right here. How about that?"},
+	Clear_Text{},
+	Add_Item{item = .Tea, number = 1},
+	Append_Text{text = "Got item: Tea"},
 	Clear_Text{},
 	Append_Text{text = "Anyway, I'm going over there now."},
 	Close_Dialogue{},

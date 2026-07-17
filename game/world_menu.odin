@@ -446,7 +446,7 @@ update_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, part
 				play_sound(skill.sound) // todo
 				pc := get_party_member(party_idx).?
 				do_effect(nil, get_pc(pc), skill.effect)
-				game_data.inventory[item_name] -= 1
+				remove_item(item_name, 1)
 				if game_data.inventory[item_name] == 0 {
 					world_menu_state = World_Menu_State_Items{item_idx, origin_idx, false, party_idx}
 				}

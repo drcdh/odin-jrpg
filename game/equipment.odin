@@ -35,10 +35,10 @@ set_equipped_item :: proc(
 	prev := equipment[slot]
 	equipment[slot] = item
 	if item != .None && from_inventory {
-		game_data.inventory[item] -= 1
+		remove_item(item, 1)
 	}
 	if prev != .None && to_inventory {
-		game_data.inventory[prev] += 1
+		remove_item(prev, 1)
 	}
 	set_inventory_order()
 }
