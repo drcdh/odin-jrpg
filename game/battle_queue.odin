@@ -14,9 +14,9 @@ queue_text_effect_character :: proc(target: ^Character, text: cstring, color := 
 	}
 }
 
-queue_battle_skill :: proc(actor: int, targets: Target_Selection, skill: Skill) {
-	battle.combatants[actor].t -= skill.cost
-	append(&battle.skill_plays, Battle_Skill_Play{actor, targets, skill, skill.windup})
+queue_battle_skill :: proc(actor_idx: int, targets: Target_Selection, skill: Skill) {
+	battle.combatants[actor_idx].t -= Ticks(skill.cost)
+	append(&battle.skill_plays, Battle_Skill_Play{actor_idx, targets, skill, Ticks(skill.windup)})
 }
 
 center_rect_on_rect :: proc(r1, r2: Rect) -> (r: Rect) {

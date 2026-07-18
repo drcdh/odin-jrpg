@@ -38,7 +38,7 @@ set_equipped_item :: proc(
 		remove_item(item, 1)
 	}
 	if prev != .None && to_inventory {
-		remove_item(prev, 1)
+		add_item(prev, 1)
 	}
 	set_inventory_order()
 }

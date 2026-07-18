@@ -3,9 +3,7 @@ package game
 import "core:strings"
 import rl "vendor:raylib"
 
-battle_ui_state: Battle_UI_State
-
-Battle_UI_State :: union {
+PC_UI_State :: union {
 	Action_Selection_State, // attack, skills, item, etc. indicated but not selected
 	Skill_Selection_State, // skill indicated but not selected
 	Item_Selection_State, // item indicated but not selected
@@ -25,7 +23,7 @@ Item_Selection_State :: struct {
 Target_Selection_State :: struct {
 	ts: Target_Selection,
 	tt: Targeting_Type,
-	// prev: Battle_UI_State,
+	// prev: battle.pc_ui_state,
 }
 Target_Selection :: union {
 	Select_One_Ally,
@@ -69,7 +67,7 @@ BATTLE_MENU_SKILLS_ROWS :: 6
 BATTLE_MENU_ITEMS_ROWS :: 6
 
 draw_battle_menu :: proc() {
-	switch state in battle_ui_state {
+	switch state in battle.pc_ui_state {
 	case Action_Selection_State:
 		draw_menu(0.0, 10, 4, 4)
 		draw_text(0.5, 10.5, "Attack", rl.YELLOW if state.s == 0 else rl.WHITE)
@@ -127,19 +125,19 @@ select_first_baddy :: proc() -> int {
 }
 
 battle_change_selection :: proc(dx, dy: int) {
-	switch &state in battle_ui_state {
+	switch &state in battle.pc_ui_state {
 	case Action_Selection_State:
 		s := state.s
 		s += dy
 		if s < 0 {s = ITEM}
 		if s > ITEM {s = 0}
-		battle_ui_state = Action_Selection_State{s}
+		battle.pc_ui_state = Action_Selection_State{s}
 	case Skill_Selection_State:
 		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_SKILLS_ROWS, len(battle.menu_skills))
-		battle_ui_state = Skill_Selection_State{s, w}
+		battle.pc_ui_state = Skill_Selection_State{s, w}
 	case Item_Selection_State:
 		s, w := shift_windowed_selection(dy, state.s, state.w, BATTLE_MENU_ITEMS_ROWS, len(Item_Name))
-		battle_ui_state = Item_Selection_State{s, w}
+		battle.pc_ui_state = Item_Selection_State{s, w}
 	case Target_Selection_State:
 		switch ts in state.ts {
 		case Select_One_Baddy:
@@ -199,8 +197,8 @@ default_target_selection :: proc(tt: Targeting_Type) -> Target_Selection {
 skill: Skill
 
 pc_turn :: proc(actor: int) {
-	if battle_ui_state == nil {
-		battle_ui_state = Action_Selection_State{}
+	if battle.pc_ui_state == nil {
+		battle.pc_ui_state = Action_Selection_State{}
 		return
 	}
 	if get_input(.UP) {
@@ -212,53 +210,55 @@ pc_turn :: proc(actor: int) {
 	} else if get_input(.RIGHT) {
 		battle_change_selection(1, 0)
 	} else if get_input(.ENTER) {
-		switch state in battle_ui_state {
+		switch state in battle.pc_ui_state {
 		case Action_Selection_State:
 			switch state.s {
 			case ATTACK:
 				// skill_proc = attack
 				skill = skills[Skill_Name.Slash]
 				// todo: check weapon target type
-				battle_ui_state = Target_Selection_State {
+				battle.pc_ui_state = Target_Selection_State {
 					ts = Select_One_Baddy{select_first_baddy()},
 					tt = .One_Opponent,
 				}
 			case SKILL:
-				battle_ui_state = Skill_Selection_State{}
+				battle.pc_ui_state = Skill_Selection_State{}
 				set_battle_skills(battle.combatants[actor])
 			case ITEM:
-				battle_ui_state = Item_Selection_State{}
+				battle.pc_ui_state = Item_Selection_State{}
 			}
 		case Skill_Selection_State:
 			skill = skills[battle.menu_skills[state.s]]
-			battle_ui_state = Target_Selection_State {
+			battle.pc_ui_state = Target_Selection_State {
 				ts = default_target_selection(skill.targeting),
 				tt = skill.targeting,
 			}
 		case Item_Selection_State:
 			if consumable, ok := items[state.s].data.(Consumable); ok {
 				skill = skills[consumable]
-				battle_ui_state = Target_Selection_State {
+				battle.pc_ui_state = Target_Selection_State {
 					ts = default_target_selection(skill.targeting),
 					tt = skill.targeting,
 				}
 			}
 		case Target_Selection_State:
 			queue_battle_skill(actor, state.ts, skill)
-			battle_ui_state = Battle_UI_State{}
-			end_turn()
+			battle.pc_ui_state = nil
+			battle.pc_ready = nil
 		}
 	} else if get_input(.CANCEL) {
-		switch state in battle_ui_state {
+		switch state in battle.pc_ui_state {
 		case Action_Selection_State:
 		// do nothing
 		case Skill_Selection_State:
-			battle_ui_state = Action_Selection_State{SKILL}
+			battle.pc_ui_state = Action_Selection_State{SKILL}
 		case Item_Selection_State:
-			battle_ui_state = Action_Selection_State{ITEM}
+			battle.pc_ui_state = Action_Selection_State{ITEM}
 		case Target_Selection_State:
-			clear_staged_turn_order()
-			battle_ui_state = Action_Selection_State{ATTACK} //fixme
+			battle.pc_ui_state = Action_Selection_State{ATTACK} //fixme
 		}
-	}
+	} // else if get_input(.E) {
+	// 	battle.pc_ui_state = PC_UI_State{}
+	// 	battle.pc_ready = get_next_ready_pc()
+	// }
 }

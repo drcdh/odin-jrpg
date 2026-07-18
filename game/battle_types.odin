@@ -2,12 +2,14 @@ package game
 
 import rl "vendor:raylib"
 
+Ticks :: f32
+
 Combatant :: struct {
 	using character: ^Character,
 	coord:           Pixel_Coord,
 	enabled:         bool,
 	id:              int,
-	t:               int,
+	t:               Ticks,
 	team:            int,
 	turn:            Turn_Proc,
 	visual:          Combatant_Visual,
@@ -29,12 +31,7 @@ Battle_Skill_Play :: struct {
 	actor:   int,
 	targets: Target_Selection,
 	skill:   Skill,
-	windup:  int,
-}
-
-Battle_Turn_Order :: struct {
-	c_idx:  int,
-	staged: bool,
+	windup:  Ticks,
 }
 
 // EVENTS
@@ -64,9 +61,10 @@ Process_Text_Effect :: struct {
 	text:  cstring,
 }
 Process_Skill :: struct {
-	skill_idx: int,
-	step:      int,
-	t:         f32,
+	active:          bool,
+	skill_plays_idx: int,
+	step:            int,
+	t:               f32,
 }
 Battle_State :: union {
 	Next_Turn,

@@ -1,12 +1,13 @@
+#+feature using-stmt
 package game
 
 import "core:fmt"
-import "core:math"
-import "core:slice"
 
 import rl "vendor:raylib"
 
-READY_T :: 100
+BATTLE_SPEED :: 2 // ticks per second per speed
+
+READY_T :: 100 // ticks per turn
 
 TAKE_TURN_DELAY :: .5 // seconds
 
@@ -20,11 +21,12 @@ Battle :: struct {
 	ending:      bool,
 	menu_skills: [dynamic]Skill_Name,
 	paused:      bool,
+	pc_ready:    Maybe(int),
+	pc_ui_state: PC_UI_State,
 	skill_plays: [dynamic]Battle_Skill_Play,
+	skill_state: Process_Skill,
 	sounds:      [dynamic]Play_Sound,
-	state:       Battle_State,
 	text:        [dynamic]Process_Text_Effect,
-	turn_order:  [dynamic]Battle_Turn_Order,
 }
 
 battle: Battle
@@ -34,20 +36,14 @@ targeting_ease: f32
 battle_cleanup :: proc() {
 	clear(&battle.combatants)
 	clear(&battle.skill_plays)
-	clear(&battle.turn_order)
 }
 
 battle_destroy :: proc() {
 	delete(battle.combatants)
 	delete(battle.skill_plays)
-	delete(battle.turn_order)
 }
 
 battle_init :: proc() {
-	for _, i in battle.combatants {
-		append(&battle.turn_order, Battle_Turn_Order{c_idx = i})
-	}
-	calc_turn_order()
 }
 
 check_win :: proc() -> bool {
@@ -69,6 +65,10 @@ check_win :: proc() -> bool {
 		battle.ending = true
 	}
 	return battle.ending
+}
+
+combatant_ready :: proc(c: Combatant) -> bool {
+	return c.t >= READY_T && combatant_alive(c) && !combatant_winding_up(c)
 }
 
 combatant_alive :: proc(c: Combatant) -> bool {
@@ -107,7 +107,6 @@ draw_battle :: proc() {
 	draw_battle_party_stats()
 	draw_battle_menu()
 	draw_battle_combatants()
-	draw_battle_turn_order()
 
 	for s in battle.animations {
 		draw_animation(s.animation, s.offset)
@@ -158,8 +157,8 @@ draw_battle_combatants :: proc() {
 			if c.character.hitpoints <= 0 {
 				tint = rl.RED
 			}
-			if turn, ok := battle.state.(Take_Turn); ok {
-				if c_idx == turn.c_idx {
+			if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+				if c_idx == battle.allies[ally_idx] {
 					tint = rl.GREEN
 				}
 			}
@@ -177,117 +176,76 @@ draw_battle_combatants :: proc() {
 			draw_text(
 				c.coord.x / tile_size,
 				c.coord.y / tile_size,
-				fmt.caprintf("%d", c.t, allocator = context.temp_allocator),
-				rl.ORANGE,
+				fmt.caprintf("%.0f", abs(c.t), allocator = context.temp_allocator),
+				rl.WHITE if c.t >= 0 else rl.ORANGE,
 			)
 		}
 	}
 }
 
-draw_battle_turn_order :: proc() {
-	i := 0
-	for o in battle.turn_order {
-		c := battle.combatants[o.c_idx]
-		if !combatant_alive(c) {continue}
-		t: Texture_Name
-		switch v in c.visual.variant {
-		case Animation:
-			t = v.current_frame
-		case Texture_Name:
-			t = v
+battle_time_tick :: proc(dt: f32) {
+	ticks := dt * BATTLE_SPEED
+	for &s, i in battle.skill_plays {
+		s.windup -= ticks * get_stat_f(battle.combatants[s.actor].character, .Speed)
+		if s.windup <= 0 {
+			battle.skill_state = Process_Skill {
+				active          = true,
+				skill_plays_idx = i,
+			}
 		}
-		i += 1
-		rl.DrawRectangle(i32(5 + i) * i32(tile_size), 0, i32(tile_size), i32(tile_size), rl.BLACK)
-		draw_texture_chunk(t, tile_to_pixel(5 + i, 0), rl.GRAY if o.staged else rl.WHITE)
-	}
-}
-
-turn_order_not_staged :: proc(o: Battle_Turn_Order) -> bool {
-	return !o.staged
-}
-
-clear_staged_turn_order :: proc() {
-	battle.turn_order = slice.into_dynamic(slice.filter(battle.turn_order[:], turn_order_not_staged))
-}
-
-end_turn :: proc() {
-	battle.state = Next_Turn{}
-}
-
-battle_time_tick :: proc() {
-	for &s in battle.skill_plays {
-		s.windup -= int(math.sqrt(get_stat_f(battle.combatants[s.actor].character, .Speed)))
 	}
 
 	for &c in battle.combatants {
 		if !c.enabled {continue}
 		if combatant_downed(c) {continue}
 		if combatant_winding_up(c) {continue}
-		c.t += int(math.sqrt(f32(c.character.speed)))
+		c.t += ticks * get_stat_f(c.character, .Speed)
+		if c.t > READY_T {c.t = READY_T}
 	}
-
-	calc_turn_order()
 }
 
-get_ready_combatant :: proc() -> (lead: int, ready := false) {
-	lead_t := 0
-	for c, i in battle.combatants {
-		if !c.enabled {continue}
-		if combatant_downed(c) {continue}
-		if combatant_winding_up(c) {continue}
-		if c.t >= lead_t {
-			lead = i
-			lead_t = c.t
+get_next_ready_pc :: proc() -> Maybe(int) {
+	for c_idx, a_idx in battle.allies {
+		if combatant_ready(battle.combatants[c_idx]) {
+			return a_idx
 		}
 	}
-	if lead_t >= READY_T {
-		ready = true
-	}
-	return
-}
-
-get_ready_skill :: proc() -> (int, bool) {
-	for s, i in battle.skill_plays {
-		if s.windup <= 0 {
-			return i, true
-		}
-	}
-	return 0, false
-}
-
-get_next_combatant :: proc() -> int {
-	first := true
-	actor_idx: int
-	actor_t := 0
-	for c, i in battle.combatants {
-		if combatant_alive(c) {
-			if first || c.t < actor_t {
-				actor_t = c.t
-				actor_idx = i
-				first = false
-			}
-		}
-	}
-	return actor_idx
-}
-
-turn_order_cmp :: proc(lhs, rhs: Battle_Turn_Order) -> bool {
-	c_lhs := battle.combatants[lhs.c_idx]
-	c_rhs := battle.combatants[rhs.c_idx]
-	return c_lhs.t > c_rhs.t // this is backward on purpose
-}
-
-calc_turn_order :: proc() {
-	slice.sort_by(battle.turn_order[:], turn_order_cmp)
+	// FIXME: infinite loop somehow?
+	// current: int
+	// if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+	// 	current = ally_idx
+	// } else {
+	// 	current = 0
+	// }
+	// for next := current + 1; next != current; next += 1 {
+	// 	if next >= len(battle.allies) {
+	// 		next = 0
+	// 	}
+	// 	if combatant_ready(battle.combatants[battle.allies[next]]) {
+	// 		return next
+	// 	}
+	// }
+	// if combatant_ready(battle.combatants[battle.allies[current]]) {
+	// 	return current
+	// }
+	return nil
 }
 
 update_battle :: proc(dt: f32) {
+	if !battle.paused {
+		check_win()
+		if !battle.skill_state.active {
+			battle_time_tick(dt)
+		}
+		process_ready_battle_skill(dt)
+		process_ready_combatants(dt)
+		if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+			pc_turn(battle.allies[ally_idx])
+		}
+	}
+
 	targeting_ease += dt / .5
 	if targeting_ease > 1 {targeting_ease = 0}
-
-	if !battle.paused {
-		process_battle_state(dt)
-	}
 
 	for anim_idx := 0; anim_idx < len(battle.animations); {
 		if animation_update(&battle.animations[anim_idx].animation, dt) {
@@ -327,37 +285,7 @@ update_battle :: proc(dt: f32) {
 	}
 }
 
-process_battle_state :: proc(dt: f32) {
-	switch &s in battle.state {
-	case Next_Turn:
-		if check_win() {
-			// TODO: run default or encounter-overriding procedure (exp gain etc.)
-			// battle.state = Aftermath{}
-		} else if skill_idx, skill_ready := get_ready_skill(); skill_ready {
-			battle.state = Process_Skill {
-				skill_idx = skill_idx,
-			}
-		} else if c_idx, c_ready := get_ready_combatant(); c_ready {
-			battle.state = Take_Turn {
-				c_idx = c_idx,
-			}
-		} else {
-			battle_time_tick()
-		}
-	case Take_Turn:
-		s.t += dt
-		if s.t >= TAKE_TURN_DELAY {
-			battle.combatants[s.c_idx].turn(s.c_idx)
-		}
-	case Process_Skill:
-		if process_battle_skill() {
-			unordered_remove(&battle.skill_plays, s.skill_idx)
-			battle.state = Next_Turn{}
-		}
-	}
-}
-
-blah :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int) {
+play_anim_sound :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int) {
 	r := center_animation_on_combatant(animation_name, battle.combatants[target_idx])
 	append(
 		&battle.animations,
@@ -366,103 +294,125 @@ blah :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int)
 	append(&battle.sounds, Play_Sound{sound = sound})
 }
 
-process_battle_skill :: proc() -> (done := false) {
-	if skill_state, ok := &battle.state.(Process_Skill); ok {
-		// fmt.printfln("% 4d: processing battle skill step %d", frame_count, skill_state.step)
-		// fmt.printfln("%#v", battle.animations)
-		// fmt.printfln("%#v", battle.sounds)
-		// fmt.printfln("%#v", battle.text)
-		play := battle.skill_plays[skill_state.skill_idx]
-		skill := play.skill
-		switch skill_state.step {
-		case 0:
-			// TODO: set_text_display(skill.name)
-			skill_state.step += 1
-		case 1:
-			if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
-				skill_state.t = 0
-				skill_state.step += 1
-			}
-		case 2:
-			// TODO: set actor to walk left
-			skill_state.step += 1
-		case 3:
-			// TODO: wait for walk to finish
-			skill_state.step += 1
-		case 4:
-			if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
-				skill_state.t = 0
-				skill_state.step += 1
-			}
-		case 5:
-			animation_name := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
-			sound := Sound_Name.Whack if skill.sound == nil else skill.sound
-			switch targets in play.targets {
-			case Select_One_Ally:
-				blah(animation_name, sound, battle.allies[targets.i])
-			case Select_One_Baddy:
-				blah(animation_name, sound, battle.baddies[targets.i])
-			case Select_All_Allies:
-				for target_idx in battle.allies {
-					blah(animation_name, sound, target_idx)
-				}
-			case Select_All_Baddies:
-				for target_idx in battle.baddies {
-					blah(animation_name, sound, target_idx)
-				}
-			case Select_All_Combatants:
-				for _, target_idx in battle.combatants {
-					blah(animation_name, sound, target_idx)
-				}
-			}
-			skill_state.step += 1
-		case 6:
-			if len(battle.animations) == 0 && len(battle.sounds) == 0 {
-				skill_state.step += 1
-			}
-		case 7:
-			actor := battle.combatants[play.actor]
-			switch targets in play.targets {
-			case Select_One_Ally:
-				target := battle.combatants[battle.allies[targets.i]]
-				do_effect(&actor, &target, skill.effect)
-			case Select_One_Baddy:
-				target := battle.combatants[battle.baddies[targets.i]]
-				do_effect(&actor, &target, skill.effect)
-			case Select_All_Allies:
-				for target_idx in battle.allies {
-					target := battle.combatants[target_idx]
-					do_effect(&actor, &target, skill.effect)
-				}
-			case Select_All_Baddies:
-				for target_idx in battle.baddies {
-					target := battle.combatants[target_idx]
-					do_effect(&actor, &target, skill.effect)
-				}
-			case Select_All_Combatants:
-				for &target in battle.combatants {
-					do_effect(&actor, &target, skill.effect)
-				}
-			}
-			skill_state.step += 1
-		case 8:
-			if len(battle.text) == 0 {
-				skill_state.step += 1
-			}
-		case 9:
-			// TODO: set actor to walk right
-			skill_state.step += 1
-		case 10:
-			// TODO: wait for walk to finish then set actor to idle left
-			// TODO: remove_text_display(skill.name)
-			done = true
+process_ready_battle_skill :: proc(dt: f32) {
+	if battle.skill_state.active {
+		if process_battle_skill() {
+			unordered_remove(&battle.skill_plays, battle.skill_state.skill_plays_idx)
+			battle.skill_state.active = false
 		}
+	}
+}
+
+process_ready_combatants :: proc(dt: f32) {
+	if battle.pc_ready == nil {
+		battle.pc_ready = get_next_ready_pc()
+	}
+	for combatant, c_idx in battle.combatants {
+		if combatant.t >= READY_T {
+			// check for confusion, etc. of PCs
+			if combatant.turn != nil {
+				combatant.turn(c_idx)
+			}
+		}
+	}
+}
+
+process_battle_skill :: proc() -> (done := false) {
+	// fmt.printfln("% 4d: processing battle skill step %d", frame_count, skill_state.step)
+	// fmt.printfln("%#v", battle.animations)
+	// fmt.printfln("%#v", battle.sounds)
+	// fmt.printfln("%#v", battle.text)
+	using battle
+	play := skill_plays[skill_state.skill_plays_idx]
+	skill := play.skill
+	switch skill_state.step {
+	case 0:
+		// TODO: set_text_display(skill.name)
+		skill_state.step += 1
+	case 1:
+		if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
+			skill_state.t = 0
+			skill_state.step += 1
+		}
+	case 2:
+		// TODO: set actor to walk left
+		skill_state.step += 1
+	case 3:
+		// TODO: wait for walk to finish
+		skill_state.step += 1
+	case 4:
+		if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
+			skill_state.t = 0
+			skill_state.step += 1
+		}
+	case 5:
+		animation_name := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
+		sound := Sound_Name.Whack if skill.sound == nil else skill.sound
+		switch targets in play.targets {
+		case Select_One_Ally:
+			play_anim_sound(animation_name, sound, battle.allies[targets.i])
+		case Select_One_Baddy:
+			play_anim_sound(animation_name, sound, battle.baddies[targets.i])
+		case Select_All_Allies:
+			for target_idx in battle.allies {
+				play_anim_sound(animation_name, sound, target_idx)
+			}
+		case Select_All_Baddies:
+			for target_idx in battle.baddies {
+				play_anim_sound(animation_name, sound, target_idx)
+			}
+		case Select_All_Combatants:
+			for _, target_idx in battle.combatants {
+				play_anim_sound(animation_name, sound, target_idx)
+			}
+		}
+		skill_state.step += 1
+	case 6:
+		if len(battle.animations) == 0 && len(battle.sounds) == 0 {
+			skill_state.step += 1
+		}
+	case 7:
+		actor := battle.combatants[play.actor]
+		switch targets in play.targets {
+		case Select_One_Ally:
+			target := battle.combatants[battle.allies[targets.i]]
+			do_effect(&actor, &target, skill.effect)
+		case Select_One_Baddy:
+			target := battle.combatants[battle.baddies[targets.i]]
+			do_effect(&actor, &target, skill.effect)
+		case Select_All_Allies:
+			for target_idx in battle.allies {
+				target := battle.combatants[target_idx]
+				do_effect(&actor, &target, skill.effect)
+			}
+		case Select_All_Baddies:
+			for target_idx in battle.baddies {
+				target := battle.combatants[target_idx]
+				do_effect(&actor, &target, skill.effect)
+			}
+		case Select_All_Combatants:
+			for &target in battle.combatants {
+				do_effect(&actor, &target, skill.effect)
+			}
+		}
+		skill_state.step += 1
+	case 8:
+		if len(battle.text) == 0 {
+			skill_state.step += 1
+		}
+	case 9:
+		// TODO: set actor to walk right
+		skill_state.step += 1
+	case 10:
+		// TODO: wait for walk to finish then set actor to idle left
+		// TODO: remove_text_display(skill.name)
+		done = true
 	}
 	return
 }
 
 targeted :: proc(c_idx, team: int) -> bool {
-	if tss, ok := battle_ui_state.(Target_Selection_State); ok {
+	if tss, ok := battle.pc_ui_state.(Target_Selection_State); ok {
 		switch ts in tss.ts {
 		case Select_One_Baddy:
 			return team == BADDY_TEAM && c_idx == ts.i

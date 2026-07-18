@@ -134,6 +134,11 @@ get_generic_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) ->
 		}
 	} else if mh == .Rat_Smashing_Bat {
 		skill_set += {.Smash}
+		if stats.offense + level >= 25 {
+			skill_set += {.Quake_Smash}
+		}
+	} else if mh == .Beginners_Wand {
+		skill_set += {.Smack, .Fire}
 	} else if mh == .None {
 		skill_set += {.Punch}
 	}

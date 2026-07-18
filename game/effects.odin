@@ -115,7 +115,7 @@ effect_remove_status :: proc(actor, target: ^Character, effect: Effect_Remove_St
 effect_level_up :: proc(_, target: ^Character, effect: Effect_Level_Up) {
 	n := effect.n
 	set_level(target, target.level + n)
-	// set_skills(target)
+	set_all_skills() // FIXME: shouldn't be necessary to reset all
 	queue_text_effect_character(target, fmt.caprintf("%d", n), rl.PURPLE)
 }
 
