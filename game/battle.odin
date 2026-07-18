@@ -5,7 +5,7 @@ import "core:fmt"
 
 import rl "vendor:raylib"
 
-BATTLE_SPEED :: 1 // ticks per second per speed
+BATTLE_SPEED :: 2 // ticks per second per speed
 
 READY_T :: 100 // ticks per turn
 
@@ -21,10 +21,12 @@ Battle :: struct {
 	ending:      bool,
 	menu_skills: [dynamic]Skill_Name,
 	paused:      bool,
+	pc_ready:    Maybe(int),
+	pc_ui_state: PC_UI_State,
 	skill_plays: [dynamic]Battle_Skill_Play,
 	skill_state: Process_Skill,
 	sounds:      [dynamic]Play_Sound,
-	state:       Battle_State,
+	// state:       Battle_State,
 	text:        [dynamic]Process_Text_Effect,
 }
 
@@ -64,6 +66,10 @@ check_win :: proc() -> bool {
 		battle.ending = true
 	}
 	return battle.ending
+}
+
+combatant_ready :: proc(c: Combatant) -> bool {
+	return c.t >= READY_T && combatant_alive(c) && !combatant_winding_up(c)
 }
 
 combatant_alive :: proc(c: Combatant) -> bool {
@@ -152,8 +158,8 @@ draw_battle_combatants :: proc() {
 			if c.character.hitpoints <= 0 {
 				tint = rl.RED
 			}
-			if turn, ok := battle.state.(Take_Turn); ok {
-				if c_idx == turn.c_idx {
+			if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+				if c_idx == battle.allies[ally_idx] {
 					tint = rl.GREEN
 				}
 			}
@@ -179,7 +185,7 @@ draw_battle_combatants :: proc() {
 }
 
 end_turn :: proc() {
-	battle.state = Next_Turn{}
+	// battle.state = Next_Turn{}
 }
 
 battle_time_tick :: proc(dt: f32) {
@@ -199,25 +205,26 @@ battle_time_tick :: proc(dt: f32) {
 		if combatant_downed(c) {continue}
 		if combatant_winding_up(c) {continue}
 		c.t += ticks * get_stat_f(c.character, .Speed)
+		if c.t > READY_T {c.t = READY_T}
 	}
 }
 
-get_ready_combatant :: proc() -> (lead: int, ready := false) {
-	lead_t: Ticks
-	for c, i in battle.combatants {
-		if !c.enabled {continue}
-		if combatant_downed(c) {continue}
-		if combatant_winding_up(c) {continue}
-		if c.t >= lead_t {
-			lead = i
-			lead_t = c.t
-		}
-	}
-	if lead_t >= READY_T {
-		ready = true
-	}
-	return
-}
+// get_ready_combatant :: proc() -> (lead: int, ready := false) {
+// 	lead_t: Ticks
+// 	for c, i in battle.combatants {
+// 		if !c.enabled {continue}
+// 		if combatant_downed(c) {continue}
+// 		if combatant_winding_up(c) {continue}
+// 		if c.t >= lead_t {
+// 			lead = i
+// 			lead_t = c.t
+// 		}
+// 	}
+// 	if lead_t >= READY_T {
+// 		ready = true
+// 	}
+// 	return
+// }
 
 // get_ready_skill :: proc() -> (int, bool) {
 // 	for s, i in battle.skill_plays {
@@ -227,6 +234,33 @@ get_ready_combatant :: proc() -> (lead: int, ready := false) {
 // 	}
 // 	return 0, false
 // }
+
+get_next_ready_pc :: proc() -> Maybe(int) {
+	for c_idx, a_idx in battle.allies {
+		if combatant_ready(battle.combatants[c_idx]) {
+			return a_idx
+		}
+	}
+	// FIXME: infinite loop somehow?
+	// current: int
+	// if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+	// 	current = ally_idx
+	// } else {
+	// 	current = 0
+	// }
+	// for next := current + 1; next != current; next += 1 {
+	// 	if next >= len(battle.allies) {
+	// 		next = 0
+	// 	}
+	// 	if combatant_ready(battle.combatants[battle.allies[next]]) {
+	// 		return next
+	// 	}
+	// }
+	// if combatant_ready(battle.combatants[battle.allies[current]]) {
+	// 	return current
+	// }
+	return nil
+}
 
 get_next_combatant :: proc() -> int {
 	first := true
@@ -246,6 +280,7 @@ get_next_combatant :: proc() -> int {
 
 update_battle :: proc(dt: f32) {
 	if !battle.paused {
+		check_win()
 		if !battle.skill_state.active {
 			battle_time_tick(dt)
 		}
@@ -444,7 +479,7 @@ process_battle_skill :: proc() -> (done := false) {
 }
 
 targeted :: proc(c_idx, team: int) -> bool {
-	if tss, ok := battle_ui_state.(Target_Selection_State); ok {
+	if tss, ok := battle.pc_ui_state.(Target_Selection_State); ok {
 		switch ts in tss.ts {
 		case Select_One_Baddy:
 			return team == BADDY_TEAM && c_idx == ts.i

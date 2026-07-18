@@ -100,8 +100,7 @@ start_encounter :: proc(i: int, paused: bool) {
 					coord = {x, y},
 					enabled = true,
 					team = PLAYER_TEAM,
-					// turn = pc_turn,
-					turn = ATTACK_RANDOM_OPPONENT,
+					turn = pc_turn,
 					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
 				},
 			)
@@ -118,7 +117,7 @@ start_encounter :: proc(i: int, paused: bool) {
 	battle.active = true
 	battle.ending = false
 	battle.paused = paused
-	battle.state = Next_Turn{}
+	// battle.state = Next_Turn{}
 	battle_init()
 
 	play_music(&music_state, .Battle)
