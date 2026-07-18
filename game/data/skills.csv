@@ -5,7 +5,9 @@ Antidote,One_Ally,Remove_Status,100,,,,,,,,.Poison,10,25,,,Warp
 Poisonous Mushroom,One_Ally,Add_Status,100,,,,,,,,.Poison,10,25,,,Warp
 Bite,One_Opponent,Attack,,100,,,,,,,,,50,,Ffvi_Stars,Whack
 Punch,One_Opponent,Attack,,80,,,,,150,,,,50,,Smack,Whack
+Smack,One_Opponent,Attack,,60,,,,,,,,,50,,Smack,Whack
 Smash,One_Opponent,Attack,,100,,,,,,,,,50,,Smack,Whack
+Quake Smash,All_Opponents,Attack,,300,,,,,,ranged,,60,150,500,Smack,Whack
 Slash,One_Opponent,Attack,,100,,,,,,,,,50,,Slash,Whack
 Pommel Strike,One_Opponent,Add_Status,100,,,,,,,,.Confuse,,60,,Smack,Whack
 Slash All,All_Opponents,Attack,,100,,,,,,,,30,80,100,Slash,Whack
