@@ -1,6 +1,7 @@
 package game
 
 import hm "core:container/handle_map"
+import "core:container/queue"
 import "core:fmt"
 import rl "vendor:raylib"
 
@@ -165,7 +166,7 @@ process_event :: proc(event: Event) {
 	case Append_Choice:
 		append(&dialogue_choices, event.text)
 	case End:
-		runner.script = nil
+		runner.state = Continue{}
 	case Get_Choice:
 		dialogue_choice_made = nil
 		dialogue_state = Dialogue_Choose{}
@@ -223,14 +224,14 @@ process_event :: proc(event: Event) {
 	case Set_Party_Control:
 		set_party_control()
 	case Skip:
-		runner.step += event.n
+		queue.consume_front(&runner.events, event.n)
 	case Skip_If:
 		if get_game_data(event.d) {
-			runner.step += event.n
+			queue.consume_front(&runner.events, event.n)
 		}
 	case Skip_If_Choice:
 		if dialogue_choice_made == event.c {
-			runner.step += event.n
+			queue.consume_front(&runner.events, event.n)
 		}
 	case Start_Encounter:
 		start_encounter(event.encounter, event.paused)

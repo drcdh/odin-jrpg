@@ -15,7 +15,6 @@ boat_handle: Entity_Handle
 entities: hm.Static_Handle_Map(128, Entity, Entity_Handle)
 party_handle: Entity_Handle
 pc_entity: Entity_Handle
-runner := Runner{}
 
 current_level: Level
 next_level: Level
@@ -84,11 +83,11 @@ update_world :: proc(dt: f32) {
 }
 
 activate_entity_talk_script :: proc(h: Entity_Handle) {
-	start_script(hm.get(&entities, h).talk)
+	queue_events(hm.get(&entities, h).talk)
 }
 
 activate_entity_trap_script :: proc(h: Entity_Handle) {
-	start_script(hm.get(&entities, h).trap)
+	queue_events(hm.get(&entities, h).trap)
 }
 
 get_entity_p :: proc(id: Id) -> ^Entity {

@@ -213,6 +213,6 @@ start_level_0 :: proc() {
 	play_music(&music_state, .Town)
 
 	if !get_game_data(Bool_Datum.Introduction) {
-		start_script(welcome[:])
+		queue_events(welcome[:])
 	}
 }

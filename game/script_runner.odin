@@ -1,5 +1,6 @@
 package game
 
+import "core:container/queue"
 import "core:fmt"
 
 Continue :: struct {}
@@ -21,26 +22,42 @@ Script_State :: union {
 	Wait_Encounter,
 	Wait_Transition,
 }
+Event_Queue :: queue.Queue(Event)
 
 Runner :: struct {
-	script: []Event,
+	events: Event_Queue,
 	state:  Script_State,
-	step:   int,
 }
 
-start_script :: proc(script: []Event) {
-	if script != nil {
-		runner.script = script
-		runner.state = Continue{}
-		runner.step = -1
+runner := Runner{}
+
+queue_events :: proc(events: []Event) {
+	queue.push_back_elems(&runner.events, ..events)
+}
+
+queue_events_front :: proc(events: []Event) {
+	#reverse for event in events {
+		queue.push_front(&runner.events, event)
 	}
 }
 
+runner_len :: proc() -> int {
+	return queue.len(runner.events)
+}
+
+runner_current_event :: proc() -> Event {
+	return queue.front(&runner.events)
+}
+
 update_runner :: proc(dt: f32) {
-	if runner.script != nil {
+	if runner_len() > 0 {
 		switch &state in runner.state {
 		case Continue:
-			runner.step += 1
+			queue.consume_front(&runner.events, 1)
+			if runner_len() == 0 {
+				runner.state = nil
+				return
+			}
 		case Pause:
 			state.countdown -= dt
 			if state.countdown <= 0 {runner.state = Continue{}}
@@ -61,8 +78,8 @@ update_runner :: proc(dt: f32) {
 			if transition_done() {runner.state = Continue{}}
 			return
 		}
-
-		fmt.printfln("% 4d: step %d - %w", frame_count, runner.step, runner.script[runner.step])
-		process_event(runner.script[runner.step])
+		fmt.printfln("% 4d: %w || %w", frame_count, runner.state, runner_current_event())
+		process_event(runner_current_event())
+		if runner.state == nil {runner.state = Continue{}}
 	}
 }
