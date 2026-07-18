@@ -1,6 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
 import "core:fmt"
 
 Continue :: struct {}
@@ -64,92 +63,6 @@ update_runner :: proc(dt: f32) {
 		}
 
 		fmt.printfln("% 4d: step %d - %w", frame_count, runner.step, runner.script[runner.step])
-		switch event in runner.script[runner.step] {
-		case Add_Item:
-			add_item(event.item, event.number)
-		case Append_Text:
-			queue_dialogue(event.text, event.hurry, event.pause)
-			runner.state = Wait_Dialogue{}
-		case Append_Choice:
-			append(&dialogue_choices, event.text)
-		case End:
-			runner.script = nil
-		case Get_Choice:
-			dialogue_choice_made = nil
-			dialogue_state = Dialogue_Choose{}
-			runner.state = Wait_Choice{}
-		case Pause_Runner:
-			runner.state = Pause {
-				countdown = event.duration,
-			}
-		case Battle_Unpause:
-			battle.paused = false
-		case Clear_Text:
-			clear_dialogue()
-		case Close_Dialogue:
-			close_dialogue()
-		case Curtain_Down:
-			curtain_down(event.type)
-			runner.state = Wait_Transition{}
-		case Curtain_Up:
-			curtain_up(event.type)
-			runner.state = Wait_Transition{}
-		case Move_Entity_Here:
-			moving_entity := get_entity_p(event.id)
-			if pc, ok := hm.get(&entities, pc_entity); ok {
-				moving_entity.tile = pc.tile
-				fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
-			}
-		case Play_Animation:
-		// todo
-		case Play_Sound:
-			play_sound(event.sound)
-		case Remove_Entity:
-			remove_entity(event.id)
-		case Set_Boat_Control:
-			boat := get_entity_p(BOAT_ID)
-			boat.state = Control{}
-			boat_mode = true
-			pc_entity = boat_handle
-			camera_entity = boat_handle
-		case Set_Bool:
-			set_game_data(event.k, event.v)
-		case Set_Int:
-			set_game_data(event.k, event.v)
-		case Set_Entity_Busy:
-			set_entity_busy(event.id, event.busy)
-		case Set_Entity_Disabled:
-			set_entity_disabled(event.id, event.disabled)
-		case Set_Entity_Talk_Script:
-			set_entity_talk_script(event.id, event.script)
-		case Set_Entity_Trap_Script:
-			set_entity_trap_script(event.id, event.script)
-		case Set_Entity_State:
-			set_entity_state(event.id, event.state)
-		case Set_Entity_Texture:
-			set_entity_visual(event.id, event.texture)
-		case Set_Party_Control:
-			set_party_control()
-		case Skip:
-			runner.step += event.n
-		case Skip_If:
-			if get_game_data(event.d) {
-				runner.step += event.n
-			}
-		case Skip_If_Choice:
-			if dialogue_choice_made == event.c {
-				runner.step += event.n
-			}
-		case Start_Encounter:
-			start_encounter(event.encounter, event.paused)
-		case Start_Level:
-			start_level(event.level)
-		case Start_Next_Level:
-			start_level(next_level)
-		case Toggle_Party_Member:
-			game_data.party_membership[event.pc_idx] = event.join
-		case Wait_Encounter_R:
-			runner.state = Wait_Encounter{}
-		}
+		process_event(runner.script[runner.step])
 	}
 }
