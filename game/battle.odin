@@ -92,6 +92,15 @@ get_combatant :: proc(character: ^Character) -> ^Combatant {
 	return nil
 }
 
+get_combatant_skill_play :: proc(c_idx: int) -> Maybe(int) {
+	for sp, i in battle.skill_plays {
+		if sp.actor == c_idx {
+			return i
+		}
+	}
+	return nil
+}
+
 select_one_random_ally :: proc() -> Maybe(Select_One_Ally) {
 	// TODO: just take first for now
 	for c_idx, ally_idx in battle.allies {
@@ -179,6 +188,14 @@ draw_battle_combatants :: proc() {
 				fmt.caprintf("%.0f", abs(c.t), allocator = context.temp_allocator),
 				rl.WHITE if c.t >= 0 else rl.ORANGE,
 			)
+			if skill_play_idx, ok := get_combatant_skill_play(c_idx).?; ok {
+				draw_text(
+					c.coord.x / tile_size,
+					.5 + c.coord.y / tile_size,
+					fmt.caprintf("%.0f", battle.skill_plays[skill_play_idx].windup, allocator = context.temp_allocator),
+					rl.ORANGE,
+				)
+			}
 		}
 	}
 }
@@ -188,6 +205,7 @@ battle_time_tick :: proc(dt: f32) {
 	for &s, i in battle.skill_plays {
 		s.windup -= ticks * get_stat_f(battle.combatants[s.actor].character, .Speed)
 		if s.windup <= 0 {
+			s.windup = 0
 			battle.skill_state = Process_Skill {
 				active          = true,
 				skill_plays_idx = i,
@@ -244,6 +262,11 @@ update_battle :: proc(dt: f32) {
 		}
 	}
 
+	if battle.ending {
+		battle.active = false
+		battle_cleanup()
+	}
+
 	targeting_ease += dt / .5
 	if targeting_ease > 1 {targeting_ease = 0}
 
@@ -277,11 +300,6 @@ update_battle :: proc(dt: f32) {
 		case Animation:
 			animation_update(&v, dt)
 		}
-	}
-
-	if battle.ending {
-		battle.active = false
-		battle_cleanup()
 	}
 }
 
