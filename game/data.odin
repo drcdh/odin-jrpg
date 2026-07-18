@@ -46,6 +46,7 @@ init_new_game :: proc() {
 	unequip_all(&MOURNER, to_inventory = false)
 	unequip_all(&ZEALOT, to_inventory = false)
 	set_equipped_item(&PROTAGONIST, .Mainhand, .Sword, false, false)
+	set_equipped_item(&PROTAGONIST, .Accessory, .Speed_Ring)
 	set_level(&PROTAGONIST, 1)
 	set_level(&ASSASSIN, 1)
 	set_level(&MUSICIAN, 1)
