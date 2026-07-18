@@ -2,12 +2,10 @@
 package game
 
 import "core:fmt"
-import "core:math"
-import "core:slice"
 
 import rl "vendor:raylib"
 
-BATTLE_SPEED :: 1 // ticks per second
+BATTLE_SPEED :: 1 // ticks per second per speed
 
 READY_T :: 100 // ticks per turn
 
@@ -173,7 +171,7 @@ draw_battle_combatants :: proc() {
 			draw_text(
 				c.coord.x / tile_size,
 				c.coord.y / tile_size,
-				fmt.caprintf("%d", abs(c.t), allocator = context.temp_allocator),
+				fmt.caprintf("%.0f", abs(c.t), allocator = context.temp_allocator),
 				rl.WHITE if c.t >= 0 else rl.ORANGE,
 			)
 		}
@@ -185,10 +183,14 @@ end_turn :: proc() {
 }
 
 battle_time_tick :: proc(dt: f32) {
+	ticks := dt * BATTLE_SPEED
 	for &s, i in battle.skill_plays {
-		s.windup -= int(math.sqrt(get_stat_f(battle.combatants[s.actor].character, .Speed)))
+		s.windup -= ticks * get_stat_f(battle.combatants[s.actor].character, .Speed)
 		if s.windup <= 0 {
-			battle.skill_state = Process_Skill{active=true, skill_plays_idx=i}
+			battle.skill_state = Process_Skill {
+				active          = true,
+				skill_plays_idx = i,
+			}
 		}
 	}
 
@@ -196,12 +198,12 @@ battle_time_tick :: proc(dt: f32) {
 		if !c.enabled {continue}
 		if combatant_downed(c) {continue}
 		if combatant_winding_up(c) {continue}
-		c.t += BATTLE_SPEED * int(math.sqrt(f32(c.character.speed)))
+		c.t += ticks * get_stat_f(c.character, .Speed)
 	}
 }
 
 get_ready_combatant :: proc() -> (lead: int, ready := false) {
-	lead_t := 0
+	lead_t: Ticks
 	for c, i in battle.combatants {
 		if !c.enabled {continue}
 		if combatant_downed(c) {continue}
@@ -229,7 +231,7 @@ get_ready_combatant :: proc() -> (lead: int, ready := false) {
 get_next_combatant :: proc() -> int {
 	first := true
 	actor_idx: int
-	actor_t := 0
+	actor_t: Ticks
 	for c, i in battle.combatants {
 		if combatant_alive(c) {
 			if first || c.t < actor_t {
