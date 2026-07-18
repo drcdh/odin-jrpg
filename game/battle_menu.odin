@@ -243,8 +243,8 @@ pc_turn :: proc(actor: int) {
 			}
 		case Target_Selection_State:
 			queue_battle_skill(actor, state.ts, skill)
-			battle.pc_ui_state = PC_UI_State{}
-			battle.pc_ready = get_next_ready_pc()
+			battle.pc_ui_state = nil
+			battle.pc_ready = nil
 		}
 	} else if get_input(.CANCEL) {
 		switch state in battle.pc_ui_state {

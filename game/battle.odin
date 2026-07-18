@@ -239,6 +239,9 @@ update_battle :: proc(dt: f32) {
 		}
 		process_ready_battle_skill(dt)
 		process_ready_combatants(dt)
+		if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+			pc_turn(battle.allies[ally_idx])
+		}
 	}
 
 	targeting_ease += dt / .5
@@ -301,9 +304,15 @@ process_ready_battle_skill :: proc(dt: f32) {
 }
 
 process_ready_combatants :: proc(dt: f32) {
+	if battle.pc_ready == nil {
+		battle.pc_ready = get_next_ready_pc()
+	}
 	for combatant, c_idx in battle.combatants {
 		if combatant.t >= READY_T {
-			combatant.turn(c_idx)
+			// check for confusion, etc. of PCs
+			if combatant.turn != nil {
+				combatant.turn(c_idx)
+			}
 		}
 	}
 }
