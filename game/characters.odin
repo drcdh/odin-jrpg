@@ -3,15 +3,15 @@ package game
 import "core:strings"
 
 Character :: struct {
-	base_stats:      Stats,
-	hitpoints:       int,
-	level:           int,
-	leveled_stats:   Stats,
-	name:            cstring,
-	using equipment: Equipment,
-	using stats:     Stats,
-	using status:    Status,
-	skills:          Skill_Set,
+	base_stats:    Stats,
+	hitpoints:     int,
+	level:         int,
+	leveled_stats: Stats,
+	name:          cstring,
+	equipment:     Equipment,
+	using stats:   Stats,
+	using status:  Status,
+	skills:        Skill_Set,
 }
 
 set_level :: proc(c: ^Character, level: int) {
@@ -69,4 +69,24 @@ remove_status :: proc(c: ^Character, status: Status_Name) {
 	case .Zombie:
 		c.zombie = false
 	}
+}
+
+character_set_equipped_item :: proc(
+	character: ^Character,
+	slot: Equipment_Slot,
+	item: Item_Name,
+	from_inventory := true,
+	to_inventory := true,
+) {
+	set_equipped_item(&character.equipment, slot, item, from_inventory, to_inventory)
+	character.stats = equipped_stats(character.leveled_stats, character.equipment)
+	character.hitpoints = min(character.hitpoints, character.max_hitpoints)
+	set_all_skills()
+}
+
+character_unequip_all :: proc(character: ^Character, to_inventory := true) {
+	unequip_all(&character.equipment, to_inventory)
+	character.stats = equipped_stats(character.leveled_stats, character.equipment)
+	character.hitpoints = min(character.hitpoints, character.max_hitpoints)
+	set_all_skills()
 }

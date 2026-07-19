@@ -64,6 +64,20 @@ equipment_string :: proc(equipment: Equipment, slot: Equipment_Slot) -> string {
 	return "bad_equipment_slot"
 }
 
+equipment_string_short :: proc(equipment: Equipment, slot: Equipment_Slot) -> cstring {
+	item := equipped_item(equipment, slot)
+	item_name := items[item].name if item != .None else ""
+	switch slot {
+	case .Mainhand:
+		return fmt.ctprintf("M %s", item_name)
+	case .Sidehand:
+		return fmt.ctprintf("S %s", item_name)
+	case .Accessory:
+		return fmt.ctprintf("A %s", item_name)
+	}
+	return "bad_equipment_slot"
+}
+
 fits_in_slot_equippable :: proc(item: Equippable, slot: Equipment_Slot) -> bool {
 	return item.slot == slot
 }
@@ -102,15 +116,14 @@ fits_in_slot :: proc {
 
 changed_equipment_enum_enum :: proc(
 	equipment: Equipment,
-	item: Item_Name,
+	item_name: Item_Name,
 	slot: Equipment_Slot,
 ) -> (
 	changed: Equipment,
 ) {
-	for i in 0 ..< NUM_EQUIPMENT_SLOTS {
-		s := Equipment_Slot(i)
-		if s == slot && fits_in_slot(item, slot) {
-			set_equipped_item(&changed, s, item, false, false)
+	for s in Equipment_Slot {
+		if s == slot && fits_in_slot(item_name, slot) {
+			set_equipped_item(&changed, s, item_name, false, false)
 		} else {
 			set_equipped_item(&changed, s, equipment[s], false, false)
 		}

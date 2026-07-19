@@ -175,7 +175,7 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 			draw_text(
 				2,
 				3 + NUM_STATS + f32(i),
-				strings.clone_to_cstring(equipment_string(pc^, Equipment_Slot(i)), context.temp_allocator),
+				strings.clone_to_cstring(equipment_string(pc.equipment, Equipment_Slot(i)), context.temp_allocator),
 			)
 		}
 		draw_text(2, 3 + NUM_STATS, get_status_cstring(pc^))
@@ -370,10 +370,7 @@ update_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, it
 			item_name := equippables_order[item_idx]
 			if fits_in_slot(item_name, equipment_slot) {
 				pc := get_pc(party_idx)
-				set_equipped_item(pc, equipment_slot, item_name)
-				pc.stats = equipped_stats(pc.leveled_stats, pc.equipment)
-				pc.hitpoints = min(pc.hitpoints, pc.max_hitpoints)
-				set_skills(party_idx) // is this correct when there are gaps in the party? e.g., members 1 and 3, not 2
+				character_set_equipped_item(pc, equipment_slot, item_name)
 				world_menu_state = World_Menu_State_Character{party_idx, slot_idx, false, 0, 0}
 			} else {
 				fmt.println(item_name, " does not fit in ", equipment_slot)

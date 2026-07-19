@@ -119,6 +119,24 @@ stat_string :: proc(s: Stats, i: Stat) -> string {
 	return "bad_stat_index"
 }
 
+stat_string_short :: proc(s: Stats, i: Stat) -> cstring {
+	switch i {
+	case .Hitpoints:
+		return fmt.ctprintf("MHP % 2d", s.max_hitpoints)
+	case .Offense:
+		return fmt.ctprintf("Off % 2d", s.offense)
+	case .Defense:
+		return fmt.ctprintf("Def % 2d", s.defense)
+	case .PsyOffense:
+		return fmt.ctprintf("POf % 2d", s.psy_offense)
+	case .PsyDefense:
+		return fmt.ctprintf("PDf % 2d", s.psy_defense)
+	case .Speed:
+		return fmt.ctprintf("Spd % 2d", s.speed)
+	}
+	return "bad_stat_index"
+}
+
 change_tint :: proc(prev, next: int) -> (tint := rl.WHITE) {
 	if next > prev {tint = rl.GREEN}
 	if next < prev {tint = rl.RED}

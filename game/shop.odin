@@ -203,19 +203,20 @@ shop_redraw_texture :: proc(pane: Shop_Pane) {
 		if pc_idx, ok := get_party_member(party_idx).?; ok {
 			pc := get_pc(pc_idx)
 			for slot_idx in 0 ..< NUM_EQUIPMENT_SLOTS {
-				draw_text(
-					1,
-					1 + f32(slot_idx),
-					strings.clone_to_cstring(equipment_string(pc^, Equipment_Slot(slot_idx)), context.temp_allocator),
-				)
+				draw_text(1, 1 + f32(slot_idx), equipment_string_short(pc.equipment, Equipment_Slot(slot_idx)))
 			}
 		}
 	case .Stats:
 		party_idx := shop_menu_data.ui_data.character
+		item_name :=
+			filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)[shop_menu_data.ui_data.inv_row]
+		slot := Equipment_Slot(shop_menu_data.ui_data.slot)
 		if pc_idx, ok := get_party_member(party_idx).?; ok {
 			pc := get_pc(pc_idx)
+			changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_name, slot))
 			for s in Stat {
-				draw_text(2, 3 + f32(s), strings.clone_to_cstring(stat_string(pc^, s), context.temp_allocator))
+				tint := change_tint(get_stat(pc^, s), get_stat(changing_stats, s))
+				draw_text(1, 1 + f32(s), stat_string_short(changing_stats, s), tint)
 			}
 		}
 	}
@@ -361,6 +362,7 @@ shop_update :: proc() {
 		} else if get_input(.ENTER) {
 			shop_menu_data.ui_state = .Swap_Buy
 			shop_set_stale(.Inventory)
+			shop_set_stale(.Stats)
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.slot = grid_change(shop_menu_data.ui_data.slot, dy, 0, NUM_EQUIPMENT_SLOTS, 1)
 			shop_set_stale(.Inventory)
@@ -374,6 +376,7 @@ shop_update :: proc() {
 				equip = true,
 			) {
 				shop_set_stale(.Money)
+				shop_set_stale(.Stats)
 			}
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.inv_row, shop_menu_data.ui_data.inv_origin = shift_windowed_selection(
@@ -384,6 +387,7 @@ shop_update :: proc() {
 				len(filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)),
 			)
 			shop_set_stale(.Inventory)
+			shop_set_stale(.Stats)
 		}
 	}
 	shop_update_icons()
@@ -409,7 +413,7 @@ buy_item :: proc(item_name: Item_Name, equip := false) {
 	dec_money(item_price(item_name).(Money))
 	if equip {
 		pc := get_pc(shop_menu_data.ui_data.character)
-		set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot), item_name)
+		character_set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot), item_name)
 	}
 	play_sound(.Kaching)
 }
