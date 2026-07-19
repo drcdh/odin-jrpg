@@ -14,7 +14,7 @@ Int_Datum :: enum {
 }
 
 Money :: u32
-MONEY_MAX :: u32(0xffffffff)
+MONEY_MAX :: 999999 //u32(0xffffffff)
 
 game_data: struct {
 	bool_data:        [len(Bool_Datum)]bool,
@@ -41,7 +41,7 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Beginners_Wand] = 1
 	game_data.inventory[Item_Name.Rat_Smashing_Bat] = 1
 	game_data.inventory[Item_Name.Postcard] = 4
-	game_data.money = 123
+	game_data.money = MONEY_MAX - 1000
 	set_inventory_order()
 	unequip_all(&PROTAGONIST, to_inventory = false)
 	unequip_all(&ASSASSIN, to_inventory = false)
@@ -97,6 +97,9 @@ inc_money :: proc(v: Money) {
 	game_data.money += v
 	if game_data.money < prev {
 		// overflowed
+		game_data.money = MONEY_MAX
+	}
+	if game_data.money > MONEY_MAX {
 		game_data.money = MONEY_MAX
 	}
 	fmt.printfln("Money increased by %d from %d to %d", v, prev, game_data.money)
