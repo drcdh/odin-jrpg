@@ -132,3 +132,11 @@ draw_text :: proc(l, t: f32, text: cstring, tint := rl.WHITE) {
 	if y < 0 {y += view_dim.y}
 	rl.DrawTextEx(font, text, {x, y}, tile_size / 2, 0, tint)
 }
+
+draw_text_center :: proc(l, t: f32, text: cstring, tint := rl.WHITE) {
+	draw_text(l - f32(len(text)) / 4, t, text, tint)
+}
+
+draw_text_rjust :: proc(l, t: f32, text: cstring, tint := rl.WHITE) {
+	draw_text(l - f32(len(text)) / 2, t, text, tint)
+}

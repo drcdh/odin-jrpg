@@ -90,7 +90,7 @@ shop_enter :: proc(shop: ^Shop) {
 	shop_menu_data.ui_state = .Top
 
 	for pane in Shop_Pane {
-		shop_redraw_texture(pane)
+		shop_redraw_pane(pane)
 	}
 }
 
@@ -106,7 +106,7 @@ shop_menu_active :: proc() -> bool {
 shop_draw :: proc() {
 	for &stale, i in shop_menu_data.stale {
 		if stale {
-			shop_redraw_texture(Shop_Pane(i))
+			shop_redraw_pane(Shop_Pane(i))
 			stale = false
 		}
 	}
@@ -158,67 +158,91 @@ shop_draw_icons :: proc() {
 	}
 }
 
-shop_redraw_texture :: proc(pane: Shop_Pane) {
+shop_redraw_top_pane :: proc() {
+	draw_text(1, .75, strings.clone_to_cstring("Buy   Sell  Swap", allocator = context.temp_allocator))
+}
+
+shop_redraw_money_pane :: proc() {
+	s := fmt.ctprint(game_data.money)
+	draw_text(f32(4 - len(s) / 2), .75, s)
+}
+
+shop_redraw_inventory_pane :: proc() {
+	#partial switch shop_menu_data.ui_state {
+	case .Top:
+		switch shop_menu_data.ui_data.top {
+		case 0:
+			shop_draw_shop_inventory()
+		case 1:
+			shop_draw_party_inventory()
+		case 2:
+			shop_draw_shop_inventory(equipment = true)
+		}
+	case .Buy:
+		shop_draw_shop_inventory()
+	case .Sell:
+		shop_draw_party_inventory()
+	case .Swap_Character:
+		shop_draw_shop_inventory(equipment = true)
+	case .Swap_Slot:
+		shop_draw_shop_inventory(equipment = true, slot = true)
+	case .Swap_Buy:
+		shop_draw_shop_inventory(equipment = true, slot = true)
+	}
+}
+
+shop_redraw_party_pane :: proc() {
+	for p in 0 ..< party_size() {
+		if pc_idx, ok := get_party_member(p).?; ok {
+			origin_tile: Tile_Coord = {1, 1} + {p % 2, int(p / 2)}
+			origin := tile_to_pixel(origin_tile)
+			draw_texture(pc_idle_texture[pc_idx], origin)
+		}
+	}
+}
+
+shop_redraw_equipment_pane :: proc() {
+	party_idx := shop_menu_data.ui_data.character
+	if pc_idx, ok := get_party_member(party_idx).?; ok {
+		pc := get_pc(pc_idx)
+		for slot_idx in 0 ..< NUM_EQUIPMENT_SLOTS {
+			draw_text(1, 1 + f32(slot_idx), equipment_string_short(pc.equipment, Equipment_Slot(slot_idx)))
+		}
+	}
+}
+
+shop_redraw_stats_pane :: proc() {
+	party_idx := shop_menu_data.ui_data.character
+	item_name :=
+		filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)[shop_menu_data.ui_data.inv_row]
+	slot := Equipment_Slot(shop_menu_data.ui_data.slot)
+	if pc_idx, ok := get_party_member(party_idx).?; ok {
+		pc := get_pc(pc_idx)
+		changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_name, slot))
+		for s in Stat {
+			tint := change_tint(get_stat(pc^, s), get_stat(changing_stats, s))
+			draw_text(1, 1 + f32(s), stat_string_short(changing_stats, s), tint)
+		}
+	}
+}
+
+shop_redraw_pane :: proc(pane: Shop_Pane) {
 	fmt.printfln("Redrawing texture for %w", pane)
 	rl.BeginTextureMode(shop_menu_data.textures[pane])
 	draw_menu(PANE_DIM[pane])
 	switch pane {
 	case .Top:
-		draw_text(1, .75, strings.clone_to_cstring("Buy   Sell  Swap", allocator = context.temp_allocator))
+		shop_redraw_top_pane()
 	case .Money:
-		s := fmt.ctprint(game_data.money)
-		draw_text(f32(4 - len(s) / 2), .75, s)
+		shop_redraw_money_pane()
 	case .Inventory:
-		#partial switch shop_menu_data.ui_state {
-		case .Top:
-			switch shop_menu_data.ui_data.top {
-			case 0:
-				shop_draw_shop_inventory()
-			case 1:
-				shop_draw_party_inventory()
-			case 2:
-				shop_draw_shop_inventory(equipment = true)
-			}
-		case .Buy:
-			shop_draw_shop_inventory()
-		case .Sell:
-			shop_draw_party_inventory()
-		case .Swap_Character:
-			shop_draw_shop_inventory(equipment = true)
-		case .Swap_Slot:
-			shop_draw_shop_inventory(equipment = true, slot = true)
-		case .Swap_Buy:
-			shop_draw_shop_inventory(equipment = true, slot = true)
-		}
+		shop_redraw_inventory_pane()
 	case .Party:
-		for p in 0 ..< party_size() {
-			if pc_idx, ok := get_party_member(p).?; ok {
-				origin_tile: Tile_Coord = {1, 1} + {p % 2, int(p / 2)}
-				origin := tile_to_pixel(origin_tile)
-				draw_texture(pc_idle_texture[pc_idx], origin)
-			}
-		}
+		shop_redraw_party_pane()
 	case .Equipment:
-		party_idx := shop_menu_data.ui_data.character
-		if pc_idx, ok := get_party_member(party_idx).?; ok {
-			pc := get_pc(pc_idx)
-			for slot_idx in 0 ..< NUM_EQUIPMENT_SLOTS {
-				draw_text(1, 1 + f32(slot_idx), equipment_string_short(pc.equipment, Equipment_Slot(slot_idx)))
-			}
-		}
+		shop_redraw_equipment_pane()
 	case .Stats:
-		party_idx := shop_menu_data.ui_data.character
-		item_name :=
-			filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)[shop_menu_data.ui_data.inv_row]
-		slot := Equipment_Slot(shop_menu_data.ui_data.slot)
-		if pc_idx, ok := get_party_member(party_idx).?; ok {
-			pc := get_pc(pc_idx)
-			changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_name, slot))
-			for s in Stat {
-				tint := change_tint(get_stat(pc^, s), get_stat(changing_stats, s))
-				draw_text(1, 1 + f32(s), stat_string_short(changing_stats, s), tint)
-			}
-		}
+		shop_redraw_stats_pane()
 	}
 	rl.EndTextureMode()
 }
@@ -250,17 +274,11 @@ shop_draw_party_inventory :: proc() {
 	for r in 0 ..< SHOP_INVENTORY_ROWS {
 		if r >= len(inventory_order) {break}
 		item_name := inventory_order[r + shop_menu_data.ui_data.inv_origin]
-		if price, can_sell := item_price(item_name).?; can_sell {
-			tint := rl.WHITE
-			draw_text(
-				1,
-				1 + f32(r),
-				fmt.ctprintf("%sx%d %d", items[item_name].name, game_data.inventory[item_name], get_sell_price(price)),
-				tint,
-			)
-		} else {
-			tint := rl.GRAY
-			draw_text(1, 1 + f32(r), fmt.ctprintf("%sx%d", items[item_name].name, game_data.inventory[item_name]), tint)
+		price, can_sell := item_price(item_name).?
+		tint := rl.WHITE if can_sell else rl.GRAY
+		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
+		if can_sell {
+			draw_text_rjust(10, 1.5 + f32(r), fmt.ctprintf("%d", get_sell_price(price)), tint)
 		}
 	}
 }
@@ -271,9 +289,10 @@ shop_draw_shop_inventory :: proc(equipment := false, slot := false) {
 	for r in 0 ..< SHOP_INVENTORY_ROWS {
 		if r >= len(inventory) {break}
 		item_name := inventory[r + shop_menu_data.ui_data.inv_origin]
-		tint := rl.WHITE if !slot || fits_in_slot(item_name, Equipment_Slot(shop_menu_data.ui_data.slot)) else rl.GRAY
 		price := item_price(item_name).? or_else 0
-		draw_text(1, 1 + f32(r), fmt.ctprintf("%s %d", items[item_name].name, Money(0.25 * f32(price))), tint)
+		tint := rl.WHITE if !slot || fits_in_slot(item_name, Equipment_Slot(shop_menu_data.ui_data.slot)) else rl.GRAY
+		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
+		draw_text_rjust(10, 1.5 + f32(r), fmt.ctprintf("%d", price), tint)
 	}
 }
 
