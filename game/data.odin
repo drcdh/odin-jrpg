@@ -131,3 +131,7 @@ have_money :: proc {
 	have_money_Money,
 	have_money_Price,
 }
+
+get_sell_price :: proc(v: Money) -> Money {
+	return Money(0.25 * f32(v))
+}

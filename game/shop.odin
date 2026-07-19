@@ -249,9 +249,18 @@ shop_draw_party_inventory :: proc() {
 	for r in 0 ..< SHOP_INVENTORY_ROWS {
 		if r >= len(inventory_order) {break}
 		item_name := inventory_order[r + shop_menu_data.ui_data.inv_origin]
-		tint := rl.WHITE if can_sell(item_name) else rl.GRAY
-		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
-		// TODO: price, quantity
+		if price, can_sell := item_price(item_name).?; can_sell {
+			tint := rl.WHITE
+			draw_text(
+				1,
+				1 + f32(r),
+				fmt.ctprintf("%sx%d %d", items[item_name].name, game_data.inventory[item_name], get_sell_price(price)),
+				tint,
+			)
+		} else {
+			tint := rl.GRAY
+			draw_text(1, 1 + f32(r), fmt.ctprintf("%sx%d", items[item_name].name, game_data.inventory[item_name]), tint)
+		}
 	}
 }
 
@@ -262,9 +271,8 @@ shop_draw_shop_inventory :: proc(equipment := false, slot := false) {
 		if r >= len(inventory) {break}
 		item_name := inventory[r + shop_menu_data.ui_data.inv_origin]
 		tint := rl.WHITE if !slot || fits_in_slot(item_name, Equipment_Slot(shop_menu_data.ui_data.slot)) else rl.GRAY
-		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
-		// TODO: price
-		// TODO: quantity, maybe
+		price := item_price(item_name).? or_else 0
+		draw_text(1, 1 + f32(r), fmt.ctprintf("%s %d", items[item_name].name, Money(0.25 * f32(price))), tint)
 	}
 }
 
