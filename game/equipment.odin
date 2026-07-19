@@ -89,6 +89,17 @@ fits_in_slot :: proc {
 	fits_in_slot_item_name,
 }
 
+// FIXME: Odin doesn't have closures :-c
+// filter_equipment_slot :: proc(
+// 	item_names: []Item_Name,
+// 	slot: Equipment_Slot,
+// 	allocator := context.allocator,
+// ) -> []Item_Name {
+// 	return slice.filter(item_names, proc(item_name: Item_Name) -> bool {
+// 			return fits_in_slot(item_name, slot)
+// 		}, allocator)
+// }
+
 changed_equipment_enum_enum :: proc(
 	equipment: Equipment,
 	item: Item_Name,

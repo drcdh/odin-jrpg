@@ -173,7 +173,14 @@ shop_redraw_texture :: proc(pane: Shop_Pane) {
 	case .Inventory:
 		#partial switch shop_menu_data.ui_state {
 		case .Top:
-			shop_draw_shop_inventory()
+			switch shop_menu_data.ui_data.top {
+			case 0:
+				shop_draw_shop_inventory()
+			case 1:
+				shop_draw_party_inventory()
+			case 2:
+				shop_draw_shop_inventory(equipment = true)
+			}
 		case .Buy:
 			shop_draw_shop_inventory()
 		case .Sell:
@@ -181,9 +188,9 @@ shop_redraw_texture :: proc(pane: Shop_Pane) {
 		case .Swap_Character:
 			shop_draw_shop_inventory(equipment = true)
 		case .Swap_Slot:
-			shop_draw_shop_inventory(equipment = true)
+			shop_draw_shop_inventory(equipment = true, slot = true)
 		case .Swap_Buy:
-			shop_draw_shop_inventory(equipment = true)
+			shop_draw_shop_inventory(equipment = true, slot = true)
 		}
 	case .Party:
 		for p in 0 ..< party_size() {
@@ -242,14 +249,14 @@ shop_draw_party_inventory :: proc() {
 	}
 }
 
-shop_draw_shop_inventory :: proc(equipment := false) {
+shop_draw_shop_inventory :: proc(equipment := false, slot := false) {
+	inventory :=
+		filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator) if equipment else shop_menu_data.shop.inventory
 	for r in 0 ..< SHOP_INVENTORY_ROWS {
-		if r >= len(shop_menu_data.shop.inventory) {break}
-		draw_text(
-			1,
-			1 + f32(r),
-			fmt.ctprint(items[shop_menu_data.shop.inventory[r + shop_menu_data.ui_data.inv_origin]].name),
-		)
+		if r >= len(inventory) {break}
+		item_name := inventory[r + shop_menu_data.ui_data.inv_origin]
+		tint := rl.WHITE if !slot || fits_in_slot(item_name, Equipment_Slot(shop_menu_data.ui_data.slot)) else rl.GRAY
+		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
 		// TODO: price
 		// TODO: quantity, maybe
 	}
@@ -280,6 +287,7 @@ shop_update :: proc() {
 			}
 		} else if dx, ok := get_x_input().?; ok {
 			shop_menu_data.ui_data.top = grid_change(shop_menu_data.ui_data.top, dx, 0, 3, 1)
+			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		}
 	case .Buy:
 		if get_input(.CANCEL) {
@@ -316,6 +324,8 @@ shop_update :: proc() {
 			shop_menu_data.ui_state = .Top
 		} else if get_input(.ENTER) {
 			shop_menu_data.ui_state = .Swap_Slot
+			shop_menu_data.stale[Shop_Pane.Equipment] = true
+			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		} else {
 			m := get_menu_input()
 			shop_menu_data.ui_data.character = grid_change(shop_menu_data.ui_data.character, m.x, m.y, 2, 3)
@@ -323,10 +333,13 @@ shop_update :: proc() {
 	case .Swap_Slot:
 		if get_input(.CANCEL) {
 			shop_menu_data.ui_state = .Swap_Character
+			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		} else if get_input(.ENTER) {
 			shop_menu_data.ui_state = .Swap_Buy
+			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.slot = grid_change(shop_menu_data.ui_data.slot, dy, 0, NUM_EQUIPMENT_SLOTS, 1)
+			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		}
 	case .Swap_Buy:
 		if get_input(.CANCEL) {
@@ -340,7 +353,7 @@ shop_update :: proc() {
 				shop_menu_data.ui_data.inv_row,
 				shop_menu_data.ui_data.inv_origin,
 				SHOP_INVENTORY_ROWS,
-				len(shop_menu_data.shop.inventory),
+				len(filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)),
 			)
 			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		}

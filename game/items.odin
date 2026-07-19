@@ -1,5 +1,7 @@
 package game
 
+import "core:slice"
+
 Item :: struct {
 	name: string,
 	data: Item_Variant,
@@ -35,4 +37,8 @@ is_equippable_int :: proc(item_idx: int) -> bool {
 is_equippable :: proc {
 	is_equippable_enum,
 	is_equippable_int,
+}
+
+filter_equippables :: proc(item_names: []Item_Name, allocator := context.allocator) -> []Item_Name {
+	return slice.filter(item_names, is_equippable, allocator)
 }
