@@ -13,6 +13,9 @@ Int_Datum :: enum {
 	Kills_Rat_Sized_Mouse,
 }
 
+Money :: u32
+MONEY_MAX :: u32(0xffffffff)
+
 game_data: struct {
 	bool_data:        [len(Bool_Datum)]bool,
 	int_data:         [len(Int_Datum)]i32,
@@ -20,7 +23,7 @@ game_data: struct {
 	protagonist_name: string,
 	boat_coord:       Tile_Coord,
 	inventory:        [NUM_ITEMS]u8,
-	money:            i32,
+	money:            Money,
 }
 
 init_new_game :: proc() {
@@ -86,4 +89,28 @@ set_game_data :: proc {
 item_possession_cstring :: proc(i: Item_Name) -> cstring {
 	item := items[i]
 	return fmt.caprintf("%s %2d", item.name, game_data.inventory[i], allocator = context.temp_allocator)
+}
+
+inc_money :: proc(v: Money) {
+	prev := game_data.money
+	game_data.money += v
+	if game_data.money < prev {
+		// overflowed
+		game_data.money = MONEY_MAX
+	}
+	fmt.printfln("Money increased by %d from %d to %d", v, prev, game_data.money)
+}
+
+dec_money :: proc(v: Money) {
+	prev := game_data.money
+	if v >= game_data.money {
+		game_data.money = 0
+	} else {
+		game_data.money -= v
+	}
+	fmt.printfln("Money decreased by %d from %d to %d", v, prev, game_data.money)
+}
+
+have_money :: proc(v: Money) -> bool {
+	return game_data.money >= v
 }

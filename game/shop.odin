@@ -293,7 +293,9 @@ shop_update :: proc() {
 		if get_input(.CANCEL) {
 			shop_menu_data.ui_state = .Top
 		} else if get_input(.ENTER) {
-			shop_buy_item()
+			if try_buy_item(shop_menu_data.shop.inventory[shop_menu_data.ui_data.inv_row]) {
+				shop_menu_data.stale[Shop_Pane.Inventory] = true
+			}
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.inv_row, shop_menu_data.ui_data.inv_origin = shift_windowed_selection(
 				dy,
@@ -308,7 +310,8 @@ shop_update :: proc() {
 		if get_input(.CANCEL) {
 			shop_menu_data.ui_state = .Top
 		} else if get_input(.ENTER) {
-			sell_item()
+			sell_item(inventory_order[shop_menu_data.ui_data.inv_row])
+			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.inv_row, shop_menu_data.ui_data.inv_origin = shift_windowed_selection(
 				dy,
@@ -345,8 +348,10 @@ shop_update :: proc() {
 		if get_input(.CANCEL) {
 			shop_menu_data.ui_state = .Swap_Slot
 		} else if get_input(.ENTER) {
-			shop_buy_item()
-			// TODO: equip immediately
+			try_buy_item(
+				filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)[shop_menu_data.ui_data.inv_row],
+				equip = true,
+			)
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.inv_row, shop_menu_data.ui_data.inv_origin = shift_windowed_selection(
 				dy,
@@ -362,10 +367,32 @@ shop_update :: proc() {
 }
 
 shop_update_icons :: proc() {
+	animation_update(&world_menu_icon, rl.GetFrameTime())
 }
 
-shop_buy_item :: proc() {
+try_buy_item :: proc(item_name: Item_Name, equip := false) -> bool {
+	if have_money(item_price(item_name)) {
+		buy_item(item_name, equip)
+		play_sound(.Kaching)
+		return true
+	} else {
+		play_sound(.Blerp)
+	}
+	return false
 }
 
-sell_item :: proc() {
+buy_item :: proc(item_name: Item_Name, equip := false) {
+	add_item(item_name)
+	dec_money(item_price(item_name))
+	if equip {
+		pc := get_pc(shop_menu_data.ui_data.character)
+		set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot), item_name)
+	}
+	play_sound(.Kaching)
+}
+
+sell_item :: proc(item_name: Item_Name) {
+	remove_item(item_name)
+	inc_money(item_price(item_name))
+	play_sound(.Kaching)
 }

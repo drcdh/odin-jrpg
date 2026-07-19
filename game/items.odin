@@ -42,3 +42,7 @@ is_equippable :: proc {
 filter_equippables :: proc(item_names: []Item_Name, allocator := context.allocator) -> []Item_Name {
 	return slice.filter(item_names, is_equippable, allocator)
 }
+
+item_price :: proc(item_name: Item_Name) -> Money {
+	return 100
+}
