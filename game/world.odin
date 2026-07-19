@@ -56,8 +56,8 @@ draw_world :: proc() {
 
 	// pc := hm.get(&entities, pc_entity)
 	// rl.DrawText(
-	// 	// fmt.caprintf("%s [%d,%d] %w", pc.n, pc.tile.x, pc.tile.y, pc.state, allocator = context.temp_allocator),
-	// 	fmt.caprint(// fmt.caprintf("%s %w %w", pc.n, pc.state, pc.k, allocator = context.temp_allocator),
+	// 	// fmt.ctprintf("%s [%d,%d] %w", pc.n, pc.tile.x, pc.tile.y, pc.state),
+	// 	fmt.ctprint(// fmt.ctprintf("%s %w %w", pc.n, pc.state, pc.k),
 	// 		pc.n,
 	// 		pc.state,
 	// 		pc.k.tile.x,
@@ -65,7 +65,6 @@ draw_world :: proc() {
 	// 		pc.k.moving,
 	// 		pc.k.offset,
 	// 		pc.k.offset_ease,
-	// 		allocator = context.temp_allocator,
 	// 	),
 	// 	0,
 	// 	i32(view_dim.y - tile_size),

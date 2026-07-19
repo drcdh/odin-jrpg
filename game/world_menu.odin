@@ -72,13 +72,14 @@ draw_world_menu :: proc() {
 		draw_world_menu_top(3, true, 0, rl.GRAY)
 		draw_world_menu_system(state.i)
 	}
-	rl.DrawText(
-		fmt.caprint(world_menu_state, allocator = context.temp_allocator),
-		i32(tile_size),
-		i32(view_dim.y - tile_size),
-		20,
-		rl.PURPLE,
-	)
+	// debug
+	// rl.DrawText(
+	// 	fmt.ctprint(world_menu_state),
+	// 	i32(tile_size),
+	// 	i32(view_dim.y - tile_size),
+	// 	20,
+	// 	rl.PURPLE,
+	// )
 }
 
 draw_world_menu_top :: proc(i: int, next: bool, party_idx: int, tint := rl.WHITE) {
@@ -135,7 +136,7 @@ draw_character_card :: proc(pc_idx: PC, origin: Pixel_Coord, tint := rl.WHITE) {
 	}
 	origin := origin
 	origin.y += tile_size
-	rl.DrawTextEx(font, fmt.caprintf("%d/%d", hp, max_hp, allocator = context.temp_allocator), origin, 32, 0, hp_tint)
+	rl.DrawTextEx(font, fmt.ctprintf("%d/%d", hp, max_hp), origin, 32, 0, hp_tint)
 
 	draw_texture(pc_idle_texture[pc_idx], {origin.x + 3 * tile_size, origin.y + .5 * tile_size}, tint)
 }
@@ -144,16 +145,7 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 	draw_menu(1, 1, VIEW_TILES_W - 2, VIEW_TILES_H - 2)
 	if pc_idx, ok := get_party_member(party_idx).?; ok {
 		pc := get_pc(pc_idx)
-		draw_text(
-			2,
-			2,
-			fmt.caprintf(
-				"%-12s %s",
-				pc.name,
-				fmt.caprintf("L% 2d", pc.level, allocator = context.temp_allocator),
-				allocator = context.temp_allocator,
-			),
-		)
+		draw_text(2, 2, fmt.ctprintf("%-12s %s", pc.name, fmt.ctprintf("L% 2d", pc.level)))
 		for i in 0 ..< NUM_STATS {
 			s := Stat(i)
 			if !changing {
@@ -192,13 +184,7 @@ draw_world_menu_character :: proc(party_idx, slot_idx: int, changing: bool, item
 					draw_text(11, 3 + f32(r), "remove", rl.WHITE)
 				} else {
 					tint := rl.WHITE if fits_in_slot(item_name, Equipment_Slot(slot_idx)) else rl.GRAY
-					draw_text(11, 3 + f32(r), fmt.caprint(items[item_name].name, allocator = context.temp_allocator), tint)
-					// draw_text(
-					// 	VIEW_TILES_W - 3,
-					// 	4 + f32(r),
-					// 	fmt.caprintf("% 2d", game_data.inventory[r + origin_idx], allocator = context.temp_allocator),
-					// 	tint,
-					// )
+					draw_text(11, 3 + f32(r), fmt.ctprint(items[item_name].name), tint)
 				}
 			}
 		}
@@ -213,7 +199,7 @@ draw_world_menu_skills :: proc(party_idx, skill_idx, origin_idx: int) {
 	r := 0
 	for k in 0 ..< len(Skill_Name) {
 		if Skill_Name(k) in pc.skills {
-			draw_text(2, 2 + f32(r), fmt.caprint(skills[k].name, allocator = context.temp_allocator))
+			draw_text(2, 2 + f32(r), fmt.ctprint(skills[k].name))
 			r += 1
 		}
 	}
@@ -223,33 +209,14 @@ draw_world_menu_items :: proc(item_idx, origin_idx: int, targeting: bool, party_
 	tint := rl.WHITE
 	if targeting {tint = rl.GRAY}
 	draw_menu(1, 1, VIEW_TILES_W - 2, WORLD_MENU_ITEMS_ROWS + 3, tint)
-	draw_text(
-		2,
-		WORLD_MENU_ITEMS_ROWS + 3,
-		fmt.caprintf(
-			"% 24s",
-			fmt.caprintf("$ %d", game_data.money, allocator = context.temp_allocator),
-			allocator = context.temp_allocator,
-		),
-		tint = tint,
-	)
+	draw_text_rjust(14, WORLD_MENU_ITEMS_ROWS + 3, fmt.ctprintf("$ %d", game_data.money), tint = tint)
 	for r in 0 ..< WORLD_MENU_ITEMS_ROWS {
 		if r >= len(inventory_order) {break}
 		if r + origin_idx == item_idx {
 			draw_animation(world_menu_icon, tile_to_pixel(1.5, 2 + r), tint)
 		}
-		draw_text(
-			2,
-			2 + f32(r),
-			fmt.caprint(items[inventory_order[r + origin_idx]].name, allocator = context.temp_allocator),
-			tint = tint,
-		)
-		draw_text(
-			VIEW_TILES_W - 3,
-			2 + f32(r),
-			fmt.caprintf("% 2d", game_data.inventory[inventory_order[r + origin_idx]], allocator = context.temp_allocator),
-			tint = tint,
-		)
+		draw_text(2, 2 + f32(r), fmt.ctprint(items[inventory_order[r + origin_idx]].name), tint = tint)
+		draw_text_rjust(14, 2 + f32(r), fmt.ctprint(game_data.inventory[inventory_order[r + origin_idx]]), tint = tint)
 	}
 	if targeting {
 		draw_menu(8, 5, 7, 6)

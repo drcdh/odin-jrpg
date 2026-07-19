@@ -49,7 +49,7 @@ init_dialogue :: proc() {
 }
 
 draw_dialogue :: proc() {
-	// rl.DrawText( fmt.caprint(dialogue_state, allocator = context.temp_allocator), i32(6 * tile_size), i32(12 * tile_size), 24, rl.BLACK,) // debug
+	// rl.DrawText( fmt.ctprint(dialogue_state), i32(6 * tile_size), i32(12 * tile_size), 24, rl.BLACK,) // debug
 	if _, hidden := dialogue_state.(Dialogue_Hidden); !hidden {
 		str := strings.to_string(dialogue_marquee)
 		if substr, ok := strings.substring_to(str, dialogue_marquee_end); ok {

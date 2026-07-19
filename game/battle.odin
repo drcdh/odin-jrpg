@@ -131,8 +131,8 @@ draw_battle :: proc() {
 	}
 
 	// debug
-	// rl.DrawText(fmt.caprint(battle_ui_state, allocator = context.temp_allocator), 0, i32(7 * tile_size), 16, rl.BLACK)
-	// rl.DrawText(fmt.caprint(battle.state, allocator = context.temp_allocator), 0, i32(7.5 * tile_size), 16, rl.BLACK)
+	// rl.DrawText(fmt.ctprint(battle_ui_state), 0, i32(7 * tile_size), 16, rl.BLACK)
+	// rl.DrawText(fmt.ctprint(battle.state), 0, i32(7.5 * tile_size), 16, rl.BLACK)
 }
 
 draw_battle_background :: proc() {
@@ -144,21 +144,15 @@ draw_battle_party_stats :: proc() {
 
 	for i, p in battle.allies {
 		c := battle.combatants[i]
-		text_color := rl.WHITE
+		tint := rl.WHITE
 		if c.character.hitpoints <= 0 {
-			text_color = rl.RED
+			tint = rl.RED
 		}
 		draw_text(
 			4.5,
 			(VIEW_TILES_H - 3.5) + f32(p) / 2,
-			fmt.caprintf(
-				"%- 13s% 4d/% 4d",
-				c.character.name,
-				c.character.hitpoints,
-				c.character.max_hitpoints,
-				allocator = context.temp_allocator,
-			),
-			text_color,
+			fmt.ctprintf("%- 13s% 4d/% 4d", c.character.name, c.character.hitpoints, c.character.max_hitpoints),
+			tint,
 		)
 	}
 }
@@ -189,14 +183,14 @@ draw_battle_combatants :: proc() {
 			draw_text(
 				c.coord.x / tile_size,
 				c.coord.y / tile_size,
-				fmt.caprintf("%.0f", abs(c.t), allocator = context.temp_allocator),
+				fmt.ctprintf("%.0f", abs(c.t)),
 				rl.WHITE if c.t >= 0 else rl.ORANGE,
 			)
 			if skill_play_idx, ok := get_combatant_skill_play(c_idx).?; ok {
 				draw_text(
 					c.coord.x / tile_size,
 					.5 + c.coord.y / tile_size,
-					fmt.caprintf("%.0f", battle.skill_plays[skill_play_idx].windup, allocator = context.temp_allocator),
+					fmt.ctprintf("%.0f", battle.skill_plays[skill_play_idx].windup),
 					rl.ORANGE,
 				)
 			}

@@ -87,11 +87,6 @@ set_game_data :: proc {
 	set_game_data_int,
 }
 
-item_possession_cstring :: proc(i: Item_Name) -> cstring {
-	item := items[i]
-	return fmt.caprintf("%s %2d", item.name, game_data.inventory[i], allocator = context.temp_allocator)
-}
-
 inc_money :: proc(v: Money) {
 	prev := game_data.money
 	game_data.money += v
