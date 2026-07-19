@@ -85,7 +85,7 @@ MONSTER_IN_A_BOX := [?]Event {
 	Close_Dialogue{},
 	Clear_Text{},
 	Curtain_Down{.Battle},
-	Start_Encounter{encounter = 0, paused = true},
+	Start_Encounter{encounter = 2, paused = true},
 	Curtain_Up{.Battle},
 	Append_Text{text = "Oh noes!"},
 	Close_Dialogue{},
@@ -112,7 +112,7 @@ welcome := [?]Event {
 
 WARP_TO_1 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Play_Sound{.Warp},
+	Play_Sound{sound = .Warp},
 	Curtain_Down{},
 	Start_Level{level = .LEVEL_1},
 	Curtain_Up{},

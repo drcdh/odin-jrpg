@@ -14,7 +14,7 @@ TRAP_BADDY_ID :: 666
 
 WARP_TO_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Play_Sound{.Warp},
+	Play_Sound{sound = .Warp},
 	Curtain_Down{},
 	Start_Level{level = .LEVEL_0},
 	Curtain_Up{},

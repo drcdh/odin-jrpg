@@ -51,6 +51,7 @@ Take_Turn :: struct {
 }
 Process_Battle_Animation :: struct {
 	animation: Animation,
+	delay:     f32,
 	offset:    Pixel_Coord,
 	t:         f32,
 }

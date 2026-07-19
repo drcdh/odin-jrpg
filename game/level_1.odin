@@ -6,7 +6,7 @@ LEVEL_1_OVERLAY :: true
 
 WARP_TO_2 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Play_Sound{.Warp},
+	Play_Sound{sound = .Warp},
 	Curtain_Down{},
 	Start_Level{level = .LEVEL_2},
 	Curtain_Up{},
@@ -35,9 +35,9 @@ GUY_SCRIPT := [?]Event {
 DOOR_KNOCK := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Pause_Runner{.5},
-	Play_Sound{.Door_Knock},
+	Play_Sound{sound = .Door_Knock},
 	Pause_Runner{1},
-	Play_Sound{.Door_Open},
+	Play_Sound{sound = .Door_Open},
 	Set_Entity_Disabled{id = WOMAN_ID, disabled = false},
 	Pause_Runner{.5},
 	Skip_If{9, .Met_Woman},
@@ -46,7 +46,7 @@ DOOR_KNOCK := [?]Event {
 	Close_Dialogue{},
 	Clear_Text{},
 	Set_Entity_Disabled{id = WOMAN_ID, disabled = true},
-	Play_Sound{.Door_Shut},
+	Play_Sound{sound = .Door_Shut},
 	Pause_Runner{.1},
 	Set_Bool{k = .Met_Woman, v = true},
 	Skip{5},

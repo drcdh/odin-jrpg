@@ -50,6 +50,7 @@ Play_Animation :: struct {
 	offset:    Pixel_Coord,
 }
 Play_Sound :: struct {
+	delay: f32,
 	sound: Sound_Name,
 }
 Remove_Entity :: struct {

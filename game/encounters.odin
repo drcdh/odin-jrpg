@@ -99,6 +99,7 @@ start_encounter :: proc(i: int, paused: bool) {
 					character = get_pc(PC(pc_idx)),
 					coord = {x, y},
 					enabled = true,
+					t = READY_T,
 					team = PLAYER_TEAM,
 					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
 				},

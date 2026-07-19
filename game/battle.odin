@@ -11,6 +11,8 @@ READY_T :: 100 // ticks per turn
 
 TAKE_TURN_DELAY :: .5 // seconds
 
+MULTI_TARGET_DELAY :: .2 // seconds
+
 Battle :: struct {
 	active:      bool,
 	allies:      [dynamic]int,
@@ -118,7 +120,9 @@ draw_battle :: proc() {
 	draw_battle_combatants()
 
 	for s in battle.animations {
-		draw_animation(s.animation, s.offset)
+		if s.delay <= 0 {
+			draw_animation(s.animation, s.offset)
+		}
 	}
 
 	for s in battle.text {
@@ -271,7 +275,8 @@ update_battle :: proc(dt: f32) {
 	if targeting_ease > 1 {targeting_ease = 0}
 
 	for anim_idx := 0; anim_idx < len(battle.animations); {
-		if animation_update(&battle.animations[anim_idx].animation, dt) {
+		battle.animations[anim_idx].delay -= dt
+		if battle.animations[anim_idx].delay <= 0 && animation_update(&battle.animations[anim_idx].animation, dt) {
 			unordered_remove(&battle.animations, anim_idx)
 		} else {
 			anim_idx += 1
@@ -279,10 +284,13 @@ update_battle :: proc(dt: f32) {
 	}
 
 	for sound_idx := 0; sound_idx < len(battle.sounds); {
-		sp := battle.sounds[sound_idx]
-		// TODO delay
-		play_sound(sp.sound)
-		unordered_remove(&battle.sounds, sound_idx)
+		battle.sounds[sound_idx].delay -= dt
+		if battle.sounds[sound_idx].delay <= 0 {
+			play_sound(battle.sounds[sound_idx].sound)
+			unordered_remove(&battle.sounds, sound_idx)
+		} else {
+			sound_idx += 1
+		}
 	}
 
 	for text_idx := 0; text_idx < len(battle.text); {
@@ -303,13 +311,13 @@ update_battle :: proc(dt: f32) {
 	}
 }
 
-play_anim_sound :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int) {
+play_anim_sound :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int, delay: f32 = 0) {
 	r := center_animation_on_combatant(animation_name, battle.combatants[target_idx])
 	append(
 		&battle.animations,
-		Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}},
+		Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}, delay = delay},
 	)
-	append(&battle.sounds, Play_Sound{sound = sound})
+	append(&battle.sounds, Play_Sound{sound = sound, delay = delay})
 }
 
 process_ready_battle_skill :: proc(dt: f32) {
@@ -346,6 +354,7 @@ process_battle_skill :: proc() -> (done := false) {
 	switch skill_state.step {
 	case 0:
 		// TODO: set_text_display(skill.name)
+		fmt.printfln("~~ %s ~~", skill.name)
 		skill_state.step += 1
 	case 1:
 		if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
@@ -372,16 +381,16 @@ process_battle_skill :: proc() -> (done := false) {
 		case Select_One_Baddy:
 			play_anim_sound(animation_name, sound, battle.baddies[targets.i])
 		case Select_All_Allies:
-			for target_idx in battle.allies {
-				play_anim_sound(animation_name, sound, target_idx)
+			for target_idx, i in battle.allies {
+				play_anim_sound(animation_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
 			}
 		case Select_All_Baddies:
-			for target_idx in battle.baddies {
-				play_anim_sound(animation_name, sound, target_idx)
+			for target_idx, i in battle.baddies {
+				play_anim_sound(animation_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
 			}
 		case Select_All_Combatants:
 			for _, target_idx in battle.combatants {
-				play_anim_sound(animation_name, sound, target_idx)
+				play_anim_sound(animation_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
 			}
 		}
 		skill_state.step += 1
