@@ -2,9 +2,12 @@ package game
 
 import "core:slice"
 
+Price :: Maybe(Money)
+
 Item :: struct {
-	name: string,
-	data: Item_Variant,
+	name:  string,
+	data:  Item_Variant,
+	price: Price,
 }
 
 Item_Variant :: union {
@@ -43,6 +46,14 @@ filter_equippables :: proc(item_names: []Item_Name, allocator := context.allocat
 	return slice.filter(item_names, is_equippable, allocator)
 }
 
-item_price :: proc(item_name: Item_Name) -> Money {
-	return 100
+item_price :: proc(item_name: Item_Name) -> Price {
+	return items[item_name].price
+}
+
+is_priceless :: proc(item_name: Item_Name) -> bool {
+	return items[item_name].price == nil
+}
+
+can_sell :: proc(item_name: Item_Name) -> bool {
+	return !is_priceless(item_name)
 }

@@ -1,13 +1,13 @@
-name,skill
-Potion,Potion
-Super Potion,Super_Potion
-Antidote,Antidote
-Poisonous Mushroom,Poisonous_Mushroom
-Thingamajig,
-Doodad,
-Deluxe Doodad,
-Postcard,
-Generic Trinket,
-Mundane Tchotchke,
-Boost Donut,Level_Up
-Tea,
+name,skill,price
+Potion,Potion,10
+Super Potion,Super_Potion,100
+Antidote,Antidote,10
+Poisonous Mushroom,Poisonous_Mushroom,50
+Thingamajig,,
+Doodad,,
+Deluxe Doodad,,
+Postcard,,
+Generic Trinket,,
+Mundane Tchotchke,,
+Boost Donut,Level_Up,100000
+Tea,,20

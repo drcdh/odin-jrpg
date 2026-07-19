@@ -5,11 +5,14 @@ from processing import name_to_enum
 items = []
 def odin_consumable(row):
 	skill = row.get("skill")
+	price = row.get("price")
 	return {
 		"name": row["name"],
 		"skill": f".{skill}" if skill else "nil",
+		"price": str(price) if price else "nil",
 	}
 def odin_equippable(row):
+	price = row.get("price")
 	return {
 		"name": row["name"],
 		"slot": "." + row["slot"],
@@ -29,13 +32,14 @@ def odin_equippable(row):
 			row["mpd"] or 0,
 			row["msp"] or 0,
 		),
+		"price": str(price) if price else "nil",
 	}
 
 def write_item(f, oitem):
 	if "skill" in oitem:
-		f.write("\t{{ \"{name}\", {skill} }},\n".format(**oitem))
+		f.write("\t{{ \"{name}\", {skill}, {price} }},\n".format(**oitem))
 	else:
-		f.write("\t{{ \"{name}\", Equippable{{ {stats_add}, {stats_mul}, {slot} }} }},\n".format(**oitem))
+		f.write("\t{{ \"{name}\", Equippable{{ {stats_add}, {stats_mul}, {slot} }}, {price} }},\n".format(**oitem))
 
 with open("data/consumables.csv") as f:
 	reader = csv.DictReader(f, delimiter=",")

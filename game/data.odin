@@ -40,6 +40,7 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Speed_Ring] = 2
 	game_data.inventory[Item_Name.Beginners_Wand] = 1
 	game_data.inventory[Item_Name.Rat_Smashing_Bat] = 1
+	game_data.inventory[Item_Name.Postcard] = 4
 	game_data.money = 123
 	set_inventory_order()
 	unequip_all(&PROTAGONIST, to_inventory = false)
@@ -111,6 +112,19 @@ dec_money :: proc(v: Money) {
 	fmt.printfln("Money decreased by %d from %d to %d", v, prev, game_data.money)
 }
 
-have_money :: proc(v: Money) -> bool {
+have_money_Money :: proc(v: Money) -> bool {
 	return game_data.money >= v
+}
+
+have_money_Price :: proc(v: Price) -> bool {
+	switch v in v {
+	case Money:
+		return have_money_Money(Money(v))
+	}
+	return false
+}
+
+have_money :: proc {
+	have_money_Money,
+	have_money_Price,
 }

@@ -243,9 +243,10 @@ shop_draw_panes :: proc(panes: ..Shop_Pane) {
 shop_draw_party_inventory :: proc() {
 	for r in 0 ..< SHOP_INVENTORY_ROWS {
 		if r >= len(inventory_order) {break}
-		draw_text(1, 1 + f32(r), fmt.ctprint(items[inventory_order[r + shop_menu_data.ui_data.inv_origin]].name))
-		// TODO: price
-		// TODO: quantity, maybe
+		item_name := inventory_order[r + shop_menu_data.ui_data.inv_origin]
+		tint := rl.WHITE if can_sell(item_name) else rl.GRAY
+		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
+		// TODO: price, quantity
 	}
 }
 
@@ -310,7 +311,7 @@ shop_update :: proc() {
 		if get_input(.CANCEL) {
 			shop_menu_data.ui_state = .Top
 		} else if get_input(.ENTER) {
-			sell_item(inventory_order[shop_menu_data.ui_data.inv_row])
+			try_sell_item(inventory_order[shop_menu_data.ui_data.inv_row])
 			shop_menu_data.stale[Shop_Pane.Inventory] = true
 		} else if dy, ok := get_y_input().?; ok {
 			shop_menu_data.ui_data.inv_row, shop_menu_data.ui_data.inv_origin = shift_windowed_selection(
@@ -383,7 +384,7 @@ try_buy_item :: proc(item_name: Item_Name, equip := false) -> bool {
 
 buy_item :: proc(item_name: Item_Name, equip := false) {
 	add_item(item_name)
-	dec_money(item_price(item_name))
+	dec_money(item_price(item_name).(Money))
 	if equip {
 		pc := get_pc(shop_menu_data.ui_data.character)
 		set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot), item_name)
@@ -391,8 +392,14 @@ buy_item :: proc(item_name: Item_Name, equip := false) {
 	play_sound(.Kaching)
 }
 
-sell_item :: proc(item_name: Item_Name) {
-	remove_item(item_name)
-	inc_money(item_price(item_name))
-	play_sound(.Kaching)
+try_sell_item :: proc(item_name: Item_Name) -> bool {
+	if v, can_sell := item_price(item_name).?; can_sell {
+		remove_item(item_name)
+		inc_money(Money(0.25 * f32(v)))
+		play_sound(.Kaching)
+		return true
+	} else {
+		play_sound(.Blerp)
+	}
+	return false
 }

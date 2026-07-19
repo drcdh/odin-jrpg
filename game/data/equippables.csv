@@ -1,8 +1,8 @@
-name,slot,mhp,ahp,mof,aof,mde,ade,mpo,apo,mpd,apd,msp,asp
-Sword,Mainhand,,,5,2,,,,,,,,
-Beef Bracer,Sidehand,10,10,5,2,5,2,,,,,-5,-1
-Chump Charm,Accessory,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5
-Knife,Mainhand,,,5,1,,,,,,,,
-Rat-Smashing Bat,Mainhand,,,5,2,5,1,,,,,,-1
-Beginner's Wand,Mainhand,,,,,,,5,2,5,1,,
-Speed Ring,Accessory,,,,,,,,,,,,12
+name,slot,mhp,ahp,mof,aof,mde,ade,mpo,apo,mpd,apd,msp,asp,price
+Sword,Mainhand,,,5,2,,,,,,,,,100
+Beef Bracer,Sidehand,10,10,5,2,5,2,,,,,-5,-1,500
+Chump Charm,Accessory,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,200
+Knife,Mainhand,,,5,1,,,,,,,,,50
+Rat-Smashing Bat,Mainhand,,,5,2,5,1,,,,,,-1,500
+Beginner's Wand,Mainhand,,,,,,,5,2,5,1,,,100
+Speed Ring,Accessory,,,,,,,,,,,,12,10000
