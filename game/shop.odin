@@ -28,8 +28,8 @@ demo_shop := Shop {
 
 Shop_UI_Data :: struct {
 	top:        int,
-	character:  int,
-	slot:       int,
+	party_idx:  int,
+	slot_idx:   int,
 	inv_origin: int,
 	inv_row:    int,
 }
@@ -146,10 +146,10 @@ shop_draw_icons :: proc() {
 	case .Swap_Character:
 		draw_animation(
 			world_menu_icon,
-			tile_to_pixel(11 + 2 * (shop_menu_data.ui_data.character % 2), 3 + shop_menu_data.ui_data.character / 2),
+			tile_to_pixel(11 + 2 * (shop_menu_data.ui_data.party_idx % 2), 3 + shop_menu_data.ui_data.party_idx / 2),
 		)
 	case .Swap_Slot:
-		draw_animation(world_menu_icon, tile_to_pixel(10, 3 + shop_menu_data.ui_data.slot))
+		draw_animation(world_menu_icon, tile_to_pixel(10, 3 + shop_menu_data.ui_data.slot_idx))
 	case .Swap_Buy:
 		draw_animation(
 			world_menu_icon,
@@ -202,7 +202,7 @@ shop_redraw_party_pane :: proc() {
 }
 
 shop_redraw_equipment_pane :: proc() {
-	party_idx := shop_menu_data.ui_data.character
+	party_idx := shop_menu_data.ui_data.party_idx
 	if pc_idx, ok := get_party_member(party_idx).?; ok {
 		pc := get_pc(pc_idx)
 		for slot_idx in 0 ..< NUM_EQUIPMENT_SLOTS {
@@ -212,10 +212,10 @@ shop_redraw_equipment_pane :: proc() {
 }
 
 shop_redraw_stats_pane :: proc() {
-	party_idx := shop_menu_data.ui_data.character
+	party_idx := shop_menu_data.ui_data.party_idx
 	item_name :=
 		filter_equippables(shop_menu_data.shop.inventory, allocator = context.temp_allocator)[shop_menu_data.ui_data.inv_row]
-	slot := Equipment_Slot(shop_menu_data.ui_data.slot)
+	slot := Equipment_Slot(shop_menu_data.ui_data.slot_idx)
 	if pc_idx, ok := get_party_member(party_idx).?; ok {
 		pc := get_pc(pc_idx)
 		changing_stats = equipped_stats(pc.leveled_stats, changed_equipment(pc.equipment, item_name, slot))
@@ -290,7 +290,7 @@ shop_draw_shop_inventory :: proc(equipment := false, slot := false) {
 		if r >= len(inventory) {break}
 		item_name := inventory[r + shop_menu_data.ui_data.inv_origin]
 		price := item_price(item_name).? or_else 0
-		tint := rl.WHITE if !slot || fits_in_slot(item_name, Equipment_Slot(shop_menu_data.ui_data.slot)) else rl.GRAY
+		tint := rl.WHITE if !slot || fits_in_slot(item_name, Equipment_Slot(shop_menu_data.ui_data.slot_idx)) else rl.GRAY
 		draw_text(1, 1 + f32(r), fmt.ctprint(items[item_name].name), tint)
 		draw_text_rjust(10, 1.5 + f32(r), fmt.ctprintf("%d", price), tint)
 	}
@@ -372,7 +372,7 @@ shop_update :: proc() {
 			shop_set_stale(.Inventory)
 		} else {
 			m := get_menu_input()
-			shop_menu_data.ui_data.character = grid_change(shop_menu_data.ui_data.character, m.x, m.y, 2, 3)
+			shop_menu_data.ui_data.party_idx = grid_change(shop_menu_data.ui_data.party_idx, m.x, m.y, 2, 3)
 		}
 	case .Swap_Slot:
 		if get_input(.CANCEL) {
@@ -383,7 +383,7 @@ shop_update :: proc() {
 			shop_set_stale(.Inventory)
 			shop_set_stale(.Stats)
 		} else if dy, ok := get_y_input().?; ok {
-			shop_menu_data.ui_data.slot = grid_change(shop_menu_data.ui_data.slot, dy, 0, NUM_EQUIPMENT_SLOTS, 1)
+			shop_menu_data.ui_data.slot_idx = grid_change(shop_menu_data.ui_data.slot_idx, dy, 0, NUM_EQUIPMENT_SLOTS, 1)
 			shop_set_stale(.Inventory)
 		}
 	case .Swap_Buy:
@@ -431,8 +431,8 @@ buy_item :: proc(item_name: Item_Name, equip := false) {
 	add_item(item_name)
 	dec_money(item_price(item_name).(Money))
 	if equip {
-		pc := get_pc(shop_menu_data.ui_data.character)
-		character_set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot), item_name)
+		pc := get_pc(shop_menu_data.ui_data.party_idx)
+		character_set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot_idx), item_name)
 	}
 	play_sound(.Kaching)
 }
