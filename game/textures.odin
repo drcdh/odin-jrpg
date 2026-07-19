@@ -91,7 +91,7 @@ draw_texture :: proc {
 	draw_texture_rl,
 }
 
-draw_menu :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
+draw_menu_lt :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
 	r := l + w - 1
 	b := t + h - 1
 	draw_texture(Texture_Name.Menu_Topleft, tile_to_pixel({l, t}), tint)
@@ -109,6 +109,20 @@ draw_menu :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
 		draw_texture(Texture_Name.Menu_Centerleft, tile_to_pixel({l, y}), tint)
 		draw_texture(Texture_Name.Menu_Centerright, tile_to_pixel({r, y}), tint)
 	}
+}
+
+draw_menu_00 :: proc(w, h: Tile_T, tint := rl.WHITE) {
+	draw_menu_lt(0, 0, w, h, tint)
+}
+
+draw_menu_alt :: proc(wh: Tile_Coord, tint := rl.WHITE) {
+	draw_menu_00(wh.x, wh.y, tint)
+}
+
+draw_menu :: proc {
+	draw_menu_00,
+	draw_menu_lt,
+	draw_menu_alt,
 }
 
 draw_text :: proc(l, t: f32, text: cstring, tint := rl.WHITE) {

@@ -101,6 +101,42 @@ shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
 	return s, w
 }
 
+grid_change :: proc(i, dx, dy, W, H: int) -> int {
+	// if dx or dy are non-zero, their magnitude is assumed to be 1
+	_i := i
+	if dx < 0 {
+		if i % W == 0 {
+			// left edge
+			_i += W - 1
+		} else {
+			_i -= 1
+		}
+	} else if dx > 0 {
+		if (i + 1) % W == 0 {
+			// right edge
+			_i -= W - 1
+		} else {
+			_i += 1
+		}
+	}
+	if dy < 0 {
+		if i < W {
+			// top edge
+			_i += W * (H - 1)
+		} else {
+			_i -= W
+		}
+	} else if dy > 0 {
+		if i >= W * (H - 1) {
+			// bottom edge
+			_i -= W * (H - 1)
+		} else {
+			_i += W
+		}
+	}
+	return _i
+}
+
 remove_margins :: proc(r: rl.Rectangle, p: f32) -> rl.Rectangle {
 	return {x = r.x + p, y = r.y + p, width = r.width - 2 * p, height = r.height - 2 * p}
 }

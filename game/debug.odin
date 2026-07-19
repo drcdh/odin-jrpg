@@ -71,10 +71,20 @@ draw_debug :: proc() {
 }
 
 update_debug :: proc() {
-	if rl.IsKeyPressed(.B) {fmt.printfln("%#v", battle)}
+	if rl.IsKeyPressed(.B) {
+		if battle.active {
+			fmt.printfln("%#v", battle)
+		} else if shop_menu_active() {
+			fmt.printfln("%#v\n%#v", shop_menu_data.ui_state, shop_menu_data.ui_data)
+		}
+	}
 	if rl.IsKeyPressed(.F) {debug_framerate = !debug_framerate}
 	if rl.IsKeyPressed(.G) {debug_grid = !debug_grid}
 	if rl.IsKeyPressed(.T) {debug_text = !debug_text}
+	if rl.IsKeyPressed(.H) {
+		shop_enter(&demo_shop)
+		// fmt.printfln("%#v", shop_menu_data)
+	}
 
 	if rl.IsKeyPressed(.GRAVE) {
 		throttle = !throttle

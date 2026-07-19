@@ -131,6 +131,20 @@ get_menu_input :: proc() -> (m := [2]int{}) {
 	return
 }
 
+get_x_input :: proc() -> Maybe(int) {
+	v := 0
+	if get_input(.LEFT) {
+		v -= 1
+	}
+	if get_input(.RIGHT) {
+		v += 1
+	}
+	if v != 0 {
+		return v
+	}
+	return nil
+}
+
 get_y_input :: proc() -> Maybe(int) {
 	v := 0
 	if get_input(.UP) {
