@@ -38,7 +38,7 @@ init :: proc() {
 	init_rl()
 	initialize_input()
 	init_dialogue()
-	init_world_menu()
+	world_menu_load()
 
 	shop_load()
 
@@ -56,8 +56,8 @@ draw :: proc() {
 
 	if battle.active {
 		draw_battle()
-	} else if world_menu_active {
-		draw_world_menu()
+	} else if world_menu_active() {
+		world_menu_draw()
 	} else if shop_menu_active() {
 		shop_draw()
 	} else {
@@ -83,14 +83,14 @@ update :: proc() {
 
 	if battle.active {
 		update_battle(dt)
-	} else if world_menu_active {
-		update_world_menu()
+	} else if world_menu_active() {
+		world_menu_update()
 	} else if shop_menu_active() {
 		shop_update()
 	} else {
 		update_world(dt)
 		if !pc_busy() && get_input(.MENU) {
-			world_menu_active = true
+			world_menu_enter()
 		}
 	}
 
@@ -115,6 +115,7 @@ tear_down :: proc() {
 	delete_input()
 	delete_inventory_order()
 	tear_down_dialogue()
+	world_menu_unload()
 	unload_sounds()
 	shop_unload()
 	tear_down_rl()

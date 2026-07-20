@@ -84,7 +84,7 @@ get_moves_toward :: proc(k: Kinematics, d: Tile_Coord) -> (Tile_Coord, Tile_Coor
 	return move, alt
 }
 
-shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
+shift_windowed_selection_a :: proc(d, s, w, W, N: int) -> (int, int) {
 	s, w := s, w
 	s += d
 	if s < 0 {
@@ -99,6 +99,16 @@ shift_windowed_selection :: proc(d, s, w, W, N: int) -> (int, int) {
 		w = s
 	}
 	return s, w
+}
+
+shift_windowed_selection_b :: proc(d: int, sel: Selection, W, N: int) -> Selection {
+	_s, _w := shift_windowed_selection_a(d, sel.row_idx, sel.origin_idx, W, N)
+	return {origin_idx = _w, row_idx = _s}
+}
+
+shift_windowed_selection :: proc {
+	shift_windowed_selection_a,
+	shift_windowed_selection_b,
 }
 
 grid_change :: proc(i, dx, dy, W, H: int) -> int {

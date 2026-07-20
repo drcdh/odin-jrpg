@@ -6,10 +6,10 @@ queue_text_effect_character :: proc(target: ^Character, text: cstring, color := 
 	if battle.active {
 		target := get_combatant(target)
 		append(&battle.text, Process_Text_Effect{color = color, coord = target.coord, text = text})
-	} else if world_menu_active {
+	} else if world_menu_active() {
 		if i, row, ok := get_world_menu_target_character_position(target); ok {
-			coord := tile_to_pixel(9 + 2 * (f32(i) - 3 * row), 6 + 2.5 * row)
-			append(&world_menu_text_effects, Process_Text_Effect{color = color, coord = coord, text = text})
+			coord := tile_to_pixel(9 + 2 * f32(i), 6 + 2.5 * row)
+			append(&world_menu.text_effects, Process_Text_Effect{color = color, coord = coord, text = text})
 		}
 	}
 }
