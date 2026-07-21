@@ -80,6 +80,20 @@ update_debug :: proc() {
 		// fmt.printfln("%#v", shop_menu_data)
 	}
 
+	if rl.IsKeyPressed(.ONE) {
+		debug_toggle_pc(.Protagonist)
+	} else if rl.IsKeyPressed(.TWO) {
+		debug_toggle_pc(.Assassin)
+	} else if rl.IsKeyPressed(.THREE) {
+		debug_toggle_pc(.Musician)
+	} else if rl.IsKeyPressed(.FOUR) {
+		debug_toggle_pc(.Killer)
+	} else if rl.IsKeyPressed(.FIVE) {
+		debug_toggle_pc(.Mourner)
+	} else if rl.IsKeyPressed(.SIX) {
+		debug_toggle_pc(.Zealot)
+	}
+
 	if rl.IsKeyPressed(.GRAVE) {
 		throttle = !throttle
 		if throttle {
@@ -99,5 +113,22 @@ update_debug :: proc() {
 			debug_framerate_count += 1
 			debug_framerate_sum += dt
 		}
+	}
+}
+
+debug_toggle_pc :: proc(pc_idx: PC) {
+	if battle.active || world_menu_active() || shop_menu_active() {
+		return
+	}
+	if game_data.party_membership[pc_idx] {
+		if party_size() > 1 {
+			game_data.party_membership[pc_idx] = false
+			play_sound(.Kaching)
+		} else {
+			play_sound(.Blerp)
+		}
+	} else {
+		game_data.party_membership[pc_idx] = true
+		play_sound(.Warp)
 	}
 }

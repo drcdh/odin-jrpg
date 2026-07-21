@@ -85,7 +85,7 @@ MONSTER_IN_A_BOX := [?]Event {
 	Close_Dialogue{},
 	Clear_Text{},
 	Curtain_Down{.Battle},
-	Start_Encounter{encounter = 2, paused = true},
+	Start_Encounter{encounter = 0, paused = true},
 	Curtain_Up{.Battle},
 	Append_Text{text = "Oh noes!"},
 	Close_Dialogue{},

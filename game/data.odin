@@ -28,7 +28,7 @@ game_data: struct {
 
 init_new_game :: proc() {
 	game_data.boat_coord = LEVEL_OVERWORLD_BOAT_SPAWN
-	game_data.party_membership = {true, true, true, true, true, true}
+	game_data.party_membership = {true, false, false, false, false, false}
 	game_data.protagonist_name = "Hiro"
 	game_data.inventory[Item_Name.Potion] = 5
 	game_data.inventory[Item_Name.Super_Potion] = 4
@@ -41,7 +41,7 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Beginners_Wand] = 1
 	game_data.inventory[Item_Name.Rat_Smashing_Bat] = 1
 	game_data.inventory[Item_Name.Postcard] = 4
-	game_data.money = MONEY_MAX - 1000
+	game_data.money = Money(MONEY_MAX / 8)
 	set_inventory_order()
 	character_unequip_all(&PROTAGONIST, to_inventory = false)
 	character_unequip_all(&ASSASSIN, to_inventory = false)
