@@ -60,10 +60,6 @@ start_encounter :: proc(i: int, paused: bool) {
 		if baddy_id == .None {continue}
 		template := baddy_templates[baddy_id]
 		fmt.printfln("adding %s (baddy_id=%d)", template.name, baddy_id)
-		baddy := new(Character)
-		baddy.name = template.name
-		baddy.hitpoints = template.stats.max_hitpoints
-		baddy.stats = template.stats
 		visual_variant: Combatant_Visual_Variant
 		switch t in template.texture {
 		case Texture_Name:
@@ -75,7 +71,7 @@ start_encounter :: proc(i: int, paused: bool) {
 		append(
 			&battle.combatants,
 			Combatant {
-				character = baddy,
+				character = new_baddy(template),
 				coord = tile_to_pixel(BATTLE_ORIGIN_TILE + spot.tile),
 				enabled = true,
 				team = BADDY_TEAM,

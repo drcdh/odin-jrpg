@@ -11,3 +11,11 @@ Baddy_Template :: struct {
 	texture:     Baddy_Visual,
 	turn:        Turn_Proc,
 }
+
+new_baddy :: proc(template: Baddy_Template) -> ^Character {
+	baddy := new(Character)
+	baddy.name = template.name
+	baddy.hitpoints = template.stats.max_hitpoints
+	baddy.stats = template.stats
+	return baddy
+}
