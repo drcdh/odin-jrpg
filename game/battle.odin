@@ -36,13 +36,28 @@ battle: Battle
 targeting_ease: f32
 
 battle_cleanup :: proc() {
+	clear(&battle.allies)
+	clear(&battle.animations)
+	clear(&battle.baddies)
 	clear(&battle.combatants)
+	clear(&battle.menu_skills)
 	clear(&battle.skill_plays)
+	clear(&battle.sounds)
+	clear(&battle.text)
+	battle.pc_ready = nil
+	battle.pc_ui_state = PC_UI_State{}
+	battle.skill_state = Process_Skill{}
 }
 
 battle_destroy :: proc() {
+	delete(battle.allies)
+	delete(battle.animations)
+	delete(battle.baddies)
 	delete(battle.combatants)
+	delete(battle.menu_skills)
 	delete(battle.skill_plays)
+	delete(battle.sounds)
+	delete(battle.text)
 }
 
 battle_init :: proc() {
