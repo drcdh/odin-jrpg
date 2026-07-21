@@ -420,7 +420,8 @@ world_menu_update :: proc() {
 			equipment_slot := Equipment_Slot(world_menu.ui_data.slot_idx)
 			item_name := equippables_order[world_menu.ui_data.equip_sel.row_idx]
 			if fits_in_slot(item_name, equipment_slot) {
-				pc := get_pc(world_menu.ui_data.party_idx)
+				pc_idx := get_party_member(world_menu.ui_data.party_idx).?
+				pc := get_pc(pc_idx)
 				character_set_equipped_item(pc, equipment_slot, item_name)
 				world_menu.ui_state = .Character
 				world_menu_set_stale(.Character)
@@ -480,13 +481,16 @@ world_menu_update :: proc() {
 			if consumable, ok := items[item_name].data.(Consumable); ok {
 				skill = skills[consumable]
 				play_sound(skill.sound) // todo
-				pc := get_party_member(party_idx).?
-				do_effect(nil, get_pc(pc), skill.effect)
+				pc_idx := get_party_member(party_idx).?
+				do_effect(nil, get_pc(pc_idx), skill.effect)
 				remove_item(item_name)
 				if game_data.inventory[item_name] == 0 {
 					world_menu.ui_state = .Inventory
 				}
-				fmt.printfln("Used item %s on %s", item_name, pc)
+				world_menu_set_stale(.Party)
+				world_menu_set_stale(.Inventory)
+				world_menu_set_stale(.Targeting)
+				fmt.printfln("Used item %s on %s", item_name, pc_idx)
 			} else {
 				fmt.println("Uh oh! Tried to use non-consumable %s", item_name)
 			}
