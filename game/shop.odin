@@ -146,7 +146,10 @@ shop_draw_icons :: proc() {
 	case .Swap_Character:
 		draw_animation(
 			world_menu_icon,
-			tile_to_pixel(11.5 + 2 * f32(shop_menu_data.ui_data.party_idx % 2), 3 + shop_menu_data.ui_data.party_idx / 2),
+			tile_to_pixel(
+				11.5 + 2 * f32(shop_menu_data.ui_data.party_idx % 2),
+				3 + 2 * int(shop_menu_data.ui_data.party_idx / 2),
+			),
 		)
 	case .Swap_Slot:
 		draw_animation(world_menu_icon, tile_to_pixel(11.5, 3 + shop_menu_data.ui_data.slot_idx))
@@ -194,7 +197,7 @@ shop_redraw_inventory_pane :: proc() {
 shop_redraw_party_pane :: proc() {
 	for p in 0 ..< party_size() {
 		if pc_idx, ok := get_party_member(p).?; ok {
-			origin_tile: Tile_Coord = {1, 1} + {2 * (p % 2), int(p / 2)}
+			origin_tile: Tile_Coord = {1, 1} + {2 * (p % 2), 2 * int(p / 2)}
 			origin := tile_to_pixel(origin_tile)
 			draw_texture(pc_idle_texture[pc_idx], origin)
 		}
@@ -431,8 +434,11 @@ buy_item :: proc(item_name: Item_Name, equip := false) {
 	add_item(item_name)
 	dec_money(item_price(item_name).(Money))
 	if equip {
-		pc := get_pc(shop_menu_data.ui_data.party_idx)
+		pc_idx := get_party_member(shop_menu_data.ui_data.party_idx).?
+		pc := get_pc(pc_idx)
 		character_set_equipped_item(pc, Equipment_Slot(shop_menu_data.ui_data.slot_idx), item_name)
+		shop_set_stale(.Party)
+		shop_set_stale(.Equipment)
 	}
 	play_sound(.Kaching)
 }
