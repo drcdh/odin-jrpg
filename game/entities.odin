@@ -132,20 +132,16 @@ try_set_adjacent_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
 	return false
 }
 
-try_set_destination :: proc(e: ^Entity, d: Tile_Coord) {
+try_set_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
 	move, alt := get_moves_toward(e^, d)
 	e.face = get_face_toward(move)
-	if !try_set_adjacent_destination(e, move) {
-		_ = try_set_adjacent_destination(e, alt)
-	}
+	return try_set_adjacent_destination(e, move) || try_set_adjacent_destination(e, alt)
 }
 
-try_set_destination_toward :: proc(e: ^Entity, t: Kinematics) {
+try_set_destination_toward :: proc(e: ^Entity, t: Kinematics) -> bool {
 	move, alt := get_moves_toward(e^, t.tile)
 	e.face = get_face_toward(move)
-	if !try_set_adjacent_destination(e, move) {
-		_ = try_set_adjacent_destination(e, alt)
-	}
+	return try_set_adjacent_destination(e, move) || try_set_adjacent_destination(e, alt)
 }
 
 update_entity :: proc(dt: f32, e: ^Entity) {
@@ -190,7 +186,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 					if s.step >= len(destinations) {s.step = 0}
 				}
 				// fmt.println("step", s.step, "dest", destinations[s.step], "pos", e.tile)
-				try_set_destination(e, destinations[s.step])
+				_ = try_set_destination(e, destinations[s.step])
 				s.countdown = s.pause
 			}
 		}
@@ -237,7 +233,9 @@ player_control :: proc(_: f32, p: ^Entity) {
 		} else if input.x < 0 {
 			p.k.face = .Left
 		}
-		try_set_destination(p, p.k.tile + input)
+		if try_set_destination(p, p.k.tile + input) {
+			do_party_step_effects()
+		}
 	} else {
 		if get_input(.ENTER) {
 			if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {

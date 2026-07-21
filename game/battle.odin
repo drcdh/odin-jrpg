@@ -467,9 +467,9 @@ targeted :: proc(c_idx, team: int) -> bool {
 
 set_battle_skills :: proc(actor: ^Character) {
 	clear(&battle.menu_skills)
-	for s in 0 ..< len(skills) {
-		if Skill_Name(s) in actor.skills {
-			append(&battle.menu_skills, Skill_Name(s))
+	for k in Skill_Name {
+		if skill_in_set(k, actor.skills) {
+			append(&battle.menu_skills, k)
 		}
 	}
 }

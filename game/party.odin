@@ -181,7 +181,7 @@ get_zealot_skill_set :: proc(equipment: Equipment, level: int, stats: Stats) -> 
 
 set_skills_int :: proc(i: int) {
 	pc := get_pc(i)
-	pc.skills = get_skill_set(PC(i), pc.equipment, pc.level, pc.stats)
+	pc.skills.skills = get_skill_set(PC(i), pc.equipment, pc.level, pc.stats)
 }
 
 set_skills_enum :: proc(i: PC) {
@@ -219,4 +219,12 @@ get_world_menu_target_character_position :: proc(character: ^Character) -> (int,
 		}
 	}
 	return 0, 0, false
+}
+
+do_party_step_effects :: proc() {
+	for party_idx in 0 ..< party_size() {
+		pc_idx := get_party_member(party_idx).?
+		pc := get_pc(pc_idx)
+		skill_set_charge_tick(&pc.skills)
+	}
 }

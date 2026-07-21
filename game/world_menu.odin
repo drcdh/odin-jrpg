@@ -262,8 +262,13 @@ world_menu_redraw_skills_pane :: proc() {
 	if pc_idx, ok := get_party_member(world_menu.ui_data.party_idx).?; ok {
 		pc := get_pc(pc_idx)
 		for k in Skill_Name {
-			if k in pc.skills {
-				draw_text(1, 1 + f32(row), fmt.ctprint(skills[k].name))
+			if skill_in_set(k, pc.skills) {
+				draw_text(
+					1,
+					1 + f32(row),
+					fmt.ctprintf("%-12s % 3.0f", skills[k].name, 100 * f16(pc.skills.charges[k]) / CHARGE_MAX),
+				)
+				// draw_text(1, 1 + f32(row), fmt.ctprint(skills[k].name))
 				row += 1
 			}
 		}
@@ -425,6 +430,7 @@ world_menu_update :: proc() {
 				character_set_equipped_item(pc, equipment_slot, item_name)
 				world_menu.ui_state = .Character
 				world_menu_set_stale(.Character)
+				world_menu_set_stale(.Inventory)
 			} else {
 				fmt.println(item_name, " does not fit in ", equipment_slot)
 			}
