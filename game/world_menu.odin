@@ -278,7 +278,7 @@ world_menu_redraw_inventory_pane :: proc() {
 		draw_text_rjust(13, 1 + f32(r), fmt.ctprint(game_data.inventory[inventory_order[r + origin_idx]]))
 	}
 
-	draw_text_rjust(14, WORLD_MENU_INVENTORY_ROWS + 3, fmt.ctprintf("$ %d", game_data.money))
+	draw_text_rjust(13, WORLD_MENU_INVENTORY_ROWS + 1.5, fmt.ctprintf("$ %d", game_data.money))
 }
 
 world_menu_redraw_targeting_pane :: proc() {
