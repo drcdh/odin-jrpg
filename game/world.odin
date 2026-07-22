@@ -85,8 +85,17 @@ activate_entity_talk_script :: proc(h: Entity_Handle) {
 	queue_events(hm.get(&entities, h).talk)
 }
 
-activate_entity_trap_script :: proc(h: Entity_Handle) {
-	queue_events(hm.get(&entities, h).trap)
+activate_entity_trap_script_entity :: proc(e: ^Entity) {
+	queue_events(e.trap)
+}
+
+activate_entity_trap_script_handle :: proc(h: Entity_Handle) {
+	activate_entity_trap_script_entity(hm.get(&entities, h))
+}
+
+activate_entity_trap_script :: proc {
+	activate_entity_trap_script_entity,
+	activate_entity_trap_script_handle,
 }
 
 get_entity_p :: proc(id: Id) -> ^Entity {

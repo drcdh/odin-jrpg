@@ -125,7 +125,7 @@ get_face_toward :: proc(d: Tile_Coord) -> Face {
 }
 
 try_set_adjacent_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
-	if tile_free(e.tile + d) {
+	if e.ghost || tile_free(e.tile + d) {
 		set_destination(e, d)
 		return true
 	}
@@ -156,6 +156,12 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 		if trap, ok := get_entity_at_tile(e.tile, e.id).?; ok {
 			fmt.printfln("% 4d: %s stepped onto %w", frame_count, e.n, trap)
 			activate_entity_trap_script(trap)
+		}
+		if e.trap != nil {
+			if catch, ok := get_entity_at_tile(e.tile, e.id).?; ok {
+				fmt.printfln("% 4d: %s caught %w", frame_count, e.n, catch)
+				activate_entity_trap_script(e)
+			}
 		}
 		if tile_outside(e.tile) {
 			fmt.printfln("% 4d: %s leaving level", frame_count, e.n)
