@@ -6,12 +6,14 @@ import rl "vendor:raylib"
 ATLAS_DATA :: #load("atlas.png")
 BATTLE_BACKGROUND_DATA :: #load("textures/_battle_background.png")
 FONT_ATLAS_DATA :: #load("textures/_font.png")
+PANE_IMAGE_DATA :: #load("textures/_pane.png")
 
 Rect :: rl.Rectangle // for the results of atlas_builder
 
 atlas: rl.Texture
 battle_background: rl.Texture
 font_atlas: rl.Texture
+pane_texture: rl.Texture
 
 font: rl.Font
 
@@ -27,6 +29,10 @@ init_atlases :: proc() {
 	font_atlas_image := rl.LoadImageFromMemory(".png", raw_data(FONT_ATLAS_DATA), i32(len(FONT_ATLAS_DATA)))
 	font_atlas = rl.LoadTextureFromImage(font_atlas_image)
 	rl.UnloadImage(font_atlas_image)
+
+	pane_image := rl.LoadImageFromMemory(".png", raw_data(PANE_IMAGE_DATA), i32(len(PANE_IMAGE_DATA)))
+	pane_texture = rl.LoadTextureFromImage(pane_image)
+	rl.UnloadImage(pane_image)
 
 	// from Karl's atlas-builder example
 
@@ -86,43 +92,91 @@ draw_texture_rl :: proc(texture: rl.Texture, pos: Pixel_Coord, tint := rl.WHITE)
 	rl.DrawTexturePro(texture, {0, 0, w, h}, dest, {}, 0, tint)
 }
 
+draw_texture_rl_src :: proc(texture: rl.Texture, src: rl.Rectangle, pos: Pixel_Coord, tint := rl.WHITE) {
+	w := src.width
+	h := src.height
+	dest := rl.Rectangle{pos.x, pos.y, zoom * w, zoom * h}
+	rl.DrawTexturePro(texture, src, dest, {}, 0, tint)
+}
+
 draw_texture :: proc {
 	draw_texture_atlas,
 	draw_texture_rl,
+	draw_texture_rl_src,
 }
 
-draw_menu_lt :: proc(l, t, w, h: Tile_T, tint := rl.WHITE) {
+Pane_Piece :: enum {
+	Top_Left,
+	Top,
+	Top_Right,
+	Left,
+	Right,
+	Bottom_Left,
+	Bottom,
+	Bottom_Right,
+}
+
+PANE_BACKGROUND_COLOR :: rl.Color{1, 87, 155, 255}
+
+draw_pane_piece :: proc(piece: Pane_Piece, l, t: Tile_T) {
+	src := rl.Rectangle{0, 0, TILE_SIZE, TILE_SIZE}
+	switch piece {
+	case .Top_Left:
+	case .Top:
+		src.x = 16
+	case .Top_Right:
+		src.x = 32
+	case .Left:
+		src.y = 16
+	case .Right:
+		src.x = 32
+		src.y = 16
+	case .Bottom_Left:
+		src.y = 32
+	case .Bottom:
+		src.x = 16
+		src.y = 32
+	case .Bottom_Right:
+		src.x = 32
+		src.y = 32
+	}
+	draw_texture(pane_texture, src, tile_to_pixel(l, t))
+}
+
+draw_pane_lt :: proc(l, t, w, h: Tile_T) {
+	inside_pos := tile_to_pixel(l + 1, t + 1)
+	inside_dim := tile_to_pixel(w - 2, h - 2)
+	if inside_dim.x > 0 && inside_dim.y > 0 {
+		rl.DrawRectangleV(inside_pos, inside_dim, PANE_BACKGROUND_COLOR)
+	}
 	r := l + w - 1
 	b := t + h - 1
-	draw_texture(Texture_Name.Menu_Topleft, tile_to_pixel({l, t}), tint)
-	draw_texture(Texture_Name.Menu_Topright, tile_to_pixel({r, t}), tint)
-	draw_texture(Texture_Name.Menu_Bottomleft, tile_to_pixel({l, b}), tint)
-	draw_texture(Texture_Name.Menu_Bottomright, tile_to_pixel({r, b}), tint)
+	draw_pane_piece(.Top_Left, l, t)
+	draw_pane_piece(.Top_Right, r, t)
+	draw_pane_piece(.Bottom_Left, l, b)
+	draw_pane_piece(.Bottom_Right, r, b)
 	for x in l + 1 ..< r {
-		draw_texture(Texture_Name.Menu_Topcenter, tile_to_pixel({x, t}), tint)
-		draw_texture(Texture_Name.Menu_Bottomcenter, tile_to_pixel({x, b}), tint)
-		for y in t + 1 ..< b {
-			draw_texture(Texture_Name.Menu_Center, tile_to_pixel({x, y}), tint)
-		}
+		draw_pane_piece(.Top, x, t)
+		draw_pane_piece(.Bottom, x, b)
 	}
 	for y in t + 1 ..< b {
-		draw_texture(Texture_Name.Menu_Centerleft, tile_to_pixel({l, y}), tint)
-		draw_texture(Texture_Name.Menu_Centerright, tile_to_pixel({r, y}), tint)
+		draw_pane_piece(.Left, l, y)
+		draw_pane_piece(.Right, r, y)
 	}
 }
 
-draw_menu_00 :: proc(w, h: Tile_T, tint := rl.WHITE) {
-	draw_menu_lt(0, 0, w, h, tint)
+draw_pane_00 :: proc(w, h: Tile_T) {
+	draw_pane_lt(0, 0, w, h)
 }
 
-draw_menu_alt :: proc(wh: Tile_Coord, tint := rl.WHITE) {
-	draw_menu_00(wh.x, wh.y, tint)
+draw_pane_alt :: proc(wh: Tile_Coord) {
+	draw_pane_00(wh.x, wh.y)
 }
 
-draw_menu :: proc {
-	draw_menu_00,
-	draw_menu_lt,
-	draw_menu_alt,
+draw_pane :: proc {
+	draw_pane_00,
+	draw_pane_lt,
+	draw_pane_alt,
 }
 
 draw_text :: proc(l, t: f32, text: cstring, tint := rl.WHITE) {

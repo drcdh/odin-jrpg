@@ -232,7 +232,7 @@ shop_redraw_stats_pane :: proc() {
 shop_redraw_pane :: proc(pane: Shop_Pane) {
 	fmt.printfln("Redrawing texture for %w", pane)
 	rl.BeginTextureMode(shop_menu_data.textures[pane])
-	draw_menu(PANE_DIM[pane])
+	draw_pane(PANE_DIM[pane])
 	switch pane {
 	case .Top:
 		shop_redraw_top_pane()

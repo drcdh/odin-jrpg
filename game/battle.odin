@@ -155,7 +155,7 @@ draw_battle_background :: proc() {
 }
 
 draw_battle_party_stats :: proc() {
-	draw_menu(4, VIEW_TILES_H - 4, VIEW_TILES_W - 4, 4)
+	draw_pane(4, VIEW_TILES_H - 4, VIEW_TILES_W - 4, 4)
 
 	for i, p in battle.allies {
 		c := battle.combatants[i]

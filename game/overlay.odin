@@ -22,7 +22,7 @@ draw_overlay :: proc() {
 	if overlay {
 		for nx in -1 ..= 1 {
 			for ny in -1 ..= 1 {
-				draw_texture(clouds, clouds_offset + {f32(nx) * zoom * 320, f32(ny) * zoom * 320}, {255, 255, 255, 50})
+				draw_texture(clouds, clouds_offset + {f32(nx) * zoom * 320, f32(ny) * zoom * 320}, rl.Color{255, 255, 255, 50})
 			}
 		}
 	}

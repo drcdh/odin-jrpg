@@ -302,7 +302,7 @@ world_menu_redraw_system_pane :: proc() {}
 
 world_menu_redraw_pane :: proc(pane: World_Menu_Pane) {
 	rl.BeginTextureMode(world_menu.textures[pane])
-	draw_menu(WORLD_MENU_PANE_DIM[pane])
+	draw_pane(WORLD_MENU_PANE_DIM[pane])
 	switch pane {
 	case .Top:
 		world_menu_redraw_top_pane()

@@ -69,12 +69,12 @@ BATTLE_MENU_ITEMS_ROWS :: 6
 draw_battle_menu :: proc() {
 	switch state in battle.pc_ui_state {
 	case Action_Selection_State:
-		draw_menu(0.0, 10, 4, 4)
+		draw_pane(0.0, 10, 4, 4)
 		draw_text(0.5, 10.5, "Attack", rl.YELLOW if state.s == 0 else rl.WHITE)
 		draw_text(0.5, 11.0, "Skill", rl.YELLOW if state.s == 1 else rl.WHITE)
 		draw_text(0.5, 11.5, "Item", rl.YELLOW if state.s == 2 else rl.WHITE)
 	case Skill_Selection_State:
-		draw_menu(2, 8, 8, BATTLE_MENU_SKILLS_ROWS - 2)
+		draw_pane(2, 8, 8, BATTLE_MENU_SKILLS_ROWS - 2)
 		for r in 0 ..< BATTLE_MENU_SKILLS_ROWS {
 			if r >= len(battle.menu_skills) {break}
 			draw_text(
@@ -85,7 +85,7 @@ draw_battle_menu :: proc() {
 			)
 		}
 	case Item_Selection_State:
-		draw_menu(2, 8, 8, BATTLE_MENU_ITEMS_ROWS - 2)
+		draw_pane(2, 8, 8, BATTLE_MENU_ITEMS_ROWS - 2)
 		for r in 0 ..< BATTLE_MENU_ITEMS_ROWS {
 			if r >= len(Item_Name) {break}
 			draw_text(

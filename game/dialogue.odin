@@ -53,7 +53,7 @@ draw_dialogue :: proc() {
 	if _, hidden := dialogue_state.(Dialogue_Hidden); !hidden {
 		str := strings.to_string(dialogue_marquee)
 		if substr, ok := strings.substring_to(str, dialogue_marquee_end); ok {
-			draw_menu(0, 0, VIEW_TILES_W, (dialogue_lines + 2) / 2)
+			draw_pane(0, 0, VIEW_TILES_W, (dialogue_lines + 2) / 2)
 			draw_text(.5, .5, strings.clone_to_cstring(substr, context.temp_allocator))
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
@@ -67,7 +67,7 @@ draw_dialogue :: proc() {
 
 draw_choices :: proc() {
 	if len(dialogue_choices) > 0 {
-		draw_menu(0, (dialogue_lines + 2) / 2, VIEW_TILES_W, (len(dialogue_choices) + 2) / 2)
+		draw_pane(0, (dialogue_lines + 2) / 2, VIEW_TILES_W, (len(dialogue_choices) + 2) / 2)
 		for c, i in dialogue_choices {
 			if i == dialogue_choice_pending {
 				draw_text(
