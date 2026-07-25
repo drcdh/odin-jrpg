@@ -68,8 +68,15 @@ update_debug :: proc() {
 	if rl.IsKeyPressed(.B) {
 		if battle.active {
 			fmt.printfln("%#v", battle)
+		}
+	}
+	if rl.IsKeyPressed(.M) {
+		if battle_menu.ui_state != .Inactive {
+			fmt.printfln("%#v\n%#v", battle_menu.ui_state, battle_menu.ui_data)
 		} else if shop_menu_active() {
 			fmt.printfln("%#v\n%#v", shop_menu_data.ui_state, shop_menu_data.ui_data)
+		} else if world_menu_active() {
+			fmt.printfln("%#v\n%#v", world_menu.ui_state, world_menu.ui_data)
 		}
 	}
 	if rl.IsKeyPressed(.F) {debug_framerate = !debug_framerate}

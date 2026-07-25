@@ -367,6 +367,7 @@ world_menu_draw_text_effects :: proc() {
 world_menu_update :: proc() {
 	switch world_menu.ui_state {
 	case .Inactive:
+
 	case .Top:
 		if get_input(.CANCEL) {
 			world_menu_exit()
@@ -384,6 +385,7 @@ world_menu_update :: proc() {
 		} else if dx, ok := get_x_input().?; ok {
 			world_menu.ui_data.top = grid_change(world_menu.ui_data.top, dx, 0, 4, 1)
 		}
+
 	case .Party:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Top
@@ -399,6 +401,7 @@ world_menu_update :: proc() {
 		} else {
 			world_menu.ui_data.party_idx = change_world_menu_party_idx_from_input(world_menu.ui_data.party_idx)
 		}
+
 	case .Character:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Party
@@ -417,6 +420,7 @@ world_menu_update :: proc() {
 				world_menu.ui_data.slot_idx %%= NUM_EQUIPMENT_SLOTS
 			}
 		}
+
 	case .Equipment:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Character
@@ -429,6 +433,7 @@ world_menu_update :: proc() {
 				pc := get_pc(pc_idx)
 				character_set_equipped_item(pc, equipment_slot, item_name)
 				world_menu.ui_state = .Character
+				world_menu_set_stale(.Party)
 				world_menu_set_stale(.Character)
 				world_menu_set_stale(.Inventory)
 			} else {
@@ -446,6 +451,7 @@ world_menu_update :: proc() {
 				world_menu_set_stale(.Equipment)
 			}
 		}
+
 	case .Skills:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Party
@@ -456,8 +462,10 @@ world_menu_update :: proc() {
 			world_menu.ui_data.party_idx %%= party_size()
 			world_menu_set_stale(.Skills)
 		} // TODO: get_y_input
+
 	case .Skill_Target:
 	// TODO
+
 	case .Inventory:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Top
@@ -478,6 +486,7 @@ world_menu_update :: proc() {
 			)
 			world_menu_set_stale(.Inventory)
 		}
+
 	case .Item_Target:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Inventory
@@ -485,7 +494,7 @@ world_menu_update :: proc() {
 			item_name := inventory_order[world_menu.ui_data.inv_sel.row_idx]
 			party_idx := world_menu.ui_data.party_idx
 			if consumable, ok := items[item_name].data.(Consumable); ok {
-				skill = skills[consumable]
+				skill := skills[consumable]
 				play_sound(skill.sound) // todo
 				pc_idx := get_party_member(party_idx).?
 				do_effect(nil, get_pc(pc_idx), skill.effect)
@@ -503,12 +512,15 @@ world_menu_update :: proc() {
 		} else {
 			world_menu.ui_data.party_idx = change_world_menu_party_idx_from_input(world_menu.ui_data.party_idx)
 		}
+
 	case .System:
 		if get_input(.CANCEL) {
 			world_menu.ui_state = .Top
 		}
 	}
+
 	animation_update(&world_menu_icon, rl.GetFrameTime())
+
 	for text_idx := 0; text_idx < len(world_menu.text_effects); {
 		world_menu.text_effects[text_idx].t += rl.GetFrameTime()
 		if world_menu.text_effects[text_idx].t >= 1 {

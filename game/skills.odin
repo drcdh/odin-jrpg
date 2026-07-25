@@ -3,7 +3,7 @@ package game
 Skill :: struct {
 	name:      string,
 	effect:    Effect,
-	targeting: Targeting_Type,
+	targeting: Target_Type,
 	windup:    int,
 	cost:      int,
 	cooldown:  int,
@@ -20,6 +20,11 @@ Skill_Set :: bit_set[Skill_Name]
 Skill_Set_C :: struct {
 	charges: [len(Skill_Name)]Charge,
 	skills:  Skill_Set,
+}
+
+Skill_Charge :: struct {
+	charge:     Charge,
+	skill_name: Skill_Name,
 }
 
 skill_in_set_bit_set :: proc(k: Skill_Name, s: Skill_Set) -> bool {
@@ -53,4 +58,15 @@ skill_set_charge_tick :: proc(ssc: ^Skill_Set_C) {
 			}
 		}
 	}
+}
+
+get_character_skills :: proc(ssc: Skill_Set_C) -> [dynamic]Skill_Charge {
+	result := make([dynamic]Skill_Charge, 0, 10, context.temp_allocator)
+	for k in Skill_Name {
+		if skill_in_set(k, ssc) {
+			append(&result, Skill_Charge{ssc.charges[k], k})
+		}
+	}
+	// fmt.printfln("%#v\n%#v\n", ssc, result)
+	return result
 }

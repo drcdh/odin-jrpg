@@ -21,10 +21,7 @@ Battle :: struct {
 	combatants:  [dynamic]Combatant,
 	encounter:   int,
 	ending:      bool,
-	menu_skills: [dynamic]Skill_Name,
 	paused:      bool,
-	pc_ready:    Maybe(int),
-	pc_ui_state: PC_UI_State,
 	skill_plays: [dynamic]Battle_Skill_Play,
 	skill_state: Process_Skill,
 	sounds:      [dynamic]Play_Sound,
@@ -40,12 +37,9 @@ battle_cleanup :: proc() {
 	clear(&battle.animations)
 	clear(&battle.baddies)
 	clear(&battle.combatants)
-	clear(&battle.menu_skills)
 	clear(&battle.skill_plays)
 	clear(&battle.sounds)
 	clear(&battle.text)
-	battle.pc_ready = nil
-	battle.pc_ui_state = PC_UI_State{}
 	battle.skill_state = Process_Skill{}
 }
 
@@ -54,13 +48,13 @@ battle_destroy :: proc() {
 	delete(battle.animations)
 	delete(battle.baddies)
 	delete(battle.combatants)
-	delete(battle.menu_skills)
 	delete(battle.skill_plays)
 	delete(battle.sounds)
 	delete(battle.text)
 }
 
 battle_init :: proc() {
+	battle_menu_start()
 }
 
 check_win :: proc() -> bool {
@@ -118,11 +112,11 @@ get_combatant_skill_play :: proc(c_idx: int) -> Maybe(int) {
 	return nil
 }
 
-select_one_random_ally :: proc() -> Maybe(Select_One_Ally) {
+select_one_random_ally :: proc() -> Maybe(Target_One_Ally) {
 	// TODO: just take first for now
 	for c_idx, ally_idx in battle.allies {
 		if combatant_alive(battle.combatants[c_idx]) {
-			return Select_One_Ally{ally_idx}
+			return Target_One_Ally{ally_idx}
 		}
 	}
 	return nil
@@ -130,8 +124,7 @@ select_one_random_ally :: proc() -> Maybe(Select_One_Ally) {
 
 draw_battle :: proc() {
 	draw_battle_background()
-	draw_battle_party_stats()
-	draw_battle_menu()
+	battle_menu_draw()
 	draw_battle_combatants()
 
 	for s in battle.animations {
@@ -154,24 +147,6 @@ draw_battle_background :: proc() {
 	draw_texture(battle_background, {})
 }
 
-draw_battle_party_stats :: proc() {
-	draw_pane(4, VIEW_TILES_H - 4, VIEW_TILES_W - 4, 4)
-
-	for i, p in battle.allies {
-		c := battle.combatants[i]
-		tint := rl.WHITE
-		if c.character.hitpoints <= 0 {
-			tint = rl.RED
-		}
-		draw_text(
-			4.5,
-			(VIEW_TILES_H - 3.5) + f32(p) / 2,
-			fmt.ctprintf("%- 13s% 4d/% 4d", c.character.name, c.character.hitpoints, c.character.max_hitpoints),
-			tint,
-		)
-	}
-}
-
 draw_battle_combatants :: proc() {
 	for c, c_idx in battle.combatants {
 		if c.enabled {
@@ -179,8 +154,8 @@ draw_battle_combatants :: proc() {
 			if c.character.hitpoints <= 0 {
 				tint = rl.RED
 			}
-			if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
-				if c_idx == battle.allies[ally_idx] {
+			if battle_menu.ui_state != .Inactive {
+				if c_idx == battle_menu.ui_data.c_idx {
 					tint = rl.GREEN
 				}
 			}
@@ -232,6 +207,12 @@ battle_time_tick :: proc(dt: f32) {
 		if combatant_winding_up(c) {continue}
 		c.t += ticks * get_stat_f(c.character, .Speed)
 		if c.t > READY_T {c.t = READY_T}
+		if true {
+			skill_set_charge_tick(&c.character.skills)
+			if battle_menu.ui_state == .Skills {
+				battle_menu_set_stale(.Skills)
+			}
+		}
 	}
 }
 
@@ -270,9 +251,10 @@ update_battle :: proc(dt: f32) {
 		}
 		process_ready_battle_skill(dt)
 		process_ready_combatants(dt)
-		if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
-			pc_turn(battle.allies[ally_idx])
-		}
+		// if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
+		// 	pc_turn(battle.allies[ally_idx])
+		// }
+		battle_menu_update()
 	}
 
 	if battle.ending {
@@ -339,8 +321,11 @@ process_ready_battle_skill :: proc(dt: f32) {
 }
 
 process_ready_combatants :: proc(dt: f32) {
-	if battle.pc_ready == nil {
-		battle.pc_ready = get_next_ready_pc()
+	if battle_menu.ui_state == .Idle {
+		if ally_idx, ready := get_next_ready_pc().?; ready {
+			battle_menu.ui_data.c_idx = battle.allies[ally_idx]
+			battle_menu.ui_state = .Top
+		}
 	}
 	for combatant, c_idx in battle.combatants {
 		if combatant.t >= READY_T {
@@ -385,19 +370,19 @@ process_battle_skill :: proc() -> (done := false) {
 		animation_name := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
 		sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 		switch targets in play.targets {
-		case Select_One_Ally:
+		case Target_One_Ally:
 			play_anim_sound(animation_name, sound, battle.allies[targets.i])
-		case Select_One_Baddy:
+		case Target_One_Baddy:
 			play_anim_sound(animation_name, sound, battle.baddies[targets.i])
-		case Select_All_Allies:
+		case Target_All_Allies:
 			for target_idx, i in battle.allies {
 				play_anim_sound(animation_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
 			}
-		case Select_All_Baddies:
+		case Target_All_Baddies:
 			for target_idx, i in battle.baddies {
 				play_anim_sound(animation_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
 			}
-		case Select_All_Combatants:
+		case Target_All_Combatants:
 			for _, target_idx in battle.combatants {
 				play_anim_sound(animation_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
 			}
@@ -410,23 +395,23 @@ process_battle_skill :: proc() -> (done := false) {
 	case 7:
 		actor := battle.combatants[play.actor]
 		switch targets in play.targets {
-		case Select_One_Ally:
+		case Target_One_Ally:
 			target := battle.combatants[battle.allies[targets.i]]
 			do_effect(&actor, &target, skill.effect)
-		case Select_One_Baddy:
+		case Target_One_Baddy:
 			target := battle.combatants[battle.baddies[targets.i]]
 			do_effect(&actor, &target, skill.effect)
-		case Select_All_Allies:
+		case Target_All_Allies:
 			for target_idx in battle.allies {
 				target := battle.combatants[target_idx]
 				do_effect(&actor, &target, skill.effect)
 			}
-		case Select_All_Baddies:
+		case Target_All_Baddies:
 			for target_idx in battle.baddies {
 				target := battle.combatants[target_idx]
 				do_effect(&actor, &target, skill.effect)
 			}
-		case Select_All_Combatants:
+		case Target_All_Combatants:
 			for &target in battle.combatants {
 				do_effect(&actor, &target, skill.effect)
 			}
@@ -448,30 +433,21 @@ process_battle_skill :: proc() -> (done := false) {
 }
 
 targeted :: proc(c_idx, team: int) -> bool {
-	if tss, ok := battle.pc_ui_state.(Target_Selection_State); ok {
-		switch ts in tss.ts {
-		case Select_One_Baddy:
+	if battle_menu.ui_state == .Skill_Target || battle_menu.ui_state == .Item_Target {
+		switch ts in battle_menu.ui_data.targets {
+		case Target_One_Baddy:
 			return team == BADDY_TEAM && c_idx == ts.i
-		case Select_One_Ally:
+		case Target_One_Ally:
 			return team == PLAYER_TEAM && c_idx == ts.i
-		case Select_All_Allies:
+		case Target_All_Allies:
 			return team == PLAYER_TEAM
-		case Select_All_Baddies:
+		case Target_All_Baddies:
 			return team == BADDY_TEAM
-		case Select_All_Combatants:
+		case Target_All_Combatants:
 			return true
 		}
 	}
 	return false
-}
-
-set_battle_skills :: proc(actor: ^Character) {
-	clear(&battle.menu_skills)
-	for k in Skill_Name {
-		if skill_in_set(k, actor.skills) {
-			append(&battle.menu_skills, k)
-		}
-	}
 }
 
 roll_for_counter :: proc(actor, target: ^Character, risk: f32 = 1) {

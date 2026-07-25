@@ -38,6 +38,7 @@ init :: proc() {
 	init_rl()
 	initialize_input()
 	init_dialogue()
+	battle_menu_load()
 	world_menu_load()
 
 	shop_load()
@@ -115,6 +116,7 @@ tear_down :: proc() {
 	delete_input()
 	delete_inventory_order()
 	tear_down_dialogue()
+	battle_menu_unload()
 	world_menu_unload()
 	unload_sounds()
 	shop_unload()
