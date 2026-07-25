@@ -8,7 +8,7 @@ MAX_ENCOUNTER_SIZE :: 6
 BADDY_TEAM :: 0
 PLAYER_TEAM :: 1
 
-BATTLE_ORIGIN_TILE :: Tile_Coord{3, 3}
+BATTLE_ORIGIN_TILE :: Tile_Coord{3, 4}
 
 Encounter_Spot :: struct {
 	tile:     Tile_Coord,
@@ -82,7 +82,7 @@ start_encounter :: proc(i: int, paused: bool) {
 	}
 
 	dy: f32 = 2 * tile_size
-	y0: f32 = 2 * tile_size
+	y0: f32 = 3 * tile_size
 	x: f32 = 9.5 * tile_size
 	y: f32 = y0
 	party_idx := 0
