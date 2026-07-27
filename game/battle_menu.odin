@@ -188,11 +188,18 @@ battle_redraw_skills_pane :: proc() {
 	for r in 0 ..< BATTLE_MENU_SKILLS_ROWS {
 		if r >= len(c_skills) {break}
 		cs := c_skills[battle_menu.ui_data.skill_sel.origin_idx + r]
+		tint := rl.WHITE
+		if r == selection_row(battle_menu.ui_data.skill_sel) {
+			tint = rl.YELLOW
+		}
+		if cs.charge < CHARGE_MAX {
+			tint = rl.GRAY
+		}
 		draw_text(
 			.5,
 			.5 + f32(r) * .5,
 			fmt.ctprintf("%s % 3.0f", skills[cs.skill_name].name, 100 * f16(cs.charge) / CHARGE_MAX),
-			rl.YELLOW if r == selection_row(battle_menu.ui_data.skill_sel) else rl.WHITE,
+			tint,
 		)
 	}
 }
@@ -301,8 +308,11 @@ battle_menu_update :: proc() {
 		if get_input(.ENTER) {
 			battle_menu.ui_data.skill =
 				get_character_skills(battle.combatants[battle_menu.ui_data.c_idx].character.skills)[battle_menu.ui_data.skill_sel.row_idx].skill_name
-			battle_menu.ui_state = .Skill_Target
-			battle_menu.ui_data.targets = default_target_selection(skills[battle_menu.ui_data.skill].targeting)
+			if battle.combatants[battle_menu.ui_data.c_idx].character.skills.charges[battle_menu.ui_data.skill] ==
+			   CHARGE_MAX {
+				battle_menu.ui_state = .Skill_Target
+				battle_menu.ui_data.targets = default_target_selection(skills[battle_menu.ui_data.skill].targeting)
+			}
 		} else if get_input(.CANCEL) {
 			battle_menu.ui_state = .Top
 		} else if dy, ok := get_y_input().?; ok {
@@ -325,7 +335,12 @@ battle_menu_update :: proc() {
 		} else if get_input(.CANCEL) {
 			battle_menu.ui_state = .Skills
 		} else if m := get_menu_input(); m.x != 0 || m.y != 0 {
-			target_update(m.x, m.y, battle_menu.ui_data.targets, skills[battle_menu.ui_data.skill].targeting)
+			battle_menu.ui_data.targets = target_update(
+				m.x,
+				m.y,
+				battle_menu.ui_data.targets,
+				skills[battle_menu.ui_data.skill].targeting,
+			)
 		}
 
 	case .Inventory:
@@ -354,7 +369,12 @@ battle_menu_update :: proc() {
 		} else if get_input(.CANCEL) {
 			battle_menu.ui_state = .Inventory
 		} else if m := get_menu_input(); m.x != 0 || m.y != 0 {
-			target_update(m.x, m.y, battle_menu.ui_data.targets, skills[battle_menu.ui_data.skill].targeting)
+			battle_menu.ui_data.targets = target_update(
+				m.x,
+				m.y,
+				battle_menu.ui_data.targets,
+				skills[battle_menu.ui_data.skill].targeting,
+			)
 		}
 	}
 	battle_update_icons()
