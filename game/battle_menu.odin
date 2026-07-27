@@ -193,7 +193,7 @@ battle_redraw_skills_pane :: proc() {
 			tint = rl.YELLOW
 		}
 		if cs.charge < CHARGE_MAX {
-			tint = rl.GRAY
+			tint = rl.ColorTint(tint, rl.GRAY)
 		}
 		draw_text(
 			.5,
