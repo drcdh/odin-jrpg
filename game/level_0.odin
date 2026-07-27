@@ -131,6 +131,42 @@ lorem_ipsum := [?]Event {
 	End{},
 }
 
+jukebox := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text {
+		text = "This may look like an ol'-timey jukebox, but it's actually a subtemporal meso-reconstructive bio-phasmatron! Use it, and almost instantaneously you'll feel like you've had a good long rest.",
+	},
+	Append_Choice{"Use it!"},
+	Append_Choice{"Nah, I'm good."},
+	Get_Choice{},
+	Clear_Text{},
+	Skip_If_Choice{20, 1},
+	Append_Text{text = "Sure. You still gotta put money in it, though. It's similar to a jukebox in that way."},
+	Append_Choice{"Ugh, fine. $3"},
+	Append_Choice{"What? No way."},
+	Get_Choice{},
+	Clear_Text{},
+	Skip_If_Choice{14, 1},
+	Skip_If_Have_Money{2, 3},
+	Append_Text{text = "You can't afford it!"},
+	Skip{11},
+	Lose_Money{3},
+	Curtain_Down{},
+	Heal_Party{},
+	Pause_Runner{.5},
+	Play_Sound{sound = .Warp},
+	Pause_Runner{.5},
+	Curtain_Up{},
+	Append_Text{text = "You feel great!"},
+	Clear_Text{},
+	Pause_Runner{.5},
+	Append_Text{text = "|but you're still hungry."},
+	Clear_Text{},
+	Close_Dialogue{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
 start_level_0 :: proc() {
 	add_pc_entity(LEVEL_0_PLAYER_SPAWN, .Down)
 
@@ -208,6 +244,11 @@ start_level_0 :: proc() {
 	_ = hm.add(
 		&entities,
 		Entity{id = 11, tile = LEVEL_0_SIGN, n = "Lorem Ipsum sign", talk = lorem_ipsum[:], v = Texture_Name.Sign},
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity{id = 567, tile = LEVEL_0_JUKEBOX, n = "Jukebox", talk = jukebox[:], v = Texture_Name.Jukebox},
 	)
 
 	play_music(&music_state, .Town)

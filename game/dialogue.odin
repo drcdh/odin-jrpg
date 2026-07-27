@@ -121,6 +121,7 @@ update_dialogue :: proc() {
 	case Dialogue_Choose:
 		if get_input(.ENTER) {
 			dialogue_choice_made = dialogue_choice_pending
+			dialogue_choice_pending = 0
 			clear(&dialogue_choices)
 			dialogue_state = Dialogue_Done{}
 		} else if dy, ok := get_y_input().?; ok {

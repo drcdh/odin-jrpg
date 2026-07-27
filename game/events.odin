@@ -42,6 +42,10 @@ Effect_Event :: struct {
 	target:      ^Character,
 	value:       int,
 }
+Heal_Party :: struct {}
+Lose_Money :: struct {
+	m: Money,
+}
 Move_Entity_Here :: struct {
 	id: Id,
 }
@@ -101,6 +105,10 @@ Skip_If_Choice :: struct {
 	n: int,
 	c: int,
 }
+Skip_If_Have_Money :: struct {
+	n: int,
+	m: Money,
+}
 Start_Encounter :: struct {
 	encounter: int,
 	paused:    bool,
@@ -127,11 +135,13 @@ Event :: union {
 	Battle_Unpause,
 	Clear_Text,
 	Close_Dialogue,
-	End,
-	Get_Choice,
-	Pause_Runner,
 	Curtain_Down,
 	Curtain_Up,
+	End,
+	Get_Choice,
+	Heal_Party,
+	Lose_Money,
+	Pause_Runner,
 	Move_Entity_Here,
 	Play_Animation,
 	Play_Sound,
@@ -149,6 +159,7 @@ Event :: union {
 	Skip,
 	Skip_If,
 	Skip_If_Choice,
+	Skip_If_Have_Money,
 	Start_Encounter,
 	Start_Level,
 	Start_Next_Level,
@@ -166,16 +177,6 @@ process_event :: proc(event: Event) {
 		runner.state = Wait_Dialogue{}
 	case Append_Choice:
 		append(&dialogue_choices, event.text)
-	case End:
-		runner.state = Continue{}
-	case Get_Choice:
-		dialogue_choice_made = nil
-		dialogue_state = Dialogue_Choose{}
-		runner.state = Wait_Choice{}
-	case Pause_Runner:
-		runner.state = Pause {
-			countdown = event.duration,
-		}
 	case Battle_Unpause:
 		battle.paused = false
 	case Clear_Text:
@@ -188,11 +189,26 @@ process_event :: proc(event: Event) {
 	case Curtain_Up:
 		curtain_up(event.type)
 		runner.state = Wait_Transition{}
+	case End:
+		runner.state = Continue{}
+	case Get_Choice:
+		dialogue_choice_made = nil
+		dialogue_state = Dialogue_Choose{}
+		runner.state = Wait_Choice{}
+	case Heal_Party:
+		heal_party()
+	case Lose_Money:
+		game_data.money -= event.m
+		if game_data.money < 0 {game_data.money = 0}
 	case Move_Entity_Here:
 		moving_entity := get_entity_p(event.id)
 		if pc, ok := hm.get(&entities, pc_entity); ok {
 			moving_entity.tile = pc.tile
 			fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
+		}
+	case Pause_Runner:
+		runner.state = Pause {
+			countdown = event.duration,
 		}
 	case Play_Animation:
 	// todo
@@ -232,6 +248,10 @@ process_event :: proc(event: Event) {
 		}
 	case Skip_If_Choice:
 		if dialogue_choice_made == event.c {
+			queue.consume_front(&runner.events, event.n)
+		}
+	case Skip_If_Have_Money:
+		if game_data.money >= event.m {
 			queue.consume_front(&runner.events, event.n)
 		}
 	case Start_Encounter:
