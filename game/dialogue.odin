@@ -250,4 +250,6 @@ set_next_dialogue_state :: proc() {
 tear_down_dialogue :: proc() {
 	strings.builder_destroy(&dialogue_builder)
 	strings.builder_destroy(&dialogue_marquee)
+	clear(&dialogue_choices)
+	delete(dialogue_choices)
 }

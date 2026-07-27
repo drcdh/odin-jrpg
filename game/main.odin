@@ -112,6 +112,7 @@ update :: proc() {
 
 tear_down :: proc() {
 	battle_destroy()
+	runner_destroy()
 	delete_atlased_font(font)
 	delete_input()
 	delete_inventory_order()

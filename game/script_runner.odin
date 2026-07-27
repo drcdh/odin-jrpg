@@ -31,6 +31,11 @@ Runner :: struct {
 
 runner := Runner{}
 
+runner_destroy :: proc() {
+	// call when game quits
+	queue.destroy(&runner.events)
+}
+
 queue_events :: proc(events: []Event) {
 	queue.push_back_elems(&runner.events, ..events)
 }

@@ -33,6 +33,10 @@ battle: Battle
 targeting_ease: f32
 
 battle_cleanup :: proc() {
+	for c_idx in battle.baddies {
+		// free new Characters created with new_baddy in start_encounter
+		free(battle.combatants[c_idx].character)
+	}
 	clear(&battle.allies)
 	clear(&battle.animations)
 	clear(&battle.baddies)
