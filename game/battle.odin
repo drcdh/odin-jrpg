@@ -18,7 +18,7 @@ Battle :: struct {
 	animations:  [dynamic]Process_Battle_Animation,
 	baddies:     [dynamic]int,
 	combatants:  [dynamic]Combatant,
-	encounter:   int,
+	encounter:   ^Encounter,
 	paused:      bool,
 	skill_plays: [dynamic]Battle_Skill_Play,
 	skill_state: Process_Skill,
@@ -62,19 +62,9 @@ battle_destroy :: proc() {
 
 battle_init :: proc() {
 	battle_menu_start()
-	queue_events(
-		[]Event {
-			Curtain_Up{.Battle},
-			// Append_Text{text = "Uh oh."},
-			// Append_Text{text = "Get ready!"},
-			// Close_Dialogue{},
-			// Clear_Text{},
-			Pause_Runner{.5},
-			Battle_Unpause{},
-			End{},
-		},
-		battle = true,
-	)
+	init_events :=
+		battle.encounter.init_events.? or_else []Event{Curtain_Up{.Battle}, Pause_Runner{.5}, Battle_Unpause{}, End{}}
+	queue_events(init_events, battle = true)
 }
 
 check_win :: proc() -> Maybe(Battle_Result) {
@@ -82,7 +72,7 @@ check_win :: proc() -> Maybe(Battle_Result) {
 	for c_idx in battle.allies {
 		if combatant_alive(battle.combatants[c_idx]) {
 			allies_alive = true
-		}	}
+		}}
 	if !allies_alive {
 		return .Lose
 	}
@@ -275,23 +265,22 @@ update_battle :: proc(dt: f32) {
 			battle_menu_update()
 		case .Lose:
 			battle.paused = true
-			queue_events(
-				[]Event {
+			lose_events := battle.encounter.lose_events.? or_else []Event {
 					Append_Text{text = "You lost|"},
 					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{.5},
 					Curtain_Down{.Battle},
+					// TODO: clear other runners
 					Battle_Deactivate{},
+					// TODO: Title{},
 					End{},
-				},
-				battle = true,
-			)
+				}
+			queue_events(lose_events, battle = true)
 		case .Win:
 			battle.paused = true
-			// TODO: set party members to cheer pose
-			queue_events(
-				[]Event {
+			win_events := battle.encounter.win_events.? or_else []Event {
+					// TODO: set party members to cheer pose
 					Add_Item{.Potion, 1},
 					Append_Text{text = "You won!"},
 					Clear_Text{},
@@ -304,9 +293,8 @@ update_battle :: proc(dt: f32) {
 					Curtain_Down{.Battle},
 					Battle_Deactivate{},
 					End{},
-				},
-				battle = true,
-			)
+				}
+			queue_events(win_events, battle = true)
 		}
 	}
 

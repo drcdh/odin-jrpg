@@ -16,7 +16,10 @@ Encounter_Spot :: struct {
 }
 
 Encounter :: struct {
-	baddies: [MAX_ENCOUNTER_SIZE]Encounter_Spot,
+	baddies:     [MAX_ENCOUNTER_SIZE]Encounter_Spot,
+	init_events: Maybe([]Event),
+	lose_events: Maybe([]Event),
+	win_events:  Maybe([]Event),
 }
 
 encounters := [?]Encounter {
@@ -111,6 +114,7 @@ start_encounter :: proc(i: int, paused: bool) {
 		}
 	}
 	battle.active = true
+	battle.encounter = &encounters[i]
 	battle.paused = paused
 	battle_init()
 
