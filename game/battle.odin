@@ -82,12 +82,8 @@ check_win :: proc() -> Maybe(Battle_Result) {
 	for c_idx in battle.allies {
 		if combatant_alive(battle.combatants[c_idx]) {
 			allies_alive = true
-		} else {
-			fmt.println("ALLY IS DEAD")
-		}
-	}
+		}	}
 	if !allies_alive {
-		fmt.println("ALLIES ARE DEAD")
 		return .Lose
 	}
 	baddies_alive := false
