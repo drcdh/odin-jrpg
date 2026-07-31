@@ -17,11 +17,6 @@ Append_Text :: struct {
 Append_Choice :: struct {
 	text: string,
 }
-Battle_Effect_Event :: struct {
-	actor:  int,
-	target: int,
-	effect: Effect,
-}
 Battle_Unpause :: struct {}
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}

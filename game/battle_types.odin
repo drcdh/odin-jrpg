@@ -26,7 +26,6 @@ Combatant_Visual :: struct {
 	variant: Combatant_Visual_Variant,
 }
 
-// TURN
 Battle_Skill_Play :: struct {
 	actor:   int,
 	targets: Target_Selection,
@@ -34,43 +33,25 @@ Battle_Skill_Play :: struct {
 	windup:  Ticks,
 }
 
-// EVENTS
-Battle_Event :: union {
-	Battle_Effect_Event,
-	Play_Animation,
-	Play_Sound,
-	Text_Effect,
-}
-
-// STATE
-Next_Event :: struct {}
-Next_Turn :: struct {}
-Take_Turn :: struct {
-	c_idx: int,
-	t:     f32,
-}
 Process_Battle_Animation :: struct {
 	animation: Animation,
 	delay:     f32,
 	offset:    Pixel_Coord,
 	t:         f32,
 }
+
 Process_Text_Effect :: struct {
 	color: rl.Color,
 	coord: Pixel_Coord,
 	t:     f32,
 	text:  cstring,
 }
+
 Process_Skill :: struct {
 	active:          bool,
 	skill_plays_idx: int,
 	step:            int,
 	t:               f32,
-}
-Battle_State :: union {
-	Next_Turn,
-	Take_Turn,
-	Process_Skill,
 }
 
 Turn_Proc :: proc(actor_idx: int)
