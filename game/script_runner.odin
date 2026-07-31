@@ -60,8 +60,16 @@ runner_current :: proc(runner: ^Runner) -> Event {
 }
 
 update_runners :: proc(dt: f32) {
-	for &runner in runners {
-		update_runner(&runner, dt)
+	for i := 0; i < len(runners); {
+		if runner_len(runners[i]) <= 0 {
+			queue.destroy(&runners[i].events)
+			unordered_remove(&runners, i)
+		} else {
+			if !battle.active || runners[i].battle {
+				update_runner(&runners[i], dt)
+			}
+			i += 1
+		}
 	}
 }
 
@@ -72,7 +80,6 @@ update_runner :: proc(runner: ^Runner, dt: f32) {
 		case .Continue:
 			queue.consume_front(&runner.events, 1)
 			if runner_len(runner^) == 0 {
-				runner.state = .Start
 				return
 			}
 		case .Pause:
@@ -110,6 +117,8 @@ process_event :: proc(runner: ^Runner) {
 		runner.state = .Wait_Dialogue
 	case Append_Choice:
 		append(&dialogue_choices, event.text)
+	case Battle_Deactivate:
+		battle_deactivate()
 	case Battle_Unpause:
 		battle.paused = false
 	case Clear_Text:

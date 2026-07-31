@@ -111,7 +111,6 @@ start_encounter :: proc(i: int, paused: bool) {
 		}
 	}
 	battle.active = true
-	battle.ending = false
 	battle.paused = paused
 	battle_init()
 

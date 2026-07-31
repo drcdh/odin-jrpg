@@ -14,6 +14,7 @@ Append_Text :: struct {
 Append_Choice :: struct {
 	text: string,
 }
+Battle_Deactivate :: struct {}
 Battle_Unpause :: struct {}
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}
@@ -124,6 +125,7 @@ Event :: union {
 	Add_Item,
 	Append_Choice,
 	Append_Text,
+	Battle_Deactivate,
 	Battle_Unpause,
 	Clear_Text,
 	Close_Dialogue,

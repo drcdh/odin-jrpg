@@ -20,7 +20,6 @@ Battle :: struct {
 	baddies:     [dynamic]int,
 	combatants:  [dynamic]Combatant,
 	encounter:   int,
-	ending:      bool,
 	paused:      bool,
 	skill_plays: [dynamic]Battle_Skill_Play,
 	skill_state: Process_Skill,
@@ -47,6 +46,11 @@ battle_cleanup :: proc() {
 	battle.skill_state = Process_Skill{}
 }
 
+battle_deactivate :: proc() {
+	battle.active = false
+	battle_cleanup()
+}
+
 battle_destroy :: proc() {
 	delete(battle.allies)
 	delete(battle.animations)
@@ -59,27 +63,44 @@ battle_destroy :: proc() {
 
 battle_init :: proc() {
 	battle_menu_start()
+	queue_events(
+		[]Event {
+			Curtain_Up{.Battle},
+			// Append_Text{text = "Uh oh."},
+			// Append_Text{text = "Get ready!"},
+			// Close_Dialogue{},
+			// Clear_Text{},
+			Pause_Runner{.5},
+			Battle_Unpause{},
+			End{},
+		},
+		battle = true,
+	)
 }
 
-check_win :: proc() -> bool {
-	// TODO: tie function to encounter
-	team_alive := [?]bool{false, false}
-	for c in battle.combatants {
-		if combatant_alive(c) {
-			team_alive[c.team] = true
+check_win :: proc() -> Maybe(Battle_Result) {
+	allies_alive := false
+	for c_idx in battle.allies {
+		if combatant_alive(battle.combatants[c_idx]) {
+			allies_alive = true
+		} else {
+			fmt.println("ALLY IS DEAD")
 		}
 	}
-	if team_alive[0] && !team_alive[1] {
-		fmt.println("Team 0 wins")
-		battle.ending = true
-	} else if !team_alive[0] && team_alive[1] {
-		fmt.println("Team 1 wins")
-		battle.ending = true
-	} else if !team_alive[0] && !team_alive[1] {
-		fmt.println("Draw")
-		battle.ending = true
+	if !allies_alive {
+		fmt.println("ALLIES ARE DEAD")
+		return .Lose
 	}
-	return battle.ending
+	baddies_alive := false
+	for c_idx in battle.baddies {
+		if combatant_alive(battle.combatants[c_idx]) {
+			baddies_alive = true
+		}
+	}
+	if !baddies_alive {
+		return .Win
+	}
+	return nil
 }
 
 combatant_ready :: proc(c: Combatant) -> bool {
@@ -249,21 +270,48 @@ get_next_ready_pc :: proc() -> Maybe(int) {
 
 update_battle :: proc(dt: f32) {
 	if !battle.paused {
-		check_win()
-		if !battle.skill_state.active {
-			battle_time_tick(dt)
+		switch check_win() {
+		case nil:
+			if !battle.skill_state.active {
+				battle_time_tick(dt)
+			}
+			process_ready_battle_skill(dt)
+			process_ready_combatants(dt)
+			battle_menu_update()
+		case .Lose:
+			battle.paused = true
+			queue_events(
+				[]Event {
+					Append_Text{text = "You lost|"},
+					Clear_Text{},
+					Pause_Runner{.5},
+					Curtain_Down{.Battle},
+					Battle_Deactivate{},
+					End{},
+				},
+				battle = true,
+			)
+		case .Win:
+			battle.paused = true
+			// TODO: set party members to cheer pose
+			queue_events(
+				[]Event {
+					Add_Item{.Potion, 1},
+					Append_Text{text = "You won!"},
+					Clear_Text{},
+					Append_Text{text = "Got some EXP maybe?"},
+					Clear_Text{},
+					Append_Text{text = fmt.aprintf("Got item: %v", Item_Name.Potion)}, // FIXME: leak
+					Close_Dialogue{},
+					Clear_Text{},
+					Pause_Runner{.5},
+					Curtain_Down{.Battle},
+					Battle_Deactivate{},
+					End{},
+				},
+				battle = true,
+			)
 		}
-		process_ready_battle_skill(dt)
-		process_ready_combatants(dt)
-		// if ally_idx, ally_ready := battle.pc_ready.?; ally_ready {
-		// 	pc_turn(battle.allies[ally_idx])
-		// }
-		battle_menu_update()
-	}
-
-	if battle.ending {
-		battle.active = false
-		battle_cleanup()
 	}
 
 	targeting_ease += dt / .5
@@ -420,6 +468,7 @@ process_battle_skill :: proc() -> (done := false) {
 				do_effect(&actor, &target, skill.effect)
 			}
 		}
+		battle_menu_set_stale(.Party)
 		skill_state.step += 1
 	case 8:
 		if len(battle.text) == 0 {

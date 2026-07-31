@@ -55,3 +55,8 @@ Process_Skill :: struct {
 }
 
 Turn_Proc :: proc(actor_idx: int)
+
+Battle_Result :: enum {
+	Lose,
+	Win,
+}

@@ -79,19 +79,35 @@ BUTTON_2_SCRIPT := [?]Event {
 	End{},
 }
 
-MONSTER_IN_A_BOX := [?]Event {
+MONSTER_IN_A_BOX_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Append_Text{text = "Monster in a box!"},
 	Close_Dialogue{},
 	Clear_Text{},
 	Curtain_Down{.Battle},
-	Start_Encounter{encounter = 4, paused = true},
+	Start_Encounter{encounter = 0, paused = true},
+	// Curtain_Up{.Battle},
+	// Append_Text{text = "Oh noes!"},
+	// Close_Dialogue{},
+	// Clear_Text{},
+	// Battle_Unpause{},
+	// Wait_Encounter{},
 	Curtain_Up{.Battle},
-	Append_Text{text = "Oh noes!"},
+	Append_Text{text = "Didja win?"},
 	Close_Dialogue{},
 	Clear_Text{},
-	Battle_Unpause{},
-	Wait_Encounter{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
+MONSTER_IN_A_BOX_1 := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text{text = "Monster in a box!"},
+	Close_Dialogue{},
+	Clear_Text{},
+	Curtain_Down{.Battle},
+	Start_Encounter{encounter = 1, paused = true},
+	Curtain_Up{.Battle},
 	Append_Text{text = "Didja win?"},
 	Close_Dialogue{},
 	Clear_Text{},
@@ -236,7 +252,18 @@ start_level_0 :: proc() {
 			id = 100,
 			tile = LEVEL_0_CHEST_MONSTER,
 			n = "Monster in a box",
-			talk = MONSTER_IN_A_BOX[:],
+			talk = MONSTER_IN_A_BOX_0[:],
+			v = Texture_Name.Box,
+		},
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 100,
+			tile = LEVEL_0_CHEST_MONSTER + {0, 1},
+			n = "Monster in a box",
+			talk = MONSTER_IN_A_BOX_1[:],
 			v = Texture_Name.Box,
 		},
 	)
