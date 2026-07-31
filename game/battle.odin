@@ -1,4 +1,3 @@
-#+feature using-stmt
 package game
 
 import "core:fmt"
@@ -283,6 +282,7 @@ update_battle :: proc(dt: f32) {
 			queue_events(
 				[]Event {
 					Append_Text{text = "You lost|"},
+					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{.5},
 					Curtain_Down{.Battle},
@@ -394,29 +394,28 @@ process_battle_skill :: proc() -> (done := false) {
 	// fmt.printfln("%#v", battle.animations)
 	// fmt.printfln("%#v", battle.sounds)
 	// fmt.printfln("%#v", battle.text)
-	using battle
-	play := skill_plays[skill_state.skill_plays_idx]
+	play := battle.skill_plays[battle.skill_state.skill_plays_idx]
 	skill := play.skill
-	switch skill_state.step {
+	switch battle.skill_state.step {
 	case 0:
 		// TODO: set_text_display(skill.name)
 		fmt.printfln("~~ %s ~~", skill.name)
-		skill_state.step += 1
+		battle.skill_state.step += 1
 	case 1:
-		if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
-			skill_state.t = 0
-			skill_state.step += 1
+		if battle.skill_state.t += rl.GetFrameTime(); battle.skill_state.t >= .5 {
+			battle.skill_state.t = 0
+			battle.skill_state.step += 1
 		}
 	case 2:
 		// TODO: set actor to walk left
-		skill_state.step += 1
+		battle.skill_state.step += 1
 	case 3:
 		// TODO: wait for walk to finish
-		skill_state.step += 1
+		battle.skill_state.step += 1
 	case 4:
-		if skill_state.t += rl.GetFrameTime(); skill_state.t >= .5 {
-			skill_state.t = 0
-			skill_state.step += 1
+		if battle.skill_state.t += rl.GetFrameTime(); battle.skill_state.t >= .5 {
+			battle.skill_state.t = 0
+			battle.skill_state.step += 1
 		}
 	case 5:
 		animation_name := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
@@ -439,10 +438,10 @@ process_battle_skill :: proc() -> (done := false) {
 				play_anim_sound(animation_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
 			}
 		}
-		skill_state.step += 1
+		battle.skill_state.step += 1
 	case 6:
 		if len(battle.animations) == 0 && len(battle.sounds) == 0 {
-			skill_state.step += 1
+			battle.skill_state.step += 1
 		}
 	case 7:
 		actor := battle.combatants[play.actor]
@@ -469,14 +468,14 @@ process_battle_skill :: proc() -> (done := false) {
 			}
 		}
 		battle_menu_set_stale(.Party)
-		skill_state.step += 1
+		battle.skill_state.step += 1
 	case 8:
 		if len(battle.text) == 0 {
-			skill_state.step += 1
+			battle.skill_state.step += 1
 		}
 	case 9:
 		// TODO: set actor to walk right
-		skill_state.step += 1
+		battle.skill_state.step += 1
 	case 10:
 		// TODO: wait for walk to finish then set actor to idle left
 		// TODO: remove_text_display(skill.name)
