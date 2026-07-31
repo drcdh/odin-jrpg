@@ -91,7 +91,7 @@ MONSTER_IN_A_BOX := [?]Event {
 	Close_Dialogue{},
 	Clear_Text{},
 	Battle_Unpause{},
-	Wait_Encounter_R{},
+	Wait_Encounter{},
 	Append_Text{text = "Didja win?"},
 	Close_Dialogue{},
 	Clear_Text{},

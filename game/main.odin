@@ -80,7 +80,7 @@ update :: proc() {
 	update_input_state(dt)
 
 	update_dialogue()
-	update_runner(dt)
+	update_runners(dt)
 
 	if battle.active {
 		update_battle(dt)
@@ -112,10 +112,10 @@ update :: proc() {
 
 tear_down :: proc() {
 	battle_destroy()
-	runner_destroy()
 	delete_atlased_font(font)
 	delete_input()
 	delete_inventory_order()
+	delete_runners()
 	tear_down_dialogue()
 	battle_menu_unload()
 	world_menu_unload()
