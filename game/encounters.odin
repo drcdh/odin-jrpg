@@ -8,7 +8,7 @@ MAX_ENCOUNTER_SIZE :: 6
 BADDY_TEAM :: 0
 PLAYER_TEAM :: 1
 
-BATTLE_ORIGIN_TILE :: Tile_Coord{3, 4}
+BATTLE_ORIGIN_TILE :: Tile_Coord{2, 4}
 
 Encounter_Spot :: struct {
 	tile:     Tile_Coord,
@@ -29,7 +29,7 @@ encounters := [?]Encounter {
 			{{0, 0}, .Mouse_Sized_Rat},
 			{{0, 1}, .Mouse_Sized_Rat},
 			{{0, 3}, .Malicious_Mushroom},
-			{{1, 1}, .Generic_Goblin_1},
+			{{2, 1}, .Generic_Goblin_1},
 			{{-2, 1}, .Magic_Serpent},
 			{},
 		},
@@ -37,21 +37,21 @@ encounters := [?]Encounter {
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
-			{{1, 0}, .Mouse_Sized_Rat},
 			{{2, 0}, .Mouse_Sized_Rat},
+			{{4, 0}, .Mouse_Sized_Rat},
 			{{0, 1}, .Mouse_Sized_Rat},
-			{{1, 1}, .Mouse_Sized_Rat},
 			{{2, 1}, .Mouse_Sized_Rat},
+			{{4, 1}, .Mouse_Sized_Rat},
 		},
 	},
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
-			{{1, 0}, .Mouse_Sized_Rat},
-			{{1, 1}, .Rat_Sized_Mouse},
+			{{2, 0}, .Mouse_Sized_Rat},
+			{{2, 1}, .Rat_Sized_Mouse},
 			{{0, 2}, .Mouse_Sized_Rat},
-			{{1, 2}, .Mouse_Sized_Rat},
 			{{2, 2}, .Mouse_Sized_Rat},
+			{{4, 2}, .Mouse_Sized_Rat},
 		},
 	},
 	{baddies = {{{0, 0}, .Bad_Box}, {{0, 3}, .Bad_Box}, {{0, 5}, .Bad_Box}, {}, {}, {}}},

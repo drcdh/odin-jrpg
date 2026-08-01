@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import "core:math"
 
 import rl "vendor:raylib"
 
@@ -175,9 +176,9 @@ draw_battle_combatants :: proc() {
 			}
 			switch v in c.visual.variant {
 			case Animation:
-				draw_animation(v, c.coord, tint)
+				draw_animation(v, c.coord + Pixel_Coord{f32(-math.sign(1 - 2 * c.team)), 1} * c.coord_d, tint)
 			case Texture_Name:
-				draw_texture(v, c.coord, tint)
+				draw_texture(v, c.coord + Pixel_Coord{f32(-math.sign(1 - 2 * c.team)), 1} * c.coord_d, tint)
 			}
 			// debug
 			draw_text(
@@ -436,11 +437,16 @@ process_battle_skill :: proc() -> (done := false) {
 			battle.skill_state.step += 1
 		}
 	case 2:
-		// TODO: set actor to walk left
+		// TODO: set actor pose to walk left
 		battle.skill_state.step += 1
 	case 3:
-		// TODO: wait for walk to finish
-		battle.skill_state.step += 1
+		if battle.combatants[play.actor].coord_d.x > -tile_size {
+			battle.combatants[play.actor].coord_d.x -= 4 * rl.GetFrameTime() * tile_size
+		} else {
+			battle.combatants[play.actor].coord_d.x = -tile_size
+			// TODO: freeze actor animation to 2nd frame
+			battle.skill_state.step += 1
+		}
 	case 4:
 		if battle.skill_state.t += rl.GetFrameTime(); battle.skill_state.t >= .5 {
 			battle.skill_state.t = 0
@@ -506,9 +512,14 @@ process_battle_skill :: proc() -> (done := false) {
 		// TODO: set actor to walk right
 		battle.skill_state.step += 1
 	case 10:
-		// TODO: wait for walk to finish then set actor to idle left
-		// TODO: remove_text_display(skill.name)
-		done = true
+		if battle.combatants[play.actor].coord_d.x < 0 {
+			battle.combatants[play.actor].coord_d.x += 4 * rl.GetFrameTime() * tile_size
+		} else {
+			battle.combatants[play.actor].coord_d.x = 0
+			// TODO: wait for walk to finish then set actor to idle left
+			// TODO: remove_text_display(skill.name)
+			done = true
+		}
 	}
 	return
 }

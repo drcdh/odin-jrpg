@@ -7,6 +7,7 @@ Ticks :: f32
 Combatant :: struct {
 	using character: ^Character,
 	coord:           Pixel_Coord,
+	coord_d:         Pixel_Coord,
 	enabled:         bool,
 	id:              int,
 	t:               Ticks,
