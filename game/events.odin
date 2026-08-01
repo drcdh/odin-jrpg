@@ -7,9 +7,13 @@ Add_Item :: struct {
 	number: u8,
 }
 Append_Text :: struct {
+	text: string,
+}
+Append_Text_Ex :: struct {
 	text:  string,
 	hurry: bool,
 	pause: f32,
+	lines: int,
 }
 Append_Choice :: struct {
 	text: string,
@@ -129,6 +133,7 @@ Event :: union {
 	Add_Item,
 	Append_Choice,
 	Append_Text,
+	Append_Text_Ex,
 	Battle_Deactivate,
 	Battle_Pause,
 	Battle_Unpause,

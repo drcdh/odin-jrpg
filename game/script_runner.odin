@@ -115,6 +115,15 @@ process_event :: proc(runner: ^Runner) {
 	case Add_Item:
 		add_item(event.item, event.number)
 	case Append_Text:
+		dialogue_lines = DEFAULT_DIALOGUE_LINES
+		queue_dialogue(event.text)
+		runner.state = .Wait_Dialogue
+	case Append_Text_Ex:
+		if event.lines > 0 {
+			dialogue_lines = event.lines
+		} else {
+			dialogue_lines = DEFAULT_DIALOGUE_LINES
+		}
 		queue_dialogue(event.text, event.hurry, event.pause)
 		runner.state = .Wait_Dialogue
 	case Append_Choice:

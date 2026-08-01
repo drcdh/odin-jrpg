@@ -268,7 +268,7 @@ update_battle :: proc(dt: f32) {
 		case .Lose:
 			battle.paused = true
 			lose_events := battle.encounter.lose_events.? or_else []Event {
-					Append_Text{text = "You lost|"},
+					Append_Text_Ex{text = "You lost|", hurry = true, pause = 1, lines = 2},
 					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{.5},
@@ -284,11 +284,11 @@ update_battle :: proc(dt: f32) {
 			win_events := battle.encounter.win_events.? or_else []Event {
 					// TODO: set party members to cheer pose
 					Add_Item{.Potion, 1},
-					Append_Text{text = "You won!"},
+					Append_Text_Ex{text = "You won!", hurry = true, pause = 1, lines = 2},
 					Clear_Text{},
-					Append_Text{text = "Got some EXP maybe?"},
+					Append_Text_Ex{text = "Got some EXP maybe?", hurry = true, pause = 1, lines = 2},
 					Clear_Text{},
-					Append_Text{text = fmt.aprintf("Got item: %v", Item_Name.Potion)}, // FIXME: leak
+					Append_Text_Ex{text = fmt.aprintf("Got item: %v", Item_Name.Potion), hurry = true, pause = 1, lines = 2}, // FIXME: leak
 					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{.5},

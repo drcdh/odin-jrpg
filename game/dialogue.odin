@@ -37,7 +37,9 @@ dialogue_builder: strings.Builder
 dialogue_marquee: strings.Builder
 dialogue_icon: Animation
 
-dialogue_lines: int = 4 // todo
+DEFAULT_DIALOGUE_LINES :: 4
+
+dialogue_lines: int = DEFAULT_DIALOGUE_LINES
 dialogue_line_width: int = 2 * VIEW_TILES_W - 2
 
 dialogue_choices: [dynamic]string
@@ -57,7 +59,7 @@ draw_dialogue :: proc() {
 			draw_text(.5, .5, strings.clone_to_cstring(substr, context.temp_allocator))
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
-			draw_animation(dialogue_icon, {view_dim.x - tile_size, 2 * tile_size}, rl.WHITE)
+			draw_animation(dialogue_icon, {view_dim.x - tile_size, f32(dialogue_lines / 2) * tile_size}, rl.WHITE)
 		}
 		if _, choosing := dialogue_state.(Dialogue_Choose); choosing {
 			draw_choices()
@@ -223,7 +225,7 @@ dialogue_done :: proc() -> bool {
 	return done
 }
 
-queue_dialogue :: proc(text: string, hurry: bool, pause: f32) {
+queue_dialogue :: proc(text: string, hurry := false, pause: f32 = 0) {
 	ftext, _ := strings.replace(text, "$player", game_data.protagonist_name, -1, context.temp_allocator)
 	strings.write_string(&dialogue_builder, ftext)
 	dialogue_hurry = hurry

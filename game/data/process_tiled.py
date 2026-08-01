@@ -122,10 +122,10 @@ render_{level_name} :: proc() {{
 	Add_Item{{item = .{item}, number = 1}},""")
 		if len(items) > 1:
 			out_f.write(f"""
-	Append_Text{{text = "Got items: {", ".join(items)}"}},""")
+	Append_Text{{"Got items: {", ".join(items)}"}},""")
 		else:
 			out_f.write(f"""
-	Append_Text{{text = "Got item: {items[0]}"}},""")
+	Append_Text{{"Got item: {items[0]}"}},""")
 		out_f.write(f"""
 	Close_Dialogue{{}},
 	Clear_Text{{}},""")
