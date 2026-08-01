@@ -115,6 +115,21 @@ MONSTER_IN_A_BOX_1 := [?]Event {
 	End{},
 }
 
+MONSTER_IN_A_BOX_2 := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text{text = "Monster in a box!"},
+	Close_Dialogue{},
+	Clear_Text{},
+	Curtain_Down{.Battle},
+	Start_Encounter{encounter = 2, paused = true},
+	Curtain_Up{.Battle},
+	Append_Text{text = "Didja win?"},
+	Close_Dialogue{},
+	Clear_Text{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
 welcome := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Curtain_Up{},
@@ -260,10 +275,21 @@ start_level_0 :: proc() {
 	_ = hm.add(
 		&entities,
 		Entity {
-			id = 100,
+			id = 101,
 			tile = LEVEL_0_CHEST_MONSTER + {0, 1},
 			n = "Monster in a box",
 			talk = MONSTER_IN_A_BOX_1[:],
+			v = Texture_Name.Box,
+		},
+	)
+
+	_ = hm.add(
+		&entities,
+		Entity {
+			id = 102,
+			tile = LEVEL_0_CHEST_MONSTER + {0, 2},
+			n = "Monster in a box",
+			talk = MONSTER_IN_A_BOX_2[:],
 			v = Texture_Name.Box,
 		},
 	)

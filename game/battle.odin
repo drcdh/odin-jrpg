@@ -162,7 +162,7 @@ draw_battle_combatants :: proc() {
 		if c.enabled {
 			tint := c.visual.tint
 			if c.character.hitpoints <= 0 {
-				tint = rl.RED
+				tint = rl.ColorTint(tint, rl.RED)
 			}
 			if battle_menu.ui_state != .Inactive {
 				if c_idx == battle_menu.ui_data.c_idx {
@@ -262,6 +262,7 @@ update_battle :: proc(dt: f32) {
 			}
 			process_ready_battle_skill(dt)
 			process_ready_combatants(dt)
+			check_downed_baddies()
 			battle_menu_update()
 		case .Lose:
 			battle.paused = true
@@ -371,6 +372,50 @@ process_ready_combatants :: proc(dt: f32) {
 			}
 		}
 	}
+}
+
+check_downed_baddies :: proc() {
+	// check for downed baddies, fade them, and disable
+	runner_idx: Maybe(int)
+	for c_idx in battle.baddies {
+		c := battle.combatants[c_idx]
+		if c.enabled && c.hitpoints <= 0 {
+			if runner_idx == nil {
+				runner_idx = queue_events(
+					[]Event{Battle_Pause{}, Pause_Runner{.5}, Play_Sound{sound = .Down}, Combatant_Transition{c_idx}},
+					battle = true,
+				)
+			} else {
+				runner_idx = queue_events(
+					[]Event{Pause_Runner{.25}, Play_Sound{sound = .Down}, Combatant_Transition{c_idx}},
+					i = runner_idx,
+				)
+			}
+		}
+	}
+	if runner_idx != nil {
+		queue_events([]Event{Pause_Runner{.5}, Battle_Unpause{}}, i = runner_idx)
+	}
+}
+
+combatant_transition :: proc(c_idx: int) -> bool {
+	dt := rl.GetFrameTime()
+	c := battle.combatants[c_idx]
+	alpha := c.visual.tint.a
+	if alpha == 0 {
+		battle.combatants[c_idx].enabled = false
+		return true // finished
+	} else {
+		// reduce alpha
+		da := u8(dt * 600)
+		if alpha <= da {
+			alpha = 0
+		} else {
+			alpha -= da
+		}
+		battle.combatants[c_idx].visual.tint.a = alpha
+	}
+	return false
 }
 
 process_battle_skill :: proc() -> (done := false) {

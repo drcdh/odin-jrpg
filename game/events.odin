@@ -15,9 +15,13 @@ Append_Choice :: struct {
 	text: string,
 }
 Battle_Deactivate :: struct {}
+Battle_Pause :: struct {}
 Battle_Unpause :: struct {}
 Clear_Text :: struct {}
 Close_Dialogue :: struct {}
+Combatant_Transition :: struct {
+	c_idx: int,
+}
 End :: struct {}
 Get_Choice :: struct {}
 Pause_Runner :: struct {
@@ -126,9 +130,11 @@ Event :: union {
 	Append_Choice,
 	Append_Text,
 	Battle_Deactivate,
+	Battle_Pause,
 	Battle_Unpause,
 	Clear_Text,
 	Close_Dialogue,
+	Combatant_Transition,
 	Curtain_Down,
 	Curtain_Up,
 	End,

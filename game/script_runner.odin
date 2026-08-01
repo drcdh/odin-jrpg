@@ -13,6 +13,7 @@ Runner_State :: enum {
 	Wait_Dialogue,
 	Wait_Encounter,
 	Wait_Transition,
+	Working,
 }
 
 Event_Queue :: queue.Queue(Event)
@@ -101,6 +102,7 @@ update_runner :: proc(runner: ^Runner, dt: f32) {
 		case .Wait_Transition:
 			if transition_done() {runner.state = .Continue}
 			return
+		case .Working:
 		}
 		fmt.printfln("% 4d: %w || %w", frame_count, runner.state, runner_current(runner))
 		process_event(runner)
@@ -119,12 +121,16 @@ process_event :: proc(runner: ^Runner) {
 		append(&dialogue_choices, event.text)
 	case Battle_Deactivate:
 		battle_deactivate()
+	case Battle_Pause:
+		battle.paused = true
 	case Battle_Unpause:
 		battle.paused = false
 	case Clear_Text:
 		clear_dialogue()
 	case Close_Dialogue:
 		close_dialogue()
+	case Combatant_Transition:
+		runner.state = .Continue if combatant_transition(event.c_idx) else .Working
 	case Curtain_Down:
 		curtain_down(event.type)
 		runner.state = .Wait_Transition
