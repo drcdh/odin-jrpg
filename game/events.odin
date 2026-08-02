@@ -78,6 +78,13 @@ Set_Entity_Disabled :: struct {
 	id:       Id,
 	disabled: bool,
 }
+Set_Entity_Face :: struct {
+	id:   Id,
+	face: Face,
+}
+Set_Entity_Face_Party :: struct {
+	id: Id,
+}
 Set_Entity_Talk_Script :: struct {
 	id:     Id,
 	script: []Event,
@@ -156,6 +163,8 @@ Event :: union {
 	Set_Int,
 	Set_Entity_Busy,
 	Set_Entity_Disabled,
+	Set_Entity_Face,
+	Set_Entity_Face_Party,
 	Set_Entity_Talk_Script,
 	Set_Entity_Trap_Script,
 	Set_Entity_State,

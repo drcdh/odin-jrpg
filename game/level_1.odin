@@ -19,6 +19,7 @@ WOMAN_ID :: 90
 GUY_SCRIPT := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Set_Entity_Busy{id = GUY_ID, busy = true},
+	Set_Entity_Face_Party{id = GUY_ID},
 	Append_Text{"Erm, hello, $player."},
 	Clear_Text{},
 	Skip_If{2, .Met_Dude},
@@ -27,6 +28,7 @@ GUY_SCRIPT := [?]Event {
 	Append_Text{"Have you met Dude yet? Very good."},
 	Close_Dialogue{},
 	Clear_Text{},
+	Set_Entity_Face{id = GUY_ID, face = .Down},
 	Set_Entity_Busy{id = GUY_ID, busy = false},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},

@@ -161,6 +161,26 @@ set_entity_disabled :: proc(e_id: Id, disabled: bool) {
 	fmt.println("didn't find entity with id", e_id)
 }
 
+set_entity_face :: proc(e_id: Id, face: Face) {
+	it := hm.iterator_make(&entities)
+	for e, _ in hm.iterate(&it) {
+		if e.id == e_id {
+			e.face = face
+		}
+	}
+}
+
+set_entity_face_party :: proc(e_id: Id) {
+	if pc, ok := hm.get(&entities, pc_entity); ok {
+		it := hm.iterator_make(&entities)
+		for e, _ in hm.iterate(&it) {
+			if e.id == e_id {
+				e.face = face_toward(e, pc)
+			}
+		}
+	}
+}
+
 set_entity_talk_script :: proc(e_id: Id, script: []Event) {
 	it := hm.iterator_make(&entities)
 	for e, _ in hm.iterate(&it) {

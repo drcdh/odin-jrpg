@@ -187,6 +187,10 @@ process_event :: proc(runner: ^Runner) {
 		set_entity_busy(event.id, event.busy)
 	case Set_Entity_Disabled:
 		set_entity_disabled(event.id, event.disabled)
+	case Set_Entity_Face:
+		set_entity_face(event.id, event.face)
+	case Set_Entity_Face_Party:
+		set_entity_face_party(event.id)
 	case Set_Entity_Talk_Script:
 		set_entity_talk_script(event.id, event.script)
 	case Set_Entity_Trap_Script:

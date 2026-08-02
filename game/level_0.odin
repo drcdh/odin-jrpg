@@ -10,6 +10,7 @@ BUTTON_1_ID: Id = 40
 DUDE_SCRIPT_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Set_Entity_Busy{id = DUDE_ID, busy = true},
+	Set_Entity_Face_Party{id = DUDE_ID},
 	Append_Text{"Oh, hey! What's up, $player?"},
 	Clear_Text{},
 	Append_Text{"Coffee or tea?"},
@@ -17,10 +18,11 @@ DUDE_SCRIPT_0 := [?]Event {
 	Append_Choice{"Tea"},
 	Get_Choice{},
 	Clear_Text{},
-	Skip_If_Choice{11, 1}, // goto: Tea
+	Skip_If_Choice{12, 1}, // goto: Tea
 	// Coffee
 	Append_Text{"Ooh, sludgy!"},
-	Append_Text{"With out without cream?"},
+	Clear_Text{},
+	Append_Text{"With or without cream?"},
 	Append_Choice{"With!"},
 	Append_Choice{"Without."},
 	Get_Choice{},
@@ -31,9 +33,10 @@ DUDE_SCRIPT_0 := [?]Event {
 	Skip{1},
 	// no cream
 	Append_Text{"So that's a black coffee? Cool, I dunno where a coffee shop is, though. Sorry!"},
-	Skip{5},
+	Skip{6},
 	// Tea
 	Append_Text{"Ooh, grassy!"},
+	Clear_Text{},
 	Append_Text{"Y'know what? I actually have an extra cup of hot tea right here. How about that?"},
 	Clear_Text{},
 	Add_Item{item = .Tea, number = 1},

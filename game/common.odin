@@ -1,5 +1,6 @@
 package game
 
+import "core:math"
 import la "core:math/linalg"
 import rl "vendor:raylib"
 
@@ -39,6 +40,28 @@ face_tile_coord :: proc(f: Face) -> Tile_Coord {
 		t = {0, 1}
 	}
 	return t
+}
+
+face_toward :: proc(from, toward: Kinematics) -> (face: Face) {
+	dx := math.abs(toward.tile.x - from.tile.x)
+	dy := math.abs(toward.tile.y - from.tile.y)
+	sx := math.sign(toward.tile.x - from.tile.x)
+	sy := math.sign(toward.tile.y - from.tile.y)
+	if dx > dy {
+		face = .Left if sx < 0 else .Right
+	} else if dy > dx {
+		face = .Up if sy < 0 else .Down
+	} else if sx < 0 && sy < 0 {
+		face = .Up if toward.face == .Up || toward.face == .Down else .Left
+	} else if sx > 0 && sy < 0 {
+		face = .Up if toward.face == .Up || toward.face == .Down else .Right
+	} else if sx < 0 && sy > 0 {
+		face = .Down if toward.face == .Up || toward.face == .Down else .Left
+	} else if sx > 0 && sy > 0 {
+		face = .Down if toward.face == .Up || toward.face == .Down else .Right
+	}
+	// fmt.printfln("dx=%d dy=%d sx=%d sy=%d face=%v", dx, dy, sx, sy, face)
+	return
 }
 
 get_adjacent_tile :: proc(t: Tile_Coord, f: Face) -> Tile_Coord {
