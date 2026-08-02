@@ -211,7 +211,7 @@ world_menu_redraw_party_pane :: proc() {
 world_menu_redraw_character_pane :: proc() {
 	if pc_idx, ok := get_party_member(world_menu.ui_data.party_idx).?; ok {
 		pc := get_pc(pc_idx)
-		draw_text(1, 1, fmt.ctprintf("%-12s %s", pc.name, fmt.ctprintf("L% 2d", pc.level)))
+		draw_text(1, 1, fmt.ctprintf("%-12s %s", pc.name, fmt.ctprintf("L% 2d %d", pc.level, pc.exp_to_next)))
 		#partial switch world_menu.ui_state {
 		case .Character:
 			for s in Stat {

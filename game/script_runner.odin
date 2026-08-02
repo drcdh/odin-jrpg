@@ -23,6 +23,7 @@ Runner :: struct {
 	events: Event_Queue,
 	pause:  f32,
 	state:  Runner_State,
+	wait_r: int, // FIXME: bad way to do this
 }
 
 runners: [dynamic]Runner

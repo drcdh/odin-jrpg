@@ -17,13 +17,14 @@ Encounter_Spot :: struct {
 
 Encounter :: struct {
 	baddies:     [MAX_ENCOUNTER_SIZE]Encounter_Spot,
+	exp:         int,
 	init_events: Maybe([]Event),
 	lose_events: Maybe([]Event),
 	win_events:  Maybe([]Event),
 }
 
 encounters := [?]Encounter {
-	{baddies = {{{0, 0}, .Mouse_Sized_Rat}, {}, {}, {}, {}, {}}},
+	{baddies = {{{0, 0}, .Mouse_Sized_Rat}, {}, {}, {}, {}, {}}, exp = 1},
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
@@ -33,6 +34,7 @@ encounters := [?]Encounter {
 			{{-2, 1}, .Magic_Serpent},
 			{},
 		},
+		exp = 1000,
 	},
 	{
 		baddies = {
@@ -43,6 +45,7 @@ encounters := [?]Encounter {
 			{{2, 1}, .Mouse_Sized_Rat},
 			{{4, 1}, .Mouse_Sized_Rat},
 		},
+		exp = 10,
 	},
 	{
 		baddies = {
@@ -53,8 +56,9 @@ encounters := [?]Encounter {
 			{{2, 2}, .Mouse_Sized_Rat},
 			{{4, 2}, .Mouse_Sized_Rat},
 		},
+		exp = 25,
 	},
-	{baddies = {{{0, 0}, .Bad_Box}, {{0, 3}, .Bad_Box}, {{0, 5}, .Bad_Box}, {}, {}, {}}},
+	{baddies = {{{0, 0}, .Bad_Box}, {{0, 3}, .Bad_Box}, {{0, 5}, .Bad_Box}, {}, {}, {}}, exp = 9999},
 }
 
 start_encounter :: proc(i: int, paused: bool) {

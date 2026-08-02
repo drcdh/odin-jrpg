@@ -281,13 +281,10 @@ update_battle :: proc(dt: f32) {
 			queue_events(lose_events, battle = true)
 		case .Win:
 			battle.paused = true
+			// TODO: set party members to cheer pose
+			runner_idx := party_get_experience(battle.encounter.exp)
 			win_events := battle.encounter.win_events.? or_else []Event {
-					// TODO: set party members to cheer pose
 					Add_Item{.Potion, 1},
-					Append_Text_Ex{text = "You won!", hurry = true, pause = 1, lines = 2},
-					Clear_Text{},
-					Append_Text_Ex{text = "Got some EXP maybe?", hurry = true, pause = 1, lines = 2},
-					Clear_Text{},
 					Append_Text_Ex{text = fmt.aprintf("Got item: %v", Item_Name.Potion), hurry = true, pause = 1, lines = 2}, // FIXME: leak
 					Close_Dialogue{},
 					Clear_Text{},
@@ -296,7 +293,7 @@ update_battle :: proc(dt: f32) {
 					Battle_Deactivate{},
 					End{},
 				}
-			queue_events(win_events, battle = true)
+			queue_events(win_events, battle = true, i = runner_idx)
 		}
 	}
 
