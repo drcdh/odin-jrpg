@@ -123,6 +123,10 @@ get_combatant_skill_play :: proc(c_idx: int) -> Maybe(int) {
 	return nil
 }
 
+get_combatant_coord :: proc(c: Combatant) -> Pixel_Coord {
+	return c.coord + Pixel_Coord{f32(-math.sign(1 - 2 * c.team)), 1} * c.coord_d
+}
+
 select_one_random_ally :: proc() -> Maybe(Target_One_Ally) {
 	// TODO: just take first for now
 	for c_idx, ally_idx in battle.allies {
@@ -165,20 +169,20 @@ draw_battle_combatants :: proc() {
 			if c.character.hitpoints <= 0 {
 				tint = rl.ColorTint(tint, rl.RED)
 			}
-			if battle_menu.ui_state != .Inactive {
+			c_coord := get_combatant_coord(c)
+			if battle_menu.ui_state != .Idle {
 				if c_idx == battle_menu.ui_data.c_idx {
-					tint = rl.GREEN
+					draw_animation(select_tile_icon_down, c_coord + {0, -tile_size})
 				}
 			}
 			if targeted(c_idx, c.team) {
-				tint = rl.YELLOW
-				tint.w = u8(targeting_ease * 255)
+				draw_animation(select_tile_icon, c_coord + {-tile_size, 0})
 			}
 			switch v in c.visual.variant {
 			case Animation:
-				draw_animation(v, c.coord + Pixel_Coord{f32(-math.sign(1 - 2 * c.team)), 1} * c.coord_d, tint)
+				draw_animation(v, c_coord, tint)
 			case Texture_Name:
-				draw_texture(v, c.coord + Pixel_Coord{f32(-math.sign(1 - 2 * c.team)), 1} * c.coord_d, tint)
+				draw_texture(v, c_coord, tint)
 			}
 			// debug
 			draw_text(
@@ -527,9 +531,9 @@ targeted :: proc(c_idx, team: int) -> bool {
 	if battle_menu.ui_state == .Skill_Target || battle_menu.ui_state == .Item_Target {
 		switch ts in battle_menu.ui_data.targets {
 		case Target_One_Baddy:
-			return team == BADDY_TEAM && c_idx == ts.i
+			return team == BADDY_TEAM && c_idx == battle.baddies[ts.i]
 		case Target_One_Ally:
-			return team == PLAYER_TEAM && c_idx == ts.i
+			return team == PLAYER_TEAM && c_idx == battle.allies[ts.i]
 		case Target_All_Allies:
 			return team == PLAYER_TEAM
 		case Target_All_Baddies:

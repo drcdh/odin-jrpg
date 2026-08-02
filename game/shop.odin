@@ -412,11 +412,6 @@ shop_update :: proc() {
 			shop_set_stale(.Stats)
 		}
 	}
-	shop_update_icons()
-}
-
-shop_update_icons :: proc() {
-	animation_update(&world_menu_icon, rl.GetFrameTime())
 }
 
 try_buy_item :: proc(item_name: Item_Name, equip := false) -> bool {

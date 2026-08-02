@@ -5,7 +5,7 @@ import rl "vendor:raylib"
 queue_text_effect_character :: proc(target: ^Character, text: cstring, color := rl.WHITE) {
 	if battle.active {
 		target := get_combatant(target)
-		append(&battle.text, Process_Text_Effect{color = color, coord = target.coord, text = text})
+		append(&battle.text, Process_Text_Effect{color = color, coord = get_combatant_coord(target^), text = text})
 	} else if world_menu_active() {
 		if i, row, ok := get_world_menu_target_character_position(target); ok {
 			coord := tile_to_pixel(9 + 2 * f32(i), 6 + 2.5 * row)
@@ -36,8 +36,8 @@ center_rect_on_combatant :: proc(r1: Rect, c: Combatant) -> Rect {
 		t = atlas_textures[v.current_frame]
 	}
 	rc: Rect
-	rc.x = c.coord.x
-	rc.y = c.coord.y
+	rc.x = c.coord.x + c.coord_d.x
+	rc.y = c.coord.y + c.coord_d.y
 	rc.width = t.document_size.x
 	rc.height = t.document_size.y
 	return center_rect_on_rect(r1, rc)

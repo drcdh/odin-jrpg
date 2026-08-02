@@ -71,11 +71,15 @@ WORLD_MENU_PANE_DIM := [WORLD_MENU_NUM_TEXTURES]Tile_Coord {
 
 WORLD_MENU_INVENTORY_ROWS :: 10
 
+select_tile_icon: Animation
+select_tile_icon_down: Animation
 world_menu_icon: Animation
 
 world_menu: World_Menu
 
 world_menu_load :: proc() {
+	select_tile_icon = animation_create(.Select_Tile)
+	select_tile_icon_down = animation_create(.Select_Tile_Down)
 	world_menu_icon = animation_create(.Select_Icon_Small)
 	for pane in World_Menu_Pane {
 		dim := WORLD_MENU_PANE_DIM[pane]
@@ -518,8 +522,6 @@ world_menu_update :: proc() {
 			world_menu.ui_state = .Top
 		}
 	}
-
-	animation_update(&world_menu_icon, rl.GetFrameTime())
 
 	for text_idx := 0; text_idx < len(world_menu.text_effects); {
 		world_menu.text_effects[text_idx].t += rl.GetFrameTime()

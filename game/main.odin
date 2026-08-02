@@ -101,6 +101,11 @@ update :: proc() {
 
 	update_transition()
 
+	// update animated UI icons
+	animation_update(&select_tile_icon, dt)
+	animation_update(&select_tile_icon_down, dt)
+	animation_update(&world_menu_icon, dt)
+
 	update_debug()
 
 	free_all(context.temp_allocator)

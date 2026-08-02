@@ -380,11 +380,6 @@ battle_menu_update :: proc() {
 			)
 		}
 	}
-	battle_update_icons()
-}
-
-battle_update_icons :: proc() {
-	animation_update(&world_menu_icon, rl.GetFrameTime())
 }
 
 // /////// //
