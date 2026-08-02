@@ -59,14 +59,6 @@ BATTLE_PANE_DIM := [BATTLE_MENU_NUM_TEXTURES][2]int {
 	{VIEW_TILES_W - 8, int(BATTLE_MENU_INVENTORY_ROWS / 2) + 1},
 }
 
-// battle_pane_redraw_proc := map[Battle_Pane]proc(){
-// 	.Top = battle_redraw_top_pane,
-// 	.Baddies = battle_redraw_baddies_pane,
-// 	.Party = battle_redraw_party_pane,
-// 	.Skills = battle_redraw_skills_pane,
-// 	.Inventory = battle_redraw_inventory_pane,
-// }
-
 BATTLE_MENU_NUM_TEXTURES :: len(Battle_Pane)
 
 Battle_Menu :: struct {
@@ -163,7 +155,18 @@ battle_draw_top_icons :: proc() {
 	)
 }
 
-battle_redraw_baddies_pane :: proc() {}
+battle_redraw_baddies_pane :: proc() {
+	row := 0
+	for c_idx in battle.baddies {
+		c := battle.combatants[c_idx]
+		if c.enabled {
+			tint := rl.WHITE
+			if c.hitpoints <= 0 {tint = rl.RED}
+			draw_text(.5, .5 + f32(row) / 2, fmt.ctprintf("%s", battle.combatants[c_idx].character.name), tint)
+			row += 1
+		}
+	}
+}
 
 battle_redraw_party_pane :: proc() {
 	for i, p in battle.allies {

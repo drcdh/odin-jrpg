@@ -402,6 +402,7 @@ combatant_transition :: proc(c_idx: int) -> bool {
 	alpha := c.visual.tint.a
 	if alpha == 0 {
 		battle.combatants[c_idx].enabled = false
+		battle_menu_set_stale(.Baddies)
 		return true // finished
 	} else {
 		// reduce alpha
@@ -499,6 +500,7 @@ process_battle_skill :: proc() -> (done := false) {
 				do_effect(&actor, &target, skill.effect)
 			}
 		}
+		battle_menu_set_stale(.Baddies)
 		battle_menu_set_stale(.Party)
 		battle.skill_state.step += 1
 	case 8:
