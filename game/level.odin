@@ -1,6 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
 import "core:fmt"
 import "core:time"
 
@@ -20,8 +19,7 @@ CHANGE_LEVEL := [?]Event {
 }
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
-	party_handle = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
 			id = PLAYER_ID,
 			face = face,
@@ -39,22 +37,23 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 			z = Z_MAX,
 		},
 	)
-	pc_entity = party_handle
+	party_handle = get_world_entity_handle(PLAYER_ID)
+	pc_handle = party_handle
 }
 
 start_level :: proc(l: Level) {
-	if pc, ok := hm.get(&entities, pc_entity); ok {
+	if pc := get_world_entity(pc_handle); pc != nil {
 		prev_level_tile = pc.tile
 	}
 	prev_level = current_level
 	current_level = l
 	level_map_wrap = l == .LEVEL_OVERWORLD
-	hm.clear(&entities)
+	clear_world_entities()
 	unload_map()
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 	init_level(l)
-	camera_entity = pc_entity
+	camera_handle = pc_handle
 	time.stopwatch_stop(&stopwatch)
 	fmt.printfln("% 4d: Loaded level %w in %s", frame_count, l, time.stopwatch_duration(stopwatch))
 	fmt.printfln("% 4d: Level map dimensions are %w", frame_count, map_dim)

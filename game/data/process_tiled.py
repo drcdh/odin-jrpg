@@ -160,7 +160,7 @@ init_{level_name} :: proc() {{
 	level_routes = {prefix}ROUTES[:]
 	""")
 	for n, _ in enumerate(item_entities):
-		out_f.write(f"\n\t_ = hm.add(&entities, {prefix}ITEM_ENTITIES[{n}])")
+		out_f.write(f"\n\tadd_world_entity({prefix}ITEM_ENTITIES[{n}])")
 	out_f.write(f"""
 	start_{level_name}()
 	render_{level_name}()

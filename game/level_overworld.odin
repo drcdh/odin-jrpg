@@ -1,5 +1,5 @@
 package game
-import hm "core:container/handle_map"
+
 import "core:fmt"
 
 LEVEL_OVERWORLD_OVERLAY :: false
@@ -70,8 +70,7 @@ start_level_overworld :: proc() {
 	}
 	add_pc_entity(party_tile, .Down)
 
-	boat_handle = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
 			id = BOAT_ID,
 			tile = game_data.boat_coord,
@@ -82,28 +81,21 @@ start_level_overworld :: proc() {
 		},
 	)
 
-	_ = hm.add(
-		&entities,
-		Entity{id = 2000, ghost = true, n = "grove", tile = LEVEL_OVERWORLD_GROVE, trap = enter_grove[:]},
-	)
+	boat_handle = get_world_entity_handle(BOAT_ID)
 
-	_ = hm.add(
-		&entities,
-		Entity{id = 2001, ghost = true, n = "house", tile = LEVEL_OVERWORLD_HOUSE, trap = enter_house[:]},
-	)
+	add_world_entity(Entity{id = 2000, ghost = true, n = "grove", tile = LEVEL_OVERWORLD_GROVE, trap = enter_grove[:]})
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(Entity{id = 2001, ghost = true, n = "house", tile = LEVEL_OVERWORLD_HOUSE, trap = enter_house[:]})
+
+	add_world_entity(
 		Entity{id = 2002, ghost = true, n = "quarry", tile = LEVEL_OVERWORLD_QUARRY, trap = enter_quarry[:]},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity{id = 2003, ghost = true, n = "cave_entrance", tile = LEVEL_OVERWORLD_CAVE_ENTRANCE, trap = enter_cave[:]},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity{id = 2004, ghost = true, n = "cave_exit", tile = LEVEL_OVERWORLD_CAVE_EXIT, trap = enter_cave[:]},
 	)
 

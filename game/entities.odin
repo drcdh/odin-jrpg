@@ -1,6 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
 import "core:fmt"
 import rl "vendor:raylib"
 
@@ -15,16 +14,6 @@ Kinematics :: struct {
 	z:           int,
 }
 
-Visual_Solid_Circle :: struct {
-	radius: Pixel,
-	color:  rl.Color,
-}
-
-Visual_Solid_Rect :: struct {
-	size:  Pixel_Dim,
-	color: rl.Color,
-}
-
 Visual_Facing_Animation :: struct {
 	left, right, up, down: Animation_Name,
 }
@@ -33,8 +22,6 @@ Visual :: union {
 	Animation,
 	Facing_Animation,
 	Texture_Name,
-	Visual_Solid_Circle,
-	Visual_Solid_Rect,
 }
 
 Name :: cstring
@@ -54,13 +41,11 @@ Pacing :: struct {
 	step:      int,
 }
 
-State :: union {
+Entity_State :: union {
 	Approach_Entity,
 	Control,
 	Pacing,
 }
-
-Entity_Handle :: distinct hm.Handle16
 
 Entity :: struct {
 	using k:  Kinematics,
@@ -71,24 +56,12 @@ Entity :: struct {
 	n:        Name,
 	talk:     []Event,
 	trap:     []Event,
-	state:    State,
+	state:    Entity_State,
 	v:        Visual,
-}
-
-draw_solid_rect :: proc(k: Kinematics, v: Visual_Solid_Rect) {
-	rl.DrawRectangleV(tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.size, v.color)
-}
-
-draw_solid_circle :: proc(k: Kinematics, v: Visual_Solid_Circle) {
-	rl.DrawCircleV(tile_dim / 2 + tile_to_pixel(k.tile) + k.offset * k.offset_ease, v.radius, v.color)
 }
 
 draw_entity :: proc(e: ^Entity) {
 	switch v in e.v {
-	case Visual_Solid_Circle:
-		draw_solid_circle(e, v)
-	case Visual_Solid_Rect:
-		draw_solid_rect(e, v)
 	case Animation:
 		draw_animation(v, entity_coord(e), rl.WHITE)
 	case Facing_Animation:
@@ -153,19 +126,19 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	}
 	if update_kinematics(dt, &e.k) {
 		// first frame completely on this tile
-		if trap, ok := get_entity_at_tile(e.tile, e.id).?; ok {
-			fmt.printfln("% 4d: %s stepped onto %w", frame_count, e.n, trap)
-			activate_entity_trap_script(trap)
+		if trap := get_world_entity_at_tile(e.tile, e.id); trap != nil && trap.trap != nil {
+			fmt.printfln("% 4d: %s stepped onto %s", frame_count, e.n, trap.n)
+			entity_trap(trap^)
 		}
 		if e.trap != nil {
-			if catch, ok := get_entity_at_tile(e.tile, e.id).?; ok {
-				fmt.printfln("% 4d: %s caught %w", frame_count, e.n, catch)
-				activate_entity_trap_script(e)
+			if catch := get_world_entity_at_tile(e.tile, e.id); catch != nil {
+				fmt.printfln("% 4d: %s caught %s", frame_count, e.n, catch.n)
+				entity_trap(e^)
 			}
 		}
 		if tile_outside(e.tile) {
 			fmt.printfln("% 4d: %s leaving level", frame_count, e.n)
-			set_entity_busy(e.id, true) // hack
+			set_world_entity_busy(e.id, true) // hack
 			next_level = .LEVEL_OVERWORLD
 			queue_events(CHANGE_LEVEL[:])
 		}
@@ -175,10 +148,8 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 		case Approach_Entity:
 			s.countdown -= dt
 			if s.countdown <= 0 {
-				if th, ok := get_entity(s.id).?; ok {
-					t := hm.get(&entities, th)
-					try_set_destination_toward(e, t)
-				}
+				target_entity := get_world_entity(s.id)
+				try_set_destination_toward(e, target_entity)
 				s.countdown = s.pause
 			}
 		case Control:
@@ -215,8 +186,12 @@ update_kinematics :: proc(dt: f32, k: ^Kinematics) -> bool {
 	return false
 }
 
-entity_at_tile :: proc(e: Entity, t: Tile_Coord) -> bool {
-	return e.k.tile == t
+entity_at_tile :: proc(k: Kinematics, t: Tile_Coord) -> bool {
+	return k.tile == t
+}
+
+entity_at_z :: proc(k: Kinematics, z: int) -> bool {
+	return (z == 0 && k.z <= 0) || (z == k.z) || (z == Z_MAX && k.z >= Z_MAX)
 }
 
 tile_in_front :: proc(e: ^Entity) -> Tile_Coord {
@@ -244,8 +219,8 @@ player_control :: proc(_: f32, p: ^Entity) {
 		}
 	} else {
 		if get_input(.ENTER) {
-			if entity_in_front, ok := get_entity_at_tile(tile_in_front(p)).?; ok {
-				activate_entity_talk_script(entity_in_front)
+			if entity_in_front := get_world_entity_at_tile(tile_in_front(p), nil); entity_in_front != nil {
+				entity_talk(entity_in_front^)
 			}
 			if boat_mode {
 				t := tile_in_front(p)
@@ -256,4 +231,12 @@ player_control :: proc(_: f32, p: ^Entity) {
 			}
 		}
 	}
+}
+
+entity_talk :: proc(e: Entity) {
+	queue_events(e.talk)
+}
+
+entity_trap :: proc(e: Entity) {
+	queue_events(e.trap)
 }

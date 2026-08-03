@@ -1,7 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
-
 @(private = "file")
 MAP_WIDTH :: LEVEL_2_WIDTH
 @(private = "file")
@@ -11,6 +9,7 @@ LEVEL_2_OVERLAY :: true
 
 TRAP_ID :: 665
 TRAP_BADDY_ID :: 666
+WARP_2_0_ID :: 300
 
 WARP_TO_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -31,6 +30,7 @@ TRAP_BADDY_ENCOUNTER := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
 	Start_Encounter{encounter = 0},
 	Remove_Entity{TRAP_BADDY_ID},
+	Curtain_Up{.Battle},
 	Set_Entity_Busy{id = PLAYER_ID, busy = false},
 	End{},
 }
@@ -39,8 +39,7 @@ start_level_2 :: proc() {
 	add_pc_entity(LEVEL_2_PLAYER_SPAWN, .Down)
 
 	for i := 1; i <= MAP_WIDTH - 3; i += 2 {
-		_ = hm.add(
-			&entities,
+		add_world_entity(
 			Entity {
 				id = 100 + i,
 				tile = Tile_Coord{i, 1},
@@ -50,8 +49,7 @@ start_level_2 :: proc() {
 				z = Z_MAX,
 			},
 		)
-		_ = hm.add(
-			&entities,
+		add_world_entity(
 			Entity {
 				id = 200 + i,
 				tile = Tile_Coord{i, MAP_HEIGHT - 3},
@@ -63,8 +61,7 @@ start_level_2 :: proc() {
 		)
 	}
 	for j := 3; j <= MAP_HEIGHT - 5; j += 2 {
-		_ = hm.add(
-			&entities,
+		add_world_entity(
 			Entity {
 				id = 300 + j,
 				tile = Tile_Coord{1, j},
@@ -74,8 +71,7 @@ start_level_2 :: proc() {
 				z = Z_MAX,
 			},
 		)
-		_ = hm.add(
-			&entities,
+		add_world_entity(
 			Entity {
 				id = 400 + j,
 				tile = Tile_Coord{MAP_WIDTH - 3, j},
@@ -87,10 +83,9 @@ start_level_2 :: proc() {
 		)
 	}
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
-			id = 3,
+			id = WARP_2_0_ID,
 			ghost = true,
 			tile = LEVEL_2_WARP_SPAWN,
 			n = "warp",
@@ -99,13 +94,11 @@ start_level_2 :: proc() {
 		},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity{id = TRAP_ID, ghost = true, tile = LEVEL_2_TRAP_SPAWN, n = "trap", trap = TRAP_BADDY_ACTIVATE[:]},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
 			id = TRAP_BADDY_ID,
 			ghost = true,

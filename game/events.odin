@@ -95,7 +95,7 @@ Set_Entity_Trap_Script :: struct {
 }
 Set_Entity_State :: struct {
 	id:    Id,
-	state: State,
+	state: Entity_State,
 }
 Set_Entity_Texture :: struct {
 	id:      Id,

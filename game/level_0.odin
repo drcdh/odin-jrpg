@@ -1,11 +1,15 @@
 package game
 
-import hm "core:container/handle_map"
-
 LEVEL_0_OVERLAY :: true
 
-DUDE_ID: Id = 1
-BUTTON_1_ID: Id = 40
+BOX_0_ID :: 200
+BOX_1_ID :: 201
+BOX_2_ID :: 202
+BUTTON_1_ID :: 40
+DUDE_ID :: 1
+JUKEBOX_ID :: 100
+SIGN_ID :: 101
+WARP_0_1_ID :: 300
 
 DUDE_SCRIPT_0 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -206,8 +210,7 @@ start_level_0 :: proc() {
 	add_pc_entity(LEVEL_0_PLAYER_SPAWN, .Down)
 
 	if get_game_data(Bool_Datum.Met_Dude) {
-		_ = hm.add(
-			&entities,
+		add_world_entity(
 			Entity {
 				id = DUDE_ID,
 				face = .Down,
@@ -221,8 +224,7 @@ start_level_0 :: proc() {
 			},
 		)
 	} else {
-		_ = hm.add(
-			&entities,
+		add_world_entity(
 			Entity {
 				id = DUDE_ID,
 				face = .Down,
@@ -237,10 +239,9 @@ start_level_0 :: proc() {
 		)
 	}
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
-			id = 3,
+			id = WARP_0_1_ID,
 			ghost = true,
 			tile = LEVEL_0_WARP_SPAWN,
 			n = "warp",
@@ -265,10 +266,9 @@ start_level_0 :: proc() {
 	// 	Entity{id = 50, tile = PLAYER_SPAWN + {2, 1}, n = "Button 2", talk = BUTTON_2_SCRIPT[:], v = Texture_Name.Button},
 	// )
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
-			id = 100,
+			id = BOX_0_ID,
 			tile = LEVEL_0_CHEST_MONSTER,
 			n = "Monster in a box",
 			talk = MONSTER_IN_A_BOX_0[:],
@@ -276,10 +276,9 @@ start_level_0 :: proc() {
 		},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
-			id = 101,
+			id = BOX_1_ID,
 			tile = LEVEL_0_CHEST_MONSTER + {0, 1},
 			n = "Monster in a box",
 			talk = MONSTER_IN_A_BOX_1[:],
@@ -287,10 +286,9 @@ start_level_0 :: proc() {
 		},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
-			id = 102,
+			id = BOX_2_ID,
 			tile = LEVEL_0_CHEST_MONSTER + {0, 2},
 			n = "Monster in a box",
 			talk = MONSTER_IN_A_BOX_2[:],
@@ -298,14 +296,12 @@ start_level_0 :: proc() {
 		},
 	)
 
-	_ = hm.add(
-		&entities,
-		Entity{id = 11, tile = LEVEL_0_SIGN, n = "Lorem Ipsum sign", talk = lorem_ipsum[:], v = Texture_Name.Sign},
+	add_world_entity(
+		Entity{id = SIGN_ID, tile = LEVEL_0_SIGN, n = "Lorem Ipsum sign", talk = lorem_ipsum[:], v = Texture_Name.Sign},
 	)
 
-	_ = hm.add(
-		&entities,
-		Entity{id = 567, tile = LEVEL_0_JUKEBOX, n = "Jukebox", talk = jukebox[:], v = Texture_Name.Jukebox},
+	add_world_entity(
+		Entity{id = JUKEBOX_ID, tile = LEVEL_0_JUKEBOX, n = "Jukebox", talk = jukebox[:], v = Texture_Name.Jukebox},
 	)
 
 	play_music(&music_state, .Town)

@@ -1,8 +1,10 @@
 package game
 
-import hm "core:container/handle_map"
-
 LEVEL_1_OVERLAY :: true
+
+GUY_ID :: 80
+WOMAN_ID :: 90
+WARP_1_2_ID :: 300
 
 WARP_TO_2 := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -12,9 +14,6 @@ WARP_TO_2 := [?]Event {
 	Curtain_Up{},
 	End{},
 }
-
-GUY_ID :: 80
-WOMAN_ID :: 90
 
 GUY_SCRIPT := [?]Event {
 	Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -64,8 +63,7 @@ DOOR_KNOCK := [?]Event {
 start_level_1 :: proc() {
 	add_pc_entity(LEVEL_1_PLAYER_SPAWN, .Right)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
 			id = GUY_ID,
 			face = .Down,
@@ -75,10 +73,10 @@ start_level_1 :: proc() {
 			v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
 		},
 	)
-	_ = hm.add(
-		&entities,
+
+	add_world_entity(
 		Entity {
-			id = 3,
+			id = WARP_1_2_ID,
 			ghost = true,
 			tile = LEVEL_1_WARP_SPAWN,
 			n = "warp",
@@ -87,8 +85,7 @@ start_level_1 :: proc() {
 		},
 	)
 
-	_ = hm.add(
-		&entities,
+	add_world_entity(
 		Entity {
 			id = WOMAN_ID,
 			disabled = true,
@@ -99,7 +96,7 @@ start_level_1 :: proc() {
 		},
 	)
 
-	_ = hm.add(&entities, Entity{id = 1000, tile = LEVEL_1_DOOR, talk = DOOR_KNOCK[:]})
+	add_world_entity(Entity{id = 1000, tile = LEVEL_1_DOOR, talk = DOOR_KNOCK[:]})
 
 	play_music(&music_state, .Town)
 }

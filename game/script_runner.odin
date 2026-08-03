@@ -1,6 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
 import "core:container/queue"
 import "core:fmt"
 
@@ -159,8 +158,8 @@ process_event :: proc(runner: ^Runner) {
 		game_data.money -= event.m
 		if game_data.money < 0 {game_data.money = 0}
 	case Move_Entity_Here:
-		moving_entity := get_entity_p(event.id)
-		if pc, ok := hm.get(&entities, pc_entity); ok {
+		moving_entity := get_world_entity(event.id)
+		if pc := get_world_entity(pc_handle); pc != nil {
 			moving_entity.tile = pc.tile
 			fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
 		}
@@ -172,33 +171,33 @@ process_event :: proc(runner: ^Runner) {
 	case Play_Sound:
 		play_sound(event.sound)
 	case Remove_Entity:
-		remove_entity(event.id)
+		remove_world_entity(event.id)
 	case Set_Boat_Control:
-		boat := get_entity_p(BOAT_ID)
+		boat := get_world_entity(BOAT_ID)
 		boat.state = Control{}
 		boat_mode = true
-		pc_entity = boat_handle
-		camera_entity = boat_handle
+		pc_handle = boat_handle
+		camera_handle = boat_handle
 	case Set_Bool:
 		set_game_data(event.k, event.v)
 	case Set_Int:
 		set_game_data(event.k, event.v)
 	case Set_Entity_Busy:
-		set_entity_busy(event.id, event.busy)
+		set_world_entity_busy(event.id, event.busy)
 	case Set_Entity_Disabled:
-		set_entity_disabled(event.id, event.disabled)
+		set_world_entity_disabled(event.id, event.disabled)
 	case Set_Entity_Face:
-		set_entity_face(event.id, event.face)
+		set_world_entity_face(event.id, event.face)
 	case Set_Entity_Face_Party:
-		set_entity_face_party(event.id)
+		set_world_entity_face_party(event.id)
 	case Set_Entity_Talk_Script:
-		set_entity_talk_script(event.id, event.script)
+		set_world_entity_talk_script(event.id, event.script)
 	case Set_Entity_Trap_Script:
-		set_entity_trap_script(event.id, event.script)
+		set_world_entity_trap_script(event.id, event.script)
 	case Set_Entity_State:
-		set_entity_state(event.id, event.state)
+		set_world_entity_state(event.id, event.state)
 	case Set_Entity_Texture:
-		set_entity_visual(event.id, event.texture)
+		set_world_entity_visual(event.id, event.texture)
 	case Set_Party_Control:
 		set_party_control()
 	case Skip:

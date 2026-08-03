@@ -1,7 +1,5 @@
 package game
 
-import hm "core:container/handle_map"
-
 LEVEL_CAVE_OVERLAY :: false
 
 LEAVE_CAVE := [?]Event {
@@ -15,9 +13,9 @@ LEAVE_CAVE := [?]Event {
 start_level_cave :: proc() {
 	add_pc_entity(LEVEL_CAVE_EXIT if prev_level_tile == LEVEL_OVERWORLD_CAVE_EXIT else LEVEL_CAVE_ENTRANCE, .Down)
 
-	_ = hm.add(&entities, Entity{id = 900, ghost = true, tile = LEVEL_CAVE_ENTRANCE, trap = LEAVE_CAVE[:]})
+	add_world_entity(Entity{id = 900, ghost = true, tile = LEVEL_CAVE_ENTRANCE, trap = LEAVE_CAVE[:]})
 
-	_ = hm.add(&entities, Entity{id = 901, ghost = true, tile = LEVEL_CAVE_EXIT, trap = LEAVE_CAVE[:]})
+	add_world_entity(Entity{id = 901, ghost = true, tile = LEVEL_CAVE_EXIT, trap = LEAVE_CAVE[:]})
 
 	play_music(&music_state, .None)
 }

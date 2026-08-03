@@ -111,7 +111,7 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 	}
 	if !free {return}
 
-	it := hm.iterator_make(&entities)
+	it := hm.iterator_make(&world_entities.entities)
 	for e, _ in hm.iterate(&it) {
 		if e.tile == t && !e.ghost {
 			free = false
