@@ -11,6 +11,12 @@ World_Entities :: struct {
 
 world_entities: World_Entities
 
+delete_world_entities :: proc() {
+	// call when program ends
+	clear_world_entities()
+	delete(world_entities.id_map)
+}
+
 draw_world_entities :: proc() {
 	for z in 0 ..= Z_MAX {
 		it := hm.iterator_make(&world_entities.entities)
@@ -31,6 +37,10 @@ update_world_entities :: proc(dt: f32) {
 
 add_world_entity :: proc(e: Entity) {
 	world_entities.id_map[e.id] = hm.add(&world_entities.entities, e)
+}
+
+clear_world_entities :: proc() {
+	hm.clear(&world_entities.entities)
 }
 
 get_world_entity_handle :: proc(id: Id) -> Entity_Handle {
@@ -104,8 +114,4 @@ set_world_entity_visual_texture :: proc(id: Id, texture: Texture_Name) {
 
 set_world_entity_visual :: proc {
 	set_world_entity_visual_texture,
-}
-
-clear_world_entities :: proc() {
-	hm.clear(&world_entities.entities)
 }
