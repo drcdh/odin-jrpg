@@ -111,6 +111,15 @@ update_debug :: proc() {
 		fmt.println("FPS throttling", throttle)
 	}
 
+	if rl.IsKeyPressed(.D) {
+		if darkness < 250 {
+			darkness += 50
+		} else {
+			darkness = 0
+		}
+		fmt.printfln("darkness = %d", darkness)
+	}
+
 	if debug_framerate {
 		dt := rl.GetFrameTime()
 		if debug_framerate_sum >= DEBUG_FRAMERATE_PERIOD {

@@ -35,6 +35,8 @@ draw_world :: proc() {
 	draw_overlay()
 	rl.EndMode2D()
 
+	draw_darkness()
+
 	// pc := hm.get(&entities, pc_handle)
 	// rl.DrawText(
 	// 	// fmt.ctprintf("%s [%d,%d] %w", pc.n, pc.tile.x, pc.tile.y, pc.state),

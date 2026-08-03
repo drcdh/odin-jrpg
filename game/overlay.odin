@@ -38,3 +38,34 @@ update_overlay :: proc() {
 		if clouds_offset.y < 0 {clouds_offset.y += zoom * 320}
 	}
 }
+
+
+darkness_texture: rl.RenderTexture
+darkness: u8
+
+init_darkness :: proc() {
+	darkness_texture = rl.LoadRenderTexture(i32(view_dim.x), i32(view_dim.y))
+}
+
+delete_darkness :: proc() {
+	rl.UnloadRenderTexture(darkness_texture)
+}
+
+draw_darkness :: proc() {
+	if darkness > 0 {
+		rl.BeginTextureMode(darkness_texture)
+		rl.DrawRectangleV({0, 0}, view_dim, rl.BLACK)
+		if camera := get_world_entity(camera_handle); camera != nil {
+			if pc := get_world_entity(PLAYER_ID); pc != nil {
+				pos := tile_to_pixel(pc.tile) - tile_to_pixel(camera.tile) + view_dim / 2 // FIXME
+				radius := 3 * tile_size
+				rl.BeginBlendMode(.SUBTRACT_COLORS)
+				rl.DrawCircleV(pos, radius, rl.BLACK)
+				rl.EndBlendMode()
+			}
+		}
+		rl.EndTextureMode()
+		rect := rl.Rectangle{0, 0, view_dim.x, -view_dim.y}
+		rl.DrawTexturePro(darkness_texture.texture, rect, rect, {}, 0, {255, 255, 255, darkness})
+	}
+}

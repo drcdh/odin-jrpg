@@ -32,6 +32,7 @@ init_rl :: proc(z: i32 = 4) {
 
 	init_atlases()
 	init_overlays()
+	init_darkness()
 }
 
 init :: proc() {
@@ -118,6 +119,7 @@ update :: proc() {
 tear_down :: proc() {
 	battle_destroy()
 	delete_atlased_font(font)
+	delete_darkness()
 	delete_input()
 	delete_inventory_order()
 	delete_runners()

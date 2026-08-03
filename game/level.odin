@@ -50,6 +50,7 @@ start_level :: proc(l: Level) {
 	level_map_wrap = l == .LEVEL_OVERWORLD
 	clear_world_entities()
 	unload_map()
+	darkness = 0
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 	init_level(l)
