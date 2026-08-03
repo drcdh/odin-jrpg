@@ -1,6 +1,7 @@
 package game
 
 import hm "core:container/handle_map"
+import "core:fmt"
 
 Entity_Handle :: distinct hm.Handle16
 
@@ -36,11 +37,24 @@ update_world_entities :: proc(dt: f32) {
 }
 
 add_world_entity :: proc(e: Entity) {
+	if h, ok := world_entities.id_map[e.id]; ok {
+		fmt.printfln("Id %d already in world entities", e.id)
+		if existing := get_world_entity(h); existing != nil {
+			fmt.printfln(
+				"OOPS: attempting to add an entity %s with id %d, but entity %s is already using it",
+				e.n,
+				e.id,
+				existing.n,
+			)
+			panic("Entity Id collision")
+		}
+	}
 	world_entities.id_map[e.id] = hm.add(&world_entities.entities, e)
 }
 
 clear_world_entities :: proc() {
 	hm.clear(&world_entities.entities)
+	clear_map(&world_entities.id_map)
 }
 
 get_world_entity_handle :: proc(id: Id) -> Entity_Handle {

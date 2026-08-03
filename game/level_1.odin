@@ -98,5 +98,7 @@ start_level_1 :: proc() {
 
 	add_world_entity(Entity{id = 1000, tile = LEVEL_1_DOOR, talk = DOOR_KNOCK[:]})
 
+	add_world_entity(Entity{id = 1, tile = LEVEL_1_FIRE, v = animation_create(.Fire)})
+
 	play_music(&music_state, .Town)
 }
