@@ -219,7 +219,8 @@ player_control :: proc(_: f32, p: ^Entity) {
 		}
 	} else {
 		if get_input(.ENTER) {
-			if entity_in_front := get_world_entity_at_tile(tile_in_front(p), nil); entity_in_front != nil {
+			if entity_in_front := get_world_entity_at_tile(tile_in_front(p), nil);
+			   entity_in_front != nil && entity_in_front.talk != nil {
 				entity_talk(entity_in_front^)
 			}
 			if boat_mode {

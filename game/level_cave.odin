@@ -17,5 +17,7 @@ start_level_cave :: proc() {
 
 	add_world_entity(Entity{id = 901, ghost = true, tile = LEVEL_CAVE_EXIT, trap = LEAVE_CAVE[:]})
 
+	add_world_entity(Entity{id = 5, tile = LEVEL_CAVE_FIRE, v = animation_create(.Fire)})
+
 	play_music(&music_state, .None)
 }
