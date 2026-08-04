@@ -16,9 +16,7 @@ def process_tmx(level_name):
 	prefix = level_name.upper() + "_"
 	out_f = open(f"{level_name}_data.odin", "w")
 
-	out_f.write("#+vet !unused\n")
 	out_f.write("package game\n")
-	out_f.write("import hm \"core:container/handle_map\"\n")
 	out_f.write("import rl \"vendor:raylib\"\n")
 
 	item_entities = []
