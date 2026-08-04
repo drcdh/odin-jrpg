@@ -1,82 +1,12 @@
+#+private file
 package game
 
 import "core:fmt"
 
+@(private)
 LEVEL_OVERWORLD_OVERLAY :: false
 
-BOAT_ID :: 77
-
-board_boat :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Disabled{id = PLAYER_ID, disabled = true},
-			Set_Entity_Busy{id = BOAT_ID, busy = false},
-			Set_Boat_Control{},
-			End{},
-		},
-	)
-}
-
-leave_boat :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = BOAT_ID, busy = true},
-			Move_Entity_Here{id = PLAYER_ID},
-			Set_Entity_Disabled{id = PLAYER_ID, disabled = false},
-			Set_Party_Control{},
-			End{},
-		},
-	)
-}
-
-enter_grove :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Curtain_Down{},
-			Start_Level{level = .LEVEL_0},
-			Curtain_Up{},
-			End{},
-		},
-	)
-}
-
-enter_house :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Curtain_Down{},
-			Start_Level{level = .LEVEL_1},
-			Curtain_Up{},
-			End{},
-		},
-	)
-}
-
-enter_quarry :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Curtain_Down{},
-			Start_Level{level = .LEVEL_2},
-			Curtain_Up{},
-			End{},
-		},
-	)
-}
-
-enter_cave :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Curtain_Down{},
-			Start_Level{level = .LEVEL_CAVE},
-			Curtain_Up{},
-			End{},
-		},
-	)
-}
-
+@(private)
 start_level_overworld :: proc() {
 	fmt.println(prev_level, prev_level_tile, current_level)
 	party_tile: Tile_Coord
@@ -107,19 +37,45 @@ start_level_overworld :: proc() {
 
 	boat_handle = get_world_entity_handle(BOAT_ID)
 
-	add_world_entity(Entity{id = 2000, ghost = true, n = "grove", tile = LEVEL_OVERWORLD_GROVE, trap = enter_grove})
+	add_world_entity(Entity {
+		id = 2000,
+		ghost = true,
+		n = "grove",
+		tile = LEVEL_OVERWORLD_GROVE,
+		trap = proc() {egress(.LEVEL_0)},
+	})
 
-	add_world_entity(Entity{id = 2001, ghost = true, n = "house", tile = LEVEL_OVERWORLD_HOUSE, trap = enter_house})
+	add_world_entity(Entity {
+		id = 2001,
+		ghost = true,
+		n = "house",
+		tile = LEVEL_OVERWORLD_HOUSE,
+		trap = proc() {egress(.LEVEL_1)},
+	})
 
-	add_world_entity(Entity{id = 2002, ghost = true, n = "quarry", tile = LEVEL_OVERWORLD_QUARRY, trap = enter_quarry})
+	add_world_entity(Entity {
+		id = 2002,
+		ghost = true,
+		n = "quarry",
+		tile = LEVEL_OVERWORLD_QUARRY,
+		trap = proc() {egress(.LEVEL_2)},
+	})
 
-	add_world_entity(
-		Entity{id = 2003, ghost = true, n = "cave_entrance", tile = LEVEL_OVERWORLD_CAVE_ENTRANCE, trap = enter_cave},
-	)
+	add_world_entity(Entity {
+		id = 2003,
+		ghost = true,
+		n = "cave_entrance",
+		tile = LEVEL_OVERWORLD_CAVE_ENTRANCE,
+		trap = proc() {egress(.LEVEL_CAVE)},
+	})
 
-	add_world_entity(
-		Entity{id = 2004, ghost = true, n = "cave_exit", tile = LEVEL_OVERWORLD_CAVE_EXIT, trap = enter_cave},
-	)
+	add_world_entity(Entity {
+		id = 2004,
+		ghost = true,
+		n = "cave_exit",
+		tile = LEVEL_OVERWORLD_CAVE_EXIT,
+		trap = proc() {egress(.LEVEL_CAVE)},
+	})
 
 	play_music(&music_state, .Overworld)
 }

@@ -1,19 +1,12 @@
+#+private file
 package game
 
+@(private)
 LEVEL_CAVE_OVERLAY :: false
 
-leave_cave :: proc() {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Curtain_Down{},
-			Start_Level{level = .LEVEL_OVERWORLD},
-			Curtain_Up{},
-			End{},
-		},
-	)
-}
+leave_cave :: proc() {egress(.LEVEL_OVERWORLD)}
 
+@(private)
 start_level_cave :: proc() {
 	add_pc_entity(LEVEL_CAVE_EXIT if prev_level_tile == LEVEL_OVERWORLD_CAVE_EXIT else LEVEL_CAVE_ENTRANCE, .Down)
 
