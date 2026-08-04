@@ -195,6 +195,14 @@ start_level_0 :: proc() {
 		v = Texture_Name.Box,
 	})
 
+	add_world_entity(Entity {
+		id = 23552,
+		tile = LEVEL_0_CHEST_MONSTER + {0, 3},
+		n = "Monster in a box",
+		talk = proc() {monster_in_a_box(4)},
+		v = Texture_Name.Box,
+	})
+
 	add_world_entity(
 		Entity {
 			id = SIGN_ID,

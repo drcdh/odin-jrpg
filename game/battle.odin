@@ -127,16 +127,6 @@ get_combatant_coord :: proc(c: Combatant) -> Pixel_Coord {
 	return c.coord + Pixel_Coord{f32(-math.sign(1 - 2 * c.team)), 1} * c.coord_d
 }
 
-select_one_random_ally :: proc() -> Maybe(Target_One_Ally) {
-	// TODO: just take first for now
-	for c_idx, ally_idx in battle.allies {
-		if combatant_alive(battle.combatants[c_idx]) {
-			return Target_One_Ally{ally_idx}
-		}
-	}
-	return nil
-}
-
 draw_battle :: proc() {
 	draw_battle_background()
 	battle_menu_draw()

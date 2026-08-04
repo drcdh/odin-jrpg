@@ -41,6 +41,7 @@ with open("data/baddies.csv") as f:
 	texture = .{texture},
 	turn = {turn},
 """.format(**row))
+		out_f.write("skills = {" + ",".join(["."+skill for skill in row["skills"].split(",")]) + "},")
 		out_f.write("},\n")
 
 out_f.write("""}

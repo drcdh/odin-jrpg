@@ -58,7 +58,7 @@ encounters := [?]Encounter {
 		},
 		exp = 25,
 	},
-	{baddies = {{{0, 0}, .Bad_Box}, {{0, 3}, .Bad_Box}, {{0, 5}, .Bad_Box}, {}, {}, {}}, exp = 9999},
+	{baddies = {{{2, 0}, .Bad_Box}, {{2, 2}, .Bad_Box}, {{2, 4}, .Bad_Box}, {{-1, 2}, .Ghost}, {}, {}}, exp = 9999},
 }
 
 start_encounter :: proc(i: int, paused: bool) {
