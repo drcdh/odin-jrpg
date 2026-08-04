@@ -107,13 +107,21 @@ update_dialogue :: proc() {
 	switch &s in dialogue_state {
 	case Dialogue_Hidden:
 	case Dialogue_Marquee:
-		s.t -= dt
-		if s.t <= 0 {
-			if done := advance_marquee(); done {
-				set_next_dialogue_state()
-			} else {
-				dialogue_state = Dialogue_Marquee {
-					t = dialogue_speed,
+		if get_input(.ENTER) {
+			// skip typewriter effect
+			dialogue_marquee_line = dialogue_lines
+			m := dialogue_marquee_lines[dialogue_marquee_line]
+			dialogue_marquee_end = strings.builder_len(m)
+			set_next_dialogue_state()
+		} else {
+			s.t -= dt
+			if s.t <= 0 {
+				if done := advance_marquee(); done {
+					set_next_dialogue_state()
+				} else {
+					dialogue_state = Dialogue_Marquee {
+						t = dialogue_speed,
+					}
 				}
 			}
 		}
