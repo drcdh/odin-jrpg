@@ -95,11 +95,11 @@ Set_Entity_Face_Party :: struct {
 }
 Set_Entity_Talk_Script :: struct {
 	id:     Id,
-	script: []Event,
+	script: Entity_Script,
 }
 Set_Entity_Trap_Script :: struct {
 	id:     Id,
-	script: []Event,
+	script: Entity_Script,
 }
 Set_Entity_State :: struct {
 	id:    Id,

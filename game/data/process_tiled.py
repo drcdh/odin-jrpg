@@ -112,39 +112,17 @@ render_{level_name} :: proc() {{
 }}
 """)
 
-	for n, item_entity in enumerate(item_entities):
-		out_f.write(f"""
-{prefix}ITEM_{n} := [?]Event {{
-	Set_Entity_Busy{{id = PLAYER_ID, busy = true}},""")
-		items = item_entity.properties["items"].split(",")
-		for item in items:
-			out_f.write(f"""
-	Add_Item{{item = .{item}, number = 1}},""")
-		if len(items) > 1:
-			out_f.write(f"""
-	Append_Text{{"Got items: {", ".join(items)}"}},""")
-		else:
-			out_f.write(f"""
-	Append_Text{{"Got item: {items[0]}"}},""")
-		out_f.write(f"""
-	Close_Dialogue{{}},
-	Clear_Text{{}},""")
-		out_f.write(f"""
-	Set_Entity_Busy{{id = PLAYER_ID, busy = false}},
-	End{{}},
-}}
-""")
-
 	out_f.write(f"""
 {prefix}ITEM_ENTITIES := [{len(item_entities)}]Entity{{""")
 	for n, item_entity in enumerate(item_entities):
+		items = ["."+_s for _s in item_entity.properties["items"].split(",")]
 		x, y = orderedpair_to_tile(item_entity.coordinates)
 		out_f.write(f"""
 	Entity{{
 		id = {2000+n},
 		tile = {{ {x}, {y} }},
 		n = "items:{2000+n}",
-		talk = {prefix}ITEM_{n}[:],
+		talk = proc() {{ items_in_a_box({", ".join(items)}) }},
 		v = Texture_Name.Box,
 	}},""")
 

@@ -3,19 +3,17 @@ package game
 import "core:fmt"
 import "core:time"
 
-PLAYER_ID: Id = 0
+PLAYER_ID :: 0
 
 level_firstgids: []int
 level_map_wrap: bool
 level_routes: [][]Tile_Coord
 level_tilesets: []Tileset_Id
 
-CHANGE_LEVEL := [?]Event {
-	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Curtain_Down{},
-	Start_Next_Level{},
-	Curtain_Up{},
-	End{},
+change_level :: proc(level: Level) {
+	queue_events(
+		[]Event{Set_Entity_Busy{id = PLAYER_ID, busy = true}, Curtain_Down{}, Start_Level{level}, Curtain_Up{}, End{}},
+	)
 }
 
 add_pc_entity :: proc(tile: Tile_Coord, face: Face) {

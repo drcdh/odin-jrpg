@@ -11,42 +11,58 @@ TRAP_ID :: 665
 TRAP_BADDY_ID :: 666
 WARP_2_0_ID :: 300
 
-WARP_TO_0 := [?]Event {
-	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Play_Sound{sound = .Warp},
-	Curtain_Down{},
-	Start_Level{level = .LEVEL_0},
-	Curtain_Up{},
-	End{},
+warp_to_0 :: proc() {
+	queue_events(
+		[]Event {
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Play_Sound{sound = .Warp},
+			Curtain_Down{},
+			Start_Level{level = .LEVEL_0},
+			Curtain_Up{},
+			End{},
+		},
+	)
 }
 
-TRAP_BADDY_ACTIVATE := [?]Event {
-	Set_Entity_State{id = TRAP_BADDY_ID, state = Approach_Entity{id = PLAYER_ID}},
-	Remove_Entity{TRAP_ID},
-	End{},
+trap_baddy_activate :: proc() {
+	queue_events(
+		[]Event {
+			Set_Entity_State{id = TRAP_BADDY_ID, state = Approach_Entity{id = PLAYER_ID}},
+			Remove_Entity{TRAP_ID},
+			End{},
+		},
+	)
 }
 
-TRAP_BADDY_ENCOUNTER := [?]Event {
-	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Start_Encounter{encounter = 0},
-	Remove_Entity{TRAP_BADDY_ID},
-	Curtain_Up{.Battle},
-	Set_Entity_Busy{id = PLAYER_ID, busy = false},
-	End{},
+trap_baddy_encounter :: proc() {
+	queue_events(
+		[]Event {
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Start_Encounter{encounter = 0},
+			Remove_Entity{TRAP_BADDY_ID},
+			Curtain_Up{.Battle},
+			Set_Entity_Busy{id = PLAYER_ID, busy = false},
+			End{},
+		},
+	)
 }
 
-level_2_save := []Event {
-	Set_Entity_Busy{id = PLAYER_ID, busy = true},
-	Append_Text{"Hot damn, a save point! Save your game?"},
-	Append_Choice{"Yeah!"},
-	Append_Choice{"Nope."},
-	Get_Choice{},
-	Clear_Text{},
-	Skip_If_Choice{1, 1},
-	Save_Game{.Level_2},
-	Close_Dialogue{},
-	Set_Entity_Busy{id = PLAYER_ID, busy = false},
-	End{},
+level_2_save :: proc() {
+	queue_events(
+		[]Event {
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Append_Text{"Hot damn, a save point! Save your game?"},
+			Append_Choice{"Yeah!"},
+			Append_Choice{"Nope."},
+			Get_Choice{},
+			Clear_Text{},
+			Skip_If_Choice{1, 1},
+			Save_Game{.Level_2},
+			Close_Dialogue{},
+			Set_Entity_Busy{id = PLAYER_ID, busy = false},
+			End{},
+		},
+	)
 }
 
 start_level_2 :: proc() {
@@ -103,13 +119,13 @@ start_level_2 :: proc() {
 			ghost = true,
 			tile = LEVEL_2_WARP_SPAWN,
 			n = "warp",
-			trap = WARP_TO_0[:],
+			trap = warp_to_0,
 			v = animation_create(.Warp),
 		},
 	)
 
 	add_world_entity(
-		Entity{id = TRAP_ID, ghost = true, tile = LEVEL_2_TRAP_SPAWN, n = "trap", trap = TRAP_BADDY_ACTIVATE[:]},
+		Entity{id = TRAP_ID, ghost = true, tile = LEVEL_2_TRAP_SPAWN, n = "trap", trap = trap_baddy_activate},
 	)
 
 	add_world_entity(
@@ -120,7 +136,7 @@ start_level_2 :: proc() {
 			tile = LEVEL_2_BADDY_SPAWN,
 			n = "baddy",
 			speed = 3,
-			trap = TRAP_BADDY_ENCOUNTER[:],
+			trap = trap_baddy_encounter,
 			v = facing_animation_create(.Baddy_World_Left, .Baddy_World_Right, .Baddy_World_Up, .Baddy_World_Down, .Right),
 			z = Z_MAX,
 		},
@@ -133,7 +149,7 @@ start_level_2 :: proc() {
 			ghost = true,
 			n = "Level_2_Save",
 			v = animation_create(.Save_Point_Active),
-			trap = level_2_save[:],
+			trap = level_2_save,
 		},
 	)
 

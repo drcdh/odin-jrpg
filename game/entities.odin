@@ -41,6 +41,8 @@ Pacing :: struct {
 	step:      int,
 }
 
+Entity_Script :: proc()
+
 Entity_State :: union {
 	Approach_Entity,
 	Control,
@@ -54,8 +56,8 @@ Entity :: struct {
 	handle:   Entity_Handle,
 	id:       Id,
 	n:        Name,
-	talk:     []Event,
-	trap:     []Event,
+	talk:     Entity_Script,
+	trap:     Entity_Script,
 	state:    Entity_State,
 	v:        Visual,
 }
@@ -139,8 +141,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 		if tile_outside(e.tile) {
 			fmt.printfln("% 4d: %s leaving level", frame_count, e.n)
 			set_world_entity_busy(e.id, true) // hack
-			next_level = .LEVEL_OVERWORLD
-			queue_events(CHANGE_LEVEL[:])
+			change_level(.LEVEL_OVERWORLD)
 		}
 	}
 	if !e.busy && !e.disabled && !e.k.moving {
@@ -227,7 +228,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 				t := tile_in_front(p)
 				p := LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
 				if p & PARTY_IMPASSABLE == 0 {
-					queue_events(LEAVE_BOAT[:])
+					leave_boat()
 				}
 			}
 		}
@@ -235,9 +236,9 @@ player_control :: proc(_: f32, p: ^Entity) {
 }
 
 entity_talk :: proc(e: Entity) {
-	queue_events(e.talk)
+	e.talk()
 }
 
 entity_trap :: proc(e: Entity) {
-	queue_events(e.trap)
+	e.trap()
 }

@@ -110,11 +110,11 @@ set_world_entity_face_party :: proc(id: Id) {
 	e.face = face_toward(e, pc)
 }
 
-set_world_entity_talk_script :: proc(id: Id, script: []Event) {
+set_world_entity_talk_script :: proc(id: Id, script: Entity_Script) {
 	get_world_entity(id).talk = script
 }
 
-set_world_entity_trap_script :: proc(id: Id, script: []Event) {
+set_world_entity_trap_script :: proc(id: Id, script: Entity_Script) {
 	get_world_entity(id).trap = script
 }
 
