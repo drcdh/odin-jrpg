@@ -76,7 +76,7 @@ update_debug :: proc() {
 		} else if shop_menu_active() {
 			fmt.printfln("%#v\n%#v", shop_menu_data.ui_state, shop_menu_data.ui_data)
 		} else if world_menu_active() {
-			fmt.printfln("%#v\n%#v", world_menu.ui_state, world_menu.ui_data)
+			// fmt.printfln("%#v\n%#v", world_menu.ui_state, world_menu.ui_data)
 		}
 	}
 	if rl.IsKeyPressed(.F) {debug_framerate = !debug_framerate}

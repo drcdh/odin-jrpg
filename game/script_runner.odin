@@ -154,6 +154,9 @@ process_event :: proc(runner: ^Runner) {
 		runner.state = .Wait_Choice
 	case Heal_Party:
 		heal_party()
+	case Load_Game:
+		// TODO
+		quitting = true
 	case Lose_Money:
 		game_data.money -= event.m
 		if game_data.money < 0 {game_data.money = 0}
@@ -163,6 +166,10 @@ process_event :: proc(runner: ^Runner) {
 			moving_entity.tile = pc.tile
 			fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
 		}
+	case New_Game:
+		init_new_game()
+		start_menu_exit()
+		start_level(.LEVEL_0)
 	case Pause_Runner:
 		runner.pause = event.pause
 		runner.state = .Pause
@@ -170,6 +177,8 @@ process_event :: proc(runner: ^Runner) {
 	// todo
 	case Play_Sound:
 		play_sound(event.sound)
+	case Quit:
+		quitting = true
 	case Remove_Entity:
 		remove_world_entity(event.id)
 	case Set_Boat_Control:

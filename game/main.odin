@@ -39,15 +39,15 @@ init :: proc() {
 	init_rl()
 	initialize_input()
 	init_dialogue()
+	init_ui_icons()
 	battle_menu_load()
-	world_menu_load()
-
 	shop_load()
+	start_menu_load()
+	world_menu_load()
 
 	music_init(&music_state)
 
-	init_new_game()
-	start_level(.LEVEL_0)
+	start_menu_enter()
 
 	running = true
 }
@@ -56,7 +56,9 @@ draw :: proc() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
 
-	if battle.active {
+	if start_menu_active() {
+		start_menu_draw()
+	} else if battle.active {
 		draw_battle()
 	} else if world_menu_active() {
 		world_menu_draw()
@@ -83,7 +85,9 @@ update :: proc() {
 	update_dialogue()
 	update_runners(dt)
 
-	if battle.active {
+	if start_menu_active() {
+		start_menu_update()
+	} else if battle.active {
 		update_battle(dt)
 	} else if world_menu_active() {
 		world_menu_update()
@@ -102,10 +106,7 @@ update :: proc() {
 
 	update_transition()
 
-	// update animated UI icons
-	animation_update(&select_tile_icon, dt)
-	animation_update(&select_tile_icon_down, dt)
-	animation_update(&world_menu_icon, dt)
+	update_ui_icons(dt)
 
 	update_debug()
 
@@ -126,6 +127,7 @@ tear_down :: proc() {
 	delete_world_entities()
 	tear_down_dialogue()
 	battle_menu_unload()
+	start_menu_unload()
 	world_menu_unload()
 	music_shutdown(&music_state)
 	unload_sounds()
@@ -147,6 +149,7 @@ set_window_mode :: proc(z: i32) {
 	view_origin.x = 0
 	view_origin.y = 0
 	tile_size = f32(zoom * TILE_SIZE)
+	tile_size_int = int(zoom * TILE_SIZE)
 	tile_dim = {tile_size, tile_size}
 	view_dim = {tile_size * VIEW_TILES_W, tile_size * VIEW_TILES_H}
 	view_bottomleft = view_origin + {0, view_dim.y}

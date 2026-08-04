@@ -1,3 +1,4 @@
+#+private file
 package game
 
 import "core:fmt"
@@ -71,28 +72,24 @@ WORLD_MENU_PANE_DIM := [WORLD_MENU_NUM_TEXTURES]Tile_Coord {
 
 WORLD_MENU_INVENTORY_ROWS :: 10
 
-select_tile_icon: Animation
-select_tile_icon_down: Animation
-world_menu_icon: Animation
-
 world_menu: World_Menu
 
+@(private)
 world_menu_load :: proc() {
-	select_tile_icon = animation_create(.Select_Tile)
-	select_tile_icon_down = animation_create(.Select_Tile_Down)
-	world_menu_icon = animation_create(.Select_Icon_Small)
 	for pane in World_Menu_Pane {
 		dim := WORLD_MENU_PANE_DIM[pane]
 		world_menu.textures[pane] = rl.LoadRenderTexture(i32(dim.x) * i32(tile_size), i32(dim.y) * i32(tile_size))
 	}
 }
 
+@(private)
 world_menu_unload :: proc() {
 	for t in world_menu.textures {
 		rl.UnloadRenderTexture(t)
 	}
 }
 
+@(private)
 world_menu_enter :: proc() {
 	world_menu.ui_data = World_Menu_UI_Data{}
 	world_menu.ui_state = .Top
@@ -106,6 +103,7 @@ world_menu_exit :: proc() {
 	world_menu.ui_state = .Inactive
 }
 
+@(private)
 world_menu_active :: proc() -> bool {
 	return world_menu.ui_state != .Inactive
 }
@@ -114,6 +112,7 @@ world_menu_set_stale :: proc(pane: World_Menu_Pane) {
 	world_menu.stale[pane] = true
 }
 
+@(private)
 world_menu_draw :: proc() {
 	for &stale, i in world_menu.stale {
 		if stale {
@@ -121,6 +120,7 @@ world_menu_draw :: proc() {
 			stale = false
 		}
 	}
+
 	switch world_menu.ui_state {
 	case .Inactive:
 	case .Top:
@@ -149,6 +149,7 @@ world_menu_draw :: proc() {
 		world_menu_draw_panes(.Top, .Party, tint = rl.GRAY)
 		world_menu_draw_panes(.System)
 	}
+
 	world_menu_draw_icons()
 	world_menu_draw_text_effects()
 }
@@ -361,6 +362,11 @@ world_menu_draw_party_member :: proc(pc_idx: PC, origin: Tile_Coord) {
 	draw_texture(pc_idle_texture[pc_idx], tile_to_pixel(origin.x + 3, f32(origin.y) + .5))
 }
 
+@(private)
+world_menu_add_text_effect :: proc(text: cstring, coord: [2]f32, color: rl.Color) {
+	append(&world_menu.text_effects, Process_Text_Effect{color = color, coord = coord, text = text})
+}
+
 world_menu_draw_text_effects :: proc() {
 	for te in world_menu.text_effects {
 		pos := Pixel_Coord{te.coord.x - 32, te.coord.y - 32 * te.t}
@@ -368,6 +374,7 @@ world_menu_draw_text_effects :: proc() {
 	}
 }
 
+@(private)
 world_menu_update :: proc() {
 	switch world_menu.ui_state {
 	case .Inactive:

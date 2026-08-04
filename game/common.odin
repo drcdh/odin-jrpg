@@ -18,6 +18,7 @@ Tile_Offset :: Pixel_Coord
 
 TILE_SIZE :: 16
 tile_size: Pixel
+tile_size_int: int
 tile_dim: Pixel_Dim
 
 Face :: enum {
@@ -105,33 +106,6 @@ get_moves_toward :: proc(k: Kinematics, d: Tile_Coord) -> (Tile_Coord, Tile_Coor
 	move := la.projection(v, f)
 	alt := v - move
 	return move, alt
-}
-
-shift_windowed_selection_a :: proc(d, s, w, W, N: int) -> (int, int) {
-	s, w := s, w
-	s += d
-	if s < 0 {
-		s = N - 1
-		w = max(0, N - W)
-	} else if s >= N {
-		s = 0
-		w = 0
-	} else if s >= w + W {
-		w = s - W + 1
-	} else if s < w {
-		w = s
-	}
-	return s, w
-}
-
-shift_windowed_selection_b :: proc(d: int, sel: Selection, W, N: int) -> Selection {
-	_s, _w := shift_windowed_selection_a(d, sel.row_idx, sel.origin_idx, W, N)
-	return {origin_idx = _w, row_idx = _s}
-}
-
-shift_windowed_selection :: proc {
-	shift_windowed_selection_a,
-	shift_windowed_selection_b,
 }
 
 grid_change :: proc(i, dx, dy, W, H: int) -> int {

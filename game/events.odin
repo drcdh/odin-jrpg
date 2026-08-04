@@ -44,12 +44,16 @@ Effect_Event :: struct {
 	value:       int,
 }
 Heal_Party :: struct {}
+Load_Game :: struct {
+	filename: cstring,
+}
 Lose_Money :: struct {
 	m: Money,
 }
 Move_Entity_Here :: struct {
 	id: Id,
 }
+New_Game :: struct {}
 Play_Animation :: struct {
 	animation: Animation_Name,
 	offset:    Pixel_Coord,
@@ -58,6 +62,7 @@ Play_Sound :: struct {
 	delay: f32,
 	sound: Sound_Name,
 }
+Quit :: struct {}
 Remove_Entity :: struct {
 	id: Id,
 }
@@ -152,11 +157,14 @@ Event :: union {
 	End,
 	Get_Choice,
 	Heal_Party,
+	Load_Game,
 	Lose_Money,
 	Pause_Runner,
 	Move_Entity_Here,
+	New_Game,
 	Play_Animation,
 	Play_Sound,
+	Quit,
 	Remove_Entity,
 	Set_Boat_Control,
 	Set_Bool,
