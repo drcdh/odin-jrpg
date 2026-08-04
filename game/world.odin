@@ -59,6 +59,9 @@ draw_world :: proc() {
 update_world :: proc(dt: f32) {
 	update_world_entities(dt)
 	update_overlay()
+	if level_proc != nil {
+		level_proc(dt)
+	}
 }
 
 // activate_entity_trap_script_handle :: proc(h: Entity_Handle) {

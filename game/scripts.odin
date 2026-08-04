@@ -15,6 +15,22 @@ board_boat :: proc() {
 	)
 }
 
+dialogue :: proc(speaker_id: Id, dialogue: string) {
+	queue_events(
+		[]Event {
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Set_Entity_Busy{id = speaker_id, busy = true},
+			Set_Entity_Face_Party{id = speaker_id},
+			Append_Text{dialogue},
+			Close_Dialogue{},
+			Clear_Text{},
+			Set_Entity_Busy{id = speaker_id, busy = false},
+			Set_Entity_Busy{id = PLAYER_ID, busy = false},
+			End{},
+		},
+	)
+}
+
 egress :: proc(destination: Level) {
 	queue_events(
 		[]Event {
@@ -88,6 +104,19 @@ save_point :: proc(save_point: Save_Point) {
 			Skip_If_Choice{1, 1},
 			Save_Game{save_point},
 			Close_Dialogue{},
+			Set_Entity_Busy{id = PLAYER_ID, busy = false},
+			End{},
+		},
+	)
+}
+
+text_popup :: proc(dialogue: string) {
+	queue_events(
+		[]Event {
+			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Append_Text{dialogue},
+			Close_Dialogue{},
+			Clear_Text{},
 			Set_Entity_Busy{id = PLAYER_ID, busy = false},
 			End{},
 		},

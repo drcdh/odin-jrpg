@@ -7,6 +7,7 @@ PLAYER_ID :: 0
 
 level_firstgids: []int
 level_map_wrap: bool
+level_proc: proc(_: f32)
 level_routes: [][]Tile_Coord
 level_tilesets: []Tileset_Id
 
@@ -49,6 +50,7 @@ start_level :: proc(l: Level) {
 	clear_world_entities()
 	unload_map()
 	darkness = 0
+	level_proc = nil
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 	init_level(l)

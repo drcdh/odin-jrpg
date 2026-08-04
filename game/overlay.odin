@@ -1,5 +1,6 @@
 package game
 
+import hm "core:container/handle_map"
 import rl "vendor:raylib"
 
 CLOUDS_DATA :: #load("textures/_overlay_clouds.png")
@@ -56,16 +57,19 @@ draw_darkness :: proc() {
 		rl.BeginTextureMode(darkness_texture)
 		rl.DrawRectangleV({0, 0}, view_dim, rl.BLACK)
 		if camera := get_world_entity(camera_handle); camera != nil {
-			if pc := get_world_entity(PLAYER_ID); pc != nil {
-				pos := tile_to_pixel(pc.tile) - tile_to_pixel(camera.tile) + view_dim / 2 // FIXME
-				radius := 3 * tile_size
-				rl.BeginBlendMode(.SUBTRACT_COLORS)
-				rl.DrawCircleV(pos, radius, rl.BLACK)
-				rl.EndBlendMode()
-			}
-		}
+			// if pc := get_world_entity(PLAYER_ID); pc != nil {
+			it := hm.iterator_make(&world_entities.entities)
+			for e, _ in hm.iterate(&it) {
+				if e.light > 0 {
+					pos := get_entity_pixel(e^) - get_entity_pixel(camera^) + view_dim / 2
+					radius := f32(e.light) * tile_size
+					rl.BeginBlendMode(.SUBTRACT_COLORS)
+					rl.DrawCircleV(pos, radius, rl.BLACK)
+					rl.EndBlendMode()
+				}
+			}}
 		rl.EndTextureMode()
-		rect := rl.Rectangle{0, 0, view_dim.x, -view_dim.y}
-		rl.DrawTexturePro(darkness_texture.texture, rect, rect, {}, 0, {255, 255, 255, darkness})
 	}
+	rect := rl.Rectangle{0, 0, view_dim.x, -view_dim.y}
+	rl.DrawTexturePro(darkness_texture.texture, rect, rect, {}, 0, {255, 255, 255, darkness})
 }

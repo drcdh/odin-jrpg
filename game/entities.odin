@@ -55,6 +55,7 @@ Entity :: struct {
 	disabled: bool, // script will not run and will not be displayed if true
 	handle:   Entity_Handle,
 	id:       Id,
+	light:    f16,
 	n:        Name,
 	talk:     Entity_Script,
 	trap:     Entity_Script,

@@ -121,6 +121,15 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
+		id = 463,
+		ghost = true,
+		tile = LEVEL_0_WARP_CAVE,
+		n = "warp",
+		trap = proc() {warp_to_level(.LEVEL_CAVE)},
+		v = animation_create(.Warp),
+	})
+
+	add_world_entity(Entity {
 		id = BUTTON_1_ID,
 		tile = LEVEL_0_PLAYER_SPAWN + {1, 1},
 		n = "Button 1",
