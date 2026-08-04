@@ -4,7 +4,7 @@ import "core:math"
 import la "core:math/linalg"
 import rl "vendor:raylib"
 
-Id :: int
+Id :: u16
 
 NULL_ID :: 9999
 

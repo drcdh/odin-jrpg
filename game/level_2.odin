@@ -18,7 +18,7 @@ start_level_2 :: proc() {
 	for i := 1; i <= MAP_WIDTH - 3; i += 2 {
 		add_world_entity(
 			Entity {
-				id = 100 + i,
+				id = Id(100 + i),
 				tile = Tile_Coord{i, 1},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 1},
@@ -28,7 +28,7 @@ start_level_2 :: proc() {
 		)
 		add_world_entity(
 			Entity {
-				id = 200 + i,
+				id = Id(200 + i),
 				tile = Tile_Coord{i, MAP_HEIGHT - 3},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 3},
@@ -40,7 +40,7 @@ start_level_2 :: proc() {
 	for j := 3; j <= MAP_HEIGHT - 5; j += 2 {
 		add_world_entity(
 			Entity {
-				id = 300 + j,
+				id = Id(300 + j),
 				tile = Tile_Coord{1, j},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 0},
@@ -50,7 +50,7 @@ start_level_2 :: proc() {
 		)
 		add_world_entity(
 			Entity {
-				id = 400 + j,
+				id = Id(400 + j),
 				tile = Tile_Coord{MAP_WIDTH - 3, j},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 2},
