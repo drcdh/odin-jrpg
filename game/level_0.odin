@@ -206,6 +206,20 @@ jukebox := [?]Event {
 	End{},
 }
 
+level_0_save := [?]Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text{"Ooh, it's a save point! Save your game?"},
+	Append_Choice{"Yeah!"},
+	Append_Choice{"Nope."},
+	Get_Choice{},
+	Clear_Text{},
+	Skip_If_Choice{1, 1},
+	Save_Game{.Level_0},
+	Close_Dialogue{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
 start_level_0 :: proc() {
 	add_pc_entity(LEVEL_0_PLAYER_SPAWN, .Down)
 
@@ -302,6 +316,17 @@ start_level_0 :: proc() {
 
 	add_world_entity(
 		Entity{id = JUKEBOX_ID, tile = LEVEL_0_JUKEBOX, n = "Jukebox", talk = jukebox[:], v = Texture_Name.Jukebox},
+	)
+
+	add_world_entity(
+		Entity {
+			id = 800,
+			tile = LEVEL_0_SAVE,
+			ghost = true,
+			n = "Level_0_Save",
+			v = animation_create(.Save_Point_Active),
+			trap = level_0_save[:],
+		},
 	)
 
 	play_music(&music_state, .Town)

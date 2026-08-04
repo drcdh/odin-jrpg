@@ -1,12 +1,13 @@
 package game
 
+import "core:strings"
 import rl "vendor:raylib"
 
 Start_Menu_UI_Data :: struct {
 	fade_t:    f32,
 	start_t:   f32,
 	top_idx:   int,
-	save_data: [dynamic]cstring,
+	save_data: [dynamic]string,
 	load_sel:  Selection,
 }
 
@@ -110,7 +111,6 @@ start_menu_draw :: proc() {
 	case .Start:
 	case .Top:
 		origin := START_MENU_PANE_ORIGINS[Start_Menu_Pane.Top]
-		fmt.println(0, .5 * f32(start_menu.top_idx), origin)
 		draw_text_icon(.5, .5 * f32(1 + start_menu.top_idx), origin)
 	case .Load:
 		origin := START_MENU_PANE_ORIGINS[Start_Menu_Pane.Load]
@@ -129,7 +129,7 @@ start_menu_redraw_load_pane :: proc() {
 	for r in 0 ..< START_MENU_LOAD_ROWS {
 		if r >= len(start_menu.save_data) {break}
 		s := start_menu.save_data[r + start_menu.load_sel.origin_idx]
-		draw_text(.5, .5 * f32(1 + r), s)
+		draw_text(.5, .5 * f32(1 + r), strings.clone_to_cstring(s, context.temp_allocator))
 	}
 }
 
@@ -160,9 +160,7 @@ start_menu_draw_panes :: proc(panes: ..Start_Menu_Pane) {
 	}
 }
 
-import "core:fmt"
 start_menu_update :: proc() {
-
 	switch start_menu.ui_state {
 	case .Inactive:
 
@@ -185,11 +183,14 @@ start_menu_update :: proc() {
 			case 1:
 				play_sound(.Blerp)
 			case 2:
-				if len(start_menu.save_data) > 0 {
-					start_menu.ui_state = .Load
-				} else {
-					play_sound(.Blerp)
-				}
+				filepath := "save_game.json"
+				save_data := read_saved_game_data(filepath)
+				queue_events([]Event{Curtain_Down{}, Load_Game{save_data}, End{}})
+			// if len(start_menu.save_data) > 0 {
+			// 	start_menu.ui_state = .Load
+			// } else {
+			// 	play_sound(.Blerp)
+			// }
 			case 3:
 				queue_events([]Event{Curtain_Down{}, Quit{}, End{}})
 			}
@@ -200,7 +201,9 @@ start_menu_update :: proc() {
 
 	case .Load:
 		if get_input(.ENTER) {
-			queue_events([]Event{Curtain_Down{}, Load_Game{start_menu.save_data[selection_row(start_menu.load_sel)]}, End{}})
+			filepath := start_menu.save_data[selection_row(start_menu.load_sel)]
+			save_data := read_saved_game_data(filepath)
+			queue_events([]Event{Curtain_Down{}, Load_Game{save_data}, End{}})
 		} else if dy, ok := get_y_input().?; ok {
 			start_menu.load_sel = shift_windowed_selection(
 				dy,

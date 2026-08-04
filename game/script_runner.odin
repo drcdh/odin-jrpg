@@ -155,8 +155,9 @@ process_event :: proc(runner: ^Runner) {
 	case Heal_Party:
 		heal_party()
 	case Load_Game:
-		// TODO
-		quitting = true
+		load_saved_game(event.save_data)
+		start_menu_exit()
+		start_save_point(event.save_data.save_point)
 	case Lose_Money:
 		game_data.money -= event.m
 		if game_data.money < 0 {game_data.money = 0}
@@ -181,6 +182,8 @@ process_event :: proc(runner: ^Runner) {
 		quitting = true
 	case Remove_Entity:
 		remove_world_entity(event.id)
+	case Save_Game:
+		save_game(event.save_point)
 	case Set_Boat_Control:
 		boat := get_world_entity(BOAT_ID)
 		boat.state = Control{}

@@ -35,6 +35,20 @@ TRAP_BADDY_ENCOUNTER := [?]Event {
 	End{},
 }
 
+level_2_save := []Event {
+	Set_Entity_Busy{id = PLAYER_ID, busy = true},
+	Append_Text{"Hot damn, a save point! Save your game?"},
+	Append_Choice{"Yeah!"},
+	Append_Choice{"Nope."},
+	Get_Choice{},
+	Clear_Text{},
+	Skip_If_Choice{1, 1},
+	Save_Game{.Level_2},
+	Close_Dialogue{},
+	Set_Entity_Busy{id = PLAYER_ID, busy = false},
+	End{},
+}
+
 start_level_2 :: proc() {
 	add_pc_entity(LEVEL_2_PLAYER_SPAWN, .Down)
 
@@ -109,6 +123,17 @@ start_level_2 :: proc() {
 			trap = TRAP_BADDY_ENCOUNTER[:],
 			v = facing_animation_create(.Baddy_World_Left, .Baddy_World_Right, .Baddy_World_Up, .Baddy_World_Down, .Right),
 			z = Z_MAX,
+		},
+	)
+
+	add_world_entity(
+		Entity {
+			id = 800,
+			tile = LEVEL_2_SAVE,
+			ghost = true,
+			n = "Level_2_Save",
+			v = animation_create(.Save_Point_Active),
+			trap = level_2_save[:],
 		},
 	)
 

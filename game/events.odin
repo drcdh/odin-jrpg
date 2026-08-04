@@ -45,7 +45,7 @@ Effect_Event :: struct {
 }
 Heal_Party :: struct {}
 Load_Game :: struct {
-	filename: cstring,
+	save_data: Save_Data,
 }
 Lose_Money :: struct {
 	m: Money,
@@ -65,6 +65,9 @@ Play_Sound :: struct {
 Quit :: struct {}
 Remove_Entity :: struct {
 	id: Id,
+}
+Save_Game :: struct {
+	save_point: Save_Point,
 }
 Set_Boat_Control :: struct {}
 Set_Bool :: struct {
@@ -166,6 +169,7 @@ Event :: union {
 	Play_Sound,
 	Quit,
 	Remove_Entity,
+	Save_Game,
 	Set_Boat_Control,
 	Set_Bool,
 	Set_Int,
