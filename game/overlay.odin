@@ -40,7 +40,6 @@ update_overlay :: proc() {
 	}
 }
 
-
 darkness_texture: rl.RenderTexture
 darkness: u8
 
@@ -55,19 +54,20 @@ delete_darkness :: proc() {
 draw_darkness :: proc() {
 	if darkness > 0 {
 		rl.BeginTextureMode(darkness_texture)
-		rl.DrawRectangleV({0, 0}, view_dim, rl.BLACK)
+		rl.ClearBackground(rl.BLANK)
 		if camera := get_world_entity(camera_handle); camera != nil {
-			// if pc := get_world_entity(PLAYER_ID); pc != nil {
 			it := hm.iterator_make(&world_entities.entities)
 			for e, _ in hm.iterate(&it) {
 				if e.light > 0 {
 					pos := get_entity_pixel(e^) - get_entity_pixel(camera^) + view_dim / 2
 					radius := f32(e.light) * tile_size
-					rl.BeginBlendMode(.SUBTRACT_COLORS)
-					rl.DrawCircleV(pos, radius, rl.BLACK)
-					rl.EndBlendMode()
+					rl.DrawCircleV(pos, radius, rl.WHITE)
 				}
-			}}
+			}
+		}
+		rl.BeginBlendMode(.SUBTRACT_COLORS)
+		rl.DrawRectangleV({0, 0}, view_dim, rl.BLACK)
+		rl.EndBlendMode()
 		rl.EndTextureMode()
 	}
 	rect := rl.Rectangle{0, 0, view_dim.x, -view_dim.y}
