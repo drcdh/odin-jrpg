@@ -1,20 +1,23 @@
-name,targeting,effect,const,power,psypow,pierce,psyprc,chance,risk,ranged,status,windup,cost,cooldown,animation,sound
-Potion,One_Ally,Heal_Hp,50,,,,,,,,,10,25,,Heal,Warp
-Super Potion,One_Ally,Heal_Hp,500,,,,,,,,,10,25,,Heal,Warp
-Antidote,One_Ally,Remove_Status,100,,,,,,,,.Poison,10,25,,Heal,Warp
-Poisonous Mushroom,One_Ally,Add_Status,100,,,,,,,,.Poison,10,25,,Heal,Warp
-Bite,One_Opponent,Attack,,100,,,,,,,,,50,,Ffvi_Stars,Whack
-Punch,One_Opponent,Attack,,80,,,,,150,,,,50,,Smack,Whack
-Smack,One_Opponent,Attack,,60,,,,,,,,,50,,Smack,Whack
-Smash,One_Opponent,Attack,,100,,,,,,,,,50,,Smack,Whack
-Quake Smash,All_Opponents,Attack,,300,,,,,,ranged,,60,150,500,Smack,Whack
-Slash,One_Opponent,Attack,,100,,,,,,,,,50,,Slash,Whack
-Pommel Strike,One_Opponent,Add_Status,100,,,,,,,,.Confuse,,60,,Smack,Whack
-Slash All,All_Opponents,Attack,,100,,,,,,,,30,80,100,Slash,Whack
-Wild Swing,One_Opponent,Attack,,200,,,,,300,,,,50,60,Slash,Whack
-Heal,One_Ally,Heal_Hp,,100,,,,,,,,20,50,50,Heal,Warp
-Heal All,All_Allies,Heal_Hp,,50,,,,,,,,50,100,100,Heal,Warp
-Healing Hymn,All_Allies,Heal_Hp,,70,,,,,,,,50,100,100,Heal,Warp
-Fire,Some_Opponents,Attack,,,100,,,,,ranged,,,50,,Small_Flame,Warp
-Mind Control,One_Opponent,Add_Status,100,,,,,,,ranged,.Control,50,100,200,Heal,Warp
-Level Up,One_Ally,Level_Up,1,,,,,,,,,,,,Heal,Warp
+name,targeting,effect,const,power,psypow,pierce,psyprc,chance,risk,ranged,status,stagger,interrupt,windup,cost,cooldown,animation,sound
+Potion,One_Ally,Heal_Hp,50,,,,,,,,,,,10,25,,Heal,Warp
+Super Potion,One_Ally,Heal_Hp,500,,,,,,,,,,,10,25,,Heal,Warp
+Antidote,One_Ally,Remove_Status,100,,,,,,,,.Poison,,,10,25,,Heal,Warp
+Poisonous Mushroom,One_Ally,Add_Status,100,,,,,,,,.Poison,,,10,25,,Heal,Warp
+Bite,One_Opponent,Attack,,100,,,,,,,,,,,50,,Ffvi_Stars,Whack
+Punch,One_Opponent,Attack,,80,,,,,150,,,,,,50,,Smack,Whack
+Smack,One_Opponent,Attack,,60,,,,,,,,,,,50,,Smack,Whack
+Smash,One_Opponent,Attack,,100,,,,,,,,,,,50,,Smack,Whack
+Quake Smash,All_Opponents,Attack,,300,,,,,,ranged,,,,60,150,500,Smack,Whack
+Slash,One_Opponent,Attack,,100,,,,,,,,,,,50,,Slash,Whack
+Pommel Strike,One_Opponent,Add_Status,100,,,,,,,,.Confuse,,,,60,,Smack,Whack
+Plague Bite,One_Opponent,Add_Status,100,,,,,,,,.Poison,,,,70,200,Ffvi_Stars,Whack
+Slash All,All_Opponents,Attack,,100,,,,,,,,,,30,80,100,Slash,Whack
+Wild Swing,One_Opponent,Attack,,200,,,,,300,,,,,,50,60,Slash,Whack
+Tickle,One_Opponent,Stagger,,,,,,,200,,,10,10,,50,,Ffvi_Stars,Warp
+Heal,One_Ally,Heal_Hp,,100,,,,,,,,,,20,50,50,Heal,Warp
+Heal All,All_Allies,Heal_Hp,,50,,,,,,,,,,50,100,100,Heal,Warp
+Healing Hymn,All_Allies,Heal_Hp,,70,,,,,,,,,,50,100,100,Heal,Warp
+Fire,Some_Opponents,Attack,,,100,,,,,ranged,,,,,50,,Small_Flame,Warp
+Mind Control,One_Opponent,Add_Status,100,,,,,,,ranged,.Control,,,50,100,200,Heal,Warp
+Level Up,One_Ally,Level_Up,1,,,,,,,,,,,,,,Heal,Warp
+Ultimagnitude 9000,All_Combatants,Attack,,1000,1000,50,50,,,ranged,,90,90,500,500,0,Heal,Warp

@@ -1,9 +1,10 @@
 name,hitpoints,offense,defense,pOffense,pDefense,speed,texture,turn,skills
-Mouse-Sized Rat,4,2,2,0,1,10,,random_skill_random_target,"Bite,Wild_Swing"
-Rat-Sized Mouse,15,5,5,0,1,7,,random_skill_random_target,"Bite,Wild_Swing"
+Mouse-Sized Rat,4,2,2,0,1,10,,random_skill_random_target,"Bite,Tickle"
+Rat-Sized Mouse,15,5,5,0,1,7,,random_skill_random_target,"Bite,Plague_Bite"
 Malicious Mushroom,6,3,2,10,5,10,mushroom,random_skill_random_target,"Smack,Heal,Fire"
 Generic Goblin,12,12,10,0,4,8,goblin_club,random_skill_random_target,"Smash,Quake_Smash"
 Generic Goblin,12,10,10,0,4,9,goblin_knife,random_skill_random_target,"Slash,Slash_All"
 Ghost,1,4,1,10,8,12,,random_skill_random_target,"Heal,Heal_All"
 Bad Box,1000,1,1,1,1,1,,random_skill_random_target,"Smash,Quake_Smash"
 Magic Serpent,50,15,9,20,15,15,,random_skill_random_target,"Bite,Fire"
+Powerful Pebble,1,1,1,1,1,50,pebble,random_skill_random_target,Ultimagnitude_9000

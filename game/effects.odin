@@ -1,6 +1,7 @@
 package game
 
 import "core:fmt"
+import "core:math/rand"
 import rl "vendor:raylib"
 
 Effect_Name :: enum {
@@ -8,6 +9,7 @@ Effect_Name :: enum {
 	Heal_Hp,
 	Add_Status,
 	Remove_Status,
+	Stagger,
 	Level_Up,
 }
 
@@ -38,6 +40,11 @@ Effect_Remove_Status :: struct {
 	status: Status_Name,
 }
 
+Effect_Stagger :: struct {
+	stagger:   int,
+	interrupt: int,
+}
+
 Effect_Level_Up :: struct {
 	n: int,
 }
@@ -48,6 +55,7 @@ Effect :: union {
 	Effect_Heal_Hp,
 	Effect_Level_Up,
 	Effect_Remove_Status,
+	Effect_Stagger,
 }
 
 effect_attack :: proc(actor, target: ^Character, effect: Effect_Attack) {
@@ -112,6 +120,15 @@ effect_remove_status :: proc(actor, target: ^Character, effect: Effect_Remove_St
 	remove_status(target, status)
 }
 
+effect_stagger :: proc(actor, target: ^Character, effect: Effect_Stagger) {
+	target := get_combatant(target)
+	target.t -= f32(effect.stagger)
+	if rand.int_max(100) < effect.interrupt {
+		interrupt_windup(target)
+		queue_text_effect_character(target, "Break!", rl.PINK)
+	}
+}
+
 effect_level_up :: proc(_, target: ^Character, effect: Effect_Level_Up) {
 	n := effect.n
 	set_level(target, target.level + n)
@@ -124,6 +141,7 @@ effect_proc :: proc {
 	effect_heal_hp,
 	effect_add_status,
 	effect_remove_status,
+	effect_stagger,
 	effect_level_up,
 }
 
@@ -136,6 +154,8 @@ do_effect :: proc(actor, target: ^Character, effect: Effect) {
 	case Effect_Add_Status:
 		effect_proc(actor, target, effect)
 	case Effect_Remove_Status:
+		effect_proc(actor, target, effect)
+	case Effect_Stagger:
 		effect_proc(actor, target, effect)
 	case Effect_Level_Up:
 		effect_proc(actor, target, effect)

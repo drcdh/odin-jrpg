@@ -20,6 +20,10 @@ def ranged_f(row):
 	return "true" if row["ranged"] else "false"
 def status_f(row):
 	return row["status"]
+def stagger_f(row):
+	return int(row["stagger"] or 0)
+def interrupt_f(row):
+	return int(row["interrupt"] or 0)
 def traits_f(row):
 	return row["traits"]
 
@@ -48,6 +52,10 @@ def skill_effect(row):
 		chance = chance_f(row)
 		status = status_f(row)
 		return f"Effect_Remove_Status{{ {chance=}, status={status} }}"
+	elif effect == "Stagger":
+		stagger = stagger_f(row)
+		interrupt = interrupt_f(row)
+		return f"Effect_Stagger{{ {stagger=}, {interrupt=} }}"
 	elif effect == "Level_Up":
 		n = constant_f(row)
 		return f"Effect_Level_Up{{ {n=} }}"

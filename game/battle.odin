@@ -196,6 +196,9 @@ draw_battle_combatants :: proc() {
 battle_time_tick :: proc(dt: f32) {
 	ticks := dt * BATTLE_SPEED
 	for &s, i in battle.skill_plays {
+		if !combatant_alive(battle.combatants[s.actor]) {
+			fmt.println("^ OOPS: wound up skill is played by dead combatant")
+		}
 		s.windup -= ticks * get_stat_f(battle.combatants[s.actor].character, .Speed)
 		if s.windup <= 0 {
 			s.windup = 0
@@ -533,6 +536,9 @@ targeted :: proc(c_idx, team: int) -> bool {
 		}
 	}
 	return false
+}
+
+interrupt_windup :: proc(target: ^Combatant) {
 }
 
 roll_for_counter :: proc(actor, target: ^Character, risk: f32 = 1) {
