@@ -13,6 +13,7 @@ view_bottomleft: Pixel_Coord
 window_w: i32
 window_h: i32
 
+paused: bool
 running: bool
 quitting: bool // todo: transitions
 
@@ -72,6 +73,12 @@ draw :: proc() {
 
 	draw_transition()
 
+	if paused {
+		rl.BeginBlendMode(.MULTIPLIED)
+		rl.DrawRectangleV({}, view_dim, {80, 80, 155, 255})
+		rl.EndBlendMode()
+		draw_text(7, 7, "Paused")
+	}
 	draw_debug()
 
 	rl.EndDrawing()
@@ -82,31 +89,35 @@ update :: proc() {
 
 	update_input_state(dt)
 
-	update_dialogue()
-	update_runners(dt)
+	if !paused {
+		update_dialogue()
+		update_runners(dt)
 
-	if start_menu_active() {
-		start_menu_update()
-	} else if battle.active {
-		update_battle(dt)
-	} else if world_menu_active() {
-		world_menu_update()
-	} else if shop_menu_active() {
-		shop_update()
-	} else {
-		update_world(dt)
-		if !pc_busy() && get_input(.MENU) {
-			world_menu_enter()
+		if start_menu_active() {
+			start_menu_update()
+		} else if battle.active {
+			update_battle(dt)
+		} else if world_menu_active() {
+			world_menu_update()
+		} else if shop_menu_active() {
+			shop_update()
+		} else {
+			update_world(dt)
+			if !pc_busy() && get_input(.MENU) {
+				world_menu_enter()
+			}
 		}
+		update_transition()
+		update_ui_icons(dt)
+	}
+
+	if get_input(.PAUSE) {
+		paused = !paused
 	}
 
 	if rl.IsKeyPressed(.F6) {
 		rl.ToggleFullscreen()
 	}
-
-	update_transition()
-
-	update_ui_icons(dt)
 
 	update_debug()
 

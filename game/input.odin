@@ -10,13 +10,12 @@ Game_Input :: enum {
 	ENTER,
 	CANCEL,
 	MENU,
+	PAUSE,
 	UP,
 	DOWN,
 	LEFT,
 	RIGHT,
 }
-
-GAME_INPUTS :: [?]Game_Input{.ENTER, .CANCEL, .MENU, .UP, .DOWN, .LEFT, .RIGHT}
 
 INPUT_MAP: map[Game_Input]rl.KeyboardKey
 
@@ -37,6 +36,7 @@ initialize_input :: proc() {
 	INPUT_MAP[Game_Input.ENTER] = rl.KeyboardKey.Z
 	INPUT_MAP[Game_Input.CANCEL] = rl.KeyboardKey.X
 	INPUT_MAP[Game_Input.MENU] = rl.KeyboardKey.S
+	INPUT_MAP[Game_Input.PAUSE] = rl.KeyboardKey.SPACE
 	INPUT_MAP[Game_Input.UP] = rl.KeyboardKey.UP
 	INPUT_MAP[Game_Input.DOWN] = rl.KeyboardKey.DOWN
 	INPUT_MAP[Game_Input.LEFT] = rl.KeyboardKey.LEFT
@@ -45,6 +45,7 @@ initialize_input :: proc() {
 	input_state[.ENTER] = Input_Up{}
 	input_state[.CANCEL] = Input_Up{}
 	input_state[.MENU] = Input_Up{}
+	input_state[.PAUSE] = Input_Up{}
 	input_state[.UP] = Input_Up{}
 	input_state[.DOWN] = Input_Up{}
 	input_state[.LEFT] = Input_Up{}
@@ -72,16 +73,9 @@ get_updated_input_state :: proc(dt: f32, k: rl.KeyboardKey, s: Single_Input_Stat
 }
 
 update_input_state :: proc(dt: f32) {
-	for k in GAME_INPUTS {
+	for k in Game_Input {
 		input_state[k] = get_updated_input_state(dt, INPUT_MAP[k], input_state[k])
 	}
-	// input_state[.ENTER] = get_updated_input_state(dt, INPUT_MAP[.ENTER], input_state[.ENTER])
-	// input_state[.CANCEL] = get_updated_input_state(dt, INPUT_MAP[.CANCEL], input_state[.CANCEL])
-	// input_state[.MENU] = get_updated_input_state(dt, INPUT_MAP[.MENU], input_state[.MENU])
-	// input_state[.UP] = get_updated_input_state(dt, INPUT_MAP[.UP], input_state[.UP])
-	// input_state[.DOWN] = get_updated_input_state(dt, INPUT_MAP[.DOWN], input_state[.DOWN])
-	// input_state[.LEFT] = get_updated_input_state(dt, INPUT_MAP[.LEFT], input_state[.LEFT])
-	// input_state[.RIGHT] = get_updated_input_state(dt, INPUT_MAP[.RIGHT], input_state[.RIGHT])
 }
 
 get_input :: proc(k: Game_Input, down := false, silent := false) -> (v := false) {
