@@ -125,7 +125,7 @@ effect_stagger :: proc(actor, target: ^Character, effect: Effect_Stagger) {
 	target.t -= f32(effect.stagger)
 	if rand.int_max(100) < effect.interrupt {
 		interrupt_windup(target)
-		queue_text_effect_character(target, "Break!", rl.PINK)
+		queue_text_effect_character(target, fmt.caprint("Break!"), rl.PINK)
 	}
 }
 

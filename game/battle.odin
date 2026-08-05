@@ -194,13 +194,23 @@ draw_battle_combatants :: proc() {
 }
 
 battle_time_tick :: proc(dt: f32) {
+	{ 	// check for skills played by combatants downed or interrupted
+		for i := 0; i < len(battle.skill_plays); {
+			c := battle.combatants[battle.skill_plays[i].actor]
+			if !c.windup || !combatant_alive(c) {
+				// fmt.printfln("removing Skill_Play %d after combatant downed", i)
+				unordered_remove(&battle.skill_plays, i)
+			} else {
+				i += 1
+			}
+		}
+	}
+
 	ticks := dt * BATTLE_SPEED
 	for &s, i in battle.skill_plays {
-		if !combatant_alive(battle.combatants[s.actor]) {
-			fmt.println("^ OOPS: wound up skill is played by dead combatant")
-		}
 		s.windup -= ticks * get_stat_f(battle.combatants[s.actor].character, .Speed)
 		if s.windup <= 0 {
+			battle.combatants[s.actor].windup = false
 			s.windup = 0
 			battle.skill_state = Process_Skill {
 				active          = true,
@@ -388,6 +398,7 @@ check_downed_baddies :: proc() {
 			}
 		}
 	}
+
 	if runner_idx != nil {
 		queue_events([]Event{Pause_Runner{.5}, Battle_Unpause{}}, i = runner_idx)
 	}
@@ -539,6 +550,7 @@ targeted :: proc(c_idx, team: int) -> bool {
 }
 
 interrupt_windup :: proc(target: ^Combatant) {
+	target.windup = false
 }
 
 roll_for_counter :: proc(actor, target: ^Character, risk: f32 = 1) {

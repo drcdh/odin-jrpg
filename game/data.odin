@@ -60,6 +60,7 @@ init_new_game :: proc() {
 	game_data.inventory[Item_Name.Beginners_Wand] = 1
 	game_data.inventory[Item_Name.Rat_Smashing_Bat] = 1
 	game_data.inventory[Item_Name.Postcard] = 4
+	game_data.inventory[Item_Name.Small_Smoke_Bomb] = 5
 	game_data.money = Money(MONEY_MAX / 8)
 	set_inventory_order()
 	character_unequip_all(&PROTAGONIST, to_inventory = false)
