@@ -217,15 +217,19 @@ start_menu_update :: proc() {
 }
 
 start_menu_draw_title :: proc() {
+	FADE_IN_T :: 3
 	tint := rl.ORANGE
+	tint2 := rl.BLUE
 	if start_menu.ui_state == .Fade_In {
-		if start_menu.fade_t >= 1 {
+		if start_menu.fade_t >= FADE_IN_T {
 			start_menu.ui_state = .Start
 		} else {
-			tint.a = u8(255 * start_menu.fade_t)
+			tint.a = u8(255 * start_menu.fade_t / FADE_IN_T)
+			tint2.a = u8(255 * start_menu.fade_t / FADE_IN_T)
 		}
 	}
 	rl.DrawTextEx(font, "ODIN JRPG", {1.25 * tile_size, 3 * tile_size}, 1.5 * tile_size, 0, tint)
+	rl.DrawTextEx(font, "ODIN JRPG", {1.35 * tile_size, 3.1 * tile_size}, 1.5 * tile_size, 0, tint2)
 
 	if start_menu.ui_state == .Start {
 		draw_text(4, 10, "Press Z to Start")
