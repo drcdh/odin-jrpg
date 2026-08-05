@@ -8,8 +8,8 @@ Save_Point :: enum {
 start_save_point :: proc(save_point: Save_Point) {
 	switch save_point {
 	case .Level_0:
-		queue_events([]Event{Start_Level{level = .LEVEL_0}, Curtain_Up{}, End{}})
+		queue_events([]Event{Start_Level{level = .Level_0}, Curtain_Up{}, End{}})
 	case .Level_2:
-		queue_events([]Event{Start_Level{level = .LEVEL_2}, Curtain_Up{}, End{}})
+		queue_events([]Event{Start_Level{level = .Level_2}, Curtain_Up{}, End{}})
 	}
 }

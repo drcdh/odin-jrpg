@@ -11,15 +11,15 @@ start_level_overworld :: proc() {
 	fmt.println(prev_level, prev_level_tile, current_level)
 	party_tile: Tile_Coord
 	switch prev_level {
-	case .LEVEL_0:
+	case .Level_0:
 		party_tile = LEVEL_OVERWORLD_GROVE
-	case .LEVEL_1:
+	case .Level_1:
 		party_tile = LEVEL_OVERWORLD_HOUSE
-	case .LEVEL_2:
+	case .Level_2:
 		party_tile = LEVEL_OVERWORLD_QUARRY
-	case .LEVEL_CAVE:
+	case .Level_Cave:
 		party_tile = LEVEL_OVERWORLD_CAVE_ENTRANCE if prev_level_tile == LEVEL_CAVE_ENTRANCE else LEVEL_OVERWORLD_CAVE_EXIT
-	case .LEVEL_OVERWORLD:
+	case .Level_Overworld:
 	// ?
 	}
 	add_pc_entity(party_tile, .Down)
@@ -42,7 +42,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "grove",
 		tile = LEVEL_OVERWORLD_GROVE,
-		trap = proc() {egress(.LEVEL_0)},
+		trap = proc() {egress(.Level_0)},
 	})
 
 	add_world_entity(Entity {
@@ -50,7 +50,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "house",
 		tile = LEVEL_OVERWORLD_HOUSE,
-		trap = proc() {egress(.LEVEL_1)},
+		trap = proc() {egress(.Level_1)},
 	})
 
 	add_world_entity(Entity {
@@ -58,7 +58,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "quarry",
 		tile = LEVEL_OVERWORLD_QUARRY,
-		trap = proc() {egress(.LEVEL_2)},
+		trap = proc() {egress(.Level_2)},
 	})
 
 	add_world_entity(Entity {
@@ -66,7 +66,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "cave_entrance",
 		tile = LEVEL_OVERWORLD_CAVE_ENTRANCE,
-		trap = proc() {egress(.LEVEL_CAVE)},
+		trap = proc() {egress(.Level_Cave)},
 	})
 
 	add_world_entity(Entity {
@@ -74,7 +74,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "cave_exit",
 		tile = LEVEL_OVERWORLD_CAVE_EXIT,
-		trap = proc() {egress(.LEVEL_CAVE)},
+		trap = proc() {egress(.Level_Cave)},
 	})
 
 	play_music(&music_state, .Overworld)

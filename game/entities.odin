@@ -127,6 +127,7 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 	case Facing_Animation:
 		facing_animation_update(&v, e.k.face, dt)
 	}
+
 	if update_kinematics(dt, &e.k) {
 		// first frame completely on this tile
 		if trap := get_world_entity_at_tile(e.tile, e.id); trap != nil && trap.trap != nil {
@@ -142,9 +143,13 @@ update_entity :: proc(dt: f32, e: ^Entity) {
 		if tile_outside(e.tile) {
 			fmt.printfln("% 4d: %s leaving level", frame_count, e.n)
 			set_world_entity_busy(e.id, true) // hack
-			change_level(.LEVEL_OVERWORLD)
+			change_level(.Level_Overworld)
+		}
+		if e.id == PLAYER_ID {
+			try_random_encounter(current_level, e.tile)
 		}
 	}
+
 	if !e.busy && !e.disabled && !e.k.moving {
 		switch &s in e.state {
 		case Approach_Entity:

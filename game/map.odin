@@ -93,15 +93,15 @@ tile_free :: proc(t: Tile_Coord) -> (free: bool) {
 	}
 	p: u8
 	switch current_level {
-	case .LEVEL_0:
+	case .Level_0:
 		p = LEVEL_0_PASSABLE[t.y][t.x]
-	case .LEVEL_1:
+	case .Level_1:
 		p = LEVEL_1_PASSABLE[t.y][t.x]
-	case .LEVEL_2:
+	case .Level_2:
 		p = LEVEL_2_PASSABLE[t.y][t.x]
-	case .LEVEL_OVERWORLD:
+	case .Level_Overworld:
 		p = LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
-	case .LEVEL_CAVE:
+	case .Level_Cave:
 		p = LEVEL_CAVE_PASSABLE[t.y][t.x]
 	}
 	if boat_mode {

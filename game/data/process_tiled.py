@@ -8,6 +8,10 @@ import passable
 def orderedpair_to_tile(c):
 	return int(c.x//16), int(c.y//16)
 
+def tiled_rect_to_rl_rect(obj):
+	return "{{ {x}, {y}, {w}, {h} }}".format(x=obj.coordinates.x//16, y=obj.coordinates.y//16, w=obj.size.width//16, h=obj.size.height//16)
+
+encounter_regions = []
 level_names = []
 
 def process_tmx(level_name):
@@ -49,6 +53,11 @@ def process_tmx(level_name):
 						name = obj.name.upper()
 						pos = orderedpair_to_tile(obj.coordinates)
 						out_f.write(f"{prefix}{name} :: Tile_Coord{{ {pos[0]}, {pos[1]} }}\n")
+				elif isinstance(obj, pytiled_parser.tiled_object.Rectangle):
+					if obj.name.startswith("encounter"):
+						encounter_regions.append([level_name, tiled_rect_to_rl_rect(obj), obj.properties["region"]])
+					else:
+						print(f"ignoring Rectangle {obj}")
 				else:
 					print(f"unknown object type {type(obj)}: {obj}")
 		else:
@@ -154,21 +163,31 @@ def main():
 				print(f"skipping {file}")
 
 	with open(f"level_data.odin", "w") as levels_data_f:
-		levels_data_f.write(
-		f"""
-		package game
-		Level :: enum {{
-		""")
+		levels_data_f.write("package game\n\nLevel :: enum {\n")
 		for lname in level_names:
-			levels_data_f.write(f"\t{lname.upper()},\n")
+			levels_data_f.write(f"\t{lname.title()},\n")
 		levels_data_f.write(
 			"""}
 		init_level :: proc(l: Level) {
 	switch l {
 	""")
 		for lname in level_names:
-			levels_data_f.write(f"case .{lname.upper()}:\n\tinit_{lname}()\n")
+			levels_data_f.write(f"case .{lname.title()}:\n\tinit_{lname}()\n")
 		levels_data_f.write("}\n}")
+
+	with open(f"encounter_region_data.odin", "w") as regions_f:
+		regions_f.write("package game\n\nEncounter_Region :: enum {\nNone,\n")
+		for r in set(r for _, _, r in encounter_regions):
+			regions_f.write(f"\t{r.title()},\n")
+		regions_f.write("}\n\n")
+		regions_f.write(
+			"""
+			encounter_region_rects := [?]Encounter_Region_Rect{
+			"""
+		)
+		for l, rect, r in encounter_regions:
+			regions_f.write(f"{{ .{l.title()}, {rect}, .{r.title()} }},")
+		regions_f.write("}\n")
 
 if __name__ == "__main__":
 	main()

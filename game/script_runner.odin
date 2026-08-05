@@ -170,7 +170,7 @@ process_event :: proc(runner: ^Runner) {
 	case New_Game:
 		init_new_game()
 		start_menu_exit()
-		start_level(.LEVEL_0)
+		start_level(.Level_0)
 	case Pause_Runner:
 		runner.pause = event.pause
 		runner.state = .Pause

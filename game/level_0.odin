@@ -116,7 +116,7 @@ start_level_0 :: proc() {
 		ghost = true,
 		tile = LEVEL_0_WARP_SPAWN,
 		n = "warp",
-		trap = proc() {warp_to_level(.LEVEL_1)},
+		trap = proc() {warp_to_level(.Level_1)},
 		v = animation_create(.Warp),
 	})
 
@@ -125,7 +125,7 @@ start_level_0 :: proc() {
 		ghost = true,
 		tile = LEVEL_0_WARP_CAVE,
 		n = "warp",
-		trap = proc() {warp_to_level(.LEVEL_CAVE)},
+		trap = proc() {warp_to_level(.Level_Cave)},
 		v = animation_create(.Warp),
 	})
 

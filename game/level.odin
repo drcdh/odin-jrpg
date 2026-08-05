@@ -46,7 +46,7 @@ start_level :: proc(l: Level) {
 	}
 	prev_level = current_level
 	current_level = l
-	level_map_wrap = l == .LEVEL_OVERWORLD
+	level_map_wrap = l == .Level_Overworld
 	clear_world_entities()
 	unload_map()
 	darkness = 0

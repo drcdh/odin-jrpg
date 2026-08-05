@@ -43,6 +43,19 @@ egress :: proc(destination: Level) {
 	)
 }
 
+encounter :: proc(encounter: int) {
+	set_world_entity_busy(PLAYER_ID, true)
+	queue_events(
+		[]Event {
+			Curtain_Down{.Battle},
+			Start_Encounter{encounter = encounter, paused = true},
+			Curtain_Up{.Battle},
+			Set_Entity_Busy{id = PLAYER_ID, busy = false},
+			End{},
+		},
+	)
+}
+
 items_in_a_box :: proc(items: ..Item_Name) {
 	events := make([dynamic]Event)
 	defer delete(events)
