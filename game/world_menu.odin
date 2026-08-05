@@ -285,7 +285,7 @@ world_menu_redraw_inventory_pane :: proc() {
 	for r in 0 ..< WORLD_MENU_INVENTORY_ROWS {
 		if r >= len(inventory_order) {break}
 		draw_text(1, 1 + f32(r), fmt.ctprint(items[inventory_order[r + origin_idx]].name))
-		draw_text_rjust(13, 1 + f32(r), fmt.ctprint(game_data.inventory[inventory_order[r + origin_idx]]))
+		draw_text_rjust(13, 1 + f32(r), fmt.ctprintf("*% 3d", game_data.inventory[inventory_order[r + origin_idx]]))
 	}
 
 	draw_text_rjust(13, WORLD_MENU_INVENTORY_ROWS + 1.5, fmt.ctprintf("$ %d", game_data.money))
