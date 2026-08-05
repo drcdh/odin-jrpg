@@ -40,11 +40,13 @@ music := [Music_Name]Music_Asset {
 Music_State :: struct {
 	new_name:    Music_Name,
 	cur_name:    Music_Name,
+	prev_name:   Music_Name,
 	cur:         rl.Music,
 	run_thread:  bool,
 	thread:      ^thread.Thread,
 	cur_volume:  int,
-	fade_music:  bool,
+	fade_down:   bool,
+	fade_up:     bool,
 	fade_volume: f32,
 }
 
@@ -61,19 +63,27 @@ get_music_volume :: proc(s: ^Music_State) -> f32 {
 music_thread :: proc(t: ^thread.Thread) {
 	s := (^Music_State)(t.data)
 	for s.run_thread {
-		if s.fade_music {
-			s.fade_volume -= 0.003
+		if s.fade_down {
+			s.fade_volume -= 0.01
 
 			if s.fade_volume <= 0 {
 				s.fade_volume = 0
-				s.fade_music = false
-				s.new_name = .None
+				s.fade_down = false
+				// s.new_name = .None
+			} else if rl.IsMusicStreamPlaying(s.cur) {
+				rl.SetMusicVolume(s.cur, get_music_volume(s) * s.fade_volume)
+			}
+		} else if s.fade_up {
+			s.fade_volume += 0.01
+
+			if s.fade_volume >= 1 {
+				s.fade_volume = 1
+				s.fade_up = false
 			} else if rl.IsMusicStreamPlaying(s.cur) {
 				rl.SetMusicVolume(s.cur, get_music_volume(s) * s.fade_volume)
 			}
 		} else if music_volume != s.cur_volume {
 			s.cur_volume = music_volume
-
 			if rl.IsMusicStreamPlaying(s.cur) {
 				rl.SetMusicVolume(s.cur, get_music_volume(s))
 			}
@@ -81,6 +91,7 @@ music_thread :: proc(t: ^thread.Thread) {
 
 		new_name := s.new_name
 		if new_name != s.cur_name {
+			s.prev_name = s.cur_name
 			rl.StopMusicStream(s.cur)
 			rl.UnloadMusicStream(s.cur)
 			s.cur = {}
@@ -118,14 +129,24 @@ music_shutdown :: proc(s: ^Music_State) {
 	thread.destroy(s.thread)
 }
 
-music_fade :: proc(s: ^Music_State) {
+music_fade_down :: proc(s: ^Music_State) {
 	s.fade_volume = 1
-	s.fade_music = true
+	s.fade_down = true
+}
+
+music_fade_up :: proc(s: ^Music_State) {
+	s.fade_volume = 0
+	s.fade_up = true
 }
 
 play_music :: proc(s: ^Music_State, m: Music_Name) {
-	s.fade_music = false
+	s.fade_down = false
+	s.fade_up = false
 	s.new_name = m
+}
+
+play_prev_music :: proc(s: ^Music_State) {
+	play_music(s, s.prev_name)
 }
 
 load_music :: proc(name: Music_Name) -> rl.Music {

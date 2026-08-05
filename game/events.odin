@@ -53,11 +53,14 @@ Lose_Money :: struct {
 Move_Entity_Here :: struct {
 	id: Id,
 }
+Music_Fade_Down :: struct {}
+Music_Fade_Up :: struct {}
 New_Game :: struct {}
 Play_Animation :: struct {
 	animation: Animation_Name,
 	offset:    Pixel_Coord,
 }
+Play_Prev_Music :: struct {}
 Play_Sound :: struct {
 	delay: f32,
 	sound: Sound_Name,
@@ -164,8 +167,11 @@ Event :: union {
 	Lose_Money,
 	Pause_Runner,
 	Move_Entity_Here,
+	Music_Fade_Down,
+	Music_Fade_Up,
 	New_Game,
 	Play_Animation,
+	Play_Prev_Music,
 	Play_Sound,
 	Quit,
 	Remove_Entity,

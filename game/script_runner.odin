@@ -167,6 +167,10 @@ process_event :: proc(runner: ^Runner) {
 			moving_entity.tile = pc.tile
 			fmt.printfln("% 4d: moved entity %s to %s at %w", frame_count, moving_entity.n, pc.n, pc.tile)
 		}
+	case Music_Fade_Down:
+		music_fade_down(&music_state)
+	case Music_Fade_Up:
+		music_fade_up(&music_state)
 	case New_Game:
 		init_new_game()
 		start_menu_exit()
@@ -176,6 +180,8 @@ process_event :: proc(runner: ^Runner) {
 		runner.state = .Pause
 	case Play_Animation:
 	// todo
+	case Play_Prev_Music:
+		play_prev_music(&music_state)
 	case Play_Sound:
 		play_sound(event.sound)
 	case Quit:
