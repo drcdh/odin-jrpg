@@ -4,6 +4,9 @@ import "core:encoding/json"
 import "core:fmt"
 import "core:os"
 import "core:strings"
+import "core:time"
+
+SAVE_DIR :: "saves"
 
 Bool_Datum :: enum {
 	Introduction,
@@ -104,9 +107,16 @@ save_game :: proc(save_point: Save_Point) {
 	if err != nil {
 		fmt.eprintfln("Unable to marshal JSON: %v", err)
 		quitting = true
+		return
 	}
+	defer delete(json_data)
 
-	path := "saves/save_game.json"
+	t := time.now()
+	y, mo, day := time.date(t)
+	hour, min, sec := time.clock_from_time(t)
+
+	path := fmt.aprintf("%s/%d%02d%02d%02d%02d%02d_odinjrpg.json", SAVE_DIR, y, int(mo), day, hour, min, sec)
+	defer delete(path)
 
 	werr := os.write_entire_file(path, json_data)
 	if werr != nil {
@@ -118,15 +128,14 @@ save_game :: proc(save_point: Save_Point) {
 }
 
 read_saved_game_data :: proc(filename: string) -> (save_data: Save_Data) {
-	filepath := strings.concatenate({"./saves/", filename}, context.temp_allocator)
+	filepath := strings.concatenate({"./", SAVE_DIR, "/", filename}, context.temp_allocator)
 	json_data, err := os.read_entire_file(filepath, context.temp_allocator)
 	if err != nil {
 		fmt.eprintfln("Failed to read the file '%s': %v", filepath, err)
 		os.exit(1)
 	}
-	// defer delete(json_data)
 
-	unmarshal_err := json.unmarshal(json_data, &save_data)
+	unmarshal_err := json.unmarshal(json_data, &save_data, allocator = context.temp_allocator)
 	if unmarshal_err != nil {
 		fmt.eprintfln("Failed to unmarshal save game data: %v", unmarshal_err)
 		os.exit(1)

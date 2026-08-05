@@ -1,5 +1,7 @@
 package game
 
+import "core:fmt"
+import "core:os"
 import "core:strings"
 import rl "vendor:raylib"
 
@@ -35,12 +37,12 @@ Start_Menu :: struct {
 
 START_MENU_PANE_ORIGINS := [START_MENU_NUM_PANES]Tile_Coord {
 	{6, 10}, // Top
-	{4, 2}, // Load
+	{1, 2}, // Load
 }
 
 START_MENU_PANE_DIM := [START_MENU_NUM_PANES]Tile_Coord {
 	{4, 3}, // Top
-	{8, START_MENU_LOAD_ROWS + 1}, // Load
+	{14, START_MENU_LOAD_ROWS + 1}, // Load
 }
 
 START_MENU_LOAD_ROWS :: 8
@@ -58,6 +60,7 @@ start_menu_unload :: proc() {
 	for t in start_menu.textures {
 		rl.UnloadRenderTexture(t)
 	}
+	delete(start_menu.save_data)
 }
 
 start_menu_enter :: proc() {
@@ -129,7 +132,7 @@ start_menu_redraw_load_pane :: proc() {
 	for r in 0 ..< START_MENU_LOAD_ROWS {
 		if r >= len(start_menu.save_data) {break}
 		s := start_menu.save_data[r + start_menu.load_sel.origin_idx]
-		draw_text(.5, .5 * f32(1 + r), strings.clone_to_cstring(s, context.temp_allocator))
+		draw_text(1, .5 * f32(1 + r), strings.clone_to_cstring(s, context.temp_allocator))
 	}
 }
 
@@ -183,14 +186,12 @@ start_menu_update :: proc() {
 			case 1:
 				play_sound(.Blerp)
 			case 2:
-				filepath := "save_game.json"
-				save_data := read_saved_game_data(filepath)
-				queue_events([]Event{Curtain_Down{}, Load_Game{save_data}, End{}})
-			// if len(start_menu.save_data) > 0 {
-			// 	start_menu.ui_state = .Load
-			// } else {
-			// 	play_sound(.Blerp)
-			// }
+				if len(start_menu.save_data) > 0 {
+					start_menu.ui_state = .Load
+					start_menu_set_stale(.Load)
+				} else {
+					play_sound(.Blerp)
+				}
 			case 3:
 				queue_events([]Event{Curtain_Down{}, Quit{}, End{}})
 			}
@@ -204,6 +205,8 @@ start_menu_update :: proc() {
 			filepath := start_menu.save_data[selection_row(start_menu.load_sel)]
 			save_data := read_saved_game_data(filepath)
 			queue_events([]Event{Curtain_Down{}, Load_Game{save_data}, End{}})
+		} else if get_input(.CANCEL) {
+			start_menu.ui_state = .Top
 		} else if dy, ok := get_y_input().?; ok {
 			start_menu.load_sel = shift_windowed_selection(
 				dy,
@@ -237,5 +240,31 @@ start_menu_draw_title :: proc() {
 }
 
 start_menu_read_data :: proc() {
-	// TODO
+	f, open_err := os.open(SAVE_DIR)
+	if open_err != nil {
+		fmt.eprintfln("Could not open directory '%s' for reading: %v", SAVE_DIR, open_err)
+		os.exit(1)
+	}
+	defer os.close(f)
+
+	fis: []os.File_Info
+	defer os.file_info_slice_delete(fis, context.allocator)
+
+	read_err: os.Error
+	fis, read_err = os.read_dir(f, -1, context.allocator)
+	if read_err != nil {
+		fmt.eprintfln("Could not read directory: %v", read_err)
+		os.exit(2)
+	}
+
+	fmt.printfln("Current working directory %v contains:", SAVE_DIR)
+
+	for fi in fis {
+		if fi.type == .Directory {
+			fmt.printfln("%v (directory)", fi.name)
+		} else {
+			fmt.printfln("%v (%M)", fi.name, fi.size)
+			append(&start_menu.save_data, strings.clone(fi.name))
+		}
+	}
 }
