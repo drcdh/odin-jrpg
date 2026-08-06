@@ -4,9 +4,9 @@ package game
 @(private)
 LEVEL_CAVE_OVERLAY :: false
 
-leave_cave :: proc() {egress(.Level_Overworld)}
+leave_cave :: proc(_: Id) {egress(.Level_Overworld)}
 
-torch :: proc() {
+torch :: proc(_: Id) {
 	set_world_entity_light(PLAYER_ID, 3)
 	darkness = 215
 }

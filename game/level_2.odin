@@ -65,7 +65,7 @@ start_level_2 :: proc() {
 		ghost = true,
 		tile = LEVEL_2_WARP_SPAWN,
 		n = "warp",
-		trap = proc() {warp_to_level(.Level_0)},
+		trap = proc(_: Id) {warp_to_level(.Level_0)},
 		v = create_sprite_state(.Warp),
 	})
 
@@ -74,9 +74,9 @@ start_level_2 :: proc() {
 		ghost = true,
 		tile = LEVEL_2_TRAP_SPAWN,
 		n = "trap",
-		trap = proc() {
-			set_world_entity_state(TRAP_BADDY_ID, Approach_Entity{id = PLAYER_ID})
-			remove_world_entity(TRAP_ID)
+		trap = proc(id: Id) {
+			set_world_entity_state(id, Approach_Entity{id = PLAYER_ID})
+			remove_world_entity(id)
 		},
 	})
 
@@ -87,12 +87,12 @@ start_level_2 :: proc() {
 		tile = LEVEL_2_BADDY_SPAWN,
 		n = "baddy",
 		speed = 3,
-		trap = proc() {
+		trap = proc(id: Id) {
 			queue_events(
 				[]Event {
 					Set_Entity_Busy{id = PLAYER_ID, busy = true},
 					Start_Encounter{encounter = 0},
-					Remove_Entity{TRAP_BADDY_ID},
+					Remove_Entity{id},
 					Curtain_Up{.Battle},
 					Set_Entity_Busy{id = PLAYER_ID, busy = false},
 					End{},
@@ -109,7 +109,7 @@ start_level_2 :: proc() {
 		ghost = true,
 		n = "Level_2_Save",
 		v = create_sprite_state(.Save_Point),
-		trap = proc() {save_point(800, .Level_2)},
+		trap = proc(id: Id) {save_point(id, .Level_2)},
 	})
 
 	play_music(&music_state, .Town)

@@ -42,7 +42,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "grove",
 		tile = LEVEL_OVERWORLD_GROVE,
-		trap = proc() {egress(.Level_0)},
+		trap = proc(_: Id) {egress(.Level_0)},
 	})
 
 	add_world_entity(Entity {
@@ -50,7 +50,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "house",
 		tile = LEVEL_OVERWORLD_HOUSE,
-		trap = proc() {egress(.Level_1)},
+		trap = proc(_: Id) {egress(.Level_1)},
 	})
 
 	add_world_entity(Entity {
@@ -58,7 +58,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "quarry",
 		tile = LEVEL_OVERWORLD_QUARRY,
-		trap = proc() {egress(.Level_2)},
+		trap = proc(_: Id) {egress(.Level_2)},
 	})
 
 	add_world_entity(Entity {
@@ -66,7 +66,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "cave_entrance",
 		tile = LEVEL_OVERWORLD_CAVE_ENTRANCE,
-		trap = proc() {egress(.Level_Cave)},
+		trap = proc(_: Id) {egress(.Level_Cave)},
 	})
 
 	add_world_entity(Entity {
@@ -74,7 +74,7 @@ start_level_overworld :: proc() {
 		ghost = true,
 		n = "cave_exit",
 		tile = LEVEL_OVERWORLD_CAVE_EXIT,
-		trap = proc() {egress(.Level_Cave)},
+		trap = proc(_: Id) {egress(.Level_Cave)},
 	})
 
 	play_music(&music_state, .Overworld)

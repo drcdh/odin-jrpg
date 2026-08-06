@@ -12,12 +12,12 @@ JUKEBOX_ID :: 100
 SIGN_ID :: 101
 WARP_1_ID :: 300
 
-dude_script_0 :: proc() {
+dude_script_0 :: proc(id: Id) {
 	queue_events(
 		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Set_Entity_Busy{id = DUDE_ID, busy = true},
-			Set_Entity_Face_Party{id = DUDE_ID},
+			Set_Entity_Busy{PLAYER_ID, true},
+			Set_Entity_Busy{id, true},
+			Set_Entity_Face_Party{id},
 			Append_Text{"Oh, hey! What's up, $player?"},
 			Clear_Text{},
 			Append_Text{"Coffee or tea?"},
@@ -62,7 +62,7 @@ dude_script_0 :: proc() {
 	)
 }
 
-dude_script_1 :: proc() {
+dude_script_1 :: proc(id: Id) {
 	queue_events(
 		[]Event {
 			Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -114,7 +114,7 @@ start_level_0 :: proc() {
 		ghost = true,
 		tile = LEVEL_0_WARP_SPAWN,
 		n = "warp",
-		trap = proc() {warp_to_level(.Level_1)},
+		trap = proc(_: Id) {warp_to_level(.Level_1)},
 		v = create_sprite_state(.Warp),
 	})
 
@@ -123,7 +123,7 @@ start_level_0 :: proc() {
 		ghost = true,
 		tile = LEVEL_0_WARP_CAVE,
 		n = "warp",
-		trap = proc() {warp_to_level(.Level_Cave)},
+		trap = proc(_: Id) {warp_to_level(.Level_Cave)},
 		v = create_sprite_state(.Warp),
 	})
 
@@ -131,17 +131,17 @@ start_level_0 :: proc() {
 		id = BUTTON_1_ID,
 		tile = LEVEL_0_PLAYER_SPAWN + {1, 1},
 		n = "Button 1",
-		talk = proc() {
+		talk = proc(id: Id) {
 			queue_events(
 				[]Event {
-					Set_Entity_Busy{id = PLAYER_ID, busy = true},
-					Set_Entity_Tag{BUTTON_1_ID, .Down},
+					Set_Entity_Busy{PLAYER_ID, true},
+					Set_Entity_Tag{id, .Down},
 					Append_Text{"*Beep*"},
 					Close_Dialogue{},
 					Clear_Text{},
-					Set_Entity_Busy{id = PLAYER_ID, busy = false},
+					Set_Entity_Busy{PLAYER_ID, false},
 					Pause_Runner{1},
-					Set_Entity_Tag{BUTTON_1_ID, .Up},
+					Set_Entity_Tag{id, .Up},
 					End{},
 				},
 			)
@@ -153,15 +153,15 @@ start_level_0 :: proc() {
 		id = BUTTON_2_ID,
 		tile = LEVEL_0_PLAYER_SPAWN + {2, 1},
 		n = "Button 2",
-		talk = proc() {
+		talk = proc(id: Id) {
 			queue_events(
 				[]Event {
-					Set_Entity_Tag{BUTTON_2_ID, .Down},
+					Set_Entity_Tag{id, .Down},
 					Append_Text_Ex{text = "*Boop*", pause = .5, hurry = true},
 					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{1},
-					Set_Entity_Tag{BUTTON_2_ID, .Up},
+					Set_Entity_Tag{id, .Up},
 					End{},
 				},
 			)
@@ -173,7 +173,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID,
 		tile = LEVEL_0_CHEST_MONSTER,
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(BOX_0_ID, 0)},
+		talk = proc(id: Id) {monster_in_a_box(id, 0)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -181,7 +181,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 1,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 1},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(BOX_0_ID + 1, 1)},
+		talk = proc(id: Id) {monster_in_a_box(id, 1)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -189,7 +189,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 2,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 2},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(BOX_0_ID + 2, 2)},
+		talk = proc(id: Id) {monster_in_a_box(id, 2)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -197,7 +197,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 3,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 3},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(BOX_0_ID + 3, 3)},
+		talk = proc(id: Id) {monster_in_a_box(id, 3)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -205,7 +205,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 4,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 4},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(BOX_0_ID + 4, 4)},
+		talk = proc(id: Id) {monster_in_a_box(id, 4)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -214,7 +214,7 @@ start_level_0 :: proc() {
 			id = SIGN_ID,
 			tile = LEVEL_0_SIGN,
 			n = "Lorem Ipsum sign",
-			talk = proc() {
+			talk = proc(_: Id) {
 				queue_events(
 					[]Event {
 						Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -238,7 +238,7 @@ start_level_0 :: proc() {
 		id = JUKEBOX_ID,
 		tile = LEVEL_0_JUKEBOX,
 		n = "Jukebox",
-		talk = proc() {
+		talk = proc(_: Id) {
 			queue_events(
 				[]Event {
 					Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -288,7 +288,7 @@ start_level_0 :: proc() {
 		ghost = true,
 		n = "Level_0_Save",
 		v = create_sprite_state(.Save_Point),
-		trap = proc() {save_point(800, .Level_0)},
+		trap = proc(id: Id) {save_point(id, .Level_0)},
 	})
 
 	play_music(&music_state, .Town)

@@ -30,7 +30,7 @@ Pacing :: struct {
 	step:      int,
 }
 
-Entity_Script :: proc()
+Entity_Script :: proc(_: Id)
 
 Entity_State :: union {
 	Approach_Entity,
@@ -215,7 +215,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 				t := tile_in_front(p)
 				p := LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
 				if p & PARTY_IMPASSABLE == 0 {
-					leave_boat()
+					leave_boat(BOAT_ID)
 				}
 			}
 		}
@@ -223,9 +223,9 @@ player_control :: proc(_: f32, p: ^Entity) {
 }
 
 entity_talk :: proc(e: Entity) {
-	e.talk()
+	e.talk(e.id)
 }
 
 entity_trap :: proc(e: Entity) {
-	e.trap()
+	e.trap(e.id)
 }

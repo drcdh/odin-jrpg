@@ -9,7 +9,7 @@ GUY_ID :: 80
 WOMAN_ID :: 90
 WARP_2_ID :: 300
 
-door_knock :: proc() {
+door_knock :: proc(id: Id) {
 	queue_events(
 		[]Event {
 			Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -34,7 +34,7 @@ door_knock :: proc() {
 			Clear_Text{},
 			Set_Entity_Disabled{id = WOMAN_ID, disabled = true},
 			Toggle_Party_Member{.Assassin, true},
-			Set_Entity_Talk_Script{id = DOOR_ID, script = nil},
+			Set_Entity_Talk_Script{id, nil},
 			Set_Entity_Busy{id = PLAYER_ID, busy = false},
 			End{},
 		},
@@ -50,12 +50,12 @@ start_level_1 :: proc() {
 		face = .Down,
 		tile = LEVEL_1_GUY_SPAWN,
 		n = "Guy",
-		talk = proc() {
+		talk = proc(id: Id) {
 			queue_events(
 				[]Event {
-					Set_Entity_Busy{id = PLAYER_ID, busy = true},
-					Set_Entity_Busy{id = GUY_ID, busy = true},
-					Set_Entity_Face_Party{id = GUY_ID},
+					Set_Entity_Busy{PLAYER_ID, true},
+					Set_Entity_Busy{id, true},
+					Set_Entity_Face_Party{id},
 					Append_Text{"Erm, hello, $player."},
 					Clear_Text{},
 					Skip_If{2, .Met_Dude},
@@ -64,9 +64,9 @@ start_level_1 :: proc() {
 					Append_Text{"Have you met Dude yet? Very good."},
 					Close_Dialogue{},
 					Clear_Text{},
-					Set_Entity_Tag{id = GUY_ID, tag = .Down},
-					Set_Entity_Busy{id = GUY_ID, busy = false},
-					Set_Entity_Busy{id = PLAYER_ID, busy = false},
+					Set_Entity_Tag{id, .Down},
+					Set_Entity_Busy{id, false},
+					Set_Entity_Busy{PLAYER_ID, false},
 					End{},
 				},
 			)
@@ -79,7 +79,7 @@ start_level_1 :: proc() {
 		ghost = true,
 		tile = LEVEL_1_WARP_SPAWN,
 		n = "warp",
-		trap = proc() {warp_to_level(.Level_2)},
+		trap = proc(_: Id) {warp_to_level(.Level_2)},
 		v = create_sprite_state(.Warp),
 	})
 
