@@ -73,11 +73,13 @@ items_in_a_box :: proc(box_id: Id, items: ..Item_Name) {
 }
 
 leave_boat :: proc(boat_id: Id) {
+	face := get_world_entity(boat_id).face
 	queue_events(
 		[]Event {
 			Set_Entity_Busy{boat_id, true},
 			Move_Entity_Here{PLAYER_ID},
 			Set_Entity_Disabled{PLAYER_ID, false},
+			Set_Entity_Tag{PLAYER_ID, face},
 			Set_Party_Control{},
 			End{},
 		},

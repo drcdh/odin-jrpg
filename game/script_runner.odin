@@ -211,7 +211,7 @@ process_event :: proc(runner: ^Runner) {
 	case Set_Entity_State:
 		set_world_entity_state(event.id, event.state)
 	case Set_Entity_Tag:
-		set_world_entity_tag(event.id, event.tag)
+		set_world_entity_tag(event.id, event.tag, true)
 	case Set_Entity_Talk_Script:
 		set_world_entity_talk_script(event.id, event.script)
 	case Set_Entity_Trap_Script:

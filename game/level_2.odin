@@ -97,7 +97,7 @@ start_level_2 :: proc() {
 				},
 			)
 		},
-		v = create_sprite_state(.Baddy_World),
+		v = create_sprite_state(.Baddy_World, .Right),
 		z = Z_MAX,
 	})
 

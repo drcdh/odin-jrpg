@@ -68,7 +68,7 @@ start_level_1 :: proc() {
 				},
 			)
 		},
-		v = create_sprite_state(.Dude_World),
+		v = create_sprite_state(.Dude_World, .Down),
 	})
 
 	add_world_entity(Entity {
@@ -87,7 +87,7 @@ start_level_1 :: proc() {
 			face = .Down,
 			ghost = true,
 			tile = LEVEL_1_DOOR,
-			v = create_sprite_state(.Woman_World),
+			v = create_sprite_state(.Woman_World, .Down),
 		},
 	)
 

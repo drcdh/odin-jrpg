@@ -113,8 +113,13 @@ set_world_entity_disabled :: proc(id: Id, disabled: bool) {
 	get_world_entity(id).disabled = disabled
 }
 
-set_world_entity_face :: proc(id: Id, face: Face) {
-	get_world_entity(id).face = face
+set_world_entity_face :: proc(id: Id, face: Face, tag := false) {
+	if face == .Up || face == .Down || face == .Left || face == .Right {
+		get_world_entity(id).face = face
+	}
+	if tag {
+		set_world_entity_tag(id, face)
+	}
 }
 
 set_world_entity_face_party :: proc(id: Id) {
@@ -132,7 +137,10 @@ set_world_entity_sprite :: proc(id: Id, sprite_name: Sprite_Name) {
 	get_world_entity(id).v = create_sprite_state(sprite_name)
 }
 
-set_world_entity_tag :: proc(id: Id, tag: Sprite_Tag) {
+set_world_entity_tag :: proc(id: Id, tag: Sprite_Tag, face := false) {
+	if face {
+		set_world_entity_face(id, tag)
+	}
 	set_sprite_tag(&get_world_entity(id).v, tag)
 }
 

@@ -81,7 +81,7 @@ start_level_0 :: proc() {
 				n = "Dude",
 				talk = dude_script_1,
 				state = Pacing{route = LEVEL_0_DUDE_ROUTE_1, pause = 1},
-				v = create_sprite_state(.Dude_World),
+				v = create_sprite_state(.Dude_World, .Down),
 				z = Z_MAX,
 			},
 		)
@@ -95,7 +95,7 @@ start_level_0 :: proc() {
 				n = "Dude",
 				talk = dude_script_0,
 				state = Pacing{route = LEVEL_0_DUDE_ROUTE_0, pause = 1},
-				v = create_sprite_state(.Dude_World),
+				v = create_sprite_state(.Dude_World, .Down),
 				z = Z_MAX,
 			},
 		)

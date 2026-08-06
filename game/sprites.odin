@@ -133,13 +133,19 @@ Sprite_State :: struct {
 	variant: _Sprite_State,
 }
 
-create_sprite_state :: proc(n: Sprite_Name, p: Maybe(Palette_Swap) = nil) -> (s: Sprite_State) {
+create_sprite_state :: proc(
+	n: Sprite_Name,
+	t: Maybe(Sprite_Tag) = nil,
+	p: Maybe(Palette_Swap) = nil,
+) -> (
+	s: Sprite_State,
+) {
 	fmt.printfln("\nCreating new sprite state for %s", n)
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 
 	sprite_h := get_sprite_h(n, p)
-	switch t in sprite_metadata[n].metadata {
+	switch metadata in sprite_metadata[n].metadata {
 	case _Sprite_Metadata_Static:
 		s = Sprite_State {
 			h       = sprite_h,
@@ -153,7 +159,7 @@ create_sprite_state :: proc(n: Sprite_Name, p: Maybe(Palette_Swap) = nil) -> (s:
 	case _Sprite_Metadata_Tagged:
 		s = Sprite_State {
 			h = sprite_h,
-			variant = _Sprite_State_Tagged{tag = t.tags[0]},
+			variant = _Sprite_State_Tagged{tag = t.? if t != nil else metadata.tags[0]},
 		}
 	}
 

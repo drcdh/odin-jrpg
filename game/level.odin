@@ -26,7 +26,7 @@ add_pc_entity :: proc(tile: Tile_Coord, face: Face) {
 			speed = 3,
 			n = "Player",
 			state = Control{},
-			v = create_sprite_state(.Protagonist_World),
+			v = create_sprite_state(.Protagonist_World, face),
 			z = Z_MAX,
 		},
 	)
