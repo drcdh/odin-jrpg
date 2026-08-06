@@ -12,6 +12,8 @@ Sprite_Tag :: enum {
 	Up,
 	Active,
 	Inactive,
+	Closed,
+	Opened,
 }
 
 _Sprite_Metadata_Static :: struct {}

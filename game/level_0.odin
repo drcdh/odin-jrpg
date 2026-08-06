@@ -135,13 +135,13 @@ start_level_0 :: proc() {
 			queue_events(
 				[]Event {
 					Set_Entity_Busy{id = PLAYER_ID, busy = true},
-					Set_Entity_Sprite{BUTTON_1_ID, .Button_Pressed},
+					Set_Entity_Tag{BUTTON_1_ID, .Down},
 					Append_Text{"*Beep*"},
 					Close_Dialogue{},
 					Clear_Text{},
 					Set_Entity_Busy{id = PLAYER_ID, busy = false},
 					Pause_Runner{1},
-					Set_Entity_Sprite{BUTTON_1_ID, .Button},
+					Set_Entity_Tag{BUTTON_1_ID, .Up},
 					End{},
 				},
 			)
@@ -156,12 +156,12 @@ start_level_0 :: proc() {
 		talk = proc() {
 			queue_events(
 				[]Event {
-					Set_Entity_Sprite{BUTTON_2_ID, .Button_Pressed},
+					Set_Entity_Tag{BUTTON_2_ID, .Down},
 					Append_Text_Ex{text = "*Boop*", pause = .5, hurry = true},
 					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{1},
-					Set_Entity_Sprite{BUTTON_2_ID, .Button},
+					Set_Entity_Tag{BUTTON_2_ID, .Up},
 					End{},
 				},
 			)
@@ -173,7 +173,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID,
 		tile = LEVEL_0_CHEST_MONSTER,
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(0)},
+		talk = proc() {monster_in_a_box(BOX_0_ID, 0)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -181,7 +181,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 1,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 1},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(1)},
+		talk = proc() {monster_in_a_box(BOX_0_ID + 1, 1)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -189,7 +189,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 2,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 2},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(2)},
+		talk = proc() {monster_in_a_box(BOX_0_ID + 2, 2)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -197,7 +197,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 3,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 3},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(3)},
+		talk = proc() {monster_in_a_box(BOX_0_ID + 3, 3)},
 		v = create_sprite_state(.Box),
 	})
 
@@ -205,7 +205,7 @@ start_level_0 :: proc() {
 		id = BOX_0_ID + 4,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 4},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(4)},
+		talk = proc() {monster_in_a_box(BOX_0_ID + 4, 4)},
 		v = create_sprite_state(.Box),
 	})
 

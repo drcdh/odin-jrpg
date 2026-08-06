@@ -135,7 +135,7 @@ init_{level_name} :: proc() {{
 		id = {2000+n},
 		tile = {{ {x}, {y} }},
 		n = "items:{2000+n}",
-		talk = proc() {{ items_in_a_box({", ".join(items)}) }},
+		talk = proc() {{ items_in_a_box({2000+n}, {", ".join(items)}) }},
 		v = create_sprite_state(.Box),
 	}} )""")
 	out_f.write(f"""

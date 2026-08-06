@@ -59,10 +59,10 @@ encounter :: proc(encounter: int) {
 	)
 }
 
-items_in_a_box :: proc(items: ..Item_Name) {
+items_in_a_box :: proc(box_id: Id, items: ..Item_Name) {
 	events := make([dynamic]Event)
 	defer delete(events)
-	append(&events, Set_Entity_Busy{id = PLAYER_ID, busy = true})
+	append(&events, Set_Entity_Busy{id = PLAYER_ID, busy = true}, Set_Entity_Tag{box_id, .Opened})
 	for item in items {
 		append(&events, Add_Item{item = item, number = 1})
 	}
@@ -89,10 +89,11 @@ leave_boat :: proc() {
 	)
 }
 
-monster_in_a_box :: proc(encounter: int) {
+monster_in_a_box :: proc(box_id: Id, encounter: int) {
 	queue_events(
 		[]Event {
 			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Set_Entity_Tag{box_id, .Opened},
 			Append_Text{"Monster in a box!"},
 			Close_Dialogue{},
 			Clear_Text{},
