@@ -1,4 +1,3 @@
-// #+vet !unused
 package level_preview
 
 import "core:fmt"
@@ -17,7 +16,11 @@ wf: f32
 hf: f32
 
 main :: proc() {
-	game.init_rl(1)
+	game.set_window_mode(1)
+	rl.InitWindow(game.window_w, game.window_h, "Level Preview")
+	rl.SetTargetFPS(60)
+
+	game.init_atlases()
 
 	tile_size = game.tile_size
 	tile_size_i = i32(tile_size)

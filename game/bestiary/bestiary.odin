@@ -1,4 +1,3 @@
-#+vet !unused
 package bestiary
 
 import "core:fmt"
@@ -10,6 +9,8 @@ import rl "vendor:raylib"
 import "../../game"
 
 bid: int
+
+texture: rl.RenderTexture
 
 main :: proc() {
 	when ODIN_DEBUG {
@@ -28,10 +29,16 @@ main :: proc() {
 		}
 	}
 
-	game.init_rl(3)
+	game.init_rl(4)
+	game.init_atlases()
+	game.init_sprites()
+
+	w, h := f32(game.window_w), f32(game.window_h)
+
+	texture = rl.LoadRenderTexture(game.window_w, game.window_h); defer rl.UnloadRenderTexture(texture)
 
 	bid = 1
-	draw()
+	redraw()
 
 	for {
 		if rl.IsKeyPressed(.Q) {
@@ -41,33 +48,33 @@ main :: proc() {
 			if bid <= 0 {
 				bid = game.NUM_BADDY_TEMPLATES - 1
 			}
+			redraw()
 		} else if rl.IsKeyPressed(.DOWN) {
 			bid += 1
 			if bid >= game.NUM_BADDY_TEMPLATES {
 				bid = 1
 			}
+			redraw()
 		}
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.BLACK)
-		draw()
+		rl.DrawTexturePro(texture.texture, {0, 0, w, -h}, {0, 0, w, -h}, {}, 0, rl.WHITE)
 		rl.EndDrawing()
 		free_all(context.temp_allocator)
 	}
 	game.tear_down_rl()
 }
 
-coord :: game.Pixel_Coord{400, 100}
+COORD :: game.Pixel_Coord{480, 160}
 
-draw :: proc() {
+redraw :: proc() {
+	rl.BeginTextureMode(texture)
+	rl.ClearBackground(rl.BLACK)
 	bt := game.baddy_templates[game.Baddy_Id(bid)]
-	switch t in bt.texture {
-	case game.Texture_Name:
-		game.draw_texture(t, coord, rl.WHITE)
-	case game.Animation_Name:
-		game.draw_texture(game.atlas_animations[t].first_frame, coord, rl.WHITE)
-	}
+	game.draw_sprite(game.create_sprite_state(bt.texture), COORD)
 	game.draw_text(0, 0, fmt.ctprintf("% 3d: %s", bid, bt.name))
 	for i in 0 ..< game.NUM_STATS {
-		game.draw_text(0, f32(i + 1), strings.clone_to_cstring(game.stat_string(bt, game.Stat(i)), context.temp_allocator))
+		game.draw_text(0, f32(i + 1), strings.clone_to_cstring(game.stat_string(bt, game.Stat(i))))
 	}
+	rl.EndTextureMode()
 }
