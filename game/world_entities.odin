@@ -10,6 +10,8 @@ World_Entities :: struct {
 	id_map:   map[Id]Entity_Handle,
 }
 
+last_gen_id := max(Id) / 2
+
 world_entities: World_Entities
 
 delete_world_entities :: proc() {
@@ -38,7 +40,7 @@ update_world_entities :: proc(dt: f32) {
 
 add_world_entity :: proc(e: Entity) {
 	if h, ok := world_entities.id_map[e.id]; ok {
-		fmt.printfln("Id %d already in world entities", e.id)
+		fmt.printfln("Id %d already in world_entities.id_map", e.id)
 		if existing := get_world_entity(h); existing != nil {
 			fmt.printfln(
 				"OOPS: attempting to add an entity %s with id %d, but entity %s is already using it",
@@ -50,6 +52,17 @@ add_world_entity :: proc(e: Entity) {
 		}
 	}
 	world_entities.id_map[e.id] = hm.add(&world_entities.entities, e)
+}
+
+new_id :: proc() -> Id {
+	new_id := last_gen_id + 1
+	for {
+		if new_id in world_entities.id_map {
+			new_id += 1
+			if new_id == 0 {panic("overflowed generating world entity id")}
+		} else {break}
+	}
+	return Id(new_id)
 }
 
 clear_world_entities :: proc() {
@@ -134,11 +147,3 @@ set_world_entity_trap_script :: proc(id: Id, script: Entity_Script) {
 set_world_entity_state :: proc(id: Id, state: Entity_State) {
 	get_world_entity(id).state = state
 }
-
-// set_world_entity_visual_texture :: proc(id: Id, texture: Texture_Name) {
-// 	get_world_entity(id).v = texture
-// }
-//
-// set_world_entity_visual :: proc {
-// 	set_world_entity_visual_texture,
-// }

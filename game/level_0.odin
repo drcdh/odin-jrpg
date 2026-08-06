@@ -4,20 +4,12 @@ package game
 @(private)
 LEVEL_0_OVERLAY :: true
 
-BOX_0_ID :: 200
-BUTTON_1_ID :: 41
-BUTTON_2_ID :: 42
-DUDE_ID :: 1
-JUKEBOX_ID :: 100
-SIGN_ID :: 101
-WARP_1_ID :: 300
-
-dude_script_0 :: proc(id: Id) {
+dude_script_0 :: proc(dude_id: Id) {
 	queue_events(
 		[]Event {
 			Set_Entity_Busy{PLAYER_ID, true},
-			Set_Entity_Busy{id, true},
-			Set_Entity_Face_Party{id},
+			Set_Entity_Busy{dude_id, true},
+			Set_Entity_Face_Party{dude_id},
 			Append_Text{"Oh, hey! What's up, $player?"},
 			Clear_Text{},
 			Append_Text{"Coffee or tea?"},
@@ -52,11 +44,11 @@ dude_script_0 :: proc(id: Id) {
 			Append_Text{"Anyway, I'm going over there now."},
 			Close_Dialogue{},
 			Clear_Text{},
-			Set_Entity_Talk_Script{id = DUDE_ID, script = dude_script_1},
-			Set_Entity_State{id = DUDE_ID, state = Pacing{route = LEVEL_0_DUDE_ROUTE_1}},
+			Set_Entity_Talk_Script{dude_id, dude_script_1},
+			Set_Entity_State{dude_id, Pacing{route = LEVEL_0_DUDE_ROUTE_1}},
 			Set_Bool{k = .Met_Dude, v = true},
-			Set_Entity_Busy{id = DUDE_ID, busy = false},
-			Set_Entity_Busy{id = PLAYER_ID, busy = false},
+			Set_Entity_Busy{dude_id, false},
+			Set_Entity_Busy{PLAYER_ID, false},
 			End{},
 		},
 	)
@@ -82,7 +74,7 @@ start_level_0 :: proc() {
 	if get_game_data(Bool_Datum.Met_Dude) {
 		add_world_entity(
 			Entity {
-				id = DUDE_ID,
+				id = new_id(),
 				face = .Down,
 				tile = LEVEL_0_DUDE_SPAWN_MET,
 				speed = 2,
@@ -96,7 +88,7 @@ start_level_0 :: proc() {
 	} else {
 		add_world_entity(
 			Entity {
-				id = DUDE_ID,
+				id = new_id(),
 				face = .Down,
 				tile = LEVEL_0_DUDE_SPAWN_NOT_MET,
 				speed = 2,
@@ -110,7 +102,7 @@ start_level_0 :: proc() {
 	}
 
 	add_world_entity(Entity {
-		id = WARP_1_ID,
+		id = new_id(),
 		ghost = true,
 		tile = LEVEL_0_WARP_SPAWN,
 		n = "warp",
@@ -119,7 +111,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = 463,
+		id = new_id(),
 		ghost = true,
 		tile = LEVEL_0_WARP_CAVE,
 		n = "warp",
@@ -128,7 +120,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BUTTON_1_ID,
+		id = new_id(),
 		tile = LEVEL_0_PLAYER_SPAWN + {1, 1},
 		n = "Button 1",
 		talk = proc(id: Id) {
@@ -150,7 +142,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BUTTON_2_ID,
+		id = new_id(),
 		tile = LEVEL_0_PLAYER_SPAWN + {2, 1},
 		n = "Button 2",
 		talk = proc(id: Id) {
@@ -170,7 +162,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BOX_0_ID,
+		id = new_id(),
 		tile = LEVEL_0_CHEST_MONSTER,
 		n = "Monster in a box",
 		talk = proc(id: Id) {monster_in_a_box(id, 0)},
@@ -178,7 +170,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BOX_0_ID + 1,
+		id = new_id(),
 		tile = LEVEL_0_CHEST_MONSTER + {0, 1},
 		n = "Monster in a box",
 		talk = proc(id: Id) {monster_in_a_box(id, 1)},
@@ -186,7 +178,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BOX_0_ID + 2,
+		id = new_id(),
 		tile = LEVEL_0_CHEST_MONSTER + {0, 2},
 		n = "Monster in a box",
 		talk = proc(id: Id) {monster_in_a_box(id, 2)},
@@ -194,7 +186,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BOX_0_ID + 3,
+		id = new_id(),
 		tile = LEVEL_0_CHEST_MONSTER + {0, 3},
 		n = "Monster in a box",
 		talk = proc(id: Id) {monster_in_a_box(id, 3)},
@@ -202,7 +194,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = BOX_0_ID + 4,
+		id = new_id(),
 		tile = LEVEL_0_CHEST_MONSTER + {0, 4},
 		n = "Monster in a box",
 		talk = proc(id: Id) {monster_in_a_box(id, 4)},
@@ -211,7 +203,7 @@ start_level_0 :: proc() {
 
 	add_world_entity(
 		Entity {
-			id = SIGN_ID,
+			id = new_id(),
 			tile = LEVEL_0_SIGN,
 			n = "Lorem Ipsum sign",
 			talk = proc(_: Id) {
@@ -235,7 +227,7 @@ start_level_0 :: proc() {
 	)
 
 	add_world_entity(Entity {
-		id = JUKEBOX_ID,
+		id = new_id(),
 		tile = LEVEL_0_JUKEBOX,
 		n = "Jukebox",
 		talk = proc(_: Id) {
@@ -283,7 +275,7 @@ start_level_0 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = 800,
+		id = new_id(),
 		tile = LEVEL_0_SAVE,
 		ghost = true,
 		n = "Level_0_Save",

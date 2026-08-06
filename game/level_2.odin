@@ -7,9 +7,7 @@ MAP_HEIGHT :: LEVEL_2_HEIGHT
 @(private)
 LEVEL_2_OVERLAY :: true
 
-TRAP_ID :: 665
 TRAP_BADDY_ID :: 666
-WARP_0_ID :: 300
 
 @(private)
 start_level_2 :: proc() {
@@ -18,7 +16,7 @@ start_level_2 :: proc() {
 	for i := 1; i <= MAP_WIDTH - 3; i += 2 {
 		add_world_entity(
 			Entity {
-				id = Id(100 + i),
+				id = new_id(),
 				tile = Tile_Coord{i, 1},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 1},
@@ -28,7 +26,7 @@ start_level_2 :: proc() {
 		)
 		add_world_entity(
 			Entity {
-				id = Id(200 + i),
+				id = new_id(),
 				tile = Tile_Coord{i, MAP_HEIGHT - 3},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 3},
@@ -40,7 +38,7 @@ start_level_2 :: proc() {
 	for j := 3; j <= MAP_HEIGHT - 5; j += 2 {
 		add_world_entity(
 			Entity {
-				id = Id(300 + j),
+				id = new_id(),
 				tile = Tile_Coord{1, j},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 0},
@@ -50,7 +48,7 @@ start_level_2 :: proc() {
 		)
 		add_world_entity(
 			Entity {
-				id = Id(400 + j),
+				id = new_id(),
 				tile = Tile_Coord{MAP_WIDTH - 3, j},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 2},
@@ -61,7 +59,7 @@ start_level_2 :: proc() {
 	}
 
 	add_world_entity(Entity {
-		id = WARP_0_ID,
+		id = new_id(),
 		ghost = true,
 		tile = LEVEL_2_WARP_SPAWN,
 		n = "warp",
@@ -70,12 +68,12 @@ start_level_2 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = TRAP_ID,
+		id = new_id(),
 		ghost = true,
 		tile = LEVEL_2_TRAP_SPAWN,
 		n = "trap",
 		trap = proc(id: Id) {
-			set_world_entity_state(id, Approach_Entity{id = PLAYER_ID})
+			set_world_entity_state(TRAP_BADDY_ID, Approach_Entity{id = PLAYER_ID})
 			remove_world_entity(id)
 		},
 	})
@@ -104,7 +102,7 @@ start_level_2 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = 800,
+		id = new_id(),
 		tile = LEVEL_2_SAVE,
 		ghost = true,
 		n = "Level_2_Save",

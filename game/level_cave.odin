@@ -39,5 +39,4 @@ start_level_cave :: proc() {
 	darkness = 245
 
 	text_popup("Damn, it's dark in here!")
-	// set_world_entity_light(PLAYER_ID, 3.0)
 }

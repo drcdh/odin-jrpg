@@ -4,10 +4,7 @@ package game
 @(private)
 LEVEL_1_OVERLAY :: true
 
-DOOR_ID :: 1000
-GUY_ID :: 80
 WOMAN_ID :: 90
-WARP_2_ID :: 300
 
 door_knock :: proc(id: Id) {
 	queue_events(
@@ -46,7 +43,7 @@ start_level_1 :: proc() {
 	add_pc_entity(LEVEL_1_PLAYER_SPAWN, .Right)
 
 	add_world_entity(Entity {
-		id = GUY_ID,
+		id = new_id(),
 		face = .Down,
 		tile = LEVEL_1_GUY_SPAWN,
 		n = "Guy",
@@ -75,7 +72,7 @@ start_level_1 :: proc() {
 	})
 
 	add_world_entity(Entity {
-		id = WARP_2_ID,
+		id = new_id(),
 		ghost = true,
 		tile = LEVEL_1_WARP_SPAWN,
 		n = "warp",
@@ -95,10 +92,14 @@ start_level_1 :: proc() {
 	)
 
 	add_world_entity(
-		Entity{id = DOOR_ID, tile = LEVEL_1_DOOR, talk = nil if game_data.bool_data[Bool_Datum.Met_Woman] else door_knock},
+		Entity {
+			id = new_id(),
+			tile = LEVEL_1_DOOR,
+			talk = nil if game_data.bool_data[Bool_Datum.Met_Woman] else door_knock,
+		},
 	)
 
-	add_world_entity(Entity{id = 1, tile = LEVEL_1_FIRE, v = create_sprite_state(.Fire)})
+	add_world_entity(Entity{id = new_id(), tile = LEVEL_1_FIRE, v = create_sprite_state(.Fire)})
 
 	play_music(&music_state, .Town)
 }
