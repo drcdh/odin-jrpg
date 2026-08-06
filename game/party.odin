@@ -69,22 +69,15 @@ get_pc :: proc {
 	get_pc_int,
 }
 
-pc_idle_anim := [NUM_PC]Animation_Name {
-	.Protagonist_Battle,
-	.Woman_Battle,
-	.Protagonist_Battle,
-	.Protagonist_Battle,
-	.Protagonist_Battle,
-	.Protagonist_Battle,
-}
+pc_battle_sprites: [NUM_PC]Sprite_State
 
-pc_idle_texture := [NUM_PC]Texture_Name {
-	.Protagonist_Battle0,
-	.Woman_Battle0,
-	.Protagonist_Battle0,
-	.Protagonist_Battle0,
-	.Protagonist_Battle0,
-	.Protagonist_Battle0,
+init_pc_battle_sprites :: proc() {
+	pc_battle_sprites[0] = create_sprite_state(.Protagonist_Battle)
+	pc_battle_sprites[1] = create_sprite_state(.Woman_Battle)
+	pc_battle_sprites[2] = create_sprite_state(.Protagonist_Battle)
+	pc_battle_sprites[3] = create_sprite_state(.Protagonist_Battle)
+	pc_battle_sprites[4] = create_sprite_state(.Protagonist_Battle)
+	pc_battle_sprites[5] = create_sprite_state(.Protagonist_Battle)
 }
 
 get_party_member :: proc(i: int) -> Maybe(PC) {

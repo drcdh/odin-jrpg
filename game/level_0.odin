@@ -5,8 +5,6 @@ package game
 LEVEL_0_OVERLAY :: true
 
 BOX_0_ID :: 200
-BOX_1_ID :: 201
-BOX_2_ID :: 202
 BUTTON_1_ID :: 41
 BUTTON_2_ID :: 42
 DUDE_ID :: 1
@@ -91,7 +89,7 @@ start_level_0 :: proc() {
 				n = "Dude",
 				talk = dude_script_1,
 				state = Pacing{route = LEVEL_0_DUDE_ROUTE_1, pause = 1},
-				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				v = create_sprite_state(.Dude_World),
 				z = Z_MAX,
 			},
 		)
@@ -105,7 +103,7 @@ start_level_0 :: proc() {
 				n = "Dude",
 				talk = dude_script_0,
 				state = Pacing{route = LEVEL_0_DUDE_ROUTE_0, pause = 1},
-				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				v = create_sprite_state(.Dude_World),
 				z = Z_MAX,
 			},
 		)
@@ -117,7 +115,7 @@ start_level_0 :: proc() {
 		tile = LEVEL_0_WARP_SPAWN,
 		n = "warp",
 		trap = proc() {warp_to_level(.Level_1)},
-		v = animation_create(.Warp),
+		v = create_sprite_state(.Warp),
 	})
 
 	add_world_entity(Entity {
@@ -126,7 +124,7 @@ start_level_0 :: proc() {
 		tile = LEVEL_0_WARP_CAVE,
 		n = "warp",
 		trap = proc() {warp_to_level(.Level_Cave)},
-		v = animation_create(.Warp),
+		v = create_sprite_state(.Warp),
 	})
 
 	add_world_entity(Entity {
@@ -137,18 +135,18 @@ start_level_0 :: proc() {
 			queue_events(
 				[]Event {
 					Set_Entity_Busy{id = PLAYER_ID, busy = true},
-					Set_Entity_Texture{id = BUTTON_1_ID, texture = .Button_Pressed},
+					Set_Entity_Sprite{BUTTON_1_ID, .Button_Pressed},
 					Append_Text{"*Beep*"},
 					Close_Dialogue{},
 					Clear_Text{},
 					Set_Entity_Busy{id = PLAYER_ID, busy = false},
 					Pause_Runner{1},
-					Set_Entity_Texture{id = BUTTON_1_ID, texture = .Button},
+					Set_Entity_Sprite{BUTTON_1_ID, .Button},
 					End{},
 				},
 			)
 		},
-		v = Texture_Name.Button,
+		v = create_sprite_state(.Button),
 	})
 
 	add_world_entity(Entity {
@@ -158,17 +156,17 @@ start_level_0 :: proc() {
 		talk = proc() {
 			queue_events(
 				[]Event {
-					Set_Entity_Texture{id = BUTTON_2_ID, texture = .Button_Pressed},
+					Set_Entity_Sprite{BUTTON_2_ID, .Button_Pressed},
 					Append_Text_Ex{text = "*Boop*", pause = .5, hurry = true},
 					Close_Dialogue{},
 					Clear_Text{},
 					Pause_Runner{1},
-					Set_Entity_Texture{id = BUTTON_2_ID, texture = .Button},
+					Set_Entity_Sprite{BUTTON_2_ID, .Button},
 					End{},
 				},
 			)
 		},
-		v = Texture_Name.Button,
+		v = create_sprite_state(.Button),
 	})
 
 	add_world_entity(Entity {
@@ -176,39 +174,39 @@ start_level_0 :: proc() {
 		tile = LEVEL_0_CHEST_MONSTER,
 		n = "Monster in a box",
 		talk = proc() {monster_in_a_box(0)},
-		v = Texture_Name.Box,
+		v = create_sprite_state(.Box),
 	})
 
 	add_world_entity(Entity {
-		id = BOX_1_ID,
+		id = BOX_0_ID + 1,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 1},
 		n = "Monster in a box",
 		talk = proc() {monster_in_a_box(1)},
-		v = Texture_Name.Box,
+		v = create_sprite_state(.Box),
 	})
 
 	add_world_entity(Entity {
-		id = BOX_2_ID,
+		id = BOX_0_ID + 2,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 2},
 		n = "Monster in a box",
 		talk = proc() {monster_in_a_box(2)},
-		v = Texture_Name.Box,
+		v = create_sprite_state(.Box),
 	})
 
 	add_world_entity(Entity {
-		id = 23552,
+		id = BOX_0_ID + 3,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 3},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(4)},
-		v = Texture_Name.Box,
+		talk = proc() {monster_in_a_box(3)},
+		v = create_sprite_state(.Box),
 	})
 
 	add_world_entity(Entity {
-		id = 2352,
+		id = BOX_0_ID + 4,
 		tile = LEVEL_0_CHEST_MONSTER + {0, 4},
 		n = "Monster in a box",
-		talk = proc() {monster_in_a_box(5)},
-		v = Texture_Name.Box,
+		talk = proc() {monster_in_a_box(4)},
+		v = create_sprite_state(.Box),
 	})
 
 	add_world_entity(
@@ -232,7 +230,7 @@ start_level_0 :: proc() {
 					},
 				)
 			},
-			v = Texture_Name.Sign,
+			v = create_sprite_state(.Sign),
 		},
 	)
 
@@ -281,7 +279,7 @@ start_level_0 :: proc() {
 				},
 			)
 		},
-		v = Texture_Name.Jukebox,
+		v = create_sprite_state(.Jukebox),
 	})
 
 	add_world_entity(Entity {
@@ -289,8 +287,8 @@ start_level_0 :: proc() {
 		tile = LEVEL_0_SAVE,
 		ghost = true,
 		n = "Level_0_Save",
-		v = animation_create(.Save_Point_Active),
-		trap = proc() {save_point(.Level_0)},
+		v = create_sprite_state(.Save_Point),
+		trap = proc() {save_point(800, .Level_0)},
 	})
 
 	play_music(&music_state, .Town)

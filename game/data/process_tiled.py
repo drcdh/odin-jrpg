@@ -120,22 +120,6 @@ render_{level_name} :: proc() {{
 """)
 
 	out_f.write(f"""
-{prefix}ITEM_ENTITIES := [{len(item_entities)}]Entity{{""")
-	for n, item_entity in enumerate(item_entities):
-		items = ["."+_s for _s in item_entity.properties["items"].split(",")]
-		x, y = orderedpair_to_tile(item_entity.coordinates)
-		out_f.write(f"""
-	Entity{{
-		id = {2000+n},
-		tile = {{ {x}, {y} }},
-		n = "items:{2000+n}",
-		talk = proc() {{ items_in_a_box({", ".join(items)}) }},
-		v = Texture_Name.Box,
-	}},""")
-
-	out_f.write("}\n")
-
-	out_f.write(f"""
 init_{level_name} :: proc() {{
 	overlay = {prefix}OVERLAY
 	level_firstgids = {prefix}FIRSTGIDS[:]
@@ -144,8 +128,16 @@ init_{level_name} :: proc() {{
 	map_dim.y = {prefix}HEIGHT
 	level_routes = {prefix}ROUTES[:]
 	""")
-	for n, _ in enumerate(item_entities):
-		out_f.write(f"\n\tadd_world_entity({prefix}ITEM_ENTITIES[{n}])")
+	for n, item_entity in enumerate(item_entities):
+		x, y = orderedpair_to_tile(item_entity.coordinates)
+		items = ["."+_s for _s in item_entity.properties["items"].split(",")]
+		out_f.write(f"""\n\tadd_world_entity( Entity{{
+		id = {2000+n},
+		tile = {{ {x}, {y} }},
+		n = "items:{2000+n}",
+		talk = proc() {{ items_in_a_box({", ".join(items)}) }},
+		v = create_sprite_state(.Box),
+	}} )""")
 	out_f.write(f"""
 	start_{level_name}()
 	render_{level_name}()

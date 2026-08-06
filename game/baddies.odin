@@ -1,15 +1,10 @@
 package game
 
-Baddy_Visual :: union {
-	Animation_Name,
-	Texture_Name,
-}
-
 Baddy_Template :: struct {
 	name:        cstring,
 	skills:      Skill_Set,
 	using stats: Stats,
-	texture:     Baddy_Visual,
+	texture:     Sprite_Name,
 	turn:        Turn_Proc,
 }
 

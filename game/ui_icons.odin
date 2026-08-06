@@ -1,23 +1,23 @@
 package game
 
-select_tile_icon: Animation
-select_tile_icon_down: Animation
-world_menu_icon: Animation
+select_tile_icon: Sprite_State
+select_tile_icon_down: Sprite_State
+world_menu_icon: Sprite_State
 
 init_ui_icons :: proc() {
-	select_tile_icon = animation_create(.Select_Tile)
-	select_tile_icon_down = animation_create(.Select_Tile_Down)
-	world_menu_icon = animation_create(.Select_Icon_Small)
+	select_tile_icon = create_sprite_state(.Select_Tile)
+	select_tile_icon_down = create_sprite_state(.Select_Tile_Down)
+	world_menu_icon = create_sprite_state(.Select_Icon_Small)
 }
 
 update_ui_icons :: proc(dt: f32) {
-	animation_update(&select_tile_icon, dt)
-	animation_update(&select_tile_icon_down, dt)
-	animation_update(&world_menu_icon, dt)
+	update_sprite(dt, &select_tile_icon)
+	update_sprite(dt, &select_tile_icon_down)
+	update_sprite(dt, &world_menu_icon)
 }
 
 draw_text_icon_f32 :: proc(i, j: f32, origin := [2]f32{}) {
-	draw_animation(world_menu_icon, tile_to_pixel(origin.x + i, origin.y + j))
+	draw_sprite(world_menu_icon, tile_to_pixel(origin.x + i, origin.y + j))
 }
 
 draw_text_icon_Tile_Coord :: proc(i, j: f32, origin := Tile_Coord{}) {
@@ -30,9 +30,9 @@ draw_text_icon :: proc {
 }
 
 draw_tile_indicator_f32 :: proc(i, j: f32, origin := [2]f32{}) {
-	draw_animation(select_tile_icon, tile_to_pixel(origin.x + i, origin.y + j))
+	draw_sprite(select_tile_icon, tile_to_pixel(origin.x + i, origin.y + j))
 }
 
 draw_tile_indicator_down_f32 :: proc(i, j: f32, origin := [2]f32{}) {
-	draw_animation(select_tile_icon_down, tile_to_pixel(origin.x + i, origin.y + j))
+	draw_sprite(select_tile_icon_down, tile_to_pixel(origin.x + i, origin.y + j))
 }

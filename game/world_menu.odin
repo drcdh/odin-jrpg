@@ -158,44 +158,43 @@ world_menu_draw_icons :: proc() {
 	switch world_menu.ui_state {
 	case .Inactive:
 	case .Top:
-		draw_animation(world_menu_icon, tile_to_pixel(.5 + 3.5 * f32(world_menu.ui_data.top), .75))
+		draw_sprite(world_menu_icon, tile_to_pixel(.5 + 3.5 * f32(world_menu.ui_data.top), .75))
 	case .Party:
 		p := world_menu.ui_data.party_idx
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Party]) +
 			tile_to_pixel(.5 + f32(5 * (p % 3)), 1 + 5 * int(p / 3)),
 		)
 	case .Character:
 		s := world_menu.ui_data.slot_idx
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Character]) + tile_to_pixel(.5, 2 + NUM_STATS + s),
 		)
 	case .Equipment:
 		r := selection_row(world_menu.ui_data.equip_sel)
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Equipment]) + tile_to_pixel(.5, 1 + r),
 		)
 	case .Skills:
 	// r := selection_row(world_menu.ui_data.skill_sel)
-	// draw_animation(world_menu_icon, tile_to_pixel(1, 1 + r))
+	// draw_sprite(world_menu_icon, tile_to_pixel(1, 1 + r))
 	case .Skill_Target:
 	case .Inventory:
 		r := selection_row(world_menu.ui_data.inv_sel)
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Inventory]) + tile_to_pixel(.5, 1 + r),
 		)
 	case .Item_Target:
 		p := world_menu.ui_data.party_idx
 		row := f32(p / 3)
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Targeting]) +
 			tile_to_pixel(.5 + 2 * (f32(p) - 3 * row), 1 + 2.5 * row),
-			rl.WHITE,
 		)
 	case .System:
 	}
@@ -235,7 +234,7 @@ world_menu_redraw_character_pane :: proc() {
 					tint,
 				)
 			}
-			fmt.printfln("trying on %s\n%#v", item_name, changing_stats)
+		// fmt.printfln("trying on %s\n%#v", item_name, changing_stats)
 		}
 		for s in Equipment_Slot {
 			draw_text(
@@ -298,7 +297,7 @@ world_menu_redraw_targeting_pane :: proc() {
 			row += 1
 		}
 		if pc_idx, ok := get_party_member(i).?; ok {
-			draw_texture(pc_idle_texture[pc_idx], tile_to_pixel(1 + 2 * (f32(i) - 3 * row), 1 + 2.5 * row))
+			draw_sprite(pc_battle_sprites[pc_idx], tile_to_pixel(1 + 2 * (f32(i) - 3 * row), 1 + 2.5 * row))
 		}
 	}
 }
@@ -359,7 +358,7 @@ world_menu_draw_party_member :: proc(pc_idx: PC, origin: Tile_Coord) {
 	origin := origin
 	origin.y += 1
 	draw_text(f32(origin.x), f32(origin.y), fmt.ctprintf("%d/%d", hp, max_hp), hp_tint)
-	draw_texture(pc_idle_texture[pc_idx], tile_to_pixel(origin.x + 3, f32(origin.y) + .5))
+	draw_sprite(pc_battle_sprites[pc_idx], tile_to_pixel(origin.x + 3, f32(origin.y) + .5))
 }
 
 @(private)

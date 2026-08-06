@@ -7,7 +7,7 @@ Skill :: struct {
 	windup:    int,
 	cost:      int,
 	cooldown:  int,
-	animation: Animation_Name,
+	animation: Sprite_Name,
 	sound:     Sound_Name,
 }
 

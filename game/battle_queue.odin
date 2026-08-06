@@ -29,26 +29,20 @@ center_rect_on_rect :: proc(r1, r2: Rect) -> (r: Rect) {
 }
 
 center_rect_on_combatant :: proc(r1: Rect, c: Combatant) -> Rect {
-	t: Atlas_Texture
-	switch v in c.visual.variant {
-	case Texture_Name:
-		t = atlas_textures[v]
-	case Animation:
-		t = atlas_textures[v.current_frame]
-	}
+	sprite_size := sprite_size(c.visual)
 	rc: Rect
 	rc.x = c.coord.x + c.coord_d.x
 	rc.y = c.coord.y + c.coord_d.y
-	rc.width = t.document_size.x
-	rc.height = t.document_size.y
+	rc.width = sprite_size.x
+	rc.height = sprite_size.y
 	return center_rect_on_rect(r1, rc)
 }
 
-center_animation_on_combatant :: proc(a: Animation_Name, c: Combatant) -> Rect {
-	t := atlas_textures[atlas_animations[a].first_frame]
+center_animation_on_combatant :: proc(s: Sprite_Name, c: Combatant) -> Rect {
+	sprite_size := sprite_size(s)
 	ra: Rect
-	ra.width = t.document_size.x
-	ra.height = t.document_size.y
+	ra.width = sprite_size.x
+	ra.height = sprite_size.y
 	return center_rect_on_combatant(ra, c)
 }
 

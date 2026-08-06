@@ -1,10 +1,9 @@
 package game
 
 import "core:fmt"
-import rl "vendor:raylib"
 
 Kinematics :: struct {
-	face:        Face,
+	face:        Sprite_Tag,
 	ghost:       bool,
 	moving:      bool,
 	offset:      Tile_Offset,
@@ -12,16 +11,6 @@ Kinematics :: struct {
 	speed:       f32,
 	tile:        Tile_Coord,
 	z:           int,
-}
-
-Visual_Facing_Animation :: struct {
-	left, right, up, down: Animation_Name,
-}
-
-Visual :: union {
-	Animation,
-	Facing_Animation,
-	Texture_Name,
 }
 
 Name :: cstring
@@ -60,18 +49,11 @@ Entity :: struct {
 	talk:     Entity_Script,
 	trap:     Entity_Script,
 	state:    Entity_State,
-	v:        Visual,
+	v:        Sprite_State,
 }
 
 draw_entity :: proc(e: ^Entity) {
-	switch v in e.v {
-	case Animation:
-		draw_animation(v, entity_coord(e), rl.WHITE)
-	case Facing_Animation:
-		draw_facing_animation(v, entity_coord(e), rl.WHITE)
-	case Texture_Name:
-		draw_texture(v, entity_coord(e), rl.WHITE)
-	}
+	draw_sprite(e.v, entity_coord(e))
 }
 
 entity_coord :: proc(k: Kinematics) -> Pixel_Coord {
@@ -86,7 +68,7 @@ set_destination :: proc(e: ^Entity, d: Tile_Coord) {
 	// fmt.printfln("% 4d: Set destination of entity %s by %w to %w", frame_count, e.n, d, e.tile)
 }
 
-get_face_toward :: proc(d: Tile_Coord) -> Face {
+get_face_toward :: proc(d: Tile_Coord) -> Sprite_Tag {
 	switch d {
 	case {1, 0}:
 		return .Right
@@ -111,22 +93,19 @@ try_set_adjacent_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
 try_set_destination :: proc(e: ^Entity, d: Tile_Coord) -> bool {
 	move, alt := get_moves_toward(e^, d)
 	e.face = get_face_toward(move)
+	set_sprite_tag(&e.v, e.face)
 	return try_set_adjacent_destination(e, move) || try_set_adjacent_destination(e, alt)
 }
 
 try_set_destination_toward :: proc(e: ^Entity, t: Kinematics) -> bool {
 	move, alt := get_moves_toward(e^, t.tile)
 	e.face = get_face_toward(move)
+	set_sprite_tag(&e.v, e.face)
 	return try_set_adjacent_destination(e, move) || try_set_adjacent_destination(e, alt)
 }
 
 update_entity :: proc(dt: f32, e: ^Entity) {
-	#partial switch &v in e.v {
-	case Animation:
-		animation_update(&v, dt)
-	case Facing_Animation:
-		facing_animation_update(&v, e.k.face, dt)
-	}
+	update_sprite(dt, &e.v)
 
 	if update_kinematics(dt, &e.k) {
 		// first frame completely on this tile
@@ -213,13 +192,15 @@ player_control :: proc(_: f32, p: ^Entity) {
 	input := get_direction_input()
 	if (input.x != 0 || input.y != 0) {
 		if input.y > 0 {
-			p.k.face = .Down
+			set_sprite_tag(&p.v, .Down)
 		} else if input.y < 0 {
+			set_sprite_tag(&p.v, .Up)
 			p.k.face = .Up
 		} else if input.x > 0 {
+			set_sprite_tag(&p.v, .Right)
 			p.k.face = .Right
 		} else if input.x < 0 {
-			p.k.face = .Left
+			set_sprite_tag(&p.v, .Left)
 		}
 		if try_set_destination(p, p.k.tile + input) {
 			do_party_step_effects()

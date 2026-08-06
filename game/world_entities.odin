@@ -108,10 +108,19 @@ set_world_entity_face_party :: proc(id: Id) {
 	e := get_world_entity(id)
 	pc := hm.get(&world_entities.entities, pc_handle)
 	e.face = face_toward(e, pc)
+	set_sprite_tag(&e.v, e.face)
 }
 
 set_world_entity_light :: proc(id: Id, light: f16) {
 	get_world_entity(id).light = light
+}
+
+set_world_entity_sprite :: proc(id: Id, sprite_name: Sprite_Name) {
+	get_world_entity(id).v = create_sprite_state(sprite_name)
+}
+
+set_world_entity_tag :: proc(id: Id, tag: Sprite_Tag) {
+	set_sprite_tag(&get_world_entity(id).v, tag)
 }
 
 set_world_entity_talk_script :: proc(id: Id, script: Entity_Script) {
@@ -126,10 +135,10 @@ set_world_entity_state :: proc(id: Id, state: Entity_State) {
 	get_world_entity(id).state = state
 }
 
-set_world_entity_visual_texture :: proc(id: Id, texture: Texture_Name) {
-	get_world_entity(id).v = texture
-}
-
-set_world_entity_visual :: proc {
-	set_world_entity_visual_texture,
-}
+// set_world_entity_visual_texture :: proc(id: Id, texture: Texture_Name) {
+// 	get_world_entity(id).v = texture
+// }
+//
+// set_world_entity_visual :: proc {
+// 	set_world_entity_visual_texture,
+// }

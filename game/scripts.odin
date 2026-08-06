@@ -111,7 +111,7 @@ monster_in_a_box :: proc(encounter: int) {
 	)
 }
 
-save_point :: proc(save_point: Save_Point) {
+save_point :: proc(save_point_id: Id, save_point: Save_Point) {
 	queue_events(
 		[]Event {
 			Set_Entity_Busy{id = PLAYER_ID, busy = true},
@@ -123,6 +123,7 @@ save_point :: proc(save_point: Save_Point) {
 			Skip_If_Choice{1, 1},
 			Save_Game{save_point},
 			Close_Dialogue{},
+			Set_Entity_Tag{save_point_id, .Inactive},
 			Set_Entity_Busy{id = PLAYER_ID, busy = false},
 			End{},
 		},

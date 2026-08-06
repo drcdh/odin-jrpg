@@ -13,18 +13,8 @@ Combatant :: struct {
 	t:               Ticks,
 	team:            int,
 	turn:            Turn_Proc,
-	visual:          Combatant_Visual,
+	visual:          Sprite_State,
 	windup:          bool,
-}
-
-Combatant_Visual_Variant :: union {
-	Animation,
-	Texture_Name,
-}
-
-Combatant_Visual :: struct {
-	tint:    rl.Color,
-	variant: Combatant_Visual_Variant,
 }
 
 Battle_Skill_Play :: struct {
@@ -35,7 +25,7 @@ Battle_Skill_Play :: struct {
 }
 
 Process_Battle_Animation :: struct {
-	animation: Animation,
+	animation: Sprite_State,
 	delay:     f32,
 	offset:    Pixel_Coord,
 	t:         f32,

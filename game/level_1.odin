@@ -64,14 +64,14 @@ start_level_1 :: proc() {
 					Append_Text{"Have you met Dude yet? Very good."},
 					Close_Dialogue{},
 					Clear_Text{},
-					Set_Entity_Face{id = GUY_ID, face = .Down},
+					Set_Entity_Tag{id = GUY_ID, tag = .Down},
 					Set_Entity_Busy{id = GUY_ID, busy = false},
 					Set_Entity_Busy{id = PLAYER_ID, busy = false},
 					End{},
 				},
 			)
 		},
-		v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+		v = create_sprite_state(.Dude_World),
 	})
 
 	add_world_entity(Entity {
@@ -80,7 +80,7 @@ start_level_1 :: proc() {
 		tile = LEVEL_1_WARP_SPAWN,
 		n = "warp",
 		trap = proc() {warp_to_level(.Level_2)},
-		v = animation_create(.Warp),
+		v = create_sprite_state(.Warp),
 	})
 
 	add_world_entity(
@@ -90,7 +90,7 @@ start_level_1 :: proc() {
 			face = .Down,
 			ghost = true,
 			tile = LEVEL_1_DOOR,
-			v = facing_animation_create(.Woman_World_Left, .Woman_World_Right, .Woman_World_Up, .Woman_World_Down, .Down),
+			v = create_sprite_state(.Woman_World),
 		},
 	)
 
@@ -98,7 +98,7 @@ start_level_1 :: proc() {
 		Entity{id = DOOR_ID, tile = LEVEL_1_DOOR, talk = nil if game_data.bool_data[Bool_Datum.Met_Woman] else door_knock},
 	)
 
-	add_world_entity(Entity{id = 1, tile = LEVEL_1_FIRE, v = animation_create(.Fire)})
+	add_world_entity(Entity{id = 1, tile = LEVEL_1_FIRE, v = create_sprite_state(.Fire)})
 
 	play_music(&music_state, .Town)
 }

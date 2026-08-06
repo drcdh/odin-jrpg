@@ -24,23 +24,26 @@ music_state: Music_State
 
 init_rl :: proc(z: i32 = 4) {
 	set_window_mode(z)
-
 	rl.InitWindow(window_w, window_h, "JRPG")
 	rl.InitAudioDevice()
 	if throttle {
 		rl.SetTargetFPS(THROTTLED_FPS)
 	}
-
-	init_atlases()
-	init_overlays()
-	init_darkness()
 }
 
 init :: proc() {
 	init_rl()
+
 	initialize_input()
+	init_atlases()
+	init_sprites()
+
+	init_darkness()
 	init_dialogue()
+	init_overlays()
+	init_pc_battle_sprites()
 	init_ui_icons()
+
 	battle_menu_load()
 	shop_load()
 	start_menu_load()
@@ -135,6 +138,7 @@ tear_down :: proc() {
 	delete_input()
 	delete_inventory_order()
 	delete_runners()
+	delete_sprites()
 	delete_world_entities()
 	tear_down_dialogue()
 	battle_menu_unload()

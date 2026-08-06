@@ -89,12 +89,20 @@ Set_Entity_Disabled :: struct {
 	id:       Id,
 	disabled: bool,
 }
-Set_Entity_Face :: struct {
-	id:   Id,
-	face: Face,
-}
 Set_Entity_Face_Party :: struct {
 	id: Id,
+}
+Set_Entity_Sprite :: struct {
+	id:     Id,
+	sprite: Sprite_Name,
+}
+Set_Entity_State :: struct {
+	id:    Id,
+	state: Entity_State,
+}
+Set_Entity_Tag :: struct {
+	id:  Id,
+	tag: Sprite_Tag,
 }
 Set_Entity_Talk_Script :: struct {
 	id:     Id,
@@ -103,14 +111,6 @@ Set_Entity_Talk_Script :: struct {
 Set_Entity_Trap_Script :: struct {
 	id:     Id,
 	script: Entity_Script,
-}
-Set_Entity_State :: struct {
-	id:    Id,
-	state: Entity_State,
-}
-Set_Entity_Texture :: struct {
-	id:      Id,
-	texture: Texture_Name,
 }
 Set_Party_Control :: struct {}
 Skip :: struct {
@@ -181,12 +181,12 @@ Event :: union {
 	Set_Int,
 	Set_Entity_Busy,
 	Set_Entity_Disabled,
-	Set_Entity_Face,
 	Set_Entity_Face_Party,
+	Set_Entity_Sprite,
+	Set_Entity_State,
+	Set_Entity_Tag,
 	Set_Entity_Talk_Script,
 	Set_Entity_Trap_Script,
-	Set_Entity_State,
-	Set_Entity_Texture,
 	Set_Party_Control,
 	Skip,
 	Skip_If,

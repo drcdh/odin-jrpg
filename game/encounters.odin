@@ -1,7 +1,6 @@
 package game
 
 import "core:fmt"
-import rl "vendor:raylib"
 
 MAX_ENCOUNTER_SIZE :: 6
 
@@ -68,13 +67,6 @@ start_encounter :: proc(i: int, paused: bool) {
 		if baddy_id == .None {continue}
 		template := baddy_templates[baddy_id]
 		fmt.printfln("adding %s (baddy_id=%d)", template.name, baddy_id)
-		visual_variant: Combatant_Visual_Variant
-		switch t in template.texture {
-		case Texture_Name:
-			visual_variant = t
-		case Animation_Name:
-			visual_variant = animation_create(t)
-		}
 		append(&battle.baddies, len(battle.combatants))
 		append(
 			&battle.combatants,
@@ -84,7 +76,7 @@ start_encounter :: proc(i: int, paused: bool) {
 				enabled = true,
 				team = BADDY_TEAM,
 				turn = template.turn,
-				visual = {variant = visual_variant, tint = rl.WHITE},
+				visual = create_sprite_state(template.texture),
 			},
 		)
 	}
@@ -105,7 +97,7 @@ start_encounter :: proc(i: int, paused: bool) {
 					enabled = true,
 					t = READY_T,
 					team = PLAYER_TEAM,
-					visual = {variant = animation_create(pc_idle_anim[pc_idx]), tint = rl.WHITE},
+					visual = pc_battle_sprites[pc_idx],
 				},
 			)
 			party_idx += 1

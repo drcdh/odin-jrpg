@@ -134,7 +134,7 @@ draw_battle :: proc() {
 
 	for s in battle.animations {
 		if s.delay <= 0 {
-			draw_animation(s.animation, s.offset)
+			draw_sprite(s.animation, s.offset)
 		}
 	}
 
@@ -155,25 +155,22 @@ draw_battle_background :: proc() {
 draw_battle_combatants :: proc() {
 	for c, c_idx in battle.combatants {
 		if c.enabled {
-			tint := c.visual.tint
+			tint := rl.WHITE
 			if c.character.hitpoints <= 0 {
 				tint = rl.ColorTint(tint, rl.RED)
 			}
 			c_coord := get_combatant_coord(c)
 			if battle_menu.ui_state != .Idle {
 				if c_idx == battle_menu.ui_data.c_idx {
-					draw_animation(select_tile_icon_down, c_coord + {0, -tile_size})
+					draw_tile_indicator_down_f32(c_coord.x, c_coord.y - tile_size)
 				}
 			}
 			if targeted(c_idx, c.team) {
-				draw_animation(select_tile_icon, c_coord + {-tile_size, 0})
+				draw_tile_indicator_f32(c_coord.x - tile_size, c_coord.y)
 			}
-			switch v in c.visual.variant {
-			case Animation:
-				draw_animation(v, c_coord, tint)
-			case Texture_Name:
-				draw_texture(v, c_coord, tint)
-			}
+
+			draw_sprite(c.visual, c_coord, tint)
+
 			// debug
 			draw_text(
 				c.coord.x / tile_size,
@@ -309,7 +306,7 @@ update_battle :: proc(dt: f32) {
 
 	for anim_idx := 0; anim_idx < len(battle.animations); {
 		battle.animations[anim_idx].delay -= dt
-		if battle.animations[anim_idx].delay <= 0 && animation_update(&battle.animations[anim_idx].animation, dt) {
+		if battle.animations[anim_idx].delay <= 0 && update_sprite(dt, &battle.animations[anim_idx].animation) {
 			unordered_remove(&battle.animations, anim_idx)
 		} else {
 			anim_idx += 1
@@ -337,18 +334,15 @@ update_battle :: proc(dt: f32) {
 	}
 
 	for c in battle.combatants {
-		#partial switch &v in c.visual.variant {
-		case Animation:
-			animation_update(&v, dt)
-		}
+		draw_sprite(c.visual, c.coord)
 	}
 }
 
-play_anim_sound :: proc(animation_name: Animation_Name, sound: Sound_Name, target_idx: int, delay: f32 = 0) {
-	r := center_animation_on_combatant(animation_name, battle.combatants[target_idx])
+play_anim_sound :: proc(sprite_name: Sprite_Name, sound: Sound_Name, target_idx: int, delay: f32 = 0) {
+	r := center_animation_on_combatant(sprite_name, battle.combatants[target_idx])
 	append(
 		&battle.animations,
-		Process_Battle_Animation{animation = animation_create(animation_name), offset = {r.x, r.y}, delay = delay},
+		Process_Battle_Animation{animation = create_sprite_state(sprite_name), offset = {r.x, r.y}, delay = delay},
 	)
 	append(&battle.sounds, Play_Sound{sound = sound, delay = delay})
 }
@@ -408,7 +402,7 @@ combatant_transition :: proc(c_idx: int) -> bool {
 	dt := rl.GetFrameTime()
 	c := battle.combatants[c_idx]
 	alpha := c.visual.tint.a
-	if alpha == 0 {
+	if true || alpha == 0 { 	// FIXME
 		battle.combatants[c_idx].enabled = false
 		battle_menu_set_stale(.Baddies)
 		return true // finished
@@ -459,24 +453,24 @@ process_battle_skill :: proc() -> (done := false) {
 			battle.skill_state.step += 1
 		}
 	case 5:
-		animation_name := Animation_Name.Ffvi_Stars if skill.animation == nil else skill.animation
+		skill_sprite_name := skill.animation
 		sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 		switch targets in play.targets {
 		case Target_One_Ally:
-			play_anim_sound(animation_name, sound, battle.allies[targets.i])
+			play_anim_sound(skill_sprite_name, sound, battle.allies[targets.i])
 		case Target_One_Baddy:
-			play_anim_sound(animation_name, sound, battle.baddies[targets.i])
+			play_anim_sound(skill_sprite_name, sound, battle.baddies[targets.i])
 		case Target_All_Allies:
 			for target_idx, i in battle.allies {
-				play_anim_sound(animation_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
+				play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
 			}
 		case Target_All_Baddies:
 			for target_idx, i in battle.baddies {
-				play_anim_sound(animation_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
+				play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
 			}
 		case Target_All_Combatants:
 			for _, target_idx in battle.combatants {
-				play_anim_sound(animation_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
+				play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
 			}
 		}
 		battle.skill_state.step += 1

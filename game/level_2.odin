@@ -22,7 +22,7 @@ start_level_2 :: proc() {
 				tile = Tile_Coord{i, 1},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 1},
-				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				v = create_sprite_state(.Dude_World),
 				z = Z_MAX,
 			},
 		)
@@ -32,7 +32,7 @@ start_level_2 :: proc() {
 				tile = Tile_Coord{i, MAP_HEIGHT - 3},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 3},
-				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				v = create_sprite_state(.Dude_World),
 				z = Z_MAX,
 			},
 		)
@@ -44,7 +44,7 @@ start_level_2 :: proc() {
 				tile = Tile_Coord{1, j},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 0},
-				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				v = create_sprite_state(.Dude_World),
 				z = Z_MAX,
 			},
 		)
@@ -54,7 +54,7 @@ start_level_2 :: proc() {
 				tile = Tile_Coord{MAP_WIDTH - 3, j},
 				speed = 2,
 				state = Pacing{route = LEVEL_2_CONGA_LINE, pause = 1, step = 2},
-				v = facing_animation_create(.Dude_World_Left, .Dude_World_Right, .Dude_World_Up, .Dude_World_Down, .Down),
+				v = create_sprite_state(.Dude_World),
 				z = Z_MAX,
 			},
 		)
@@ -66,7 +66,7 @@ start_level_2 :: proc() {
 		tile = LEVEL_2_WARP_SPAWN,
 		n = "warp",
 		trap = proc() {warp_to_level(.Level_0)},
-		v = animation_create(.Warp),
+		v = create_sprite_state(.Warp),
 	})
 
 	add_world_entity(Entity {
@@ -99,7 +99,7 @@ start_level_2 :: proc() {
 				},
 			)
 		},
-		v = facing_animation_create(.Baddy_World_Left, .Baddy_World_Right, .Baddy_World_Up, .Baddy_World_Down, .Right),
+		v = create_sprite_state(.Baddy_World),
 		z = Z_MAX,
 	})
 
@@ -108,8 +108,8 @@ start_level_2 :: proc() {
 		tile = LEVEL_2_SAVE,
 		ghost = true,
 		n = "Level_2_Save",
-		v = animation_create(.Save_Point_Active),
-		trap = proc() {save_point(.Level_2)},
+		v = create_sprite_state(.Save_Point),
+		trap = proc() {save_point(800, .Level_2)},
 	})
 
 	play_music(&music_state, .Town)

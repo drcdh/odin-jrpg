@@ -39,7 +39,7 @@ dialogue_marquee_start, dialogue_marquee_end: int
 
 dialogue_builder: strings.Builder
 dialogue_marquee_lines: [MAX_DIALOGUE_LINES]strings.Builder
-dialogue_icon: Animation
+dialogue_icon: Sprite_State
 
 dialogue_lines: int = DEFAULT_DIALOGUE_LINES
 dialogue_line_width: int = 2 * VIEW_TILES_W - 2
@@ -49,7 +49,7 @@ dialogue_choice_made: Maybe(int)
 dialogue_choice_pending: int
 
 init_dialogue :: proc() {
-	dialogue_icon = animation_create(.Dialogue_Icon_Small)
+	dialogue_icon = create_sprite_state(.Dialogue_Icon_Small)
 }
 
 draw_dialogue :: proc() {
@@ -71,7 +71,7 @@ draw_dialogue :: proc() {
 			}
 		}
 		if _, waiting := dialogue_state.(Dialogue_Wait); waiting {
-			draw_animation(dialogue_icon, {view_dim.x - tile_size, f32(dialogue_lines / 2) * tile_size}, rl.WHITE)
+			draw_sprite(dialogue_icon, {view_dim.x - tile_size, f32(dialogue_lines / 2) * tile_size})
 		}
 		if _, choosing := dialogue_state.(Dialogue_Choose); choosing {
 			draw_choices()
@@ -131,7 +131,7 @@ update_dialogue :: proc() {
 			set_next_dialogue_state()
 		}
 	case Dialogue_Wait:
-		animation_update(&dialogue_icon, rl.GetFrameTime())
+		update_sprite(rl.GetFrameTime(), &dialogue_icon)
 		if get_input(.ENTER) {
 			if dialogue_buffer_end < strings.builder_len(dialogue_builder) {
 				refill_marquee()

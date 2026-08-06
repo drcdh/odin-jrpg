@@ -31,7 +31,7 @@ start_level_overworld :: proc() {
 			n = "boat",
 			speed = 4,
 			talk = board_boat,
-			v = facing_animation_create(.Boat_Left, .Boat_Right, .Boat_Up, .Boat_Down, .Right),
+			v = create_sprite_state(.Boat),
 		},
 	)
 

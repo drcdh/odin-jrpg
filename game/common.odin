@@ -21,16 +21,11 @@ tile_size: Pixel
 tile_size_int: int
 tile_dim: Pixel_Dim
 
-Face :: enum {
-	Left,
-	Right,
-	Up,
-	Down,
-}
+Face :: Sprite_Tag
 
 face_tile_coord :: proc(f: Face) -> Tile_Coord {
 	t: Tile_Coord
-	switch f {
+	#partial switch f {
 	case .Left:
 		t = {-1, 0}
 	case .Right:

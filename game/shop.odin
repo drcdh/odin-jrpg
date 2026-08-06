@@ -132,19 +132,19 @@ shop_draw_icons :: proc() {
 	switch shop_menu_data.ui_state {
 	case .Inactive:
 	case .Top:
-		draw_animation(world_menu_icon, tile_to_pixel(.5 + f32(3 * shop_menu_data.ui_data.top), .75))
+		draw_sprite(world_menu_icon, tile_to_pixel(.5 + f32(3 * shop_menu_data.ui_data.top), .75))
 	case .Buy:
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(.5, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin),
 		)
 	case .Sell:
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(.5, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin),
 		)
 	case .Swap_Character:
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(
 				11.5 + 2 * f32(shop_menu_data.ui_data.party_idx % 2),
@@ -152,9 +152,9 @@ shop_draw_icons :: proc() {
 			),
 		)
 	case .Swap_Slot:
-		draw_animation(world_menu_icon, tile_to_pixel(11.5, 3 + shop_menu_data.ui_data.slot_idx))
+		draw_sprite(world_menu_icon, tile_to_pixel(11.5, 3 + shop_menu_data.ui_data.slot_idx))
 	case .Swap_Buy:
-		draw_animation(
+		draw_sprite(
 			world_menu_icon,
 			tile_to_pixel(.5, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin),
 		)
@@ -199,7 +199,7 @@ shop_redraw_party_pane :: proc() {
 		if pc_idx, ok := get_party_member(p).?; ok {
 			origin_tile: Tile_Coord = {1, 1} + {2 * (p % 2), 2 * int(p / 2)}
 			origin := tile_to_pixel(origin_tile)
-			draw_texture(pc_idle_texture[pc_idx], origin)
+			draw_sprite(pc_battle_sprites[pc_idx], origin)
 		}
 	}
 }
