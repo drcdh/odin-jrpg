@@ -458,16 +458,18 @@ process_battle_skill :: proc() -> (done := false) {
 	case 2:
 		// Walk
 		set_sprite_tag(&battle.combatants[play.actor].visual, .Walk)
+		unfreeze_sprite(&battle.combatants[play.actor].visual)
 		battle.skill_state.step += 1
 
 	case 3:
 		// Move
 		if battle.combatants[play.actor].team == PLAYER_TEAM {
 			if battle.combatants[play.actor].coord_d.x > -tile_size {
-				battle.combatants[play.actor].coord_d.x -= 4 * rl.GetFrameTime() * tile_size
+				battle.combatants[play.actor].coord_d.x -= 2 * rl.GetFrameTime() * tile_size
 			} else {
 				battle.combatants[play.actor].coord_d.x = -tile_size
-				freeze_sprite_frame(&battle.combatants[play.actor].visual, 2)
+				set_sprite_tag(&battle.combatants[play.actor].visual, .LArm)
+				freeze_sprite_frame(&battle.combatants[play.actor].visual, 0)
 				battle.skill_state.step += 1
 			}
 		} else {
@@ -484,8 +486,8 @@ process_battle_skill :: proc() -> (done := false) {
 	case 5:
 		// Animate skill
 		// TODO: weapon skill or magic skill
-		set_sprite_tag(&battle.combatants[play.actor].visual, .Cheer)
-		freeze_sprite_frame(&battle.combatants[play.actor].visual, 2)
+		set_sprite_tag(&battle.combatants[play.actor].visual, .RArm)
+		freeze_sprite_frame(&battle.combatants[play.actor].visual, 0)
 		skill_sprite_name := skill.animation
 		sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 		switch targets in play.targets {
@@ -551,6 +553,7 @@ process_battle_skill :: proc() -> (done := false) {
 
 	case 9:
 		// Walk
+		set_sprite_tag(&battle.combatants[play.actor].visual, .Walk)
 		unfreeze_sprite(&battle.combatants[play.actor].visual)
 		battle.skill_state.step += 1
 
