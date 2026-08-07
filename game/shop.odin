@@ -307,16 +307,15 @@ shop_update :: proc() {
 			switch shop_menu_data.ui_data.top {
 			case 0:
 				shop_menu_data.ui_state = .Buy
-				shop_reset_inventory_pos() // TODO: only do this if previously Sell
 			case 1:
 				shop_menu_data.ui_state = .Sell
-				shop_reset_inventory_pos() // TODO: only do this if previously Buy
 			case 2:
 				shop_menu_data.ui_state = .Swap_Character
 			}
 		} else if dx, ok := get_x_input().?; ok {
 			shop_menu_data.ui_data.top = grid_change(shop_menu_data.ui_data.top, dx, 0, 3, 1)
 			shop_set_stale(.Inventory)
+			shop_reset_inventory_pos()
 		}
 	case .Buy:
 		if get_input(.CANCEL) {
