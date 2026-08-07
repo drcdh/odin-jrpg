@@ -10,7 +10,9 @@ World_Entities :: struct {
 	id_map:   map[Id]Entity_Handle,
 }
 
-last_gen_id := max(Id) / 2
+// leave lower Id values for us to use manually
+GEN_ID_0 :: 1000
+last_gen_id: Id = GEN_ID_0
 
 world_entities: World_Entities
 

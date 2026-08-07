@@ -54,6 +54,7 @@ Entity :: struct {
 
 draw_entity :: proc(e: ^Entity) {
 	draw_sprite(e.v, entity_coord(e))
+	// rl.DrawTextEx(font, fmt.ctprint(e.id), entity_coord(e), tile_size / 4, 0, rl.BLACK) // debug
 }
 
 entity_coord :: proc(k: Kinematics) -> Pixel_Coord {
