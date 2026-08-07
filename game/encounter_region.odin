@@ -12,12 +12,12 @@ Encounter_Region_Rect :: struct {
 
 try_random_encounter :: proc(level: Level, tile: Tile_Coord) {
 	region := get_encounter_region(level, tile)
-	fmt.printfln("inside encounter region %v", region)
+	// fmt.printfln("inside encounter region %v", region)
 	if enc_idx, ok := get_encounter(region).?; ok {
 		fmt.printfln("starting random encounter %d", enc_idx)
 		encounter(enc_idx)
 	} else {
-		fmt.println("no random encounter, this time...")
+		// fmt.println("no random encounter, this time...")
 	}
 }
 

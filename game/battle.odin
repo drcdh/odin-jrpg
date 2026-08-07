@@ -172,20 +172,20 @@ draw_battle_combatants :: proc() {
 			draw_sprite(c.visual, c_coord, tint)
 
 			// debug
-			draw_text(
-				c.coord.x / tile_size,
-				c.coord.y / tile_size,
-				fmt.ctprintf("%.0f", abs(c.t)),
-				rl.WHITE if c.t >= 0 else rl.ORANGE,
-			)
-			if skill_play_idx, ok := get_combatant_skill_play(c_idx).?; ok {
-				draw_text(
-					c.coord.x / tile_size,
-					.5 + c.coord.y / tile_size,
-					fmt.ctprintf("%.0f", battle.skill_plays[skill_play_idx].windup),
-					rl.ORANGE,
-				)
-			}
+			// draw_text(
+			// 	c.coord.x / tile_size,
+			// 	c.coord.y / tile_size,
+			// 	fmt.ctprintf("%.0f", abs(c.t)),
+			// 	rl.WHITE if c.t >= 0 else rl.ORANGE,
+			// )
+			// if skill_play_idx, ok := get_combatant_skill_play(c_idx).?; ok {
+			// 	draw_text(
+			// 		c.coord.x / tile_size,
+			// 		.5 + c.coord.y / tile_size,
+			// 		fmt.ctprintf("%.0f", battle.skill_plays[skill_play_idx].windup),
+			// 		rl.ORANGE,
+			// 	)
+			// }
 		}
 	}
 }
@@ -285,7 +285,12 @@ update_battle :: proc(dt: f32) {
 			queue_events(lose_events, battle = true)
 		case .Win:
 			battle.paused = true
-			// TODO: set party members to cheer pose
+			for c_idx in battle.allies {
+				if combatant_alive(battle.combatants[c_idx]) {
+					unfreeze_sprite(&battle.combatants[c_idx].visual)
+					set_sprite_tag(&battle.combatants[c_idx].visual, .Cheer)
+				}
+			}
 			runner_idx := party_get_experience(battle.encounter.exp)
 			win_events := battle.encounter.win_events.? or_else []Event {
 					Add_Item{.Potion, 1},
@@ -333,8 +338,8 @@ update_battle :: proc(dt: f32) {
 		}
 	}
 
-	for c in battle.combatants {
-		draw_sprite(c.visual, c.coord)
+	for &c in battle.combatants {
+		update_sprite(dt, &c.visual)
 	}
 }
 
@@ -426,33 +431,47 @@ process_battle_skill :: proc() -> (done := false) {
 	// fmt.printfln("%#v", battle.text)
 	play := battle.skill_plays[battle.skill_state.skill_plays_idx]
 	skill := play.skill
+
 	switch battle.skill_state.step {
 	case 0:
 		// TODO: set_text_display(skill.name)
 		fmt.printfln("~~ %s ~~", skill.name)
 		battle.skill_state.step += 1
+
 	case 1:
+		// Pause
 		if battle.skill_state.t += rl.GetFrameTime(); battle.skill_state.t >= .5 {
 			battle.skill_state.t = 0
 			battle.skill_state.step += 1
 		}
+
 	case 2:
-		// TODO: set actor pose to walk left
+		// Walk
+		set_sprite_tag(&battle.combatants[play.actor].visual, .Walk)
 		battle.skill_state.step += 1
+
 	case 3:
+		// Move
 		if battle.combatants[play.actor].coord_d.x > -tile_size {
 			battle.combatants[play.actor].coord_d.x -= 4 * rl.GetFrameTime() * tile_size
 		} else {
 			battle.combatants[play.actor].coord_d.x = -tile_size
-			// TODO: freeze actor animation to 2nd frame
+			freeze_sprite_frame(&battle.combatants[play.actor].visual, 2)
 			battle.skill_state.step += 1
 		}
+
 	case 4:
+		// Pause
 		if battle.skill_state.t += rl.GetFrameTime(); battle.skill_state.t >= .5 {
 			battle.skill_state.t = 0
 			battle.skill_state.step += 1
 		}
+
 	case 5:
+		// Animate skill
+		// TODO: weapon skill or magic skill
+		set_sprite_tag(&battle.combatants[play.actor].visual, .Cheer)
+		freeze_sprite_frame(&battle.combatants[play.actor].visual, 2)
 		skill_sprite_name := skill.animation
 		sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 		switch targets in play.targets {
@@ -474,11 +493,15 @@ process_battle_skill :: proc() -> (done := false) {
 			}
 		}
 		battle.skill_state.step += 1
+
 	case 6:
+		// Wait for skill animation
 		if len(battle.animations) == 0 && len(battle.sounds) == 0 {
 			battle.skill_state.step += 1
 		}
+
 	case 7:
+		// Skill effects
 		actor := battle.combatants[play.actor]
 		switch targets in play.targets {
 		case Target_One_Ally:
@@ -505,19 +528,25 @@ process_battle_skill :: proc() -> (done := false) {
 		battle_menu_set_stale(.Baddies)
 		battle_menu_set_stale(.Party)
 		battle.skill_state.step += 1
+
 	case 8:
+		// Wait for skill effects text
 		if len(battle.text) == 0 {
 			battle.skill_state.step += 1
 		}
+
 	case 9:
-		// TODO: set actor to walk right
+		// Walk
+		unfreeze_sprite(&battle.combatants[play.actor].visual)
 		battle.skill_state.step += 1
+
 	case 10:
+		// Move back
 		if battle.combatants[play.actor].coord_d.x < 0 {
 			battle.combatants[play.actor].coord_d.x += 4 * rl.GetFrameTime() * tile_size
 		} else {
 			battle.combatants[play.actor].coord_d.x = 0
-			// TODO: wait for walk to finish then set actor to idle left
+			set_sprite_tag(&battle.combatants[play.actor].visual, .Idle)
 			// TODO: remove_text_display(skill.name)
 			done = true
 		}

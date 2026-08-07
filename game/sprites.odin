@@ -14,6 +14,13 @@ Sprite_Tag :: enum {
 	Inactive,
 	Closed,
 	Opened,
+	Idle,
+	Walk,
+	LArm,
+	RArm,
+	Cheer,
+	Kneeled,
+	Downed,
 }
 
 _Sprite_Metadata_Static :: struct {}
@@ -111,14 +118,16 @@ get_sprite_h :: proc(n: Sprite_Name, p: Maybe(Palette_Swap) = nil) -> Sprite_Han
 _Sprite_State_Static :: struct {}
 
 _Sprite_State_Anim :: struct {
-	frame: u16,
-	t:     f32,
+	frame:  u16,
+	frozen: bool,
+	t:      f32,
 }
 
 _Sprite_State_Tagged :: struct {
-	tag:   Sprite_Tag,
-	frame: u16,
-	t:     f32,
+	tag:    Sprite_Tag,
+	frame:  u16,
+	frozen: bool,
+	t:      f32,
 }
 
 _Sprite_State :: union {
@@ -210,26 +219,52 @@ update_sprite :: proc(dt: f32, state: ^Sprite_State) -> bool {
 	switch &variant in state.variant {
 	case _Sprite_State_Static:
 	case _Sprite_State_Anim:
-		v := hm.get(&sprite_hm, state.h)
-		m := sprite_metadata[v.name].metadata.(_Sprite_Metadata_Anim)
-		variant.t += dt
-		if variant.t >= m.frame_t / 1000 {
-			variant.t = 0
-			variant.frame = (variant.frame + 1) %% m.num_frames
-			return variant.frame == 0 // looped
+		if !variant.frozen {
+			v := hm.get(&sprite_hm, state.h)
+			m := sprite_metadata[v.name].metadata.(_Sprite_Metadata_Anim)
+			variant.t += dt
+			if variant.t >= m.frame_t / 1000 {
+				variant.t = 0
+				variant.frame = (variant.frame + 1) %% m.num_frames
+				return variant.frame == 0 // looped
+			}
 		}
 	case _Sprite_State_Tagged:
-		v := hm.get(&sprite_hm, state.h)
-		m := sprite_metadata[v.name].metadata.(_Sprite_Metadata_Tagged)
-		variant.t += dt
-		if variant.t >= m.frame_t / 1000 {
-			variant.t = 0
-			tag_idx := find_tag(m.tags, variant.tag).?
-			variant.frame = (variant.frame + 1) %% m.num_frames[tag_idx]
-			return variant.frame == 0 // looped
+		if !variant.frozen {
+			v := hm.get(&sprite_hm, state.h)
+			m := sprite_metadata[v.name].metadata.(_Sprite_Metadata_Tagged)
+			variant.t += dt
+			if variant.t >= m.frame_t / 1000 {
+				variant.t = 0
+				tag_idx := find_tag(m.tags, variant.tag).?
+				variant.frame = (variant.frame + 1) %% m.num_frames[tag_idx]
+				return variant.frame == 0 // looped
+			}
 		}
 	}
 	return false
+}
+
+freeze_sprite_frame :: proc(state: ^Sprite_State, frame: u16) {
+	switch &variant in state.variant {
+	case _Sprite_State_Static:
+	case _Sprite_State_Anim:
+		variant.frame = frame
+		variant.frozen = true
+	case _Sprite_State_Tagged:
+		variant.frame = frame
+		variant.frozen = true
+	}
+}
+
+unfreeze_sprite :: proc(state: ^Sprite_State) {
+	switch &variant in state.variant {
+	case _Sprite_State_Static:
+	case _Sprite_State_Anim:
+		variant.frozen = false
+	case _Sprite_State_Tagged:
+		variant.frozen = false
+	}
 }
 
 set_sprite_tag :: proc(state: ^Sprite_State, tag: Sprite_Tag) {
