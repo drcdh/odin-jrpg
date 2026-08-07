@@ -29,7 +29,9 @@ draw_text_icon :: proc {
 	draw_text_icon_Tile_Coord,
 }
 
+import "core:fmt"
 draw_tile_indicator_f32 :: proc(i, j: f32, origin := [2]f32{}) {
+	fmt.printfln("draw_tile_indicator_f32 (%.0f, %.0f) + %v", i, j, origin)
 	draw_sprite(select_tile_icon, tile_to_pixel(origin.x + i, origin.y + j))
 }
 
