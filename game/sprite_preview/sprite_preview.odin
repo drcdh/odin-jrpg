@@ -10,9 +10,7 @@ import rl "vendor:raylib"
 import "../../game"
 
 change_pose :: proc(state: ^game.Sprite_State, ds: int, n: int) {
-	if v, ok := state.variant.(game._Sprite_State_Tagged); ok {
-		game.set_sprite_tag(state, game.Sprite_Tag((int(v.tag) + ds) %% n))
-	}
+	game.set_sprite_tag(state, game.Sprite_Tag((int(state.tag) + ds) %% n))
 }
 
 main :: proc() {

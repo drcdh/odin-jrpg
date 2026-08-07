@@ -453,11 +453,15 @@ process_battle_skill :: proc() -> (done := false) {
 
 	case 3:
 		// Move
-		if battle.combatants[play.actor].coord_d.x > -tile_size {
-			battle.combatants[play.actor].coord_d.x -= 4 * rl.GetFrameTime() * tile_size
+		if battle.combatants[play.actor].team == PLAYER_TEAM {
+			if battle.combatants[play.actor].coord_d.x > -tile_size {
+				battle.combatants[play.actor].coord_d.x -= 4 * rl.GetFrameTime() * tile_size
+			} else {
+				battle.combatants[play.actor].coord_d.x = -tile_size
+				freeze_sprite_frame(&battle.combatants[play.actor].visual, 2)
+				battle.skill_state.step += 1
+			}
 		} else {
-			battle.combatants[play.actor].coord_d.x = -tile_size
-			freeze_sprite_frame(&battle.combatants[play.actor].visual, 2)
 			battle.skill_state.step += 1
 		}
 
@@ -543,12 +547,16 @@ process_battle_skill :: proc() -> (done := false) {
 
 	case 10:
 		// Move back
-		if battle.combatants[play.actor].coord_d.x < 0 {
-			battle.combatants[play.actor].coord_d.x += 4 * rl.GetFrameTime() * tile_size
+		if battle.combatants[play.actor].team == PLAYER_TEAM {
+			if battle.combatants[play.actor].coord_d.x < 0 {
+				battle.combatants[play.actor].coord_d.x += 4 * rl.GetFrameTime() * tile_size
+			} else {
+				battle.combatants[play.actor].coord_d.x = 0
+				set_sprite_tag(&battle.combatants[play.actor].visual, .Idle)
+				// TODO: remove_text_display(skill.name)
+				done = true
+			}
 		} else {
-			battle.combatants[play.actor].coord_d.x = 0
-			set_sprite_tag(&battle.combatants[play.actor].visual, .Idle)
-			// TODO: remove_text_display(skill.name)
 			done = true
 		}
 	}

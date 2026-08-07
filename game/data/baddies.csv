@@ -8,3 +8,8 @@ Ghost,1,4,1,10,8,12,,random_skill_random_target,"Heal,Heal_All"
 Bad Box,1000,1,1,1,1,1,,random_skill_random_target,"Smash,Quake_Smash"
 Magic Serpent,50,15,9,20,15,15,,random_skill_random_target,"Bite,Fire"
 Powerful Pebble,1,1,1,1,1,50,pebble,random_skill_random_target,Ultimagnitude_9000
+Orthros,100,10,5,3,5,8,octopus_battle,random_skill_random_target,Bite
+Tentacle,10,20,3,1,3,20,tentacle_1,random_skill_random_target,"Smack,Smash,Tickle"
+Tentacle,10,20,3,1,3,20,tentacle_2,random_skill_random_target,"Smack,Smash,Tickle"
+Tentacle,10,20,3,1,3,20,tentacle_3,random_skill_random_target,"Smack,Smash,Tickle"
+Tentacle,10,20,3,1,3,20,tentacle_4,random_skill_random_target,"Smack,Smash,Tickle"

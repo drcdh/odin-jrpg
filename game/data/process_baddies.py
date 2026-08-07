@@ -21,7 +21,7 @@ with open("data/baddies.csv") as f:
 		if not row["texture"]:
 			row["texture"] = baddy_id_enum
 		row["texture"] = row["texture"].title()
-		if baddy_id_enum == baddy_id_enums[-1]:
+		if baddy_id_enum == baddy_id_enums[-1] or f"{baddy_id_enum}_{n}" == baddy_id_enums[-1]:
 			if n == 1:
 				baddy_id_enums[-1] += "_1"
 			n += 1

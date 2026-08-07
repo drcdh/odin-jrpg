@@ -77,5 +77,24 @@ start_level_overworld :: proc() {
 		trap = proc(_: Id) {egress(.Level_Cave)},
 	})
 
+	add_world_entity(Entity {
+		id = new_id(),
+		ghost = true,
+		n = "Orthros",
+		tile = LEVEL_OVERWORLD_ORTHROS_SPAWN,
+		trap = proc(id: Id) {
+			queue_events(
+				[]Event {
+					Set_Entity_Busy{id = BOAT_ID, busy = true},
+					Start_Encounter{encounter = 6},
+					Curtain_Up{.Battle},
+					Set_Entity_Busy{id = BOAT_ID, busy = false},
+					End{},
+				},
+			)
+		},
+		v = create_sprite_state(.Octopus_World),
+	})
+
 	play_music(&music_state, .Overworld)
 }
