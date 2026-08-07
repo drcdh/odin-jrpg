@@ -12,18 +12,66 @@ BATTLE_ORIGIN_TILE :: Tile_Coord{2, 4}
 Encounter_Spot :: struct {
 	tile:     Tile_Coord,
 	baddy_id: Baddy_Id,
+	// disabled: bool,
 }
 
 Encounter :: struct {
 	baddies:     [MAX_ENCOUNTER_SIZE]Encounter_Spot,
 	exp:         int,
-	init_events: Maybe([]Event),
-	lose_events: Maybe([]Event),
-	win_events:  Maybe([]Event),
+	battle_proc: Battle_Proc,
 }
 
 encounters := [?]Encounter {
-	{baddies = {{{0, 0}, .Mouse_Sized_Rat}, {}, {}, {}, {}, {}}, exp = 1},
+	{
+		baddies = {{{0, 0}, .Mouse_Sized_Rat}, {{0, 0}, .Powerful_Pebble}, {}, {}, {}, {}},
+		battle_proc = proc(start := false, result: Maybe(Battle_Result) = nil) -> bool {
+			@(static) pp: bool
+			if start {
+				pp = false
+				battle.combatants[battle.baddies[1]].enabled = false
+				queue_events(
+					[]Event {
+						Curtain_Up{.Battle},
+						Pause_Runner{.5},
+						Append_Text{"Uh oh!"},
+						Close_Dialogue{},
+						Clear_Text{},
+						Battle_Unpause{},
+						End{},
+					},
+					battle = true,
+				)
+				return false
+
+			} else {
+				switch result {
+				case nil:
+				case .Win:
+					if !pp {
+						pp = true
+						battle.paused = true
+						battle.combatants[battle.baddies[1]].enabled = true
+						battle_menu_set_stale(.Baddies)
+						queue_events(
+							[]Event {
+								Pause_Runner{.25},
+								Append_Text{"What the heck? That rock looked at you funny!"},
+								Close_Dialogue{},
+								Clear_Text{},
+								Battle_Unpause{},
+								End{},
+							},
+							battle = true,
+						)
+						return false
+					}
+					return true
+				case .Lose:
+				}
+			}
+			return true
+		},
+	},
 	{
 		baddies = {
 			{{0, 0}, .Mouse_Sized_Rat},
@@ -83,11 +131,11 @@ start_encounter :: proc(i: int, paused: bool) {
 			&battle.combatants,
 			Combatant {
 				character = new_baddy(template),
-				coord = tile_to_pixel(BATTLE_ORIGIN_TILE + spot.tile),
-				enabled = true,
-				team = BADDY_TEAM,
-				turn = template.turn,
-				visual = create_sprite_state(template.texture),
+				coord     = tile_to_pixel(BATTLE_ORIGIN_TILE + spot.tile),
+				enabled   = true, //!spot.disabled,
+				team      = BADDY_TEAM,
+				turn      = template.turn,
+				visual    = create_sprite_state(template.texture),
 			},
 		)
 	}

@@ -62,10 +62,10 @@ battle_destroy :: proc() {
 }
 
 battle_init :: proc() {
+	if battle.encounter.battle_proc == nil || battle.encounter.battle_proc(start = true) {
+		queue_events([]Event{Curtain_Up{.Battle}, Pause_Runner{.5}, Battle_Unpause{}, End{}}, battle = true)
+	}
 	battle_menu_start()
-	init_events :=
-		battle.encounter.init_events.? or_else []Event{Curtain_Up{.Battle}, Pause_Runner{.5}, Battle_Unpause{}, End{}}
-	queue_events(init_events, battle = true)
 }
 
 check_win :: proc() -> Maybe(Battle_Result) {
@@ -271,39 +271,48 @@ update_battle :: proc(dt: f32) {
 			check_downed_baddies()
 			battle_menu_update()
 		case .Lose:
-			battle.paused = true
-			lose_events := battle.encounter.lose_events.? or_else []Event {
-					Append_Text_Ex{text = "You lost|", hurry = true, pause = 1, lines = 2},
-					Close_Dialogue{},
-					Clear_Text{},
-					Pause_Runner{.5},
-					Curtain_Down{.Battle},
-					// TODO: clear other runners
-					Battle_Deactivate{},
-					// TODO: Title{},
-					End{},
-				}
-			queue_events(lose_events, battle = true)
-		case .Win:
-			battle.paused = true
-			for c_idx in battle.allies {
-				if combatant_alive(battle.combatants[c_idx]) {
-					unfreeze_sprite(&battle.combatants[c_idx].visual)
-					set_sprite_tag(&battle.combatants[c_idx].visual, .Cheer)
-				}
+			if battle.encounter.battle_proc == nil || battle.encounter.battle_proc(result = .Lose) {
+				battle.paused = true
+				queue_events(
+					[]Event {
+						Append_Text_Ex{text = "You lost|", hurry = true, pause = 1, lines = 2},
+						Close_Dialogue{},
+						Clear_Text{},
+						Pause_Runner{.5},
+						Curtain_Down{.Battle},
+						// TODO: clear other runners
+						Battle_Deactivate{},
+						// TODO: Title{},
+						End{},
+					},
+					battle = true,
+				)
 			}
-			runner_idx := party_get_experience(battle.encounter.exp)
-			win_events := battle.encounter.win_events.? or_else []Event {
-					Add_Item{.Potion, 1},
-					Append_Text_Ex{text = fmt.aprintf("Got item: %v", Item_Name.Potion), hurry = true, pause = 1, lines = 2}, // FIXME: leak
-					Close_Dialogue{},
-					Clear_Text{},
-					Pause_Runner{.5},
-					Curtain_Down{.Battle},
-					Battle_Deactivate{},
-					End{},
+		case .Win:
+			if battle.encounter.battle_proc == nil || battle.encounter.battle_proc(result = .Win) {
+				battle.paused = true
+				for c_idx in battle.allies {
+					if combatant_alive(battle.combatants[c_idx]) {
+						unfreeze_sprite(&battle.combatants[c_idx].visual)
+						set_sprite_tag(&battle.combatants[c_idx].visual, .Cheer)
+					}
 				}
-			queue_events(win_events, battle = true, i = runner_idx)
+				runner_idx := party_get_experience(battle.encounter.exp)
+				queue_events(
+					[]Event {
+						Add_Item{.Potion, 1},
+						Append_Text_Ex{text = fmt.aprintf("Got item: %v", Item_Name.Potion), hurry = true, pause = 1, lines = 2}, // FIXME: leak
+						Close_Dialogue{},
+						Clear_Text{},
+						Pause_Runner{.5},
+						Curtain_Down{.Battle},
+						Battle_Deactivate{},
+						End{},
+					},
+					battle = true,
+					i = runner_idx,
+				)
+			}
 		}
 	}
 

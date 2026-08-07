@@ -45,6 +45,7 @@ Process_Skill :: struct {
 	t:               f32,
 }
 
+Battle_Proc :: proc(start := false, result: Maybe(Battle_Result) = nil) -> bool // return true to do default init/win/lose stuff
 Turn_Proc :: proc(actor_idx: int)
 
 Battle_Result :: enum {
