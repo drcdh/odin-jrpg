@@ -214,7 +214,7 @@ player_control :: proc(_: f32, p: ^Entity) {
 			}
 			if boat_mode {
 				t := tile_in_front(p)
-				p := LEVEL_OVERWORLD_PASSABLE[t.y][t.x]
+				p := LEVEL_OVERWORLD_PASSABLE[t.y %% map_dim.y][t.x %% map_dim.x]
 				if p & PARTY_IMPASSABLE == 0 {
 					leave_boat(BOAT_ID)
 				}
