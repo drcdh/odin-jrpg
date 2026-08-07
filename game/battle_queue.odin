@@ -30,7 +30,7 @@ center_rect_on_rect :: proc(r1, r2: Rect) -> (r: Rect) {
 }
 
 center_rect_on_combatant :: proc(r1: Rect, c: Combatant) -> Rect {
-	sprite_size := sprite_size(c.visual)
+	sprite_size := raw_sprite_size(c.visual)
 	rc: Rect
 	rc.x = c.coord.x + c.coord_d.x
 	rc.y = c.coord.y + c.coord_d.y
@@ -40,7 +40,7 @@ center_rect_on_combatant :: proc(r1: Rect, c: Combatant) -> Rect {
 }
 
 center_animation_on_combatant :: proc(s: Sprite_Name, c: Combatant) -> Rect {
-	sprite_size := sprite_size(s)
+	sprite_size := raw_sprite_size(s)
 	ra: Rect
 	ra.width = sprite_size.x
 	ra.height = sprite_size.y

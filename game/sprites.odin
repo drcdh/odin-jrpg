@@ -44,7 +44,7 @@ _Sprite_Metadata :: union {
 
 Sprite_Metadata :: struct {
 	filename:   string,
-	frame_size: [2]f32,
+	frame_size: Pixel_Dim,
 	metadata:   _Sprite_Metadata,
 }
 
@@ -188,7 +188,7 @@ find_tag :: proc(tags: []Sprite_Tag, tag: Sprite_Tag) -> Maybe(int) {
 	return nil // uh oh
 }
 
-draw_sprite :: proc(state: Sprite_State, pos: [2]f32, tint := rl.WHITE) {
+draw_sprite :: proc(state: Sprite_State, pos: Pixel_Coord, tint := rl.WHITE) {
 	switch variant in state.variant {
 	case _Sprite_State_Static:
 		v := hm.get(&sprite_hm, state.h)
@@ -278,13 +278,26 @@ set_sprite_tag :: proc(state: ^Sprite_State, tag: Sprite_Tag) {
 	}
 }
 
-sprite_size_name :: proc(name: Sprite_Name) -> [2]f32 {
+raw_sprite_size_name :: proc(name: Sprite_Name) -> Pixel_Dim {
 	return sprite_metadata[name].frame_size
 }
 
-sprite_size_state :: proc(state: Sprite_State) -> [2]f32 {
+raw_sprite_size_state :: proc(state: Sprite_State) -> Pixel_Dim {
 	v := hm.get(&sprite_hm, state.h)
 	return sprite_metadata[v.name].frame_size
+}
+
+raw_sprite_size :: proc {
+	raw_sprite_size_name,
+	raw_sprite_size_state,
+}
+
+sprite_size_name :: proc(name: Sprite_Name) -> Pixel_Dim {
+	return {zoom, zoom} * raw_sprite_size_name(name)
+}
+
+sprite_size_state :: proc(state: Sprite_State) -> Pixel_Dim {
+	return {zoom, zoom} * raw_sprite_size_state(state)
 }
 
 sprite_size :: proc {

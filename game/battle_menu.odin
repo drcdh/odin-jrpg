@@ -149,9 +149,8 @@ battle_redraw_top_pane :: proc() {
 }
 
 battle_draw_top_icons :: proc() {
-	draw_sprite(
-		world_menu_icon,
-		tile_to_pixel(BATTLE_PANE_ORIGIN[Battle_Pane.Top]) + tile_to_pixel(.5, .75 + .5 * f32(battle_menu.ui_data.top)),
+	draw_text_indicator(
+		tile_to_pixel(BATTLE_PANE_ORIGIN[Battle_Pane.Top]) + tile_to_pixel(.5, .5 + .5 * f32(battle_menu.ui_data.top)),
 	)
 }
 
@@ -208,10 +207,9 @@ battle_redraw_skills_pane :: proc() {
 }
 
 battle_draw_skills_icons :: proc() {
-	draw_sprite(
-		world_menu_icon,
+	draw_text_indicator(
 		tile_to_pixel(BATTLE_PANE_ORIGIN[Battle_Pane.Skills]) +
-		tile_to_pixel(0., .5 + .5 * selection_row_f(battle_menu.ui_data.skill_sel)),
+		tile_to_pixel(.5, .5 + .5 * selection_row_f(battle_menu.ui_data.skill_sel)),
 	)
 }
 
@@ -231,10 +229,9 @@ battle_redraw_inventory_pane :: proc() {
 }
 
 battle_draw_inventory_icons :: proc() {
-	draw_sprite(
-		world_menu_icon,
+	draw_text_indicator(
 		tile_to_pixel(BATTLE_PANE_ORIGIN[Battle_Pane.Inventory]) +
-		tile_to_pixel(0., .5 + .5 * selection_row_f(battle_menu.ui_data.inv_sel)),
+		tile_to_pixel(.5, .5 + .5 * selection_row_f(battle_menu.ui_data.inv_sel)),
 	)
 }
 

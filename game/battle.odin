@@ -165,11 +165,11 @@ draw_battle_combatants :: proc() {
 
 			if battle_menu.ui_state != .Idle {
 				if c_idx == battle_menu.ui_data.c_idx {
-					draw_sprite(select_tile_icon_down, {c_coord.x, c_coord.y - tile_size})
+					draw_tile_indicator(c_coord, direction = Tile_Indicator_Direction.Down)
 				}
 			}
 			if targeted(c_idx, c.team) {
-				draw_sprite(select_tile_icon, {c_coord.x - tile_size, c_coord.y})
+				draw_tile_indicator(c_coord)
 			}
 
 			// debug

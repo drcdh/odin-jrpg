@@ -158,43 +158,37 @@ world_menu_draw_icons :: proc() {
 	switch world_menu.ui_state {
 	case .Inactive:
 	case .Top:
-		draw_sprite(world_menu_icon, tile_to_pixel(.5 + 3.5 * f32(world_menu.ui_data.top), .75))
+		draw_text_indicator(
+			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Top]) +
+			tile_to_pixel(1 + 3.5 * f32(world_menu.ui_data.top), .75),
+		)
 	case .Party:
 		p := world_menu.ui_data.party_idx
-		draw_sprite(
-			world_menu_icon,
+		draw_tile_indicator(
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Party]) +
-			tile_to_pixel(.5 + f32(5 * (p % 3)), 1 + 5 * int(p / 3)),
+			tile_to_pixel(1 + f32(5 * (p % 3)), 1 + 5 * int(p / 3)),
 		)
 	case .Character:
 		s := world_menu.ui_data.slot_idx
-		draw_sprite(
-			world_menu_icon,
-			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Character]) + tile_to_pixel(.5, 2 + NUM_STATS + s),
+		draw_text_indicator(
+			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Character]) + tile_to_pixel(1, 2 + NUM_STATS + s),
 		)
 	case .Equipment:
 		r := selection_row(world_menu.ui_data.equip_sel)
-		draw_sprite(
-			world_menu_icon,
-			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Equipment]) + tile_to_pixel(.5, 1 + r),
-		)
+		draw_text_indicator(tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Equipment]) + tile_to_pixel(1, 1 + r))
 	case .Skills:
 	// r := selection_row(world_menu.ui_data.skill_sel)
-	// draw_sprite(world_menu_icon, tile_to_pixel(1, 1 + r))
+	// draw_text_indicator(1, 1 + r)
 	case .Skill_Target:
 	case .Inventory:
 		r := selection_row(world_menu.ui_data.inv_sel)
-		draw_sprite(
-			world_menu_icon,
-			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Inventory]) + tile_to_pixel(.5, 1 + r),
-		)
+		draw_text_indicator(tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Inventory]) + tile_to_pixel(1, 1 + r))
 	case .Item_Target:
 		p := world_menu.ui_data.party_idx
 		row := f32(p / 3)
-		draw_sprite(
-			world_menu_icon,
+		draw_tile_indicator(
 			tile_to_pixel(WORLD_MENU_PANE_ORIGINS[World_Menu_Pane.Targeting]) +
-			tile_to_pixel(.5 + 2 * (f32(p) - 3 * row), 1 + 2.5 * row),
+			tile_to_pixel(1 + 2 * (f32(p) - 3 * row), 1 + 2.5 * row),
 		)
 	case .System:
 	}

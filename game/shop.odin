@@ -125,39 +125,27 @@ shop_draw :: proc() {
 	case .Swap_Buy:
 		shop_draw_panes(.Top, .Money, .Inventory, .Stats)
 	}
-	shop_draw_icons()
-}
 
-shop_draw_icons :: proc() {
+	// indicators
 	switch shop_menu_data.ui_state {
 	case .Inactive:
 	case .Top:
-		draw_sprite(world_menu_icon, tile_to_pixel(.5 + f32(3 * shop_menu_data.ui_data.top), .75))
+		draw_text_indicator(tile_to_pixel(1 + f32(3 * shop_menu_data.ui_data.top), .75))
 	case .Buy:
-		draw_sprite(
-			world_menu_icon,
-			tile_to_pixel(.5, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin),
-		)
+		draw_text_indicator(tile_to_pixel(1, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin))
 	case .Sell:
-		draw_sprite(
-			world_menu_icon,
-			tile_to_pixel(.5, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin),
-		)
+		draw_text_indicator(tile_to_pixel(1, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin))
 	case .Swap_Character:
-		draw_sprite(
-			world_menu_icon,
+		draw_tile_indicator(
 			tile_to_pixel(
-				11.5 + 2 * f32(shop_menu_data.ui_data.party_idx % 2),
+				12 + 2 * f32(shop_menu_data.ui_data.party_idx % 2),
 				3 + 2 * int(shop_menu_data.ui_data.party_idx / 2),
 			),
 		)
 	case .Swap_Slot:
-		draw_sprite(world_menu_icon, tile_to_pixel(11.5, 3 + shop_menu_data.ui_data.slot_idx))
+		draw_text_indicator(tile_to_pixel(12, 3 + shop_menu_data.ui_data.slot_idx))
 	case .Swap_Buy:
-		draw_sprite(
-			world_menu_icon,
-			tile_to_pixel(.5, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin),
-		)
+		draw_text_indicator(tile_to_pixel(1, 3 + shop_menu_data.ui_data.inv_row - shop_menu_data.ui_data.inv_origin))
 	}
 }
 

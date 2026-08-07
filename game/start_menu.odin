@@ -113,11 +113,11 @@ start_menu_draw :: proc() {
 	case .Fade_In:
 	case .Start:
 	case .Top:
-		origin := START_MENU_PANE_ORIGINS[Start_Menu_Pane.Top]
-		draw_text_icon(.5, .5 * f32(1 + start_menu.top_idx), origin)
+		origin := tile_to_pixel(START_MENU_PANE_ORIGINS[Start_Menu_Pane.Top])
+		draw_text_indicator(tile_to_pixel(1, .5 * f32(1 + start_menu.top_idx)) + origin)
 	case .Load:
-		origin := START_MENU_PANE_ORIGINS[Start_Menu_Pane.Load]
-		draw_text_icon(.5, .5 * (1 + selection_row_f(start_menu.load_sel)), origin)
+		origin := tile_to_pixel(START_MENU_PANE_ORIGINS[Start_Menu_Pane.Load])
+		draw_text_indicator(tile_to_pixel(1, .5 * (1 + selection_row_f(start_menu.load_sel))) + origin)
 	}
 }
 
