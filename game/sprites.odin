@@ -245,7 +245,7 @@ update_sprite :: proc(dt: f32, state: ^Sprite_State) -> bool {
 	return false
 }
 
-freeze_sprite_frame :: proc(state: ^Sprite_State, frame: u16) {
+freeze_sprite :: proc(state: ^Sprite_State, frame: u16) {
 	switch &variant in state.variant {
 	case _Sprite_State_Static:
 	case _Sprite_State_Anim:
@@ -265,6 +265,16 @@ unfreeze_sprite :: proc(state: ^Sprite_State) {
 	case _Sprite_State_Tagged:
 		variant.frozen = false
 	}
+}
+
+get_sprite_tag :: proc(state: Sprite_State) -> (tag: Sprite_Tag) {
+	switch &variant in state.variant {
+	case _Sprite_State_Static:
+	case _Sprite_State_Anim:
+	case _Sprite_State_Tagged:
+		tag = variant.tag
+	}
+	return
 }
 
 set_sprite_tag :: proc(state: ^Sprite_State, tag: Sprite_Tag) {

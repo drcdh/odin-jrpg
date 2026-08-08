@@ -171,15 +171,12 @@ battle_redraw_party_pane :: proc() {
 	for i, p in battle.allies {
 		c := battle.combatants[i]
 		tint := rl.WHITE
-		if c.character.hitpoints <= 0 {
+		if c.hitpoints <= 0 {
 			tint = rl.RED
+		} else if f16(c.hitpoints) <= f16(c.max_hitpoints) * 0.25 {
+			tint = rl.YELLOW
 		}
-		draw_text(
-			.5,
-			.5 + f32(p) / 2,
-			fmt.ctprintf("%- 13s% 4d/% 4d", c.character.name, c.character.hitpoints, c.character.max_hitpoints),
-			tint,
-		)
+		draw_text(.5, .5 + f32(p) / 2, fmt.ctprintf("%- 13s% 4d/% 4d", c.name, c.hitpoints, c.max_hitpoints), tint)
 	}
 }
 

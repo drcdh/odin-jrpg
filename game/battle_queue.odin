@@ -18,7 +18,7 @@ queue_battle_skill :: proc(actor_idx: int, targets: Target_Selection, skill: Ski
 	battle.combatants[actor_idx].t -= Ticks(skill.cost)
 	battle.combatants[actor_idx].windup = true
 	set_sprite_tag(&battle.combatants[actor_idx].visual, .LArm)
-	freeze_sprite_frame(&battle.combatants[actor_idx].visual, 0)
+	freeze_sprite(&battle.combatants[actor_idx].visual, 0)
 	append(&battle.skill_plays, Battle_Skill_Play{actor_idx, targets, skill, Ticks(skill.windup)})
 }
 

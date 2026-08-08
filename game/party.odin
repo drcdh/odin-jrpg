@@ -221,3 +221,17 @@ do_party_step_effects :: proc() {
 		skill_set_charge_tick(&pc.skills)
 	}
 }
+
+set_party_sprite_tags :: proc() {
+	for pc_idx in PC {
+		actor := get_pc(pc_idx)
+		visual := &pc_battle_sprites[pc_idx]
+		if actor.hitpoints <= 0 {
+			set_sprite_tag(visual, .Downed)
+		} else if f16(actor.hitpoints) <= f16(actor.max_hitpoints) * .25 {
+			set_sprite_tag(visual, .Kneeled)
+		} else {
+			set_sprite_tag(visual, .Idle)
+		}
+	}
+}

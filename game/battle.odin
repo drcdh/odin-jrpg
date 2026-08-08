@@ -62,6 +62,7 @@ battle_destroy :: proc() {
 }
 
 battle_init :: proc() {
+	check_downed_allies()
 	if battle.encounter.battle_proc == nil || battle.encounter.battle_proc(start = true) {
 		queue_events([]Event{Curtain_Up{.Battle}, Pause_Runner{.5}, Battle_Unpause{}, End{}}, battle = true)
 	}
@@ -388,8 +389,23 @@ process_ready_combatants :: proc(dt: f32) {
 	}
 }
 
+check_downed_allies :: proc() {
+	for c_idx in battle.allies {
+		c := &battle.combatants[c_idx]
+		if c.enabled {
+			if c.hitpoints <= 0 {
+				set_sprite_tag(&c.visual, .Downed)
+			} else if f16(c.hitpoints) <= f16(c.max_hitpoints) * .25 {
+				set_sprite_tag(&c.visual, .Kneeled)
+			} else {
+				set_sprite_tag(&c.visual, .Idle)
+			}
+		}
+	}
+}
+
 check_downed_baddies :: proc() {
-	// check for downed baddies, fade them, and disable
+	// check for downed baddies, fade and disable them
 	runner_idx: Maybe(int)
 	for c_idx in battle.baddies {
 		c := battle.combatants[c_idx]
@@ -441,6 +457,7 @@ process_battle_skill :: proc() -> (done := false) {
 	// fmt.printfln("%#v", battle.text)
 	play := battle.skill_plays[battle.skill_state.skill_plays_idx]
 	skill := play.skill
+	actor := &battle.combatants[play.actor]
 
 	switch battle.skill_state.step {
 	case 0:
@@ -457,19 +474,19 @@ process_battle_skill :: proc() -> (done := false) {
 
 	case 2:
 		// Walk
-		set_sprite_tag(&battle.combatants[play.actor].visual, .Walk)
-		unfreeze_sprite(&battle.combatants[play.actor].visual)
+		set_sprite_tag(&actor.visual, .Walk)
+		unfreeze_sprite(&actor.visual)
 		battle.skill_state.step += 1
 
 	case 3:
 		// Move
-		if battle.combatants[play.actor].team == PLAYER_TEAM {
-			if battle.combatants[play.actor].coord_d.x > -tile_size {
-				battle.combatants[play.actor].coord_d.x -= 2 * rl.GetFrameTime() * tile_size
+		if actor.team == PLAYER_TEAM {
+			if actor.coord_d.x > -tile_size {
+				actor.coord_d.x -= 2 * rl.GetFrameTime() * tile_size
 			} else {
-				battle.combatants[play.actor].coord_d.x = -tile_size
-				set_sprite_tag(&battle.combatants[play.actor].visual, .LArm)
-				freeze_sprite_frame(&battle.combatants[play.actor].visual, 0)
+				actor.coord_d.x = -tile_size
+				set_sprite_tag(&actor.visual, .LArm)
+				freeze_sprite(&actor.visual, 0)
 				battle.skill_state.step += 1
 			}
 		} else {
@@ -486,8 +503,8 @@ process_battle_skill :: proc() -> (done := false) {
 	case 5:
 		// Animate skill
 		// TODO: weapon skill or magic skill
-		set_sprite_tag(&battle.combatants[play.actor].visual, .RArm)
-		freeze_sprite_frame(&battle.combatants[play.actor].visual, 0)
+		set_sprite_tag(&actor.visual, .RArm)
+		freeze_sprite(&actor.visual, 0)
 		skill_sprite_name := skill.animation
 		sound := Sound_Name.Whack if skill.sound == nil else skill.sound
 		switch targets in play.targets {
@@ -518,27 +535,26 @@ process_battle_skill :: proc() -> (done := false) {
 
 	case 7:
 		// Skill effects
-		actor := battle.combatants[play.actor]
 		switch targets in play.targets {
 		case Target_One_Ally:
 			target := battle.combatants[battle.allies[targets.i]]
-			do_effect(&actor, &target, skill.effect)
+			do_effect(actor, &target, skill.effect)
 		case Target_One_Baddy:
 			target := battle.combatants[battle.baddies[targets.i]]
-			do_effect(&actor, &target, skill.effect)
+			do_effect(actor, &target, skill.effect)
 		case Target_All_Allies:
 			for target_idx in battle.allies {
 				target := battle.combatants[target_idx]
-				do_effect(&actor, &target, skill.effect)
+				do_effect(actor, &target, skill.effect)
 			}
 		case Target_All_Baddies:
 			for target_idx in battle.baddies {
 				target := battle.combatants[target_idx]
-				do_effect(&actor, &target, skill.effect)
+				do_effect(actor, &target, skill.effect)
 			}
 		case Target_All_Combatants:
 			for &target in battle.combatants {
-				do_effect(&actor, &target, skill.effect)
+				do_effect(actor, &target, skill.effect)
 			}
 		}
 		battle_menu_set_stale(.Baddies)
@@ -553,18 +569,24 @@ process_battle_skill :: proc() -> (done := false) {
 
 	case 9:
 		// Walk
-		set_sprite_tag(&battle.combatants[play.actor].visual, .Walk)
-		unfreeze_sprite(&battle.combatants[play.actor].visual)
+		set_sprite_tag(&actor.visual, .Walk)
+		unfreeze_sprite(&actor.visual)
 		battle.skill_state.step += 1
 
 	case 10:
 		// Move back
-		if battle.combatants[play.actor].team == PLAYER_TEAM {
-			if battle.combatants[play.actor].coord_d.x < 0 {
-				battle.combatants[play.actor].coord_d.x += 4 * rl.GetFrameTime() * tile_size
+		if actor.team == PLAYER_TEAM {
+			if actor.coord_d.x < 0 {
+				actor.coord_d.x += 4 * rl.GetFrameTime() * tile_size
 			} else {
-				battle.combatants[play.actor].coord_d.x = 0
-				set_sprite_tag(&battle.combatants[play.actor].visual, .Idle)
+				actor.coord_d.x = 0
+				if actor.hitpoints <= 0 {
+					set_sprite_tag(&actor.visual, .Downed)
+				} else if f16(actor.hitpoints) <= f16(actor.max_hitpoints) * .25 {
+					set_sprite_tag(&actor.visual, .Kneeled)
+				} else {
+					set_sprite_tag(&actor.visual, .Idle)
+				}
 				// TODO: remove_text_display(skill.name)
 				done = true
 			}

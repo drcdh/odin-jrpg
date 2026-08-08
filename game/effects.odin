@@ -88,7 +88,7 @@ effect_attack :: proc(actor, target: ^Character, effect: Effect_Attack) {
 	)
 	hp_loss := int(hp_loss_f)
 	fmt.printfln("  hp_loss = %f = %d", hp_loss_f, hp_loss)
-	target.hitpoints -= hp_loss
+	target.hitpoints = max(0, target.hitpoints - hp_loss)
 	queue_text_effect_character(target, fmt.caprintf("%d", hp_loss))
 	roll_for_counter(target, actor, risk)
 }
@@ -160,4 +160,5 @@ do_effect :: proc(actor, target: ^Character, effect: Effect) {
 	case Effect_Level_Up:
 		effect_proc(actor, target, effect)
 	}
+	set_party_sprite_tags() // TODO do better
 }
