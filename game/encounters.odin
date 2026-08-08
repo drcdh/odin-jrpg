@@ -21,6 +21,7 @@ Encounter :: struct {
 	battle_proc: Battle_Proc,
 }
 
+@(rodata)
 encounters := [?]Encounter {
 	{
 		baddies = {{{0, 0}, .Mouse_Sized_Rat}, {{0, 0}, .Powerful_Pebble}, {}, {}, {}, {}},

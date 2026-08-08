@@ -70,16 +70,19 @@ def process_tmx(level_name):
 	out_f.write(f"{prefix}WIDTH :: {w_tiles}\n")
 	out_f.write(f"{prefix}HEIGHT :: {h_tiles}\n")
 
+	out_f.write("@(rodata)\n")
 	out_f.write(f"{prefix}TILESETS := [{len(tileset_firstgids)}]Tileset_Id{{\n")
 	for ts, _ in tileset_firstgids:
 		out_f.write(f"\t.{ts.title()},\n")
 	out_f.write(f"}}\n")
 
+	out_f.write("@(rodata)\n")
 	out_f.write(f"{prefix}FIRSTGIDS := [{len(tileset_firstgids)}]int{{\n")
 	for _, g in tileset_firstgids:
 		out_f.write(f"\t{g},\n")
 	out_f.write(f"}}\n")
 
+	out_f.write("@(rodata)\n")
 	out_f.write(f"{level_name}_map := [{num_layers}][{h_tiles}][{w_tiles}]int{{\n")
 	for i, (_, layer_data) in enumerate(map_layers):
 		out_f.write(f"{{")
@@ -88,10 +91,12 @@ def process_tmx(level_name):
 		out_f.write("},\n")
 	out_f.write("}\n")
 
+	out_f.write("@(rodata)\n")
 	out_f.write(f"{prefix}PASSABLE := [{h_tiles}][{w_tiles}]u8 ")
 	out_f.write(str(passable.process(map_layers, tileset_firstgids)).replace("[","{").replace("]", "}"))
 	out_f.write("\n")
 
+	out_f.write("@(rodata)\n")
 	out_f.write(f"{prefix}ROUTES := [][]Tile_Coord{{\n")
 	for p in paths:
 		out_f.write("{\n")
@@ -174,6 +179,7 @@ def main():
 		regions_f.write("}\n\n")
 		regions_f.write(
 			"""
+			@(rodata)
 			encounter_region_rects := [?]Encounter_Region_Rect{
 			"""
 		)

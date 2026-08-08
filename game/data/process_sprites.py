@@ -63,7 +63,7 @@ def process_ase_tagged(name):
 	sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}{{ {poses_str}, {frames_str}, {frame_t} }}}},\n".format(**metadata))
 
 def write_sprite_data(f):
-	f.write("package game\n")
+	f.write("package game\n\n")
 
 	f.write("Sprite_Name :: enum {\n")
 	for s in sprite_names:
@@ -72,6 +72,7 @@ def write_sprite_data(f):
 
 	f.write("\n\n")
 
+	f.write("// TODO @(rodata)\n")
 	f.write("sprite_metadata := [Sprite_Name]Sprite_Metadata {\n")
 	for s in sprites:
 		f.write(s)

@@ -91,6 +91,7 @@ for skill in skills:
 	out_f.write(f"\t{enum},\n")
 out_f.write("}\n\n")
 
+out_f.write("// TODO @(rodata)\n")
 out_f.write(f"skills := [{len(skills)}]Skill {{\n")
 for skill in skills:
 	write_skill(out_f, skill)

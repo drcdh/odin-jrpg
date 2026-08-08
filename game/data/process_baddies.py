@@ -8,6 +8,7 @@ out_f = open("baddy_data.odin", "w")
 
 out_f.write("""package game
 
+@(rodata)
 baddy_templates := [?]Baddy_Template{
 Baddy_Template {},
 """)

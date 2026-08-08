@@ -60,6 +60,7 @@ with open("item_data.odin", "w") as f:
 	f.write("\tNone,\n")
 	f.write("}\n\n")
 
+	f.write("// TODO @(rodata)\n")
 	f.write(f"items := [{len(items)}]Item {{\n")
 	for item in items:
 		write_item(f, item)
