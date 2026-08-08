@@ -441,9 +441,9 @@ default_target_selection :: proc(tt: Target_Type) -> Target_Selection {
 	ts: Target_Selection
 	switch tt {
 	case .One_Opponent:
-		ts = Target_One_Baddy{}
+		ts = Target_One_Baddy{select_first_baddy()}
 	case .Some_Opponents:
-		ts = Target_One_Baddy{}
+		ts = Target_One_Baddy{select_first_baddy()}
 	case .All_Opponents:
 		ts = Target_All_Baddies{}
 	case .One_Combatant:

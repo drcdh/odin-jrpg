@@ -514,15 +514,21 @@ process_battle_skill :: proc() -> (done := false) {
 			play_anim_sound(skill_sprite_name, sound, battle.baddies[targets.i])
 		case Target_All_Allies:
 			for target_idx, i in battle.allies {
-				play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
+				if battle.combatants[target_idx].enabled {
+					play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
+				}
 			}
 		case Target_All_Baddies:
 			for target_idx, i in battle.baddies {
-				play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
+				if battle.combatants[target_idx].enabled {
+					play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(i) * MULTI_TARGET_DELAY)
+				}
 			}
 		case Target_All_Combatants:
 			for _, target_idx in battle.combatants {
-				play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
+				if battle.combatants[target_idx].enabled {
+					play_anim_sound(skill_sprite_name, sound, target_idx, delay = f32(target_idx) * MULTI_TARGET_DELAY)
+				}
 			}
 		}
 		battle.skill_state.step += 1
@@ -545,16 +551,22 @@ process_battle_skill :: proc() -> (done := false) {
 		case Target_All_Allies:
 			for target_idx in battle.allies {
 				target := battle.combatants[target_idx]
-				do_effect(actor, &target, skill.effect)
+				if target.enabled {
+					do_effect(actor, &target, skill.effect)
+				}
 			}
 		case Target_All_Baddies:
 			for target_idx in battle.baddies {
 				target := battle.combatants[target_idx]
-				do_effect(actor, &target, skill.effect)
+				if target.enabled {
+					do_effect(actor, &target, skill.effect)
+				}
 			}
 		case Target_All_Combatants:
 			for &target in battle.combatants {
-				do_effect(actor, &target, skill.effect)
+				if target.enabled {
+					do_effect(actor, &target, skill.effect)
+				}
 			}
 		}
 		battle_menu_set_stale(.Baddies)
