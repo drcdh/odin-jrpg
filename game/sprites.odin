@@ -59,10 +59,11 @@ Image :: struct {
 	handle:  Image_Handle,
 }
 
-Palette_Swap :: struct {
-	from: []rl.Color,
-	to:   []rl.Color,
+Color_Swap :: struct {
+	from, to: rl.Color,
 }
+
+Palette_Swap :: []Color_Swap
 
 Image_Handle :: hm.Handle32
 Sprite_Handle :: hm.Handle32
@@ -84,15 +85,22 @@ delete_sprites :: proc() {
 	delete(sprite_handles)
 }
 
-load_sprite :: proc(n: Sprite_Name, p: Maybe(Palette_Swap) = nil) -> (v: Sprite) {
+load_sprite :: proc(n: Sprite_Name, p: Palette_Swap = {}) -> (v: Sprite) {
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)
 
 	m := sprite_metadata[n]
 	filepath := fmt.caprintf("./game/sprites/%s.png", m.filename); defer delete(filepath)
 	img := rl.LoadImage(filepath); defer rl.UnloadImage(img)
+
+	if len(p) > 0 {
+		fmt.printfln("Processing palette swap with %d colors", len(p))
+		for cs in p {
+			rl.ImageColorReplace(&img, cs.from, cs.to)
+		}
+	}
 	texture := rl.LoadTextureFromImage(img)
-	// TODO: palette swap
+
 	v.name = n
 	v.image = hm.add(&image_hm, Image{texture = texture})
 
@@ -102,7 +110,7 @@ load_sprite :: proc(n: Sprite_Name, p: Maybe(Palette_Swap) = nil) -> (v: Sprite)
 	return
 }
 
-get_sprite_h :: proc(n: Sprite_Name, p: Maybe(Palette_Swap) = nil) -> Sprite_Handle {
+get_sprite_h :: proc(n: Sprite_Name, p: Palette_Swap = {}) -> Sprite_Handle {
 	if p == nil {
 		if h, exists := sprite_handles[n]; exists {
 			fmt.printfln("Sprite %s previously loaded. Getting from hm", n)
@@ -142,13 +150,7 @@ Sprite_State :: struct {
 	variant: _Sprite_State,
 }
 
-create_sprite_state :: proc(
-	n: Sprite_Name,
-	t: Maybe(Sprite_Tag) = nil,
-	p: Maybe(Palette_Swap) = nil,
-) -> (
-	s: Sprite_State,
-) {
+create_sprite_state :: proc(n: Sprite_Name, t: Maybe(Sprite_Tag) = nil, p: Palette_Swap = {}) -> (s: Sprite_State) {
 	fmt.printfln("\nCreating new sprite state for %s", n)
 	stopwatch: time.Stopwatch
 	time.stopwatch_start(&stopwatch)

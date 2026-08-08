@@ -1,6 +1,8 @@
 #+private file
 package game
 
+import rl "vendor:raylib"
+
 @(private)
 LEVEL_1_OVERLAY :: true
 
@@ -68,7 +70,16 @@ start_level_1 :: proc() {
 				},
 			)
 		},
-		v = create_sprite_state(.Dude_World, .Down),
+		v = create_sprite_state(
+			.Man_World,
+			.Down,
+			{
+				{rl.GetColor(0xeeeeeeff), rl.PINK},
+				{rl.GetColor(0xddddddff), rl.BLUE},
+				{rl.GetColor(0xccccccff), rl.BROWN},
+				{rl.GetColor(0xbbbbbbff), rl.BEIGE},
+			},
+		),
 	})
 
 	add_world_entity(Entity {
