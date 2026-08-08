@@ -255,6 +255,7 @@ start_level_0 :: proc() {
 					Music_Fade_Down{},
 					Curtain_Down{},
 					Heal_Party{},
+					Reset_Save_Points{},
 					Pause_Runner{.75},
 					Play_Sound{sound = .Warp},
 					Pause_Runner{.75},
@@ -279,8 +280,8 @@ start_level_0 :: proc() {
 		tile = LEVEL_0_SAVE,
 		ghost = true,
 		n = "Level_0_Save",
-		v = create_sprite_state(.Save_Point),
-		trap = proc(id: Id) {save_point(id, .Level_0)},
+		v = create_sprite_state(.Save_Point, .Active if get_game_data(Bool_Datum.Save_Point_Level_0) else .Inactive),
+		trap = proc(id: Id) {save_point(id, .Level_0, .Save_Point_Level_0)},
 	})
 
 	play_music(&music_state, .Town)

@@ -106,8 +106,8 @@ start_level_2 :: proc() {
 		tile = LEVEL_2_SAVE,
 		ghost = true,
 		n = "Level_2_Save",
-		v = create_sprite_state(.Save_Point),
-		trap = proc(id: Id) {save_point(id, .Level_2)},
+		v = create_sprite_state(.Save_Point, .Active if get_game_data(Bool_Datum.Save_Point_Level_2) else .Inactive),
+		trap = proc(id: Id) {save_point(id, .Level_2, .Save_Point_Level_2)},
 	})
 
 	play_music(&music_state, .Town)

@@ -69,6 +69,8 @@ Quit :: struct {}
 Remove_Entity :: struct {
 	id: Id,
 }
+Reset_Save_Points :: struct {}
+Restart_Level :: struct {}
 Save_Game :: struct {
 	save_point: Save_Point,
 }
@@ -175,6 +177,8 @@ Event :: union {
 	Play_Sound,
 	Quit,
 	Remove_Entity,
+	Reset_Save_Points,
+	Restart_Level,
 	Save_Game,
 	Set_Boat_Control,
 	Set_Bool,

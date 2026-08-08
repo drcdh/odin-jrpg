@@ -27,15 +27,8 @@ dialogue :: proc(speaker_id: Id, dialogue: string) {
 }
 
 egress :: proc(destination: Level) {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Curtain_Down{},
-			Start_Level{level = destination},
-			Curtain_Up{},
-			End{},
-		},
-	)
+	set_world_entity_busy(PLAYER_ID, true)
+	queue_events([]Event{Curtain_Down{}, Start_Level{level = destination}, Curtain_Up{}, End{}})
 }
 
 encounter :: proc(encounter: int) {
@@ -109,19 +102,23 @@ monster_in_a_box :: proc(box_id: Id, encounter: int) {
 	)
 }
 
-save_point :: proc(save_point_id: Id, save_point: Save_Point) {
+save_point :: proc(save_point_id: Id, save_point: Save_Point, datum: Bool_Datum) {
+	set_world_entity_busy(PLAYER_ID, true)
 	queue_events(
 		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
+			Skip_If{2, datum},
+			Append_Text{"This save point is inactive right now. Poop."},
+			Skip{9},
 			Append_Text{"Ooh, it's a save point! Save your game?"},
 			Append_Choice{"Yeah!"},
 			Append_Choice{"Nope."},
 			Get_Choice{},
 			Clear_Text{},
-			Skip_If_Choice{1, 1},
+			Skip_If_Choice{2, 1},
+			Set_Bool{datum, false},
 			Save_Game{save_point},
-			Close_Dialogue{},
 			Set_Entity_Tag{save_point_id, .Inactive},
+			Close_Dialogue{},
 			Set_Entity_Busy{id = PLAYER_ID, busy = false},
 			End{},
 		},
@@ -129,9 +126,9 @@ save_point :: proc(save_point_id: Id, save_point: Save_Point) {
 }
 
 text_popup :: proc(dialogue: string) {
+	set_world_entity_busy(PLAYER_ID, true)
 	queue_events(
 		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
 			Append_Text{dialogue},
 			Close_Dialogue{},
 			Clear_Text{},
@@ -142,14 +139,6 @@ text_popup :: proc(dialogue: string) {
 }
 
 warp_to_level :: proc(level: Level) {
-	queue_events(
-		[]Event {
-			Set_Entity_Busy{id = PLAYER_ID, busy = true},
-			Play_Sound{sound = .Warp},
-			Curtain_Down{},
-			Start_Level{level = level},
-			Curtain_Up{},
-			End{},
-		},
-	)
+	set_world_entity_busy(PLAYER_ID, true)
+	queue_events([]Event{Play_Sound{sound = .Warp}, Curtain_Down{}, Start_Level{level = level}, Curtain_Up{}, End{}})
 }

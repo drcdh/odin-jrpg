@@ -188,6 +188,10 @@ process_event :: proc(runner: ^Runner) {
 		quitting = true
 	case Remove_Entity:
 		remove_world_entity(event.id)
+	case Reset_Save_Points:
+		reset_save_points()
+	case Restart_Level:
+		restart_level()
 	case Save_Game:
 		save_game(event.save_point)
 	case Set_Boat_Control:

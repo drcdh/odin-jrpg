@@ -12,6 +12,8 @@ Bool_Datum :: enum {
 	Introduction,
 	Met_Dude,
 	Met_Woman,
+	Save_Point_Level_0,
+	Save_Point_Level_2,
 }
 
 Int_Datum :: enum {
@@ -82,6 +84,7 @@ init_new_game :: proc() {
 	set_level(&ZEALOT, 1)
 	set_all_skills()
 	heal_party()
+	reset_save_points()
 }
 
 encode_character_data :: proc() -> (d: [NUM_PC]Character_Save_Data) {
@@ -235,4 +238,9 @@ have_money :: proc {
 
 get_sell_price :: proc(v: Money) -> Money {
 	return Money(0.25 * f32(v))
+}
+
+reset_save_points :: proc() {
+	game_data.bool_data[Bool_Datum.Save_Point_Level_0] = true
+	game_data.bool_data[Bool_Datum.Save_Point_Level_2] = true
 }

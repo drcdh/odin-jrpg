@@ -54,3 +54,7 @@ start_level :: proc(l: Level) {
 	fmt.printfln("% 4d: Level map dimensions are %w", frame_count, map_dim)
 	fmt.printfln("% 4d: Level map uses %d tilesets", frame_count, len(level_tilesets))
 }
+
+restart_level :: proc() {
+	start_level(current_level)
+}
