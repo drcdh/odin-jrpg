@@ -26,8 +26,8 @@ def process_ase(name):
 	if frame_num == 1:
 		metadata["frame_width"] = data["meta"]["size"]["w"]
 		metadata["frame_height"] = data["meta"]["size"]["h"]
-		metadata["kind"] = "_Sprite_Metadata_Static"
-		sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}{{}}}},\n".format(**metadata))
+		metadata["kind"] = ".Static"
+		sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}, {{}}, {{}}, 0 }},\n".format(**metadata))
 		return
 
 	metadata["num_frames"] = frame_num
@@ -36,9 +36,9 @@ def process_ase(name):
 		metadata["frame_width"] = f["sourceSize"]["w"]
 		metadata["frame_height"] = f["sourceSize"]["h"]
 		break
-	metadata["kind"] = "_Sprite_Metadata_Anim"
+	metadata["kind"] = ".Anim"
 
-	sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}{{ {num_frames}, {frame_t} }}}},\n".format(**metadata))
+	sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}, {{}}, {{ {num_frames} }}, {frame_t} }},\n".format(**metadata))
 
 def process_ase_tagged(name):
 	metadata = dict()
@@ -58,9 +58,9 @@ def process_ase_tagged(name):
 	metadata["frames_str"] = f"{{ {','.join(str(c) for c in tag_frame_counts.values())} }}"
 	metadata["poses_str"] = f"{{ {','.join('.'+tag for tag in tag_frame_counts.keys())} }}"
 	# metadata["num_poses"] = len(tag_frame_counts)
-	metadata["kind"] = "_Sprite_Metadata_Tagged"
+	metadata["kind"] = ".Tagged"
 
-	sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}{{ {poses_str}, {frames_str}, {frame_t} }}}},\n".format(**metadata))
+	sprites.append(".{name} = {{\"{filename}\", {{ {frame_width}, {frame_height} }}, {kind}, {poses_str}, {frames_str}, {frame_t} }},\n".format(**metadata))
 
 def write_sprite_data(f):
 	f.write("package game\n\n")
@@ -72,7 +72,7 @@ def write_sprite_data(f):
 
 	f.write("\n\n")
 
-	f.write("// TODO @(rodata)\n")
+	f.write("@(rodata)\n")
 	f.write("sprite_metadata := [Sprite_Name]Sprite_Metadata {\n")
 	for s in sprites:
 		f.write(s)

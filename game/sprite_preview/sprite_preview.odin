@@ -31,14 +31,16 @@ main :: proc() {
 		if rl.IsKeyPressed(.Q) {
 			break
 		} else if rl.IsKeyPressed(.DOWN) {
-			if mp, ok := game.sprite_metadata[game.Sprite_Name(i)].metadata.(game._Sprite_Metadata_Tagged); ok {
-				tag_idx = (tag_idx + 1) %% len(mp.tags)
-				game.set_sprite_tag(&state, mp.tags[tag_idx])
+			m := game.sprite_metadata[game.Sprite_Name(i)]
+			if len(m.tags) > 1 {
+				tag_idx = (tag_idx + 1) %% len(m.tags)
+				game.set_sprite_tag(&state, m.tags[tag_idx])
 			}
 		} else if rl.IsKeyPressed(.UP) {
-			if mp, ok := game.sprite_metadata[game.Sprite_Name(i)].metadata.(game._Sprite_Metadata_Tagged); ok {
-				tag_idx = (tag_idx - 1) %% len(mp.tags)
-				game.set_sprite_tag(&state, mp.tags[tag_idx])
+			m := game.sprite_metadata[game.Sprite_Name(i)]
+			if len(m.tags) > 1 {
+				tag_idx = (tag_idx - 1) %% len(m.tags)
+				game.set_sprite_tag(&state, m.tags[tag_idx])
 			}
 		} else if rl.IsKeyPressed(.LEFT) {
 			i = (i - 1) %% len(game.Sprite_Name)
